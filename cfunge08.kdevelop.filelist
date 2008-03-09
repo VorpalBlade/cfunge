@@ -1,3 +1,3 @@
 # KDevelop Custom Project File List
 CMakeLists.txt
-main.c
+src/main.c

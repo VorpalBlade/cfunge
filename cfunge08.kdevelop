@@ -7,10 +7,10 @@
     <author>Arvid Norlander</author>
     <email>anmaster@tele2.se</email>
     <version>$VERSION$</version>
-    <primarylanguage>C++</primarylanguage>
+    <primarylanguage>C</primarylanguage>
     <ignoreparts/>
     <secondaryLanguages>
-      <language>C</language>
+      <language>C++</language>
     </secondaryLanguages>
     <projectname>cfunge08</projectname>
     <description/>
