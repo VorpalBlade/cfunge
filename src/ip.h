@@ -10,13 +10,16 @@ typedef fungeVector ipDelta;
 
 typedef struct {
 	fungePosition   position;
-	ipDelta         direction;
+	ipDelta         delta;
 	fungeStackStack stackstack;
-} ip;
+} instructionPointer;
 
 typedef struct {
-	size_t count;
-	ip*    entries;
+	size_t              count;
+	instructionPointer* entries;
 } ipList;
+
+// steps let you take several steps at once.
+extern void ipForward(int_fast64_t steps, instructionPointer * ip);
 
 #endif

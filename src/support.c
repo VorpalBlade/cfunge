@@ -3,8 +3,9 @@
 
 #include <string.h>
 
-char * cf_strndup(char const *string, size_t n) {
-	if(!string || !*string)
+char * cf_strndup(char const *string, size_t n)
+{
+	if (!string || !*string)
 		return NULL;
 	// Keep gcc happy with variable decls
 	{
@@ -15,6 +16,6 @@ char * cf_strndup(char const *string, size_t n) {
 			return NULL;
 
 		newstr[len] = '\0';
-		return memcpy (newstr, string, len);
+		return memcpy(newstr, string, len);
 	}
 }

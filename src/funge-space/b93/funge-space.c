@@ -8,7 +8,8 @@ struct _fungeSpace {
 	FUNGESPACETYPE entries[25][80];
 };
 
-static inline bool fungeSpaceInRange(const fungePosition * position) {
+static inline bool fungeSpaceInRange(const fungePosition * position)
+{
 	if ((position->x > 79) || (position->x < 0))
 		return false;
 	if ((position->y > 24) || (position->y < 0))
@@ -26,13 +27,15 @@ fungeSpaceCreate(void)
 
 
 void
-fungeSpaceFree(fungeSpace * me) {
+fungeSpaceFree(fungeSpace * me)
+{
 	cf_free(me);
 }
 
 
 FUNGESPACETYPE
-fungeSpaceGet (fungeSpace * me, const fungePosition * position) {
+fungeSpaceGet(fungeSpace * me, const fungePosition * position)
+{
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
 	// Thanks to Zaba for suggesting this code
@@ -41,7 +44,8 @@ fungeSpaceGet (fungeSpace * me, const fungePosition * position) {
 
 
 void
-fungeSpaceSet (fungeSpace * me, const fungePosition * position, FUNGESPACETYPE value) {
+fungeSpaceSet(fungeSpace * me, FUNGESPACETYPE value, const fungePosition * position)
+{
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
 	me->entries[position->y][position->x] = value;
@@ -49,7 +53,8 @@ fungeSpaceSet (fungeSpace * me, const fungePosition * position, FUNGESPACETYPE v
 
 
 fungePosition *
-fungeSpaceWrap(fungeSpace * me, const fungePosition * position) {
+fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * position)
+{
 	fungePosition *tmp = cf_malloc(sizeof(position));
 	// Fix this for less than -80
 	if (position->x < 0)
@@ -66,7 +71,8 @@ fungeSpaceWrap(fungeSpace * me, const fungePosition * position) {
 }
 
 bool
-fungeSpaceLoad(fungeSpace * me, const char * filename) {
+fungeSpaceLoad(fungeSpace * me, const char * filename)
+{
 	FILE * file;
 	char * line;
 	// Row in fungespace
@@ -77,7 +83,7 @@ fungeSpaceLoad(fungeSpace * me, const char * filename) {
 		return false;
 
 	line = cf_malloc(81 * sizeof(char));
-	
+
 	while ((row < 25) && (fgets(line, 81, file) != NULL)) {
 		for (int i = 0; i < 80; i++) {
 			// TODO: CR and CRLF are also valid (bleh)
