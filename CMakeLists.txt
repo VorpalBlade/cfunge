@@ -9,7 +9,22 @@ MARK_AS_ADVANCED(
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 #add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-Wall -Wextra -Wformat=2)
+ADD_DEFINITIONS(-std=c99)
+ADD_DEFINITIONS(-Wall -Wextra -pedantic -Wformat=2)
+ADD_DEFINITIONS(-Wpointer-arith)
+ADD_DEFINITIONS(-Wwrite-strings -Wshadow)
+ADD_DEFINITIONS(-Wstrict-aliasing=2 -Wfloat-equal)
+ADD_DEFINITIONS(-Wcast-align -Wcast-qual -Wbad-function-cast)
+ADD_DEFINITIONS(-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations)
+ADD_DEFINITIONS(-Wmissing-noreturn -Wmissing-format-attribute)
+ADD_DEFINITIONS(-Wundef)
+ADD_DEFINITIONS(-Wnested-externs -Wdeclaration-after-statement)
+ADD_DEFINITIONS(-Wmissing-include-dirs)
+ADD_DEFINITIONS(-Wunused-function -Wunused-label -Wunused-value -Wunused-variable)
+ADD_DEFINITIONS(-Wredundant-decls)
+
+
+include_directories (${CFUNGE08_SOURCE_DIR}/src/)
 
 #list all source files here
 FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} src/*.c)
