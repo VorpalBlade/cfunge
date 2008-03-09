@@ -70,6 +70,22 @@ fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * po
 	return tmp;
 }
 
+void
+fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * position)
+{
+	// Fix this for less than -80
+	if (position->x < 0)
+		position->x = 80 - position->x;
+	else
+		position->x = position->x % 80;
+
+	if (position->y < 0)
+		position->y = 25 - position->y;
+	else
+		position->y = position->y % 25;
+}
+
+
 bool
 fungeSpaceLoad(fungeSpace * me, const char * filename)
 {

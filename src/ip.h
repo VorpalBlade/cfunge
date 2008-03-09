@@ -3,8 +3,10 @@
 
 #include <sys/types.h>
 
+#include "global.h"
 #include "vector.h"
 #include "stack.h"
+#include "funge-space/b93/funge-space.h"
 
 typedef fungeVector ipDelta;
 
@@ -20,6 +22,6 @@ typedef struct {
 } ipList;
 
 // steps let you take several steps at once.
-extern void ipForward(int_fast64_t steps, instructionPointer * ip);
+extern void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space);
 
 #endif
