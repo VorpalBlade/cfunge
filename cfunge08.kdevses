@@ -20,5 +20,9 @@
    <kcachegrind path="" />
   </kdevvalgrind>
  </pluginList>
- <DocsAndViews NumberOfDocuments="0" />
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:///home/arvid/src/cfunge08/src/main.c" >
+   <View0 Encoding="" line="14" Type="Source" />
+  </Doc0>
+ </DocsAndViews>
 </KDevPrjSession>
