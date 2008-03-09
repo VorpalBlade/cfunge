@@ -1,3 +1,5 @@
+// Do not include directly, include global.h instead. It includes
+// this file.
 #ifndef _HAD_SRC_SUPPORT_H
 #define _HAD_SRC_SUPPORT_H
 

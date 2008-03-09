@@ -1,3 +1,15 @@
 # KDevelop Custom Project File List
 CMakeLists.txt
+src
+src/funge-space
+src/funge-space/b93
+src/funge-space/b93/funge-space.c
+src/funge-space/b93/funge-space.h
+src/global.h
+src/ip.c
+src/ip.h
 src/main.c
+src/stack.h
+src/support.c
+src/support.h
+src/vector.h

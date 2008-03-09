@@ -25,10 +25,11 @@ ADD_DEFINITIONS(-Wredundant-decls)
 ADD_DEFINITIONS(-D_GNU_SOURCE)
 
 
-include_directories (${CFUNGE08_SOURCE_DIR}/src/)
+include_directories (${CFUNGE08_SOURCE_DIR}/src/ ${CFUNGE08_SOURCE_DIR}/src/funge-space/b93/)
+
 
 #list all source files here
-FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} src/*.c)
+FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} src/*.c src/funge-space/b93/*.c)
 ADD_EXECUTABLE(cfunge08 ${CFUNGE08_SOURCES})
 
 
