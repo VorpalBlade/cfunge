@@ -2,10 +2,10 @@
 #include "funge-space.h"
 
 #include <string.h>
-#include <stdbool.h>
+#include <stdio.h>
 
 struct _fungeSpace {
-	FUNGESPACETYPE entries[80][25];
+	FUNGESPACETYPE entries[25][80];
 };
 
 static inline bool fungeSpaceInRange(const fungePosition * position) {
@@ -20,7 +20,7 @@ fungeSpace*
 fungeSpaceCreate(void)
 {
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
-	memset(tmp, 0, sizeof(fungeSpace));
+	memset(tmp->entries, ' ', sizeof(fungeSpace));
 	return tmp;
 }
 
@@ -36,7 +36,7 @@ fungeSpaceGet (fungeSpace * me, const fungePosition * position) {
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
 	// Thanks to Zaba for suggesting this code
-	return me->entries[position->x][position->y] ? me->entries[position->x][position->y] : (FUNGESPACETYPE)' ';
+	return me->entries[position->y][position->x];
 }
 
 
@@ -44,7 +44,7 @@ void
 fungeSpaceSet (fungeSpace * me, const fungePosition * position, FUNGESPACETYPE value) {
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
-	me->entries[position->x][position->y] = value;
+	me->entries[position->y][position->x] = value;
 }
 
 
@@ -65,7 +65,28 @@ fungeSpaceWrap(fungeSpace * me, const fungePosition * position) {
 	return tmp;
 }
 
-void
+bool
 fungeSpaceLoad(fungeSpace * me, const char * filename) {
+	FILE * file;
+	char * line;
+	// Row in fungespace
+	int    row = 0;
 
+	file = fopen(filename, "r");
+	if (file == NULL)
+		return false;
+
+	line = cf_malloc(81 * sizeof(char));
+	
+	while ((row < 25) && (fgets(line, 81, file) != NULL)) {
+		for (int i = 0; i < 80; i++) {
+			// TODO: CR and CRLF are also valid (bleh)
+			if ((line[i] == '\0') || (line[i] == '\n')) break;
+			if (line[i] == ' ') continue;
+			me->entries[row][i] = (FUNGESPACETYPE)line[i];
+		}
+		row++;
+	}
+
+	return true;
 }
