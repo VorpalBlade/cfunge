@@ -58,20 +58,26 @@ void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space)
 void
 ipReverse(instructionPointer * ip)
 {
-	ip->delta.x = -ip->delta.x;
-	ip->delta.y = -ip->delta.y;
-}
-
-void
-ipTurnLeft(instructionPointer * ip)
-{
-	// TODO
+	ip->delta.x *= -1;
+	ip->delta.y *= -1;
 }
 
 void
 ipTurnRight(instructionPointer * ip)
 {
-	// TODO
+	FUNGEVECTORTYPE tmpX;
+	tmpX        = ip->delta.x;
+	ip->delta.x = -ip->delta.y;
+	ip->delta.y = tmpX;
+}
+
+void
+ipTurnLeft(instructionPointer * ip)
+{
+	FUNGEVECTORTYPE tmpX;
+	tmpX        = ip->delta.x;
+	ip->delta.x = ip->delta.y;
+	ip->delta.y = -tmpX;
 }
 
 void

@@ -85,6 +85,14 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case 'r':
 				ipReverse(ip);
 				break;
+			case '[':
+				ipTurnLeft(ip);
+				break;
+			case ']':
+				ipTurnRight(ip);
+				break;
+
+
 			PUSHVAL('0', 0)
 			PUSHVAL('1', 1)
 			PUSHVAL('2', 2)
@@ -216,6 +224,9 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					break;
 				}
 
+			case 'n':
+				StackClear(stackStack->current->stack);
+				break;
 			case '$':
 				StackPopDiscard(stackStack->current->stack);
 				break;
