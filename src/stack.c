@@ -60,6 +60,16 @@ StackPop(fungeStack * stack)
 	}
 }
 
+void
+StackPopDiscard(fungeStack * stack)
+{
+	if (stack->top == 0) {
+		return;
+	} else {
+		stack->top--;
+	}
+}
+
 
 FUNGEDATATYPE
 StackPeek(fungeStack * stack)

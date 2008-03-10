@@ -96,6 +96,39 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					break;
 				}
 
+
+			case '-':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					StackPush(a - b, stackStack->current->stack);
+					break;
+				}
+			case '+':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					StackPush(a + b, stackStack->current->stack);
+					break;
+				}
+			case '*':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					StackPush(a * b, stackStack->current->stack);
+					break;
+				}
+
+			case '$':
+				StackPopDiscard(stackStack->current->stack);
+				break;
+			case '\\':
+				StackSwapTop(stackStack->current->stack);
+				break;
+
 			case ',':
 				{
 					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
@@ -103,14 +136,44 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					fflush(stdout);
 					break;
 				}
+			case '.':
+				{
+					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					printf("%ld ", a);
+					fflush(stdout);
+					break;
+				}
 
+			case '~':
+				{
+					FUNGEDATATYPE a = 0;
+					a = getchar();
+					StackPush(a, stackStack->current->stack);
+					break;
+				}
+			case '&':
+				{
+					FUNGEDATATYPE a = 0;
+					int retval = scanf("%li", &a);
+					if (retval == 1)
+						StackPush(a, stackStack->current->stack);
+					else
+						fprintf(stderr, "Oops, scanf in & returned %d", retval);
+					break;
+				}
 
 			case '@':
 				exit(0);
 				break;
+			case 'q':
+				{
+					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					exit((int)a);
+					break;
+				}
 
 			default:
-				fprintf(stderr, "Unknown instruction at x=%0.2ld y=%0.2ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+				fprintf(stderr, "Unknown instruction at x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
 				exit(EXIT_FAILURE);
 		}
 	}
@@ -129,7 +192,7 @@ static int interpreterMainLoop(void)
 
 	while (true) {
 		opcode = fungeSpaceGet(fspace, &ip->position);
-		fprintf(stderr, "x=%0.2ld y=%0.2ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+		//fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
 		ExecuteInstruction(opcode);
 		ipForward(1, ip, fspace);
 	}

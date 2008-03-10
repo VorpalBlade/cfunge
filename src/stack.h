@@ -36,12 +36,13 @@ typedef struct {
 extern fungeStack  * StackCreate (void) __attribute__((warn_unused_result));
 extern void          StackFree   (fungeStack * stack);
 
-extern void          StackPush   (FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
-extern FUNGEDATATYPE StackPop    (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
-extern FUNGEDATATYPE StackPeek   (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
-extern void          StackClear  (fungeStack * stack) __attribute__((nonnull));
-extern void          StackDupTop (fungeStack * stack) __attribute__((nonnull));
-extern void          StackSwapTop(fungeStack * stack) __attribute__((nonnull));
+extern void          StackPush      (FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
+extern FUNGEDATATYPE StackPop       (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern void          StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
+extern FUNGEDATATYPE StackPeek      (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern void          StackClear     (fungeStack * stack) __attribute__((nonnull));
+extern void          StackDupTop    (fungeStack * stack) __attribute__((nonnull));
+extern void          StackSwapTop   (fungeStack * stack) __attribute__((nonnull));
 
 extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
 
