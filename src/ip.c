@@ -13,8 +13,9 @@ ipCreate(fungeStackStack *stackstack)
 
 	tmp->position.x = 0;
 	tmp->position.y = 0;
-	tmp->delta.x = 1;
-	tmp->delta.y = 1;
+	tmp->mode       = ipmCODE;
+	tmp->delta.x    = 1;
+	tmp->delta.y    = 0;
 	tmp->stackstack = stackstack;
 	return tmp;
 }

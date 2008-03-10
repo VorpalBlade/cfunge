@@ -37,9 +37,10 @@ StackPush(FUNGEDATATYPE value, fungeStack * stack)
 {
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
-		cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
+		stack->entries = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
 		stack->entries[stack->top] = value;
 		stack->top++;
+		stack->size += ALLOCCHUNKSIZE;
 	} else {
 		stack->entries[stack->top] = value;
 		stack->top++;

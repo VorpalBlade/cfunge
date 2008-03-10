@@ -11,9 +11,12 @@
 
 typedef fungeVector ipDelta;
 
+typedef enum { ipmCODE = 0, ipmSTRING } ipMode;
+
 typedef struct {
 	fungePosition     position;
 	ipDelta           delta;
+	ipMode            mode;
 	fungeStackStack * stackstack;
 } instructionPointer;
 

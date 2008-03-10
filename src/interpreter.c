@@ -15,47 +15,104 @@ static fungeSpace *fspace;
 static fungeStackStack *stackStack;
 static instructionPointer *ip;
 
-#define PUSHVAL(x) \
+#define PUSHVAL(x, y) \
 	case (x): \
-		StackPush((FUNGEDATATYPE)x, stackStack->current->stack); \
+		StackPush((FUNGEDATATYPE)y, stackStack->current->stack); \
 		break;
 
-static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
-	switch (opcode) {
-		case ' ':
-			return;
-		case '<':
-			ipSetDelta(ip, & (fungeVector) { .x = -1, .y = 0 });
-			break;
-		case '>':
-			ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
-			break;
-		case '^':
-			ipSetDelta(ip, & (fungeVector) { .x = 0, .y = -1 });
-			break;
-		case 'v':
-			ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
-			break;
-		PUSHVAL('0')
-		PUSHVAL('1')
-		PUSHVAL('2')
-		PUSHVAL('3')
-		PUSHVAL('4')
-		PUSHVAL('5')
-		PUSHVAL('6')
-		PUSHVAL('7')
-		PUSHVAL('8')
-		PUSHVAL('9')
-		PUSHVAL('a')
-		PUSHVAL('b')
-		PUSHVAL('c')
-		PUSHVAL('d')
-		PUSHVAL('e')
-		PUSHVAL('f')
+#define GO_WEST ipSetDelta(ip, & (fungeVector) { .x = -1, .y = 0 });
+#define GO_EAST ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
+#define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = -1 });
+#define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
 
-		default:
-			fprintf(stderr, "Unknown instruction: %c (%ld)\n", (char)opcode, opcode);
-			exit(EXIT_FAILURE);
+static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
+	if (ip->mode == ipmSTRING) {
+		if (opcode == '"') {
+			ip->mode = ipmCODE;
+		} else {
+			StackPush(opcode, stackStack->current->stack);
+		}
+	} else {
+		switch (opcode) {
+			case ' ':
+				return;
+			case '<':
+				GO_WEST
+				break;
+			case '>':
+				GO_EAST
+				break;
+			case '^':
+				GO_NORTH
+				break;
+			case 'v':
+				GO_SOUTH
+				break;
+			PUSHVAL('0', 0)
+			PUSHVAL('1', 1)
+			PUSHVAL('2', 2)
+			PUSHVAL('3', 3)
+			PUSHVAL('4', 4)
+			PUSHVAL('5', 5)
+			PUSHVAL('6', 6)
+			PUSHVAL('7', 7)
+			PUSHVAL('8', 8)
+			PUSHVAL('9', 9)
+			PUSHVAL('a', 0xa)
+			PUSHVAL('b', 0xb)
+			PUSHVAL('c', 0xc)
+			PUSHVAL('d', 0xd)
+			PUSHVAL('e', 0xe)
+			PUSHVAL('f', 0xf)
+
+			case '"':
+				ip->mode = ipmSTRING;
+				break;
+			case ':':
+				StackDupTop(stackStack->current->stack);
+				break;
+
+			case '#':
+				ipForward(1, ip, fspace);
+				break;
+
+			case '_':
+				{
+					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					if (a == 0)
+						GO_EAST
+					else
+						GO_WEST
+					break;
+				}
+
+			case '|':
+				{
+					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					if (a == 0)
+						GO_SOUTH
+					else
+						GO_NORTH
+					break;
+				}
+
+			case ',':
+				{
+					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					putchar((char)a);
+					fflush(stdout);
+					break;
+				}
+
+
+			case '@':
+				exit(0);
+				break;
+
+			default:
+				fprintf(stderr, "Unknown instruction at x=%0.2ld y=%0.2ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+				exit(EXIT_FAILURE);
+		}
 	}
 }
 
@@ -72,7 +129,7 @@ static int interpreterMainLoop(void)
 
 	while (true) {
 		opcode = fungeSpaceGet(fspace, &ip->position);
-		fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+		fprintf(stderr, "x=%0.2ld y=%0.2ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
 		ExecuteInstruction(opcode);
 		ipForward(1, ip, fspace);
 	}
