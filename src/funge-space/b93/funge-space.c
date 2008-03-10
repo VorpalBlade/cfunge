@@ -22,15 +22,18 @@
 #include <string.h>
 #include <stdio.h>
 
+#define FUNGESPACEWIDTH 80
+#define FUNGESPACEHEIGHT 25
+
 struct _fungeSpace {
-	FUNGEDATATYPE entries[25][80];
+	FUNGEDATATYPE entries[FUNGESPACEHEIGHT][FUNGESPACEWIDTH];
 };
 
 static inline bool fungeSpaceInRange(const fungePosition * position)
 {
-	if ((position->x > 79) || (position->x < 0))
+	if ((position->x > (FUNGESPACEWIDTH - 1)) || (position->x < 0))
 		return false;
-	if ((position->y > 24) || (position->y < 0))
+	if ((position->y > (FUNGESPACEHEIGHT - 1)) || (position->y < 0))
 		return false;
 	return true;
 }
@@ -39,8 +42,8 @@ fungeSpace*
 fungeSpaceCreate(void)
 {
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
-	for (int y = 0; y < 25; y++)
-		for (int x = 0; x < 80; x++)
+	for (int y = 0; y < FUNGESPACEHEIGHT; y++)
+		for (int x = 0; x < FUNGESPACEWIDTH; x++)
 			tmp->entries[y][x]=(FUNGEDATATYPE)' ';
 	return tmp;
 }
@@ -76,16 +79,16 @@ fungePosition *
 fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * position)
 {
 	fungePosition *tmp = cf_malloc(sizeof(position));
-	// Fix this for less than -80
+	// FIXME: Fix this for less than -80
 	if (position->x < 0)
-		tmp->x = 80 + position->x;
+		tmp->x = FUNGESPACEWIDTH + position->x;
 	else
-		tmp->x = position->x % 80;
+		tmp->x = position->x % FUNGESPACEWIDTH;
 
 	if (position->y < 0)
-		tmp->y = 25 + position->y;
+		tmp->y = FUNGESPACEHEIGHT + position->y;
 	else
-		tmp->y = position->y % 25;
+		tmp->y = position->y % FUNGESPACEHEIGHT;
 
 	return tmp;
 }
@@ -93,16 +96,16 @@ fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * po
 void
 fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * position)
 {
-	// Fix this for less than -80
+	// FIXME: Fix this for less than -80
 	if (position->x < 0)
-		position->x = 80 + position->x;
+		position->x = FUNGESPACEWIDTH + position->x;
 	else
-		position->x = position->x % 80;
+		position->x = position->x % FUNGESPACEWIDTH;
 
 	if (position->y < 0)
-		position->y = 25 + position->y;
+		position->y = FUNGESPACEHEIGHT + position->y;
 	else
-		position->y = position->y % 25;
+		position->y = position->y % FUNGESPACEHEIGHT;
 }
 
 
@@ -119,9 +122,9 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 	if (file == NULL)
 		return false;
 
-	line = cf_malloc(81 * sizeof(char));
+	line = cf_malloc((FUNGESPACEWIDTH + 1) * sizeof(char));
 
-	while ((y < 25) && (fgets(line, 81, file) != NULL)) {
+	while ((y < FUNGESPACEHEIGHT) && (fgets(line, (FUNGESPACEWIDTH + 1), file) != NULL)) {
 		for (size_t i = 0; i < (strlen(line) + 1); i++) {
 			if (line[i] == '\0') {
 				break;
@@ -130,7 +133,7 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 				y++;
 				continue;
 			}
-			if (i < 80)
+			if (i < FUNGESPACEWIDTH)
 				me->entries[y][x] = (FUNGEDATATYPE)line[i];
 			x++;
 		}
