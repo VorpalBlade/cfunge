@@ -9,6 +9,7 @@ src/global.h
 src/ip.c
 src/ip.h
 src/main.c
+src/stack.c
 src/stack.h
 src/support.c
 src/support.h

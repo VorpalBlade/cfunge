@@ -18,11 +18,18 @@ typedef struct {
 } fungeStack;
 
 
+typedef struct fungeStackEntry_ {
+	fungeStack              * stack;
+	struct fungeStackEntry_ * next;
+	struct fungeStackEntry_ * previous;
+} fungeStackEntry;
+
 
 typedef struct {
-	size_t       count;
-	size_t       current;
-	fungeStack * stacks;
+	size_t            count;
+	fungeStackEntry * current;
+	fungeStackEntry * base;
+	fungeStackEntry * top;
 } fungeStackStack;
 
 
@@ -36,8 +43,10 @@ extern void          StackClear  (fungeStack * stack) __attribute__((nonnull));
 extern void          StackDupTop (fungeStack * stack) __attribute__((nonnull));
 extern void          StackSwapTop(fungeStack * stack) __attribute__((nonnull));
 
-extern fungeStack  * StackStackBegin(fungeStackStack * stackStack, fungePosition * storageOffset, size_t count);
-extern fungeStack  * StackStackEnd(fungeStackStack * stackStack);
-extern fungeStack  * StackStackUnder(fungeStackStack * stackStack, size_t count);
+extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
+
+extern fungeStack      * StackStackBegin(fungeStackStack * stackStack, fungePosition * storageOffset, size_t count) __attribute__((nonnull,warn_unused_result));
+extern fungeStack      * StackStackEnd(fungeStackStack * stackStack) __attribute__((nonnull,warn_unused_result));
+extern fungeStack      * StackStackUnder(fungeStackStack * stackStack, size_t count) __attribute__((nonnull,warn_unused_result));
 
 #endif
