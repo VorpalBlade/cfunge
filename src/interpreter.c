@@ -157,6 +157,29 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackPush(a * b, stackStack->current->stack);
 					break;
 				}
+			case '/':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					if (b == 0)
+						StackPush(0, stackStack->current->stack);
+					else
+						StackPush(a / b, stackStack->current->stack);
+					break;
+				}
+			case '%':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					if (b == 0)
+						StackPush(0, stackStack->current->stack);
+					else
+						StackPush(a % b, stackStack->current->stack);
+					break;
+				}
+
 			case '!':
 				{
 					FUNGEDATATYPE a;
