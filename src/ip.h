@@ -12,9 +12,9 @@
 typedef fungeVector ipDelta;
 
 typedef struct {
-	fungePosition   position;
-	ipDelta         delta;
-	fungeStackStack stackstack;
+	fungePosition     position;
+	ipDelta           delta;
+	fungeStackStack * stackstack;
 } instructionPointer;
 
 typedef struct {
@@ -22,7 +22,15 @@ typedef struct {
 	instructionPointer* entries;
 } ipList;
 
+extern instructionPointer * ipCreate(fungeStackStack *stackstack) __attribute__((nonnull,warn_unused_result));
+extern void                 ipFree(instructionPointer * ip);
+
 // steps let you take several steps at once.
-extern void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space);
+extern void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space) __attribute__((nonnull));
+
+extern void ipReverse(instructionPointer * ip) __attribute__((nonnull));
+extern void ipTurnLeft(instructionPointer * ip) __attribute__((nonnull));
+extern void ipTurnRight(instructionPointer * ip) __attribute__((nonnull));
+extern void ipSetDelta(instructionPointer * ip, const ipDelta * delta) __attribute__((nonnull));
 
 #endif

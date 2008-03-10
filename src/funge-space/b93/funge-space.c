@@ -21,7 +21,9 @@ fungeSpace*
 fungeSpaceCreate(void)
 {
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
-	memset(tmp->entries, ' ', sizeof(fungeSpace));
+	for (int y = 0; y < 25; y++)
+		for (int x = 0; x < 80; x++)
+			tmp->entries[y][x]=(FUNGEDATATYPE)' ';
 	return tmp;
 }
 
@@ -58,12 +60,12 @@ fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * po
 	fungePosition *tmp = cf_malloc(sizeof(position));
 	// Fix this for less than -80
 	if (position->x < 0)
-		tmp->x = 80 - position->x;
+		tmp->x = 80 + position->x;
 	else
 		tmp->x = position->x % 80;
 
 	if (position->y < 0)
-		tmp->y = 25 - position->y;
+		tmp->y = 25 + position->y;
 	else
 		tmp->y = position->y % 25;
 
@@ -75,12 +77,12 @@ fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * p
 {
 	// Fix this for less than -80
 	if (position->x < 0)
-		position->x = 80 - position->x;
+		position->x = 80 + position->x;
 	else
 		position->x = position->x % 80;
 
 	if (position->y < 0)
-		position->y = 25 - position->y;
+		position->y = 25 + position->y;
 	else
 		position->y = position->y % 25;
 }
@@ -104,7 +106,6 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 		for (int i = 0; i < 80; i++) {
 			// TODO: CR and CRLF are also valid (bleh)
 			if ((line[i] == '\0') || (line[i] == '\n')) break;
-			if (line[i] == ' ') continue;
 			me->entries[row][i] = (FUNGEDATATYPE)line[i];
 		}
 		row++;

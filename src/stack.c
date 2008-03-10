@@ -110,7 +110,7 @@ static fungeStackEntry* StackEntryCreate(void)
 	newStackE = cf_malloc(sizeof(fungeStackEntry));
 	if (!newStackE)
 		return NULL;
-	newStack = cf_malloc(sizeof(fungeStackEntry));
+	newStack = StackCreate();
 	if (!newStack)
 		return NULL;
 
