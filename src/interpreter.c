@@ -1,3 +1,21 @@
+/*
+ * cfunge08 - a conformant Befunge93/98/08 interpreter in C.
+ * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "global.h"
 #include "interpreter.h"
 #include "funge-space/b93/funge-space.h"
@@ -10,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
+
 
 static fungeSpace *fspace;
 static fungeStackStack *stackStack;
@@ -36,17 +56,33 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 		switch (opcode) {
 			case ' ':
 				return;
-			case '<':
-				GO_WEST
+			case '^':
+				GO_NORTH
 				break;
 			case '>':
 				GO_EAST
 				break;
-			case '^':
-				GO_NORTH
-				break;
 			case 'v':
 				GO_SOUTH
+				break;
+			case '<':
+				GO_WEST
+				break;
+			case '?':
+				{
+					// FIXME: May not be uniform
+					long int rnd = random() % 4;
+					switch (rnd) {
+						case 0: GO_NORTH break;
+						case 1: GO_EAST break;
+						case 2: GO_SOUTH break;
+						case 3: GO_WEST break;
+						default: fprintf(stderr, "Random: %ld not in range!?\n", rnd); abort(); break;
+					}
+					break;
+				}
+			case 'r':
+				ipReverse(ip);
 				break;
 			PUSHVAL('0', 0)
 			PUSHVAL('1', 1)
@@ -121,6 +157,40 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackPush(a * b, stackStack->current->stack);
 					break;
 				}
+			case '!':
+				{
+					FUNGEDATATYPE a;
+					a = StackPop(stackStack->current->stack);
+					StackPush(!a, stackStack->current->stack);
+					break;
+				}
+			case '`':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					StackPush(a > b, stackStack->current->stack);
+					break;
+				}
+
+			case 'p':
+				{
+					fungePosition pos;
+					FUNGEDATATYPE a;
+					pos = StackPopVector(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					fungeSpaceSet(fspace, a, &pos);
+					break;
+				}
+			case 'g':
+				{
+					fungePosition pos;
+					FUNGEDATATYPE a;
+					pos = StackPopVector(stackStack->current->stack);
+					a = fungeSpaceGet(fspace, &pos);
+					StackPush(a, stackStack->current->stack);
+					break;
+				}
 
 			case '$':
 				StackPopDiscard(stackStack->current->stack);
@@ -174,7 +244,8 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 
 			default:
 				fprintf(stderr, "Unknown instruction at x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
-				exit(EXIT_FAILURE);
+				ipReverse(ip);
+				//exit(EXIT_FAILURE);
 		}
 	}
 }
@@ -218,6 +289,10 @@ int interpreterRun(int argc, char *argv[])
 		fprintf(stderr, "Failed to handle file: %s\n", strerror(errno));
 		return EXIT_FAILURE;
 	}
+
+	// Set up randomness
+	srandom(time(NULL));
+
 
 	return interpreterMainLoop();
 }

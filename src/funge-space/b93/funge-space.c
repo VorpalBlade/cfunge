@@ -1,3 +1,21 @@
+/*
+ * cfunge08 - a conformant Befunge93/98/08 interpreter in C.
+ * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "../../global.h"
 #include "funge-space.h"
 
@@ -94,7 +112,8 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 	FILE * file;
 	char * line;
 	// Row in fungespace
-	int    row = 0;
+	int    y = 0;
+	int    x = 0;
 
 	file = fopen(filename, "r");
 	if (file == NULL)
@@ -102,13 +121,19 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 
 	line = cf_malloc(81 * sizeof(char));
 
-	while ((row < 25) && (fgets(line, 81, file) != NULL)) {
-		for (int i = 0; i < 80; i++) {
-			// TODO: CR and CRLF are also valid (bleh)
-			if ((line[i] == '\0') || (line[i] == '\n')) break;
-			me->entries[row][i] = (FUNGEDATATYPE)line[i];
+	while ((y < 25) && (fgets(line, 81, file) != NULL)) {
+		for (size_t i = 0; i < (strlen(line) + 1); i++) {
+			if (line[i] == '\0') {
+				break;
+			} else if (line[i] == '\n') {
+				x = 0;
+				y++;
+				continue;
+			}
+			if (i < 80)
+				me->entries[y][x] = (FUNGEDATATYPE)line[i];
+			x++;
 		}
-		row++;
 	}
 
 	return true;
