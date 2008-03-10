@@ -309,7 +309,7 @@ int interpreterRun(int argc, char *argv[])
 		return EXIT_FAILURE;
 	retval = fungeSpaceLoad(fspace, argv[1]);
 	if (!retval) {
-		fprintf(stderr, "Failed to handle file: %s\n", strerror(errno));
+		fprintf(stderr, "Failed to process file %s: %s\n", argv[1], strerror(errno));
 		return EXIT_FAILURE;
 	}
 
