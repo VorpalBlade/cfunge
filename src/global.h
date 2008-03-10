@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef _HAD_SRC_GLOBAL_H
 #define _HAD_SRC_GLOBAL_H
@@ -30,6 +30,8 @@
 #endif
 
 #include <support.h>
+#include <stdint.h>
+
 
 // The type of the data cells
 #define FUNGEDATATYPE int_fast64_t

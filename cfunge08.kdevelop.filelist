@@ -6,6 +6,8 @@ src/funge-space/b93
 src/funge-space/b93/funge-space.c
 src/funge-space/b93/funge-space.h
 src/global.h
+src/input.c
+src/input.h
 src/interpreter.c
 src/interpreter.h
 src/ip.c

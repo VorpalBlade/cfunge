@@ -14,13 +14,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef _HAD_SRC_VECTOR_H
 #define _HAD_SRC_VECTOR_H
 
-#include <global.h>
-#include <stdint.h>
+#include "global.h"
 
 typedef struct {
 	FUNGEVECTORTYPE x;

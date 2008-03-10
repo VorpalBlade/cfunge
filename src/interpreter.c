@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "global.h"
 #include "interpreter.h"
@@ -22,6 +22,7 @@
 #include "vector.h"
 #include "stack.h"
 #include "ip.h"
+#include "input.h"
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -240,18 +241,17 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case '~':
 				{
 					FUNGEDATATYPE a = 0;
-					a = getchar();
+					a = input_getchar();
 					StackPush(a, stackStack->current->stack);
 					break;
 				}
 			case '&':
 				{
 					FUNGEDATATYPE a = 0;
-					int retval = scanf("%li", &a);
-					if (retval == 1)
-						StackPush(a, stackStack->current->stack);
-					else
-						fprintf(stderr, "Oops, scanf in & returned %d", retval);
+					bool gotint = false;
+					while (!gotint)
+						gotint = input_getint(&a);
+					StackPush(a, stackStack->current->stack);
 					break;
 				}
 

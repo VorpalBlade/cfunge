@@ -16,19 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_INTERPRETER_H
-#define _HAD_SRC_INTERPRETER_H
-
-#include <sys/types.h>
-#include <stdint.h>
+#ifndef _HAD_SRC_INPUT_H
+#define _HAD_SRC_INPUT_H
 
 #include "global.h"
-#include "vector.h"
-#include "stack.h"
-#include "funge-space/b93/funge-space.h"
+#include <stdbool.h>
 
-extern void RunInstruction(FUNGEDATATYPE instruction);
-
-extern int interpreterRun(int argc, char *argv[]) __attribute__((warn_unused_result));
+extern bool          input_getint(FUNGEDATATYPE * value);
+extern FUNGEDATATYPE input_getchar(void);
 
 #endif

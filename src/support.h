@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 // Do not include directly, include global.h instead. It includes
 // this file.
@@ -45,6 +45,12 @@
 
 
 #define cf_strdup(x)       GC_STRDUP(x)
-char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
+extern char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
+
+#include <sys/types.h>
+#include <stdio.h>
+
+// This is glibc specific, so here is a version from gnulib.
+extern ssize_t cf_getline (char **lineptr, size_t *n, FILE *stream);
 
 #endif
