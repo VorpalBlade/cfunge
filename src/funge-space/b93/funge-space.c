@@ -119,10 +119,12 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 	int    x = 0;
 
 	file = fopen(filename, "r");
-	if (file == NULL)
+	if (!file)
 		return false;
 
 	line = cf_malloc((FUNGESPACEWIDTH + 1) * sizeof(char));
+	if (!line)
+		return false;
 
 	while ((y < FUNGESPACEHEIGHT) && (fgets(line, (FUNGESPACEWIDTH + 1), file) != NULL)) {
 		for (size_t i = 0; i < (strlen(line) + 1); i++) {
