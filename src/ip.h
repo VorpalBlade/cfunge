@@ -2,6 +2,7 @@
 #define _HAD_SRC_IP_H
 
 #include <sys/types.h>
+#include <stdint.h>
 
 #include "global.h"
 #include "vector.h"

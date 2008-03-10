@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 struct _fungeSpace {
-	FUNGESPACETYPE entries[25][80];
+	FUNGEDATATYPE entries[25][80];
 };
 
 static inline bool fungeSpaceInRange(const fungePosition * position)
@@ -33,7 +33,7 @@ fungeSpaceFree(fungeSpace * me)
 }
 
 
-FUNGESPACETYPE
+FUNGEDATATYPE
 fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 {
 	if (!fungeSpaceInRange(position))
@@ -44,7 +44,7 @@ fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 
 
 void
-fungeSpaceSet(fungeSpace * me, FUNGESPACETYPE value, const fungePosition * position)
+fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position)
 {
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
@@ -105,7 +105,7 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 			// TODO: CR and CRLF are also valid (bleh)
 			if ((line[i] == '\0') || (line[i] == '\n')) break;
 			if (line[i] == ' ') continue;
-			me->entries[row][i] = (FUNGESPACETYPE)line[i];
+			me->entries[row][i] = (FUNGEDATATYPE)line[i];
 		}
 		row++;
 	}

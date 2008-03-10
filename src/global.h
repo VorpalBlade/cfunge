@@ -13,4 +13,7 @@
 
 #include <support.h>
 
+// The type of the data cells
+#define FUNGEDATATYPE int_fast64_t
+
 #endif
