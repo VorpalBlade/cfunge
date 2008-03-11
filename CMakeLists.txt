@@ -34,4 +34,4 @@ ADD_EXECUTABLE(cfunge08 ${CFUNGE08_SOURCES})
 
 
 # need to link to some other libraries ? just add them here
-TARGET_LINK_LIBRARIES(cfunge08 gc)
+TARGET_LINK_LIBRARIES(cfunge08 gc cord)

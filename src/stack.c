@@ -20,6 +20,10 @@
 #include "vector.h"
 #include "stack.h"
 #include "ip.h"
+#include <assert.h>
+#include <string.h>
+#include <gc/cord.h>
+#include <gc/ec.h>
 
 // How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 10
@@ -119,7 +123,21 @@ fungeVector StackPopVector (fungeStack * stack) {
 	return (fungeVector) { .x = x, .y = y };
 }
 
+void StackPushString(size_t len, const char *str, fungeStack * stack) {
+	assert(len == strlen(str));
+	for (size_t i = len; i >= 0; i--)
+		StackPush(str[i], stack);
+}
+char * StackPopString(fungeStack * stack) {
+	CORD_ec x;
+	FUNGEDATATYPE c;
 
+	CORD_ec_init(x);
+	while ((c = StackPop(stack)) != '\0')
+		CORD_ec_append(x, (char)c);
+
+	return CORD_to_char_star(CORD_ec_to_cord(x));
+}
 
 /***************
  * Other stuff *

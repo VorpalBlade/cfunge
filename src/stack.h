@@ -53,11 +53,14 @@ extern fungeStack  * StackCreate (void) __attribute__((warn_unused_result));
 extern void          StackFree   (fungeStack * stack);
 
 extern void          StackPush      (FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
-extern void          StackPushVector(const fungeVector * value, fungeStack * stack)   __attribute__((nonnull));
 extern FUNGEDATATYPE StackPop       (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
 extern void          StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
-extern fungeVector   StackPopVector (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
 extern FUNGEDATATYPE StackPeek      (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+
+extern void          StackPushVector(const fungeVector * value, fungeStack * stack) __attribute__((nonnull));
+extern fungeVector   StackPopVector (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern void          StackPushString(size_t len, const char *str, fungeStack * stack) __attribute__((nonnull));
+
 extern void          StackClear     (fungeStack * stack) __attribute__((nonnull));
 extern void          StackDupTop    (fungeStack * stack) __attribute__((nonnull));
 extern void          StackSwapTop   (fungeStack * stack) __attribute__((nonnull));
