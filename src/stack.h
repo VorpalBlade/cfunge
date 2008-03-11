@@ -64,8 +64,8 @@ extern void          StackSwapTop   (fungeStack * stack) __attribute__((nonnull)
 
 extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
 
-extern bool StackStackBegin(struct _instructionPointer * ip, fungeStackStack **me, size_t count, const fungePosition * storageOffset) __attribute__((nonnull,warn_unused_result));
-extern bool StackStackEnd(fungeStackStack ** me) __attribute__((nonnull,warn_unused_result));
-extern bool StackStackUnder(fungeStackStack ** me, size_t count) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackBegin(struct _instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackEnd(struct _instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackUnder(fungeStackStack ** me, FUNGEDATATYPE count) __attribute__((nonnull,warn_unused_result));
 
 #endif

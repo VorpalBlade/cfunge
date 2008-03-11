@@ -30,7 +30,9 @@ typedef struct _fungeSpace fungeSpace;
 extern fungeSpace    * fungeSpaceCreate(void) __attribute__((warn_unused_result));
 extern void            fungeSpaceFree(fungeSpace * me);
 extern FUNGEDATATYPE   fungeSpaceGet(fungeSpace * me, const fungePosition * position) __attribute__((warn_unused_result));
+extern FUNGEDATATYPE   fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset) __attribute__((warn_unused_result));
 extern void            fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position);
+extern void            fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset);
 // This mallocs with boehm-gc
 extern fungePosition * fungeSpaceWrap(fungeSpace * me, const fungePosition * position) __attribute__((warn_unused_result));
 // Version that modifies the variable it is passed.

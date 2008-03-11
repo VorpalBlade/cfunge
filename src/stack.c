@@ -143,6 +143,15 @@ StackSwapTop(fungeStack * stack)
 	StackPush(b, stack);
 }
 
+// For use with call in gdb
+void StackDump(fungeStack * stack) __attribute__((unused));
+
+void StackDump(fungeStack * stack) {
+	for (size_t i = 0; i < stack->top; i++)
+		fprintf(stderr, "%zu=%ld ", i, stack->entries[i]);
+	fputs("%\n", stderr);
+}
+
 
 fungeStackStack *
 StackStackCreate(void)
@@ -165,15 +174,16 @@ StackStackCreate(void)
 }
 
 bool
-StackStackBegin(instructionPointer * ip, fungeStackStack **me, size_t count, const fungePosition * storageOffset)
+StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset)
 {
 	fungeStackStack *stackStack;
-	fungeStack      *newStack, *oldstack;
+	fungeStack      *TOSS, *SOSS;
 
-	oldstack = (*me)->stacks[(*me)->current];
+	// Set up variables
+	stackStack = *me;
 
-	newStack = StackCreate();
-	if (!newStack)
+	TOSS = StackCreate();
+	if (!TOSS)
 		return false;
 
 	// Extend by one
@@ -181,26 +191,28 @@ StackStackBegin(instructionPointer * ip, fungeStackStack **me, size_t count, con
 	if (!stackStack)
 		return false;
 	*me = stackStack;
+	SOSS = stackStack->stacks[stackStack->current];
 
 	stackStack->size++;
-	stackStack->stacks[stackStack->size] = newStack;
-	stackStack->current = stackStack->size;
+	stackStack->current++;
+	stackStack->stacks[stackStack->current] = TOSS;
 
 	if (count > 0) {
 		// Dynamic array (C99) to copy elements into, because order must be preserved.
-		FUNGEDATATYPE entriesCopy[count];
-		for (size_t i = 0; i < count; i++)
-			entriesCopy[i] = StackPop(oldstack);
-		for (ssize_t i = count; i >= 0; i--)
-			StackPush(entriesCopy[i], newStack);
-	} else {
-		while (count--)
-			StackPush(0, newStack);
+		FUNGEDATATYPE entriesCopy[count + 1];
+		FUNGEDATATYPE i = count;
+		while (i--)
+			entriesCopy[i] = StackPop(SOSS);
+		for (i = 0; i < count; i++)
+			StackPush(entriesCopy[i], TOSS);
+	} else if (count < 0) {
+		while (count++)
+			StackPush(0, TOSS);
 	}
-	StackPushVector(&ip->storageOffset, newStack);
+	StackPushVector(&ip->storageOffset, SOSS);
 	ip->storageOffset.x = storageOffset->x;
 	ip->storageOffset.y = storageOffset->y;
-	ip->stack = newStack;
+	ip->stack = TOSS;
 	ip->stackstack = stackStack;
 
 	return true;
@@ -208,14 +220,47 @@ StackStackBegin(instructionPointer * ip, fungeStackStack **me, size_t count, con
 
 
 bool
-StackStackEnd(fungeStackStack ** me)
+StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count)
 {
-	// TODO
+	fungeStack      *TOSS, *SOSS;
+	fungeStackStack *stackStack;
+	fungePosition    storageOffset;
+	// Set up variables
+	stackStack = *me;
+	TOSS = stackStack->stacks[stackStack->current];
+	SOSS = stackStack->stacks[stackStack->current - 1];
+	storageOffset = StackPopVector(SOSS);
+	// TODO: Transfer data back here
+	if (count > 0) {
+		// Dynamic array (C99) to copy elements into, because order must be preserved.
+		FUNGEDATATYPE entriesCopy[count + 1];
+		FUNGEDATATYPE i = count;
+		while (i--)
+			entriesCopy[i] = StackPop(TOSS);
+		for (i = 0; i < count; i++)
+			StackPush(entriesCopy[i], SOSS);
+	} else if (count < 0) {
+		while (count++)
+			StackPush(0, SOSS);
+	}
+	ip->storageOffset.x = storageOffset.x;
+	ip->storageOffset.y = storageOffset.y;
+
+	ip->stack = SOSS;
+	// Make it one smaller
+	stackStack = cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size - 1) * sizeof(fungeStack*));
+	if (!stackStack)
+		return false;
+	stackStack->size--;
+	stackStack->current--;
+	*me = stackStack;
+	ip->stackstack = stackStack;
+	return true;
 }
 
 
 bool
-StackStackUnder(fungeStackStack ** me, size_t count)
+StackStackUnder(fungeStackStack ** me, FUNGEDATATYPE count)
 {
 	// TODO
 

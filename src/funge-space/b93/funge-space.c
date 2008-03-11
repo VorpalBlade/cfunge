@@ -61,9 +61,20 @@ fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 {
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
-	// Thanks to Zaba for suggesting this code
 	return me->entries[position->y][position->x];
 }
+
+
+FUNGEDATATYPE
+fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset)
+{
+	fungePosition tmp;
+	tmp.x = position->x + offset->x;
+	tmp.y = position->y + offset->y;
+	fungeSpaceWrapInPlace(me, &tmp);
+	return me->entries[tmp.y][tmp.x];
+}
+
 
 
 void
@@ -72,6 +83,16 @@ fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * positi
 	if (!fungeSpaceInRange(position))
 		position = fungeSpaceWrap(me, position);
 	me->entries[position->y][position->x] = value;
+}
+
+void
+fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset)
+{
+	fungePosition tmp;
+	tmp.x = position->x + offset->x;
+	tmp.y = position->y + offset->y;
+	fungeSpaceWrapInPlace(me, &tmp);
+	me->entries[tmp.y][tmp.x] = value;
 }
 
 

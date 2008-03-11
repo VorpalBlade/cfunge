@@ -249,7 +249,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
 					a = StackPop(ip->stack);
-					fungeSpaceSet(fspace, a, &pos);
+					fungeSpaceSetOff(fspace, a, &pos, &ip->storageOffset);
 					break;
 				}
 			case 'g':
@@ -257,7 +257,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					fungePosition pos;
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
-					a = fungeSpaceGet(fspace, &pos);
+					a = fungeSpaceGetOff(fspace, &pos, &ip->storageOffset);
 					StackPush(a, ip->stack);
 					break;
 				}
@@ -336,6 +336,16 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackStackBegin(ip, &stackStack, count, &pos);
 					break;
 				}
+			case '}':
+				if (stackStack->size == 1) {
+					ipReverse(ip);
+				} else {
+					FUNGEDATATYPE count;
+					fungePosition pos;
+					count = StackPop(ip->stack);
+					StackStackEnd(ip, &stackStack, count);
+				}
+				break;
 
 			case '@':
 				exit(0);
@@ -369,6 +379,7 @@ static int interpreterMainLoop(void)
 	while (true) {
 		opcode = fungeSpaceGet(fspace, &ip->position);
 		//fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+		//fprintf(stderr, "%c", (char)opcode);
 		ExecuteInstruction(opcode);
 		ipForward(1, ip, fspace);
 	}
