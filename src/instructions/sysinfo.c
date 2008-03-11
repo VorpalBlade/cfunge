@@ -25,7 +25,7 @@
 #include "../ip.h"
 
 // Push a single request value
-static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeStackStack *stackStack, fungeSpace *fspace)
+static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpace *fspace)
 {
 	switch (request) {
 		case 1: // Flags
@@ -78,7 +78,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 			StackPush(0, ip->stack);
 			break;
 		case 17: // Number of stacks on stack stack
-			StackPush(stackStack->size, ip->stack);
+			StackPush(ip->stackstack->size, ip->stack);
 			break;
 		case 18: // Number of elements on all stacks (TODO)
 			StackPush(ip->stack->top + 1, ip->stack);
@@ -98,12 +98,12 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 
 #define HIGHESTREQUEST 20
 
-void RunSysInfo(instructionPointer *ip, fungeStackStack *stackStack, fungeSpace *fspace)
+void RunSysInfo(instructionPointer *ip, fungeSpace *fspace)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	if (request > 0)
-		PushRequest(request, ip, stackStack, fspace);
+		PushRequest(request, ip, fspace);
 	else
 		for (int i = HIGHESTREQUEST; i > 0; i--)
-			PushRequest(i, ip, stackStack, fspace);
+			PushRequest(i, ip, fspace);
 }

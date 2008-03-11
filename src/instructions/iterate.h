@@ -26,6 +26,6 @@
 #include "../funge-space/b93/funge-space.h"
 
 
-extern void RunIterate(instructionPointer * ip, fungeStackStack *stackStack, fungeSpace *fspace) __attribute__((nonnull));
+extern void RunIterate(instructionPointer * ip, fungeSpace *fspace) __attribute__((nonnull));
 
 #endif

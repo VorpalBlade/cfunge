@@ -24,7 +24,7 @@
 #include "../stack.h"
 #include "../ip.h"
 
-void RunIterate(instructionPointer * ip, fungeStackStack *stackStack, fungeSpace *fspace) {
+void RunIterate(instructionPointer * ip, fungeSpace *fspace) {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0)
 		ipForward(1, ip, fspace);
@@ -55,7 +55,7 @@ void RunIterate(instructionPointer * ip, fungeStackStack *stackStack, fungeSpace
 			fungePosition oldpos = ip->position;
 
 			while (iters--)
-				RunInstruction(kInstr);
+				RunInstruction(kInstr, ip);
 			if (olddelta.x == ip->delta.x
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x

@@ -125,9 +125,10 @@ fungeVector StackPopVector (fungeStack * stack) {
 
 void StackPushString(size_t len, const char *str, fungeStack * stack) {
 	assert(len == strlen(str));
-	for (size_t i = len; i >= 0; i--)
+	for (ssize_t i = len; i >= 0; i--)
 		StackPush(str[i], stack);
 }
+
 char * StackPopString(fungeStack * stack) {
 	CORD_ec x;
 	FUNGEDATATYPE c;
