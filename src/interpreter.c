@@ -52,7 +52,11 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
 			ip->mode = ipmCODE;
-		} else {
+		} else if (opcode != ' ') {
+			ip->StringLastWasSpace = false;
+			StackPush(opcode, ip->stack);
+		} else if ((opcode == ' ') && (!ip->StringLastWasSpace)) {
+			ip->StringLastWasSpace = true;
 			StackPush(opcode, ip->stack);
 		}
 	} else {
@@ -137,6 +141,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 
 			case '"':
 				ip->mode = ipmSTRING;
+				ip->StringLastWasSpace = false;
 				break;
 			case ':':
 				StackDupTop(ip->stack);

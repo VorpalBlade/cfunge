@@ -29,7 +29,8 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 {
 	switch (request) {
 		case 1: // Flags
-			StackPush(0x20, ip->stack);
+			//StackPush(0x20, ip->stack);
+			StackPush(0x0, ip->stack);
 			break;
 		case 2: // Cell size
 			StackPush(sizeof(FUNGEDATATYPE), ip->stack);

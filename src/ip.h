@@ -35,6 +35,7 @@ typedef struct _instructionPointer {
 	fungePosition     position;
 	ipDelta           delta;
 	ipMode            mode;
+	bool              StringLastWasSpace;
 	fungePosition     storageOffset;
 	fungeStackStack * stackstack;
 	// Top stack.

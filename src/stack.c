@@ -24,8 +24,11 @@
 // How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 10
 
-fungeStack *
-StackCreate(void)
+/******************************
+ * Constructor and destructor *
+ ******************************/
+
+fungeStack * StackCreate(void)
 {
 	fungeStack * tmp = cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
@@ -38,8 +41,7 @@ StackCreate(void)
 	return tmp;
 }
 
-void
-StackFree(fungeStack * stack)
+void StackFree(fungeStack * stack)
 {
 	if (!stack || !stack->entries)
 		return;
@@ -49,8 +51,12 @@ StackFree(fungeStack * stack)
 }
 
 
-void
-StackPush(FUNGEDATATYPE value, fungeStack * stack)
+
+/************************
+ * Basic push/pop/peeks *
+ ************************/
+
+void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 {
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
@@ -64,16 +70,7 @@ StackPush(FUNGEDATATYPE value, fungeStack * stack)
 	}
 }
 
-void
-StackPushVector(const fungeVector * value, fungeStack * stack) {
-	// TODO: Optimize
-	StackPush(value->x, stack);
-	StackPush(value->y, stack);
-}
-
-
-FUNGEDATATYPE
-StackPop(fungeStack * stack)
+FUNGEDATATYPE StackPop(fungeStack * stack)
 {
 	if (stack->top == 0) {
 		return 0;
@@ -84,8 +81,7 @@ StackPop(fungeStack * stack)
 	}
 }
 
-void
-StackPopDiscard(fungeStack * stack)
+void StackPopDiscard(fungeStack * stack)
 {
 	if (stack->top == 0) {
 		return;
@@ -94,17 +90,7 @@ StackPopDiscard(fungeStack * stack)
 	}
 }
 
-fungeVector
-StackPopVector (fungeStack * stack) {
-	// TODO Optimize
-	FUNGEVECTORTYPE x, y;
-	y = StackPop(stack);
-	x = StackPop(stack);
-	return (fungeVector) { .x = x, .y = y };
-}
-
-FUNGEDATATYPE
-StackPeek(fungeStack * stack)
+FUNGEDATATYPE StackPeek(fungeStack * stack)
 {
 	if (stack->top == 0) {
 		return 0;
@@ -114,15 +100,36 @@ StackPeek(fungeStack * stack)
 }
 
 
-void
-StackClear(fungeStack * stack)
+
+/********************************
+ * Push and pop for data types. *
+ ********************************/
+
+void StackPushVector(const fungeVector * value, fungeStack * stack) {
+	// TODO: Optimize
+	StackPush(value->x, stack);
+	StackPush(value->y, stack);
+}
+
+fungeVector StackPopVector (fungeStack * stack) {
+	// TODO Optimize
+	FUNGEVECTORTYPE x, y;
+	y = StackPop(stack);
+	x = StackPop(stack);
+	return (fungeVector) { .x = x, .y = y };
+}
+
+
+
+/***************
+ * Other stuff *
+ ***************/
+void StackClear(fungeStack * stack)
 {
 	stack->top = 0;
 }
 
-
-void
-StackDupTop(fungeStack * stack)
+void StackDupTop(fungeStack * stack)
 {
 	// TODO: Optimize instead of doing it this way
 	FUNGEDATATYPE tmp;
@@ -131,9 +138,7 @@ StackDupTop(fungeStack * stack)
 	StackPush(tmp, stack);
 }
 
-
-void
-StackSwapTop(fungeStack * stack)
+void StackSwapTop(fungeStack * stack)
 {
 	// TODO: Optimize instead of doing it this way
 	FUNGEDATATYPE a, b;
@@ -143,18 +148,29 @@ StackSwapTop(fungeStack * stack)
 	StackPush(b, stack);
 }
 
+
+
+/*************
+ * Debugging *
+ *************/
+
 // For use with call in gdb
 void StackDump(fungeStack * stack) __attribute__((unused));
 
-void StackDump(fungeStack * stack) {
+void StackDump(fungeStack * stack)
+{
 	for (size_t i = 0; i < stack->top; i++)
 		fprintf(stderr, "%zu=%ld ", i, stack->entries[i]);
 	fputs("%\n", stderr);
 }
 
 
-fungeStackStack *
-StackStackCreate(void)
+
+/****************
+ * Stack-stacks *
+ ****************/
+
+fungeStackStack * StackStackCreate(void)
 {
 	fungeStackStack * stackStack;
 	fungeStack      * stack;
@@ -173,8 +189,7 @@ StackStackCreate(void)
 	return stackStack;
 }
 
-bool
-StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset)
+bool StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset)
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
@@ -219,8 +234,7 @@ StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE cou
 }
 
 
-bool
-StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count)
+bool StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count)
 {
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
@@ -259,8 +273,7 @@ StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE coun
 }
 
 
-void
-StackStackTransfer(FUNGEDATATYPE count, fungeStack *TOSS, fungeStack *SOSS)
+void StackStackTransfer(FUNGEDATATYPE count, fungeStack *TOSS, fungeStack *SOSS)
 {
 	if (count > 0) {
 		while (count--) {
