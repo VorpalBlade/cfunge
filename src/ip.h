@@ -31,12 +31,17 @@ typedef fungeVector ipDelta;
 
 typedef enum { ipmCODE = 0, ipmSTRING } ipMode;
 
-typedef struct {
+typedef struct _instructionPointer {
 	fungePosition     position;
 	ipDelta           delta;
 	ipMode            mode;
+	fungePosition     storageOffset;
 	fungeStackStack * stackstack;
+	// Top stack.
+	fungeStack      * stack;
 } instructionPointer;
+#define ipDEFINED 1
+
 
 typedef struct {
 	size_t              count;

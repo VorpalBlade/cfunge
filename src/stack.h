@@ -25,29 +25,27 @@
 #include "vector.h"
 #include "funge-space/b93/funge-space.h"
 
+
+#ifndef ipDEFINED
+struct _instructionPointer;
+#endif
+
 typedef struct {
 	// This is current size of the array entries
 	size_t         size;
 	// This is current top item in stack (may not be last item)
 	// Note: One-indexed, as 0 = empty stack.
 	size_t         top;
-	fungePosition  storageOffset;
 	FUNGEDATATYPE *entries;
 } fungeStack;
 
 
-typedef struct fungeStackEntry_ {
-	fungeStack              * stack;
-	struct fungeStackEntry_ * next;
-	struct fungeStackEntry_ * previous;
-} fungeStackEntry;
-
-
 typedef struct {
-	size_t            count;
-	fungeStackEntry * current;
-	fungeStackEntry * base;
-	fungeStackEntry * top;
+	size_t         size;
+	// Top stack and current stack
+	size_t         current;
+	// Array of pointers to stacks
+	fungeStack   * stacks[];
 } fungeStackStack;
 
 
@@ -66,8 +64,8 @@ extern void          StackSwapTop   (fungeStack * stack) __attribute__((nonnull)
 
 extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
 
-extern fungeStack      * StackStackBegin(fungeStackStack * stackStack, fungePosition * storageOffset, size_t count) __attribute__((nonnull,warn_unused_result));
-extern fungeStack      * StackStackEnd(fungeStackStack * stackStack) __attribute__((nonnull,warn_unused_result));
-extern fungeStack      * StackStackUnder(fungeStackStack * stackStack, size_t count) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackBegin(struct _instructionPointer * ip, fungeStackStack **me, size_t count, const fungePosition * storageOffset) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackEnd(fungeStackStack ** me) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackUnder(fungeStackStack ** me, size_t count) __attribute__((nonnull,warn_unused_result));
 
 #endif

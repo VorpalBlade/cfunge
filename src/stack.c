@@ -19,6 +19,7 @@
 #include "global.h"
 #include "vector.h"
 #include "stack.h"
+#include "ip.h"
 
 // How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 10
@@ -34,8 +35,6 @@ StackCreate(void)
 		return NULL;
 	tmp->size = ALLOCCHUNKSIZE;
 	tmp->top = 0;
-	tmp->storageOffset.x = 0;
-	tmp->storageOffset.y = 0;
 	return tmp;
 }
 
@@ -145,82 +144,78 @@ StackSwapTop(fungeStack * stack)
 }
 
 
-
-static fungeStackEntry* StackEntryCreate(void)
-{
-	fungeStack *newStack;
-	fungeStackEntry *newStackE;
-
-	newStackE = cf_malloc(sizeof(fungeStackEntry));
-	if (!newStackE)
-		return NULL;
-	newStack = StackCreate();
-	if (!newStack)
-		return NULL;
-
-	newStackE->stack = newStack;
-	newStackE->previous = NULL;
-	newStackE->next = NULL;
-
-	return newStackE;
-}
-
 fungeStackStack *
 StackStackCreate(void)
 {
 	fungeStackStack * stackStack;
-	fungeStackEntry * stackEntry;
+	fungeStack      * stack;
 
-	stackStack = cf_malloc(sizeof(fungeStackStack));
+	stackStack = cf_malloc(sizeof(fungeStackStack) + sizeof(fungeStack*));
 	if (!stackStack)
 		return NULL;
 
-	stackEntry = StackEntryCreate();
-	if (!stackEntry)
+	stack = StackCreate();
+	if (!stack)
 		return NULL;
 
-	stackStack->base    = stackEntry;
-	stackStack->current = stackEntry;
-	stackStack->top     = stackEntry;
-	stackStack->count   = 1;
-
+	stackStack->size = 1;
+	stackStack->current = 0;
+	stackStack->stacks[0] = stack;
 	return stackStack;
 }
 
-fungeStack *
-StackStackBegin(fungeStackStack * stackStack, fungePosition * storageOffset, size_t count)
+bool
+StackStackBegin(instructionPointer * ip, fungeStackStack **me, size_t count, const fungePosition * storageOffset)
 {
-	// TODO: Do the copying of values between the stacks.
-	fungeStackEntry *newStackE, *top;
+	fungeStackStack *stackStack;
+	fungeStack      *newStack, *oldstack;
 
-	newStackE = StackEntryCreate();
-	if (!newStackE)
-		return NULL;
+	oldstack = (*me)->stacks[(*me)->current];
 
-	stackStack->count++;
-	top = stackStack->top;
-	top->next = newStackE;
-	newStackE->previous = top;
+	newStack = StackCreate();
+	if (!newStack)
+		return false;
 
-	stackStack->top = newStackE;
-	stackStack->current = newStackE;
+	// Extend by one
+	stackStack = cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size + 1) * sizeof(fungeStack*));
+	if (!stackStack)
+		return false;
+	*me = stackStack;
 
-	newStackE->stack->storageOffset.x = storageOffset->x;
-	newStackE->stack->storageOffset.y = storageOffset->y;
+	stackStack->size++;
+	stackStack->stacks[stackStack->size] = newStack;
+	stackStack->current = stackStack->size;
 
-	return newStackE->stack;
+	if (count > 0) {
+		// Dynamic array (C99) to copy elements into, because order must be preserved.
+		FUNGEDATATYPE entriesCopy[count];
+		for (size_t i = 0; i < count; i++)
+			entriesCopy[i] = StackPop(oldstack);
+		for (ssize_t i = count; i >= 0; i--)
+			StackPush(entriesCopy[i], newStack);
+	} else {
+		while (count--)
+			StackPush(0, newStack);
+	}
+	StackPushVector(&ip->storageOffset, newStack);
+	ip->storageOffset.x = storageOffset->x;
+	ip->storageOffset.y = storageOffset->y;
+	ip->stack = newStack;
+	ip->stackstack = stackStack;
+
+	return true;
 }
 
 
-fungeStack *
-StackStackEnd(fungeStackStack * stackStack)
+bool
+StackStackEnd(fungeStackStack ** me)
 {
 	// TODO
 }
 
 
-fungeStack *
-StackStackUnder(fungeStackStack * stackStack, size_t count)
+bool
+StackStackUnder(fungeStackStack ** me, size_t count)
 {
 	// TODO
 

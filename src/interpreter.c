@@ -40,7 +40,7 @@ static instructionPointer *ip;
 
 #define PUSHVAL(x, y) \
 	case (x): \
-		StackPush((FUNGEDATATYPE)y, stackStack->current->stack); \
+		StackPush((FUNGEDATATYPE)y, ip->stack); \
 		break;
 
 #define GO_WEST ipSetDelta(ip, & (fungeVector) { .x = -1, .y = 0 });
@@ -53,7 +53,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 		if (opcode == '"') {
 			ip->mode = ipmCODE;
 		} else {
-			StackPush(opcode, stackStack->current->stack);
+			StackPush(opcode, ip->stack);
 		}
 	} else {
 		switch (opcode) {
@@ -83,7 +83,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				break;
 			case 'j':
 				{
-					FUNGEDATATYPE jumps = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE jumps = StackPop(ip->stack);
 					if (jumps != 0)
 						ipForward(jumps, ip, fspace);
 					break;
@@ -113,7 +113,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case 'x':
 				{
 					fungePosition pos;
-					pos = StackPopVector(stackStack->current->stack);
+					pos = StackPopVector(ip->stack);
 					ipSetDelta(ip, & pos);
 					break;
 				}
@@ -139,7 +139,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				ip->mode = ipmSTRING;
 				break;
 			case ':':
-				StackDupTop(stackStack->current->stack);
+				StackDupTop(ip->stack);
 				break;
 
 			case '#':
@@ -148,7 +148,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 
 			case '_':
 				{
-					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE a = StackPop(ip->stack);
 					if (a == 0)
 						GO_EAST
 					else
@@ -157,7 +157,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				}
 			case '|':
 				{
-					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE a = StackPop(ip->stack);
 					if (a == 0)
 						GO_SOUTH
 					else
@@ -167,8 +167,8 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case 'w':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
 					if (a < b)
 						ipTurnLeft(ip);
 					else if (a > b)
@@ -183,63 +183,63 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case '-':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
-					StackPush(a - b, stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
+					StackPush(a - b, ip->stack);
 					break;
 				}
 			case '+':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
-					StackPush(a + b, stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
+					StackPush(a + b, ip->stack);
 					break;
 				}
 			case '*':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
-					StackPush(a * b, stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
+					StackPush(a * b, ip->stack);
 					break;
 				}
 			case '/':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
 					if (b == 0)
-						StackPush(0, stackStack->current->stack);
+						StackPush(0, ip->stack);
 					else
-						StackPush(a / b, stackStack->current->stack);
+						StackPush(a / b, ip->stack);
 					break;
 				}
 			case '%':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
 					if (b == 0)
-						StackPush(0, stackStack->current->stack);
+						StackPush(0, ip->stack);
 					else
-						StackPush(a % b, stackStack->current->stack);
+						StackPush(a % b, ip->stack);
 					break;
 				}
 
 			case '!':
 				{
 					FUNGEDATATYPE a;
-					a = StackPop(stackStack->current->stack);
-					StackPush(!a, stackStack->current->stack);
+					a = StackPop(ip->stack);
+					StackPush(!a, ip->stack);
 					break;
 				}
 			case '`':
 				{
 					FUNGEDATATYPE a, b;
-					b = StackPop(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
-					StackPush(a > b, stackStack->current->stack);
+					b = StackPop(ip->stack);
+					a = StackPop(ip->stack);
+					StackPush(a > b, ip->stack);
 					break;
 				}
 
@@ -247,8 +247,8 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				{
 					fungePosition pos;
 					FUNGEDATATYPE a;
-					pos = StackPopVector(stackStack->current->stack);
-					a = StackPop(stackStack->current->stack);
+					pos = StackPopVector(ip->stack);
+					a = StackPop(ip->stack);
 					fungeSpaceSet(fspace, a, &pos);
 					break;
 				}
@@ -256,9 +256,9 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				{
 					fungePosition pos;
 					FUNGEDATATYPE a;
-					pos = StackPopVector(stackStack->current->stack);
+					pos = StackPopVector(ip->stack);
 					a = fungeSpaceGet(fspace, &pos);
-					StackPush(a, stackStack->current->stack);
+					StackPush(a, ip->stack);
 					break;
 				}
 			case '\'':
@@ -266,38 +266,38 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					FUNGEDATATYPE a;
 					ipForward(1, ip, fspace);
 					a = fungeSpaceGet(fspace, &ip->position);
-					StackPush(a, stackStack->current->stack);
+					StackPush(a, ip->stack);
 					break;
 				}
 			case 's':
 				{
 					FUNGEDATATYPE a;
-					a = StackPop(stackStack->current->stack);
+					a = StackPop(ip->stack);
 					ipForward(1, ip, fspace);
 					fungeSpaceSet(fspace, a, &ip->position);
 					break;
 				}
 
 			case 'n':
-				StackClear(stackStack->current->stack);
+				StackClear(ip->stack);
 				break;
 			case '$':
-				StackPopDiscard(stackStack->current->stack);
+				StackPopDiscard(ip->stack);
 				break;
 			case '\\':
-				StackSwapTop(stackStack->current->stack);
+				StackSwapTop(ip->stack);
 				break;
 
 			case ',':
 				{
-					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE a = StackPop(ip->stack);
 					putchar((char)a);
 					fflush(stdout);
 					break;
 				}
 			case '.':
 				{
-					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE a = StackPop(ip->stack);
 					printf("%ld ", a);
 					fflush(stdout);
 					break;
@@ -307,7 +307,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				{
 					FUNGEDATATYPE a = 0;
 					a = input_getchar();
-					StackPush(a, stackStack->current->stack);
+					StackPush(a, ip->stack);
 					break;
 				}
 			case '&':
@@ -316,7 +316,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					bool gotint = false;
 					while (!gotint)
 						gotint = input_getint(&a);
-					StackPush(a, stackStack->current->stack);
+					StackPush(a, ip->stack);
 					break;
 				}
 
@@ -324,12 +324,25 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 				RunSysInfo(ip, stackStack, fspace);
 				break;
 
+			case '{':
+				{
+					FUNGEDATATYPE count;
+					fungePosition pos;
+					count = StackPop(ip->stack);
+					ipForward(1, ip, fspace);
+					pos.x = ip->position.x;
+					pos.y = ip->position.y;
+					ipForward(-1, ip, fspace);
+					StackStackBegin(ip, &stackStack, count, &pos);
+					break;
+				}
+
 			case '@':
 				exit(0);
 				break;
 			case 'q':
 				{
-					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
+					FUNGEDATATYPE a = StackPop(ip->stack);
 					exit((int)a);
 					break;
 				}

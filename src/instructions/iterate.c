@@ -25,7 +25,7 @@
 #include "../ip.h"
 
 void RunIterate(instructionPointer * ip, fungeStackStack *stackStack, fungeSpace *fspace) {
-	FUNGEDATATYPE iters = StackPop(stackStack->current->stack);
+	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0)
 		ipForward(1, ip, fspace);
 	else if (iters < 0)

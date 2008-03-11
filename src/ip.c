@@ -34,7 +34,10 @@ ipCreate(fungeStackStack *stackstack)
 	tmp->mode       = ipmCODE;
 	tmp->delta.x    = 1;
 	tmp->delta.y    = 0;
+	tmp->storageOffset.x = 0;
+	tmp->storageOffset.y = 0;
 	tmp->stackstack = stackstack;
+	tmp->stack      = stackstack->stacks[stackstack->current];
 	return tmp;
 }
 
@@ -43,6 +46,7 @@ ipFree(instructionPointer * ip)
 {
 	// TODO: Should we free stackstack?
 	ip->stackstack = NULL;
+	ip->stack      = NULL;
 	cf_free(ip);
 }
 
