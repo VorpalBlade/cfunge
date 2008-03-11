@@ -8,6 +8,11 @@ src/funge-space/b93/funge-space.h
 src/global.h
 src/input.c
 src/input.h
+src/instructions
+src/instructions/iterate.c
+src/instructions/iterate.h
+src/instructions/sysinfo.c
+src/instructions/sysinfo.h
 src/interpreter.c
 src/interpreter.h
 src/ip.c

@@ -65,6 +65,13 @@ StackPush(FUNGEDATATYPE value, fungeStack * stack)
 	}
 }
 
+void
+StackPushVector(const fungeVector * value, fungeStack * stack) {
+	// TODO: Optimize
+	StackPush(value->x, stack);
+	StackPush(value->y, stack);
+}
+
 
 FUNGEDATATYPE
 StackPop(fungeStack * stack)
@@ -90,6 +97,7 @@ StackPopDiscard(fungeStack * stack)
 
 fungeVector
 StackPopVector (fungeStack * stack) {
+	// TODO Optimize
 	FUNGEVECTORTYPE x, y;
 	y = StackPop(stack);
 	x = StackPop(stack);

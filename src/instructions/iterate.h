@@ -16,34 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_GLOBAL_H
-#define _HAD_SRC_GLOBAL_H
+#ifndef _HAD_SRC_INSTRUCTIONS_ITERATE_H
+#define _HAD_SRC_INSTRUCTIONS_ITERATE_H
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-// For compatiblity with other compilers to prevent them
-// failing at things like: __attribute__((noreturn))
-#ifndef __GNUC__
-#  define  __attribute__(x)  /* NO-OP */
-#endif
-
-#include <support.h>
-#include <stdint.h>
+#include "../global.h"
+#include "../stack.h"
+#include "../ip.h"
+#include "../stack.h"
+#include "../funge-space/b93/funge-space.h"
 
 
-// The type of the data cells
-#define FUNGEDATATYPE int_fast64_t
-// This version is for debugging where you want to make
-// gdb show the array as chars.
-//#define FUNGEDATATYPE char
-
-#define FUNGEVECTORTYPE int_fast64_t
-
-// Handprint: CFUN
-#define FUNGEHANDPRINT 0x4346554e
-// Version: 0.0.1
-#define FUNGEVERSION 0x001
+extern void RunIterate(instructionPointer * ip, fungeStackStack *stackStack, fungeSpace *fspace) __attribute__((nonnull));
 
 #endif

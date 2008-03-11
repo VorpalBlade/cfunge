@@ -1,0 +1,2 @@
+This directory only contains huge instructions that would be painful to put in interpreter.c
+One per file here.

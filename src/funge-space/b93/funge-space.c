@@ -22,8 +22,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#define FUNGESPACEWIDTH 80
-#define FUNGESPACEHEIGHT 25
+#define FUNGESPACEWIDTH 800
+#define FUNGESPACEHEIGHT 2500
 
 struct _fungeSpace {
 	FUNGEDATATYPE entries[FUNGESPACEHEIGHT][FUNGESPACEWIDTH];

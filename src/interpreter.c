@@ -24,13 +24,15 @@
 #include "ip.h"
 #include "input.h"
 
+#include "instructions/iterate.h"
+#include "instructions/sysinfo.h"
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <time.h>
-
 
 static fungeSpace *fspace;
 static fungeStackStack *stackStack;
@@ -57,6 +59,16 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 		switch (opcode) {
 			case ' ':
 				return;
+			case 'z':
+				return;
+			case ';':
+				{
+					do {
+						ipForward(1, ip, fspace);
+					} while ((opcode = fungeSpaceGet(fspace, &ip->position)) != ';');
+					return;
+				}
+
 			case '^':
 				GO_NORTH
 				break;
@@ -69,6 +81,13 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case '<':
 				GO_WEST
 				break;
+			case 'j':
+				{
+					FUNGEDATATYPE jumps = StackPop(stackStack->current->stack);
+					if (jumps != 0)
+						ipForward(jumps, ip, fspace);
+					break;
+				}
 			case '?':
 				{
 					// FIXME: May not be uniform
@@ -91,7 +110,13 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 			case ']':
 				ipTurnRight(ip);
 				break;
-
+			case 'x':
+				{
+					fungePosition pos;
+					pos = StackPopVector(stackStack->current->stack);
+					ipSetDelta(ip, & pos);
+					break;
+				}
 
 			PUSHVAL('0', 0)
 			PUSHVAL('1', 1)
@@ -130,7 +155,6 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 						GO_WEST
 					break;
 				}
-
 			case '|':
 				{
 					FUNGEDATATYPE a = StackPop(stackStack->current->stack);
@@ -140,7 +164,21 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 						GO_NORTH
 					break;
 				}
+			case 'w':
+				{
+					FUNGEDATATYPE a, b;
+					b = StackPop(stackStack->current->stack);
+					a = StackPop(stackStack->current->stack);
+					if (a < b)
+						ipTurnLeft(ip);
+					else if (a > b)
+						ipTurnRight(ip);
+					break;
+				}
 
+			case 'k':
+				RunIterate(ip, stackStack, fspace);
+				break;
 
 			case '-':
 				{
@@ -223,6 +261,22 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackPush(a, stackStack->current->stack);
 					break;
 				}
+			case '\'':
+				{
+					FUNGEDATATYPE a;
+					ipForward(1, ip, fspace);
+					a = fungeSpaceGet(fspace, &ip->position);
+					StackPush(a, stackStack->current->stack);
+					break;
+				}
+			case 's':
+				{
+					FUNGEDATATYPE a;
+					a = StackPop(stackStack->current->stack);
+					ipForward(1, ip, fspace);
+					fungeSpaceSet(fspace, a, &ip->position);
+					break;
+				}
 
 			case 'n':
 				StackClear(stackStack->current->stack);
@@ -265,6 +319,10 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackPush(a, stackStack->current->stack);
 					break;
 				}
+
+			case 'y':
+				RunSysInfo(ip, stackStack, fspace);
+				break;
 
 			case '@':
 				exit(0);
