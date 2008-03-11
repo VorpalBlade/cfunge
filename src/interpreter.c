@@ -38,6 +38,9 @@ static fungeSpace *fspace;
 static fungeStackStack *stackStack;
 static instructionPointer *IP;
 
+static char **fungeargv = NULL;
+static int fungeargc = 0;
+
 #define PUSHVAL(x, y) \
 	case (x): \
 		StackPush((FUNGEDATATYPE)y, ip->stack); \
@@ -62,6 +65,13 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 	} else {
 		switch (opcode) {
 			case ' ':
+				{
+					do {
+						ipForward(1, ip, fspace);
+					} while (fungeSpaceGet(fspace, &ip->position) == ' ');
+					ipForward(-1, ip, fspace);
+					//ip->forwardNeeded = false;
+				}
 				return;
 			case 'z':
 				return;
@@ -69,10 +79,9 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				{
 					do {
 						ipForward(1, ip, fspace);
-					} while ((opcode = fungeSpaceGet(fspace, &ip->position)) != ';');
+					} while (fungeSpaceGet(fspace, &ip->position) != ';');
 					return;
 				}
-
 			case '^':
 				GO_NORTH
 				break;
@@ -364,6 +373,17 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				}
 				break;
 
+
+			// TODO: insert fingerprint code here.
+			case '(':
+			case ')':
+				{
+					FUNGEDATATYPE fpsize = StackPop(ip->stack);
+					StackPopNDiscard(ip->stack, fpsize);
+					ipReverse(ip);
+					break;
+				}
+
 			case '@':
 				exit(0);
 				break;
@@ -395,7 +415,7 @@ static int interpreterMainLoop(void)
 
 	while (true) {
 		opcode = fungeSpaceGet(fspace, &IP->position);
-		//fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+		//fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", IP->position.x, IP->position.y, (char)opcode, opcode);
 		//fprintf(stderr, "%c", (char)opcode);
 		ExecuteInstruction(opcode, IP);
 		ipForward(1, IP, fspace);
@@ -407,6 +427,15 @@ static int interpreterMainLoop(void)
 int interpreterRun(int argc, char *argv[])
 {
 	bool retval;
+	fungeargc = argc;
+	fungeargv = cf_malloc(argc * sizeof(char*));
+	for (int i = 0; i < argc; i++) {
+		fungeargv[i] = cf_strdup(argv[i]);
+		if (fungeargv[i] == NULL) {
+			perror("Couldn't store arguments in array and this even before file was loaded!\n");
+			abort();
+		}
+	}
 
 	stackStack = StackStackCreate();
 	if (stackStack == NULL)

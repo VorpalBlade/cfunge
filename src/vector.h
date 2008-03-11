@@ -20,6 +20,7 @@
 #define _HAD_SRC_VECTOR_H
 
 #include "global.h"
+#include <stdbool.h>
 
 typedef struct {
 	FUNGEVECTORTYPE x;
@@ -27,5 +28,7 @@ typedef struct {
 } fungePosition;
 
 typedef fungePosition fungeVector;
+
+extern bool VectorIsCardinal(const fungeVector * v);
 
 #endif

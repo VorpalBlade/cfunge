@@ -94,6 +94,20 @@ void StackPopDiscard(fungeStack * stack)
 	}
 }
 
+void StackPopNDiscard(fungeStack * stack, size_t n)
+{
+	if (stack->top == 0) {
+		return;
+	} else {
+		if ((stack->top - n) > 0)
+			stack->top -= n;
+		else
+			stack->top = 0;
+	}
+}
+
+
+
 FUNGEDATATYPE StackPeek(fungeStack * stack)
 {
 	if (stack->top == 0) {

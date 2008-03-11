@@ -37,6 +37,8 @@ extern void            fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, co
 extern fungePosition * fungeSpaceWrap(fungeSpace * me, const fungePosition * position) __attribute__((warn_unused_result));
 // Version that modifies the variable it is passed.
 extern void            fungeSpaceWrapInPlace(fungeSpace * me, fungePosition * position);
+// Used only for IP wrapping
+extern void            fungeSpaceWrapInPlaceWithDelta(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta);
 extern bool            fungeSpaceLoad(fungeSpace * me, const char * filename) __attribute__((warn_unused_result));
 
 #endif

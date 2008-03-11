@@ -81,7 +81,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpa
 			StackPush(ip->stackstack->size, ip->stack);
 			break;
 		case 18: // Number of elements on all stacks (TODO)
-			StackPush(ip->stack->top + 1, ip->stack);
+			StackPush(ip->stack->top, ip->stack);
 			break;
 		case 19: // Command line arguments (TODO)
 			StackPush('\0', ip->stack);
@@ -101,7 +101,9 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpa
 void RunSysInfo(instructionPointer *ip, fungeSpace *fspace)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
-	if (request > 0)
+	if (request == 23)
+		PushRequest(18, ip, fspace);
+	else if (request > 0)
 		PushRequest(request, ip, fspace);
 	else
 		for (int i = HIGHESTREQUEST; i > 0; i--)

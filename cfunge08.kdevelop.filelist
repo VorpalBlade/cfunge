@@ -22,4 +22,5 @@ src/stack.c
 src/stack.h
 src/support.c
 src/support.h
+src/vector.c
 src/vector.h

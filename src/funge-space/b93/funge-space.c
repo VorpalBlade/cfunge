@@ -130,6 +130,25 @@ fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * p
 }
 
 
+void
+fungeSpaceWrapInPlaceWithDelta(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
+{
+	if (VectorIsCardinal(delta))
+		fungeSpaceWrapInPlace(me, position);
+	else {
+		if (!fungeSpaceInRange(position)) {
+			// SIGH!
+			do {
+				position->x -= delta->x;
+				position->y -= delta->y;
+			} while (fungeSpaceInRange(position));
+				position->x += delta->x;
+				position->y += delta->y;
+		}
+	}
+}
+
+
 bool
 fungeSpaceLoad(fungeSpace * me, const char * filename)
 {
@@ -151,7 +170,12 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 		for (size_t i = 0; i < (strlen(line) + 1); i++) {
 			if (line[i] == '\0') {
 				break;
-			} else if (line[i] == '\n') {
+			} else if (line[i] == '\r' && line[i+1] == '\n') {
+				x = 0;
+				y++;
+				i++;
+				continue;
+			} else if (line[i] == '\n' || line[i] == '\r') {
 				x = 0;
 				y++;
 				continue;

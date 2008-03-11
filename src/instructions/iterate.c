@@ -39,7 +39,7 @@ void RunIterate(instructionPointer * ip, fungeSpace *fspace) {
 
 		if (kInstr == ' ' || kInstr == 'z')
 			return;
-		else if ((kInstr == 'k') || (kInstr == '"') || (kInstr == ';')) {
+		else if ((kInstr == 'k') || (kInstr == ';')) {
 			fprintf(stderr, "k at x=%ld y=%ld cannot execute: %c (%ld)\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
 		} else {
