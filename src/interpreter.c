@@ -346,6 +346,17 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode) {
 					StackStackEnd(ip, &stackStack, count);
 				}
 				break;
+			case 'u':
+				if (stackStack->size == 1) {
+					ipReverse(ip);
+				} else {
+					FUNGEDATATYPE count;
+					count = StackPop(ip->stack);
+					StackStackTransfer(count,
+					                   stackStack->stacks[stackStack->current],
+					                   stackStack->stacks[stackStack->current - 1]);
+				}
+				break;
 
 			case '@':
 				exit(0);

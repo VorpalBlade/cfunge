@@ -207,7 +207,7 @@ StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE cou
 			StackPush(entriesCopy[i], TOSS);
 	} else if (count < 0) {
 		while (count++)
-			StackPush(0, TOSS);
+			StackPush(0, SOSS);
 	}
 	StackPushVector(&ip->storageOffset, SOSS);
 	ip->storageOffset.x = storageOffset->x;
@@ -241,7 +241,7 @@ StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE coun
 			StackPush(entriesCopy[i], SOSS);
 	} else if (count < 0) {
 		while (count++)
-			StackPush(0, SOSS);
+			StackPopDiscard(SOSS);
 	}
 	ip->storageOffset.x = storageOffset.x;
 	ip->storageOffset.y = storageOffset.y;
@@ -259,9 +259,16 @@ StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE coun
 }
 
 
-bool
-StackStackUnder(fungeStackStack ** me, FUNGEDATATYPE count)
+void
+StackStackTransfer(FUNGEDATATYPE count, fungeStack *TOSS, fungeStack *SOSS)
 {
-	// TODO
-
+	if (count > 0) {
+		while (count--) {
+			StackPush(StackPop(SOSS), TOSS);
+		}
+	} else if (count < 0) {
+		while (count++) {
+			StackPush(StackPop(TOSS), SOSS);
+		}
+	}
 }

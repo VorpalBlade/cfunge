@@ -66,6 +66,6 @@ extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_resul
 
 extern bool StackStackBegin(struct _instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset) __attribute__((nonnull,warn_unused_result));
 extern bool StackStackEnd(struct _instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count) __attribute__((nonnull,warn_unused_result));
-extern bool StackStackUnder(fungeStackStack ** me, FUNGEDATATYPE count) __attribute__((nonnull,warn_unused_result));
+extern void StackStackTransfer(FUNGEDATATYPE count, fungeStack *TOSS, fungeStack *SOSS)  __attribute__((nonnull));
 
 #endif
