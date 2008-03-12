@@ -27,6 +27,7 @@
 
 int main(int argc, char *argv[])
 {
+	GC_all_interior_pointers = 1;
 	GC_INIT();
 	// No proper command line parsing I know.
 	if (argc > 1) {

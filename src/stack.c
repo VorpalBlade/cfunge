@@ -26,7 +26,7 @@
 #include <gc/ec.h>
 
 // How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 10
+#define ALLOCCHUNKSIZE 20
 
 /******************************
  * Constructor and destructor *
@@ -37,7 +37,7 @@ fungeStack * StackCreate(void)
 	fungeStack * tmp = cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
 		return NULL;
-	tmp->entries = cf_malloc(ALLOCCHUNKSIZE * sizeof(FUNGEDATATYPE));
+	tmp->entries = cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(FUNGEDATATYPE));
 	if (tmp->entries == NULL)
 		return NULL;
 	tmp->size = ALLOCCHUNKSIZE;

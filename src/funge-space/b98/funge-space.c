@@ -24,6 +24,8 @@
 #include <stdio.h>
 
 #define FUNGESPACEINITIALSIZE 200000
+// We allocate *cells* this many at a time.
+#define FUNGESPACEALLOCCHUNK 512
 
 struct _fungeSpace {
 	// These two form a rectangle for the program size
@@ -31,6 +33,10 @@ struct _fungeSpace {
 	fungePosition bottomRightCorner;
 	// And this is the hash table.
 	ght_hash_table_t *entries;
+	// Array we allocate for values as we need them, we do FUNGESPACEALLOCCHUNK at a time here.
+	// We will replace it when we need to. Size MUST be FUNGESPACEALLOCCHUNK
+	FUNGEDATATYPE *allocarray;
+	size_t         allocarrayCurrent;
 };
 
 static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position)
@@ -48,6 +54,9 @@ fungeSpaceCreate(void)
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
 	tmp->entries = ght_create(FUNGESPACEINITIALSIZE);
 	//ght_set_heuristics(tmp->entries, GHT_HEURISTICS_TRANSPOSE);
+	tmp->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+	tmp->allocarrayCurrent = 0;
+
 	tmp->topLeftCorner.x = 0;
 	tmp->topLeftCorner.y = 0;
 	tmp->bottomRightCorner.x = 0;
@@ -93,6 +102,20 @@ fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePos
 		return *result;
 }
 
+static FUNGEDATATYPE*
+fungeSpaceInternalAlloc(fungeSpace * me, FUNGEDATATYPE value) {
+	if (me->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
+		// Allocate new array
+		me->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+		me->allocarrayCurrent = 0;
+	} else {
+		// Allocate from array
+		me->allocarrayCurrent++;
+	}
+	me->allocarray[me->allocarrayCurrent] = value;
+
+	return &me->allocarray[me->allocarrayCurrent];
+}
 
 
 void
@@ -101,11 +124,9 @@ fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * positi
 	if (value == ' ')
 		ght_remove(me->entries, sizeof(fungePosition), position);
 	else {
-		FUNGEDATATYPE *tmp = cf_malloc_noptr(sizeof(FUNGEDATATYPE));
-		*tmp = value;
+		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(me, value);
 		if (ght_insert(me->entries, tmp, sizeof(fungePosition), position) == -1) {
-			FUNGEDATATYPE *oldval = ght_replace(me->entries, tmp, sizeof(fungePosition), position);
-			cf_free(oldval);
+			ght_replace(me->entries, tmp, sizeof(fungePosition), position);
 		}
 	}
 	if (me->bottomRightCorner.y < position->y)
@@ -125,25 +146,7 @@ fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * pos
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	if (value == ' ')
-		ght_remove(me->entries, sizeof(fungePosition), &tmp);
-	else {
-		FUNGEDATATYPE *data = cf_malloc_noptr(sizeof(FUNGEDATATYPE));
-		*data = value;
-		if (ght_insert(me->entries, data, sizeof(fungePosition), &tmp) == -1) {
-			FUNGEDATATYPE *oldval = ght_replace(me->entries, data, sizeof(fungePosition), &tmp);
-			cf_free(oldval);
-		}
-	}
-
-	if (me->bottomRightCorner.y < position->y)
-		me->bottomRightCorner.y = position->y;
-	if (me->bottomRightCorner.x < position->x)
-		me->bottomRightCorner.x = position->x;
-	if (me->topLeftCorner.y > position->y)
-		me->topLeftCorner.y = position->y;
-	if (me->topLeftCorner.x > position->x)
-		me->topLeftCorner.x = position->x;
+	fungeSpaceSet(me, value, &tmp);
 }
 
 #define ABS(i) ((i > 0) ? i : i)
