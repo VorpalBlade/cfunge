@@ -28,7 +28,7 @@
 #include <gc/ec.h>
 
 // How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 20
+#define ALLOCCHUNKSIZE 16
 
 /******************************
  * Constructor and destructor *
@@ -170,6 +170,8 @@ void StackDupTop(fungeStack * stack)
 
 	tmp = StackPeek(stack);
 	StackPush(tmp, stack);
+	if (stack->top == 1)
+		StackPush(0, stack);
 }
 
 void StackSwapTop(fungeStack * stack)

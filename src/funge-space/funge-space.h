@@ -51,6 +51,6 @@ extern void            fungeSpaceWrap(const fungeSpace * restrict me,
 extern bool            fungeSpaceLoad(fungeSpace * restrict me,
                                       const char * restrict filename) __attribute__((nonnull,warn_unused_result));
 extern void            fungeSpaceGetBoundRect(const fungeSpace * restrict me,
-                                              fungeRect * restrict rect) __attribute__((nonnull(1)));
+                                              fungeRect * restrict rect) __attribute__((nonnull));
 
 #endif
