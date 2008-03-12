@@ -68,8 +68,6 @@ FUNGEDATATYPE
 fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 {
 	FUNGEDATATYPE *tmp;
-	if (!fungeSpaceInRange(me, position))
-		position = fungeSpaceWrap(me, position);
 
 	tmp = ght_get(me->entries, sizeof(fungePosition), position);
 	if (!tmp)
@@ -87,7 +85,6 @@ fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePos
 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
-	fungeSpaceWrapInPlace(me, &tmp);
 
 	result = ght_get(me->entries, sizeof(fungePosition), &tmp);
 	if (!result)
@@ -151,26 +148,8 @@ fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * pos
 
 #define ABS(i) ((i > 0) ? i : i)
 
-fungePosition *
-fungeSpaceWrap(fungeSpace * me, const fungePosition * position)
-{
-	fungePosition *tmp = cf_malloc(sizeof(position));
-
-	if (position->x < me->topLeftCorner.x)
-		tmp->x = me->bottomRightCorner.x - ABS(position->x);
-	else
-		tmp->x = position->x % me->bottomRightCorner.x;
-
-	if (position->y < me->topLeftCorner.y)
-		tmp->y = me->bottomRightCorner.y - ABS(position->y);
-	else
-		tmp->y = position->y % me->bottomRightCorner.y;
-
-	return tmp;
-}
-
-void
-fungeSpaceWrapInPlace(fungeSpace * me, fungePosition * position)
+static void
+fungeSpaceWrapNoDelta(fungeSpace * me, fungePosition * position)
 {
 	if (position->x < me->topLeftCorner.x)
 		position->x = me->bottomRightCorner.x - ABS(position->x);
@@ -185,13 +164,12 @@ fungeSpaceWrapInPlace(fungeSpace * me, fungePosition * position)
 
 
 void
-fungeSpaceWrapInPlaceWithDelta(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
+fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
 {
 // 	if (VectorIsCardinal(delta))
-// 		fungeSpaceWrapInPlace(me, position);
+// 		fungeSpaceWrapNoDelta(me, position);
 // 	else {
 		if (!fungeSpaceInRange(me, position)) {
-			// SIGH!
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
@@ -217,6 +195,7 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 	if (!file)
 		return false;
 
+	ght_set_rehash(me->entries, true);
 	while (cf_getline(&line, &linelen, file) != -1) {
 		for (size_t i = 0; i < (strlen(line) + 1); i++) {
 			if (line[i] == '\0') {
@@ -239,10 +218,8 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 			x++;
 		}
 	}
-
 	if (me->bottomRightCorner.y < y)
 		me->bottomRightCorner.y = y;
-	if (ght_size(me->entries) > FUNGESPACEINITIALSIZE)
-		ght_rehash(me->entries, ght_size(me->entries) * 2);
+	ght_set_rehash(me->entries, false);
 	return true;
 }

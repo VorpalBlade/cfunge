@@ -29,6 +29,10 @@ struct _fungeSpace {
 	FUNGEDATATYPE entries[FUNGESPACEHEIGHT][FUNGESPACEWIDTH];
 };
 
+// Forward decls.
+static fungePosition *fungeSpaceWrapNotInPlace(const fungePosition * position);
+static void fungeSpaceWrapNoDelta(fungePosition * position);
+
 static inline bool fungeSpaceInRange(const fungePosition * position)
 {
 	if ((position->x > (FUNGESPACEWIDTH - 1)) || (position->x < 0))
@@ -60,7 +64,7 @@ FUNGEDATATYPE
 fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 {
 	if (!fungeSpaceInRange(position))
-		position = fungeSpaceWrap(me, position);
+		position = fungeSpaceWrapNotInPlace(position);
 	return me->entries[position->y][position->x];
 }
 
@@ -71,7 +75,7 @@ fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePos
 	fungePosition tmp;
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
-	fungeSpaceWrapInPlace(me, &tmp);
+	fungeSpaceWrapNoDelta(&tmp);
 	return me->entries[tmp.y][tmp.x];
 }
 
@@ -81,7 +85,7 @@ void
 fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position)
 {
 	if (!fungeSpaceInRange(position))
-		position = fungeSpaceWrap(me, position);
+		position = fungeSpaceWrapNotInPlace(position);
 	me->entries[position->y][position->x] = value;
 }
 
@@ -91,13 +95,13 @@ fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * pos
 	fungePosition tmp;
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
-	fungeSpaceWrapInPlace(me, &tmp);
+	fungeSpaceWrapNoDelta(&tmp);
 	me->entries[tmp.y][tmp.x] = value;
 }
 
 
 fungePosition *
-fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * position)
+fungeSpaceWrapNotInPlace(const fungePosition * position)
 {
 	fungePosition *tmp = cf_malloc(sizeof(position));
 	// FIXME: Fix this for less than -80
@@ -114,8 +118,8 @@ fungeSpaceWrap(__attribute__((unused)) fungeSpace * me, const fungePosition * po
 	return tmp;
 }
 
-void
-fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * position)
+static void
+fungeSpaceWrapNoDelta(fungePosition * position)
 {
 	// FIXME: Fix this for less than -80
 	if (position->x < 0)
@@ -131,10 +135,10 @@ fungeSpaceWrapInPlace(__attribute__((unused)) fungeSpace * me, fungePosition * p
 
 
 void
-fungeSpaceWrapInPlaceWithDelta(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
+fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
 {
 	if (VectorIsCardinal(delta))
-		fungeSpaceWrapInPlace(me, position);
+		fungeSpaceWrapNoDelta(position);
 	else {
 		if (!fungeSpaceInRange(position)) {
 			// SIGH!
