@@ -26,18 +26,18 @@
 #include "../stack.h"
 #include "../ip.h"
 
-void RunIterate(instructionPointer * ip, fungeSpace *fspace) {
+void RunIterate(instructionPointer * ip) {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0)
-		ipForward(1, ip, fspace);
+		ipForward(1, ip);
 	else if (iters < 0)
 		ipReverse(ip);
 	else {
 		FUNGEDATATYPE kInstr;
 		// Fetch instruction
-		ipForward(1, ip, fspace);
+		ipForward(1, ip);
 		kInstr = fungeSpaceGet(fspace, &ip->position);
-		ipForward(-1, ip, fspace);
+		ipForward(-1, ip);
 
 		if (kInstr == ' ' || kInstr == 'z')
 			return;
@@ -62,7 +62,7 @@ void RunIterate(instructionPointer * ip, fungeSpace *fspace) {
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x
 			    && oldpos.y == ip->position.y)
-			ipForward(1, ip, fspace);
+			ipForward(1, ip);
 		}
 	}
 

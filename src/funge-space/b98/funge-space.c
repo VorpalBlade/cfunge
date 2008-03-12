@@ -70,8 +70,18 @@ fungeSpaceCreate(void)
 void
 fungeSpaceFree(fungeSpace * me)
 {
+	if (!me)
+		return;
 	ght_finalize(me->entries);
 	cf_free(me);
+}
+
+void
+fungeSpaceGetBoundRect(const fungeSpace * restrict me, fungeRect * restrict rect) {
+	rect->x = me->topLeftCorner.x;
+	rect->y = me->topLeftCorner.y;
+	rect->w = me->bottomRightCorner.x - me->topLeftCorner.x - 1;
+	rect->h = me->bottomRightCorner.y - me->topLeftCorner.y - 1;
 }
 
 
@@ -126,6 +136,7 @@ fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * positi
 	if (value == ' ')
 		ght_remove(me->entries, sizeof(fungePosition), position);
 	else {
+		// TODO: Reuse?
 		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(me, value);
 		if (ght_insert(me->entries, tmp, sizeof(fungePosition), position) == -1) {
 			ght_replace(me->entries, tmp, sizeof(fungePosition), position);

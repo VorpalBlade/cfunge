@@ -21,6 +21,7 @@
 #include "global.h"
 #include "ip.h"
 #include "vector.h"
+#include "interpreter.h"
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
@@ -53,11 +54,11 @@ ipFree(instructionPointer * ip)
 }
 
 
-void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space)
+void ipForward(int_fast64_t steps, instructionPointer * ip)
 {
 	ip->position.x += ip->delta.x * steps;
 	ip->position.y += ip->delta.y * steps;
-	fungeSpaceWrap(space, &ip->position, &ip->delta);
+	fungeSpaceWrap(fspace, &ip->position, &ip->delta);
 }
 
 

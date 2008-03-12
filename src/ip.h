@@ -55,7 +55,7 @@ extern instructionPointer * ipCreate(fungeStackStack *stackstack) __attribute__(
 extern void                 ipFree(instructionPointer * ip);
 
 // steps let you take several steps at once.
-extern void ipForward(int_fast64_t steps, instructionPointer * ip, fungeSpace *space) __attribute__((nonnull));
+extern void ipForward(int_fast64_t steps, instructionPointer * ip) __attribute__((nonnull));
 
 extern void ipReverse(instructionPointer * ip) __attribute__((nonnull));
 extern void ipTurnLeft(instructionPointer * ip) __attribute__((nonnull));

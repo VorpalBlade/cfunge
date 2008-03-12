@@ -23,6 +23,7 @@
 
 #include "../global.h"
 #include "../vector.h"
+#include "../rect.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -31,12 +32,13 @@ typedef struct _fungeSpace fungeSpace;
 
 extern fungeSpace    * fungeSpaceCreate(void) __attribute__((warn_unused_result));
 extern void            fungeSpaceFree(fungeSpace * me);
-extern FUNGEDATATYPE   fungeSpaceGet(fungeSpace * me, const fungePosition * position) __attribute__((warn_unused_result));
-extern FUNGEDATATYPE   fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset) __attribute__((warn_unused_result));
-extern void            fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position);
-extern void            fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset);
+extern FUNGEDATATYPE   fungeSpaceGet(fungeSpace * me, const fungePosition * position) __attribute__((nonnull,warn_unused_result));
+extern FUNGEDATATYPE   fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset) __attribute__((nonnull,warn_unused_result));
+extern void            fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position) __attribute__((nonnull));
+extern void            fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset) __attribute__((nonnull));
 // Used only for IP wrapping
-extern void            fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta);
-extern bool            fungeSpaceLoad(fungeSpace * me, const char * filename) __attribute__((warn_unused_result));
+extern void            fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta) __attribute__((nonnull));
+extern bool            fungeSpaceLoad(fungeSpace * me, const char * filename) __attribute__((nonnull,warn_unused_result));
+extern void            fungeSpaceGetBoundRect(const fungeSpace * restrict me, fungeRect * restrict rect) __attribute__((nonnull));
 
 #endif

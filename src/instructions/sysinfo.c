@@ -23,11 +23,12 @@
 #include "../interpreter.h"
 #include "../funge-space/funge-space.h"
 #include "../vector.h"
+#include "../rect.h"
 #include "../stack.h"
 #include "../ip.h"
 
 // Push a single request value
-static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpace *fspace)
+static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 {
 	switch (request) {
 		case 1: // Flags
@@ -67,11 +68,20 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpa
 		case 12: // Storage offset of current IP position
 			StackPushVector(&ip->storageOffset, ip->stack);
 			break;
-		case 13: // Least point (TODO)
-			StackPushVector(& (fungePosition) { .x = 0, .y = 0 }, ip->stack);
-			break;
-		case 14: // Greatest point (TODO)
-			StackPushVector(& (fungePosition) { .x = 0, .y = 0 }, ip->stack);
+		case 13: // Least point
+			{
+				fungeRect rect;
+				fungeSpaceGetBoundRect(fspace, &rect);
+				StackPushVector(& (fungePosition) { .x = rect.x, .y = rect.y }, ip->stack);
+				break;
+			}
+		case 14: // Greatest point
+			{
+				fungeRect rect;
+				fungeSpaceGetBoundRect(fspace, &rect);
+				StackPushVector(& (fungePosition) { .x = rect.w, .y = rect.h }, ip->stack);
+				break;
+			}
 			break;
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month) TODO
 			StackPush(0, ip->stack);
@@ -100,14 +110,14 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSpa
 
 #define HIGHESTREQUEST 20
 
-void RunSysInfo(instructionPointer *ip, fungeSpace *fspace)
+void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	if (request == 23)
-		PushRequest(18, ip, fspace);
+		PushRequest(18, ip);
 	else if (request > 0)
-		PushRequest(request, ip, fspace);
+		PushRequest(request, ip);
 	else
 		for (int i = HIGHESTREQUEST; i > 0; i--)
-			PushRequest(i, ip, fspace);
+			PushRequest(i, ip);
 }

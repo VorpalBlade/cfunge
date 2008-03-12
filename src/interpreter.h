@@ -30,7 +30,14 @@
 #include "ip.h"
 #include "funge-space/funge-space.h"
 
+// Variables
+extern fungeSpace *fspace;
 
+// DO NOT MODIFY these two!
+extern char **fungeargv;
+extern int fungeargc;
+
+// Functions
 extern void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip);
 
 extern int interpreterRun(int argc, char *argv[]) __attribute__((warn_unused_result));

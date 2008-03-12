@@ -28,6 +28,6 @@
 #include "../funge-space/funge-space.h"
 
 
-extern void RunIterate(instructionPointer * ip, fungeSpace *fspace) __attribute__((nonnull));
+extern void RunIterate(instructionPointer * ip) __attribute__((nonnull));
 
 #endif
