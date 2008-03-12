@@ -65,5 +65,4 @@ void RunIterate(instructionPointer * ip) {
 			ipForward(1, ip);
 		}
 	}
-
 }
