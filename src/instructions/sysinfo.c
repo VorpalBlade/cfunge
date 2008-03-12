@@ -19,6 +19,7 @@
  */
 
 #include "../global.h"
+#include <unistd.h>
 #include "sysinfo.h"
 #include "../interpreter.h"
 #include "../funge-space/funge-space.h"
@@ -28,6 +29,7 @@
 #include "../ip.h"
 #include <time.h>
 #include <string.h>
+
 
 // Push a single request value
 static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
@@ -109,16 +111,26 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 		case 18: // Number of elements on all stacks (TODO)
 			StackPush(ip->stack->top, ip->stack);
 			break;
-		case 19: // Command line arguments (TODO)
-			for (int i = fungeargc - 1; i >= 0; i--) {
+		case 19: // Command line arguments
+			StackPush('\0', ip->stack);
+			for (int i = fungeargc - 1; i > 0; i--) {
 				StackPushString(strlen(fungeargv[i]), fungeargv[i], ip->stack);
 			}
-			StackPush('\0', ip->stack);
 			break;
-		case 20: // Environment variables (TODO)
-			StackPush('\0', ip->stack);
-			StackPush('\0', ip->stack);
-			break;
+		case 20: // Environment variables
+			{
+				char * restrict tmp;
+				int i = 0;
+				while (true) {
+					tmp = environ[i];
+					if (!tmp || *tmp == '\0')
+						break;
+					StackPushString(strlen(tmp), tmp, ip->stack);
+					i++;
+				}
+				StackPush('\0', ip->stack);
+				break;
+			}
 		default:
 			ipReverse(ip);
 	}

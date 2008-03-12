@@ -384,8 +384,12 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 			case ')':
 				{
 					FUNGEDATATYPE fpsize = StackPop(ip->stack);
-					StackPopNDiscard(ip->stack, fpsize);
-					ipReverse(ip);
+					if (fpsize < 0) {
+						ipReverse(ip);
+					} else {
+						StackPopNDiscard(ip->stack, fpsize);
+						ipReverse(ip);
+					}
 					break;
 				}
 
