@@ -125,7 +125,7 @@ FUNGEDATATYPE StackPeek(fungeStack * stack)
  * Push and pop for data types. *
  ********************************/
 
-void StackPushVector(const fungeVector * value, fungeStack * stack) {
+void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) {
 	// TODO: Optimize
 	StackPush(value->x, stack);
 	StackPush(value->y, stack);
@@ -139,8 +139,7 @@ fungeVector StackPopVector (fungeStack * stack) {
 	return (fungeVector) { .x = x, .y = y };
 }
 
-void StackPushString(size_t len, const char *str, fungeStack * stack) {
-	assert(len == strlen(str));
+void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) {
 	for (ssize_t i = len; i >= 0; i--)
 		StackPush(str[i], stack);
 }
@@ -224,7 +223,7 @@ fungeStackStack * StackStackCreate(void)
 	return stackStack;
 }
 
-bool StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYPE count, const fungePosition * storageOffset)
+bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
@@ -269,7 +268,7 @@ bool StackStackBegin(instructionPointer * ip, fungeStackStack **me, FUNGEDATATYP
 }
 
 
-bool StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE count)
+bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count)
 {
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
@@ -308,7 +307,7 @@ bool StackStackEnd(instructionPointer * ip, fungeStackStack ** me, FUNGEDATATYPE
 }
 
 
-void StackStackTransfer(FUNGEDATATYPE count, fungeStack *TOSS, fungeStack *SOSS)
+void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)
 {
 	if (count > 0) {
 		while (count--) {

@@ -32,13 +32,25 @@ typedef struct _fungeSpace fungeSpace;
 
 extern fungeSpace    * fungeSpaceCreate(void) __attribute__((warn_unused_result));
 extern void            fungeSpaceFree(fungeSpace * me);
-extern FUNGEDATATYPE   fungeSpaceGet(fungeSpace * me, const fungePosition * position) __attribute__((nonnull,warn_unused_result));
-extern FUNGEDATATYPE   fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset) __attribute__((nonnull,warn_unused_result));
-extern void            fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position) __attribute__((nonnull));
-extern void            fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset) __attribute__((nonnull));
+extern FUNGEDATATYPE   fungeSpaceGet(const fungeSpace * restrict me,
+                                     const fungePosition * restrict position) __attribute__((nonnull,warn_unused_result));
+extern FUNGEDATATYPE   fungeSpaceGetOff(const fungeSpace * restrict me,
+                                        const fungePosition * restrict position,
+                                        const fungePosition * restrict offset) __attribute__((nonnull,warn_unused_result));
+extern void            fungeSpaceSet(fungeSpace * restrict me,
+                                     FUNGEDATATYPE value,
+                                     const fungePosition * restrict position) __attribute__((nonnull));
+extern void            fungeSpaceSetOff(fungeSpace * restrict me,
+                                        FUNGEDATATYPE value,
+                                        const fungePosition * restrict position,
+                                        const fungePosition * restrict offset) __attribute__((nonnull));
 // Used only for IP wrapping
-extern void            fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta) __attribute__((nonnull));
-extern bool            fungeSpaceLoad(fungeSpace * me, const char * filename) __attribute__((nonnull,warn_unused_result));
-extern void            fungeSpaceGetBoundRect(const fungeSpace * restrict me, fungeRect * restrict rect) __attribute__((nonnull));
+extern void            fungeSpaceWrap(const fungeSpace * restrict me,
+                                      fungePosition * restrict position,
+                                      const fungeVector * restrict delta) __attribute__((nonnull));
+extern bool            fungeSpaceLoad(fungeSpace * restrict me,
+                                      const char * restrict filename) __attribute__((nonnull,warn_unused_result));
+extern void            fungeSpaceGetBoundRect(const fungeSpace * restrict me,
+                                              fungeRect * restrict rect) __attribute__((nonnull(1)));
 
 #endif

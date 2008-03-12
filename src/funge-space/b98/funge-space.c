@@ -86,7 +86,7 @@ fungeSpaceGetBoundRect(const fungeSpace * restrict me, fungeRect * restrict rect
 
 
 FUNGEDATATYPE
-fungeSpaceGet(fungeSpace * me, const fungePosition * position)
+fungeSpaceGet(const fungeSpace * restrict me, const fungePosition * restrict position)
 {
 	FUNGEDATATYPE *tmp;
 
@@ -99,7 +99,7 @@ fungeSpaceGet(fungeSpace * me, const fungePosition * position)
 
 
 FUNGEDATATYPE
-fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePosition * offset)
+fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
 	FUNGEDATATYPE *result;
@@ -115,7 +115,7 @@ fungeSpaceGetOff(fungeSpace * me, const fungePosition * position, const fungePos
 }
 
 static FUNGEDATATYPE*
-fungeSpaceInternalAlloc(fungeSpace * me, FUNGEDATATYPE value) {
+fungeSpaceInternalAlloc(fungeSpace * restrict me, FUNGEDATATYPE value) {
 	if (me->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
 		me->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
@@ -131,12 +131,12 @@ fungeSpaceInternalAlloc(fungeSpace * me, FUNGEDATATYPE value) {
 
 
 void
-fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position)
+fungeSpaceSet(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	if (value == ' ')
 		ght_remove(me->entries, sizeof(fungePosition), position);
 	else {
-		// TODO: Reuse?
+		// TODO: Reuse cell?
 		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(me, value);
 		if (ght_insert(me->entries, tmp, sizeof(fungePosition), position) == -1) {
 			ght_replace(me->entries, tmp, sizeof(fungePosition), position);
@@ -153,7 +153,7 @@ fungeSpaceSet(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * positi
 }
 
 void
-fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * position, const fungePosition * offset)
+fungeSpaceSetOff(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
 	tmp.x = position->x + offset->x;
@@ -164,6 +164,7 @@ fungeSpaceSetOff(fungeSpace * me, FUNGEDATATYPE value, const fungePosition * pos
 
 #define ABS(i) ((i > 0) ? i : i)
 
+#if 0
 static void
 fungeSpaceWrapNoDelta(fungeSpace * me, fungePosition * position)
 {
@@ -177,10 +178,10 @@ fungeSpaceWrapNoDelta(fungeSpace * me, fungePosition * position)
 	else
 		position->y = position->y % me->bottomRightCorner.y;
 }
-
+#endif
 
 void
-fungeSpaceWrap(fungeSpace * me, fungePosition * restrict position, const fungeVector * restrict delta)
+fungeSpaceWrap(const fungeSpace * restrict me, fungePosition * restrict position, const fungeVector * restrict delta)
 {
 // 	if (VectorIsCardinal(delta))
 // 		fungeSpaceWrapNoDelta(me, position);

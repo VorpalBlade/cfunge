@@ -26,6 +26,8 @@
 #include "../rect.h"
 #include "../stack.h"
 #include "../ip.h"
+#include <time.h>
+#include <string.h>
 
 // Push a single request value
 static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
@@ -83,12 +85,24 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 				break;
 			}
 			break;
-		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month) TODO
-			StackPush(0, ip->stack);
+		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
+			{
+			time_t now;
+			struct tm curTime;
+			now = time(NULL);
+			gmtime_r(&now, &curTime);
+			StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + curTime.tm_mon * 256 + curTime.tm_mday), ip->stack);
 			break;
-		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second) TODO
-			StackPush(0, ip->stack);
+			}
+		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second)
+			{
+			time_t now;
+			struct tm curTime;
+			now = time(NULL);
+			gmtime_r(&now, &curTime);
+			StackPush((FUNGEDATATYPE)(curTime.tm_hour * 256 * 256 + curTime.tm_min * 256 + curTime.tm_sec), ip->stack);
 			break;
+			}
 		case 17: // Number of stacks on stack stack
 			StackPush(ip->stackstack->size, ip->stack);
 			break;
@@ -96,7 +110,9 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 			StackPush(ip->stack->top, ip->stack);
 			break;
 		case 19: // Command line arguments (TODO)
-			StackPush('\0', ip->stack);
+			for (int i = fungeargc - 1; i >= 0; i--) {
+				StackPushString(strlen(fungeargv[i]), fungeargv[i], ip->stack);
+			}
 			StackPush('\0', ip->stack);
 			break;
 		case 20: // Environment variables (TODO)
