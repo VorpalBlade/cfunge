@@ -25,11 +25,11 @@ ADD_DEFINITIONS(-Wredundant-decls)
 ADD_DEFINITIONS(-D_GNU_SOURCE -DGC_DEBUG)
 
 
-include_directories (${CFUNGE08_SOURCE_DIR}/src/ ${CFUNGE08_SOURCE_DIR}/src/instructions/ ${CFUNGE08_SOURCE_DIR}/src/funge-space/b93/)
+include_directories (${CFUNGE08_SOURCE_DIR}/lib/libghthash/ ${CFUNGE08_SOURCE_DIR}/src/ ${CFUNGE08_SOURCE_DIR}/src/instructions/ ${CFUNGE08_SOURCE_DIR}/src/funge-space/)
 
 
 # list all source files here
-FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} src/*.c src/funge-space/b93/*.c src/instructions/*.c)
+FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c)
 ADD_EXECUTABLE(cfunge08 ${CFUNGE08_SOURCES})
 
 

@@ -19,8 +19,8 @@
 #ifndef _HAD_SRC_FUNGE_SPACE_B93_FUNGE_SPACE_H
 #define _HAD_SRC_FUNGE_SPACE_B93_FUNGE_SPACE_H
 
-#include "../../global.h"
-#include "../../vector.h"
+#include "../global.h"
+#include "../vector.h"
 #include <stdint.h>
 #include <stdbool.h>
 

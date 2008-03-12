@@ -20,7 +20,7 @@
 #include "ip.h"
 #include "vector.h"
 #include "stack.h"
-#include "funge-space/b93/funge-space.h"
+#include "funge-space/funge-space.h"
 
 instructionPointer *
 ipCreate(fungeStackStack *stackstack)

@@ -25,7 +25,7 @@
 #include "global.h"
 #include "vector.h"
 #include "stack.h"
-#include "funge-space/b93/funge-space.h"
+#include "funge-space/funge-space.h"
 
 typedef fungeVector ipDelta;
 

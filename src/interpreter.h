@@ -26,7 +26,7 @@
 #include "vector.h"
 #include "stack.h"
 #include "ip.h"
-#include "funge-space/b93/funge-space.h"
+#include "funge-space/funge-space.h"
 
 
 extern void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip);

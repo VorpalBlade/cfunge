@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 #include "vector.h"
-#include "funge-space/b93/funge-space.h"
+#include "funge-space/funge-space.h"
 
 
 #ifndef ipDEFINED

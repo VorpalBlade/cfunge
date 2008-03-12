@@ -143,7 +143,7 @@ void StackPushString(size_t len, const char *str, fungeStack * stack) {
 		StackPush(str[i], stack);
 }
 
-char * StackPopString(fungeStack * stack) {
+char *StackPopString(fungeStack * stack) {
 	CORD_ec x;
 	FUNGEDATATYPE c;
 

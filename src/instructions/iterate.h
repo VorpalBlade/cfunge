@@ -23,7 +23,7 @@
 #include "../stack.h"
 #include "../ip.h"
 #include "../stack.h"
-#include "../funge-space/b93/funge-space.h"
+#include "../funge-space/funge-space.h"
 
 
 extern void RunIterate(instructionPointer * ip, fungeSpace *fspace) __attribute__((nonnull));

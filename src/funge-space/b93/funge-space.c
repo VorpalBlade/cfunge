@@ -17,7 +17,7 @@
  */
 
 #include "../../global.h"
-#include "funge-space.h"
+#include "../funge-space.h"
 
 #include <string.h>
 #include <stdio.h>

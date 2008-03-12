@@ -19,7 +19,7 @@
 #include "../global.h"
 #include "sysinfo.h"
 #include "../interpreter.h"
-#include "../funge-space/b93/funge-space.h"
+#include "../funge-space/funge-space.h"
 #include "../vector.h"
 #include "../stack.h"
 #include "../ip.h"

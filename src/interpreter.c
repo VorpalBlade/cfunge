@@ -5,8 +5,10 @@
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
-
+ * (at the proxy's option) any later version. Arvid Norlander is a
+ * proxy who can decide which future versions of the GNU General Public
+ * License can be used.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,7 +20,7 @@
 
 #include "global.h"
 #include "interpreter.h"
-#include "funge-space/b93/funge-space.h"
+#include "funge-space/funge-space.h"
 #include "vector.h"
 #include "stack.h"
 #include "ip.h"
@@ -33,6 +35,7 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <assert.h>
 
 static fungeSpace *fspace;
 static fungeStackStack *stackStack;
@@ -70,7 +73,6 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 						ipForward(1, ip, fspace);
 					} while (fungeSpaceGet(fspace, &ip->position) == ' ');
 					ipForward(-1, ip, fspace);
-					//ip->forwardNeeded = false;
 				}
 				return;
 			case 'z':
@@ -105,12 +107,12 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				{
 					// FIXME: May not be uniform
 					long int rnd = random() % 4;
+					assert((rnd >= 0) && (rnd <= 3));
 					switch (rnd) {
 						case 0: GO_NORTH break;
 						case 1: GO_EAST break;
 						case 2: GO_SOUTH break;
 						case 3: GO_WEST break;
-						default: fprintf(stderr, "Random: %ld not in range!?\n", rnd); abort(); break;
 					}
 					break;
 				}

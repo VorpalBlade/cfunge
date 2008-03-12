@@ -54,7 +54,6 @@ FUNGEDATATYPE input_getchar(void)
 
 bool input_getint(FUNGEDATATYPE * value)
 {
-	long long int result;
 	bool found = false;
 	char* endptr = NULL;
 
@@ -64,7 +63,7 @@ bool input_getint(FUNGEDATATYPE * value)
 		if (!isdigit(*lastlineCurrent))
 			continue;
 		found = true;
-		result = strtoll(lastlineCurrent, &endptr, 10);
+		*value = strtoll(lastlineCurrent, &endptr, 10);
 		break;
 	} while (*(lastlineCurrent++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.
@@ -72,6 +71,5 @@ bool input_getint(FUNGEDATATYPE * value)
 		discardTheLine();
 	else
 		lastlineCurrent = endptr;
-	*value = result;
 	return found;
 }
