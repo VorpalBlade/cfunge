@@ -82,6 +82,9 @@ extern "C"
 #  define FALSE false
 #endif
 
+// Use macros for some stuff.
+#define USE_MACROS
+
 	/** unsigned 32 bit integer. */
 	typedef uint32_t ght_uint32_t;
 
@@ -172,7 +175,7 @@ extern "C"
 	 * higher power of two.
 	 *
 	 * The hash table is created with @c ght_one_at_a_time_hash() as hash
-	 * function, automatic rehashing disabled, @c malloc() as the memory
+	 * function, automatic rehashing disabled, @c cf_malloc() as the memory
 	 * allocator and no heuristics.
 	 *
 	 * @param i_size the number of buckets in the hash table. Giving a
@@ -253,7 +256,9 @@ extern "C"
 	 */
 	void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_bucket_free_callback_t fn);
 
-
+#ifdef USE_MACROS
+#  define ght_size(p_ht) (p_ht->i_items)
+#else
 	/**
 	 * Get the size (the number of items) of the hash table.
 	 *
@@ -262,7 +267,11 @@ extern "C"
 	 * @return the number of items in the hash table.
 	 */
 	size_t ght_size(ght_hash_table_t *p_ht);
+#endif
 
+#ifdef USE_MACROS
+#  define ght_table_size(p_ht) (p_ht->i_size)
+#else
 	/**
 	 * Get the table size (the number of buckets) of the hash table.
 	 *
@@ -271,7 +280,7 @@ extern "C"
 	 * @return the number of buckets in the hash table.
 	 */
 	size_t ght_table_size(ght_hash_table_t *p_ht);
-
+#endif
 
 	/**
 	 * Insert an entry into the hash table. Prior to inserting anything,
@@ -420,7 +429,7 @@ extern "C"
 	 * @see ght_next()
 	 */
 
-	void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size);
+	void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size);
 
 	/**
 	 * Return the next entry in the hash table. This function should be
@@ -466,7 +475,7 @@ extern "C"
 	 * @see ght_first_keysize()
 	 */
 
-	void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size);
+	void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size);
 
 	/**
 	 * Rehash the hash table.

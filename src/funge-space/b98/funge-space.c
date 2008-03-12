@@ -47,6 +47,7 @@ fungeSpaceCreate(void)
 {
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
 	tmp->entries = ght_create(FUNGESPACEINITIALSIZE);
+	//ght_set_heuristics(tmp->entries, GHT_HEURISTICS_TRANSPOSE);
 	tmp->topLeftCorner.x = 0;
 	tmp->topLeftCorner.y = 0;
 	tmp->bottomRightCorner.x = 0;
@@ -241,6 +242,7 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 
 	if (me->bottomRightCorner.y < y)
 		me->bottomRightCorner.y = y;
-
+	if (ght_size(me->entries) > FUNGESPACEINITIALSIZE)
+		ght_rehash(me->entries, ght_size(me->entries) * 2);
 	return true;
 }

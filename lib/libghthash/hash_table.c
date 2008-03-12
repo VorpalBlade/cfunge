@@ -351,7 +351,7 @@ void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_
 	}
 }
 
-
+#ifndef USE_MACROS
 /* Get the number of items in the hash table */
 size_t ght_size(ght_hash_table_t *p_ht)
 {
@@ -363,6 +363,7 @@ size_t ght_table_size(ght_hash_table_t *p_ht)
 {
 	return p_ht->i_size;
 }
+#endif
 
 /* Insert an entry into the hash table */
 int ght_insert(ght_hash_table_t *p_ht,
@@ -541,7 +542,7 @@ void *ght_remove(ght_hash_table_t *p_ht,
 	return p_ret;
 }
 
-static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size)
+static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	assert(p_ht && p_iterator);
 
@@ -573,13 +574,13 @@ void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void *
 	return first_keysize(p_ht, p_iterator, pp_key, NULL);
 }
 
-void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size)
+void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	return first_keysize(p_ht, p_iterator, pp_key, size);
 }
 
 
-static inline void *next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size)
+static inline void *next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	assert(p_ht && p_iterator);
 
@@ -614,7 +615,7 @@ void *ght_next(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **
 	return next_keysize(p_ht, p_iterator, pp_key, NULL);
 }
 
-void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, unsigned int *size)
+void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	return next_keysize(p_ht, p_iterator, pp_key, size);
 }
