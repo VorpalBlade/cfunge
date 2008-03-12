@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <time.h>
+#include <sys/time.h>
 #include <assert.h>
 
 fungeSpace *fspace = NULL;
@@ -102,8 +102,16 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 			case 'j':
 				{
 					FUNGEDATATYPE jumps = StackPop(ip->stack);
-					if (jumps != 0)
-						ipForward(jumps, ip);
+					if (jumps != 0) {
+						fungeVector tmp;
+						tmp.x = ip->delta.x;
+						tmp.y = ip->delta.y;
+						ip->delta.y *= jumps;
+						ip->delta.x *= jumps;
+						ipForward(1, ip);
+						ip->delta.x = tmp.x;
+						ip->delta.y = tmp.y;
+					}
 					break;
 				}
 			case '?':
@@ -435,7 +443,6 @@ static int interpreterMainLoop(void)
 
 int interpreterRun(int argc, char *argv[])
 {
-	bool retval;
 	fungeargc = argc;
 	fungeargv = cf_malloc(argc * sizeof(char*));
 	for (int i = 0; i < argc; i++) {
@@ -455,15 +462,20 @@ int interpreterRun(int argc, char *argv[])
 	fspace = fungeSpaceCreate();
 	if (fspace == NULL)
 		return EXIT_FAILURE;
-	retval = fungeSpaceLoad(fspace, argv[1]);
-	if (!retval) {
+	if (!fungeSpaceLoad(fspace, argv[1])) {
 		fprintf(stderr, "Failed to process file %s: %s\n", argv[1], strerror(errno));
 		return EXIT_FAILURE;
 	}
 
-	// Set up randomness
-	srandom(time(NULL));
-
+	{
+		struct timeval tv;
+		if (gettimeofday(&tv, NULL)) {
+			perror("Couldn't get time of day?!");
+			abort();
+		}
+		// Set up randomness
+		srandom(tv.tv_usec);
+	}
 
 	return interpreterMainLoop();
 }
