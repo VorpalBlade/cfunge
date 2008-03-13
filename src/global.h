@@ -33,15 +33,18 @@
 
 #include <support.h>
 #include <stdint.h>
-
+#include <inttypes.h>
 
 // The type of the data cells
 #define FUNGEDATATYPE int_fast64_t
+#define FUNGEDATAPRI PRIdFAST64
 // This version is for debugging where you want to make
 // gdb show the array as chars.
 //#define FUNGEDATATYPE char
 
 #define FUNGEVECTORTYPE int_fast64_t
+#define FUNGEVECTORPRI PRIdFAST64
+
 
 // Handprint: CFUN
 #define FUNGEHANDPRINT 0x4346554e

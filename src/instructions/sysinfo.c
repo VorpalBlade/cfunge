@@ -95,7 +95,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 				struct tm curTime;
 				now = time(NULL);
 				gmtime_r(&now, &curTime);
-				StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + curTime.tm_mon * 256 + curTime.tm_mday), pushStack);
+				StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + (curTime.tm_mon + 1) * 256 + curTime.tm_mday), pushStack);
 				break;
 			}
 		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second)
@@ -135,7 +135,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 				break;
 			}
 		default:
-			fprintf(stderr, "request was %ld", request);
+			fprintf(stderr, "request was %" FUNGEDATAPRI "\n", request);
 			ipReverse(ip);
 	}
 }

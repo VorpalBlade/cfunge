@@ -200,7 +200,7 @@ void StackDump(fungeStack * stack) __attribute__((unused));
 void StackDump(fungeStack * stack)
 {
 	for (size_t i = 0; i < stack->top; i++)
-		fprintf(stderr, "%zu=%ld ", i, stack->entries[i]);
+		fprintf(stderr, "%zu=%" FUNGEDATAPRI " ", i, stack->entries[i]);
 	fputs("%\n", stderr);
 }
 

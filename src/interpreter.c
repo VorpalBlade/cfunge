@@ -323,7 +323,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 			case '.':
 				{
 					FUNGEDATATYPE a = StackPop(ip->stack);
-					printf("%ld ", a);
+					printf("%" FUNGEDATAPRI " ", a);
 					fflush(stdout);
 					break;
 				}
@@ -411,7 +411,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 
 			default:
 				if (SettingWarnings)
-					fprintf(stderr, "WARN: Unknown instruction at x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+					fprintf(stderr, "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n", ip->position.x, ip->position.y, (char)opcode, opcode);
 				ipReverse(ip);
 		}
 	}
@@ -432,7 +432,7 @@ static int interpreterMainLoop(void)
 		opcode = fungeSpaceGet(fspace, &IP->position);
 #ifndef DISABLE_TRACE
 		if (SettingTraceLevel > 3)
-			fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", IP->position.x, IP->position.y, (char)opcode, opcode);
+			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n", IP->position.x, IP->position.y, (char)opcode, opcode);
 		else if (SettingTraceLevel > 2)
 			fprintf(stderr, "%c", (char)opcode);
 #endif

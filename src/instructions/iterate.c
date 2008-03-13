@@ -46,7 +46,7 @@ void RunIterate(instructionPointer * ip)
 			return;
 		else if ((kInstr == 'k') || (kInstr == ';')) {
 			if (SettingWarnings)
-				fprintf(stderr, "WARN: k at x=%ld y=%ld cannot execute: %c (%ld)\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
+				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
 		} else {
 			// Ok we got to excute it!
