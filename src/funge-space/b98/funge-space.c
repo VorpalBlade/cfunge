@@ -238,5 +238,6 @@ fungeSpaceLoad(fungeSpace * me, const char * filename)
 	if (me->bottomRightCorner.y < y)
 		me->bottomRightCorner.y = y;
 	ght_set_rehash(me->entries, false);
+	fclose(file);
 	return true;
 }

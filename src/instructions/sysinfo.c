@@ -30,106 +30,112 @@
 #include <time.h>
 #include <string.h>
 
+// Tmp variable used for pushing of stack size.
+static size_t stackSize = 0;
 
 // Push a single request value
-static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
+// pushStack is stack to push on.
+static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeStack * pushStack)
 {
 	switch (request) {
 		case 1: // Flags
 			//StackPush(0x20, ip->stack);
-			StackPush(0x0, ip->stack);
+			StackPush(0x0, pushStack);
 			break;
 		case 2: // Cell size
-			StackPush(sizeof(FUNGEDATATYPE), ip->stack);
+			StackPush(sizeof(FUNGEDATATYPE), pushStack);
 			break;
 		case 3: // Handprint
-			StackPush(FUNGEHANDPRINT, ip->stack);
+			StackPush(FUNGEHANDPRINT, pushStack);
 			break;
 		case 4: // Version
-			StackPush(FUNGEVERSION, ip->stack);
+			StackPush(FUNGEVERSION, pushStack);
 			break;
 		case 5: // Operating paradigm
-			StackPush(0, ip->stack);
+			StackPush(0, pushStack);
 			break;
 		case 6: // Path separator
-			StackPush('/', ip->stack);
+			StackPush('/', pushStack);
 			break;
 		case 7: // Scalars / vector
-			StackPush(2, ip->stack);
+			StackPush(2, pushStack);
 			break;
 		case 8: // IP ID
-			StackPush(0, ip->stack);
+			StackPush(0, pushStack);
 			break;
 		case 9: // TEAM ID
-			StackPush(0, ip->stack);
+			StackPush(0, pushStack);
 			break;
 		case 10: // Vector of current IP position
-			StackPushVector(&ip->position, ip->stack);
+			StackPushVector(&ip->position, pushStack);
 			break;
 		case 11: // Delta of current IP position
-			StackPushVector(&ip->delta, ip->stack);
+			StackPushVector(&ip->delta, pushStack);
 			break;
 		case 12: // Storage offset of current IP position
-			StackPushVector(&ip->storageOffset, ip->stack);
+			StackPushVector(&ip->storageOffset, pushStack);
 			break;
 		case 13: // Least point
 			{
 				fungeRect rect;
 				fungeSpaceGetBoundRect(fspace, &rect);
-				StackPushVector(& (fungePosition) { .x = rect.x, .y = rect.y }, ip->stack);
+				StackPushVector(& (fungePosition) { .x = rect.x, .y = rect.y }, pushStack);
 				break;
 			}
 		case 14: // Greatest point
 			{
 				fungeRect rect;
 				fungeSpaceGetBoundRect(fspace, &rect);
-				StackPushVector(& (fungePosition) { .x = rect.w, .y = rect.h }, ip->stack);
+				StackPushVector(& (fungePosition) { .x = rect.w, .y = rect.h }, pushStack);
 				break;
 			}
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
 			{
-			time_t now;
-			struct tm curTime;
-			now = time(NULL);
-			gmtime_r(&now, &curTime);
-			StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + curTime.tm_mon * 256 + curTime.tm_mday), ip->stack);
-			break;
+				time_t now;
+				struct tm curTime;
+				now = time(NULL);
+				gmtime_r(&now, &curTime);
+				StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + curTime.tm_mon * 256 + curTime.tm_mday), pushStack);
+				break;
 			}
 		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second)
 			{
-			time_t now;
-			struct tm curTime;
-			now = time(NULL);
-			gmtime_r(&now, &curTime);
-			StackPush((FUNGEDATATYPE)(curTime.tm_hour * 256 * 256 + curTime.tm_min * 256 + curTime.tm_sec), ip->stack);
-			break;
+				time_t now;
+				struct tm curTime;
+				now = time(NULL);
+				gmtime_r(&now, &curTime);
+				StackPush((FUNGEDATATYPE)(curTime.tm_hour * 256 * 256 + curTime.tm_min * 256 + curTime.tm_sec), pushStack);
+				break;
 			}
 		case 17: // Number of stacks on stack stack
-			StackPush(ip->stackstack->size, ip->stack);
+			StackPush(ip->stackstack->size, pushStack);
 			break;
-		case 18: // Number of elements on all stacks (TODO)
-			StackPush(ip->stack->top, ip->stack);
+		case 18: // Number of elements on all stacks (TODO for multiple stacks)
+			StackPush(stackSize, pushStack);
 			break;
 		case 19: // Command line arguments
 			StackPush('\0', ip->stack);
+			StackPush('\0', ip->stack);
 			for (int i = fungeargc - 1; i >= 0; i--) {
-				StackPushString(strlen(fungeargv[i]) + 1, fungeargv[i], ip->stack);
+				StackPushString(strlen(fungeargv[i]), fungeargv[i], pushStack);
 			}
 			break;
 		case 20: // Environment variables
 			{
 				char * tmp;
 				int i = 0;
+				StackPush('\0', ip->stack);
 				while (true) {
 					tmp = environ[i];
 					if (!tmp || *tmp == '\0')
 						break;
-					StackPushString(strlen(tmp), tmp, ip->stack);
+					StackPushString(strlen(tmp), tmp, pushStack);
 					i++;
 				}
 				break;
 			}
 		default:
+			fprintf(stderr, "request was %ld", request);
 			ipReverse(ip);
 	}
 }
@@ -139,11 +145,24 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
-	if (request == 23)
-		PushRequest(18, ip);
-	else if (request > 0)
-		PushRequest(request, ip);
-	else
+	stackSize = ip->stack->top;
+	// Speed this one up for mycology
+	if (request == 23) {
+		PushRequest(18, ip, ip->stack);
+	} else if (request <= 0) {
 		for (int i = HIGHESTREQUEST; i > 0; i--)
-			PushRequest(i, ip);
+			PushRequest(i, ip, ip->stack);
+	// Simple to get single cell in this range
+	} else if (request < 10) {
+		PushRequest(request, ip, ip->stack);
+	} else {
+		fungeStack * tmp = StackCreate();
+		for (int i = 1; i <= HIGHESTREQUEST; i++)
+			PushRequest(i, ip, tmp);
+		if (tmp->top > request)
+			StackPush(tmp->entries[request -1], ip->stack);
+		else
+			StackPush(ip->stack->entries[ip->stack->top - (request - tmp->top)], ip->stack);
+		StackFree(tmp);
+	}
 }

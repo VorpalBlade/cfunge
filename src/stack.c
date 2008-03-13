@@ -138,9 +138,7 @@ fungeVector StackPopVector(fungeStack * stack)
 	FUNGEVECTORTYPE x, y;
 	y = StackPop(stack);
 	x = StackPop(stack);
-	return (fungeVector) {
-		.x = x, .y = y
-	             };
+	return (fungeVector) { .x = x, .y = y };
 }
 
 void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack)

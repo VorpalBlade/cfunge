@@ -34,6 +34,7 @@
 extern fungeSpace *fspace;
 
 // DO NOT MODIFY these two!
+// (they are declared in main.c btw)
 extern char **fungeargv;
 extern int fungeargc;
 

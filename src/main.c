@@ -48,6 +48,12 @@ static void printHelp(void) {
 
 static void printVersion(void) {
 	printf("cfunge %s\n", APPVERSION);
+	puts("Copyright (C) 2008 Arvid Norlander");
+	puts("This is free software.  You may redistribute copies of it under the terms of");
+	puts("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.");
+	puts("There is NO WARRANTY, to the extent permitted by law.\n");
+
+	puts("Written by Arvid Norlander");
 
 	exit(EXIT_SUCCESS);
 }
