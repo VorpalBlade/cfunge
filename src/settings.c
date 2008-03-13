@@ -18,36 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_GLOBAL_H
-#define _HAD_SRC_GLOBAL_H
+#include "global.h"
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include "settings.h"
 
-// For compatiblity with other compilers to prevent them
-// failing at things like: __attribute__((noreturn))
-#ifndef __GNUC__
-#  define  __attribute__(x)  /* NO-OP */
-#endif
+// This file is just for some global variables.
 
-#include <support.h>
-#include <stdint.h>
+standardVersion SettingCurrentStandard = stdver98;
 
-
-// The type of the data cells
-#define FUNGEDATATYPE int_fast64_t
-// This version is for debugging where you want to make
-// gdb show the array as chars.
-//#define FUNGEDATATYPE char
-
-#define FUNGEVECTORTYPE int_fast64_t
-
-// Handprint: CFUN
-#define FUNGEHANDPRINT 0x4346554e
-// Version: 0.0.1
-// Version: 0.0.1
-#define APPVERSION  "0.0.1"
-#define FUNGEVERSION 0x001
-
-#endif
+uint_fast16_t SettingTraceLevel = 0;
+bool SettingWarnings = false;

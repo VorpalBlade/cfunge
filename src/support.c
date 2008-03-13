@@ -125,7 +125,7 @@ unlock_return:
 
 // This function is from Gnulib
 ssize_t
-cf_getline (char **lineptr, size_t *n, FILE *stream)
+cf_getline(char **lineptr, size_t *n, FILE *stream)
 {
 	return cf_getdelim(lineptr, n, '\n', stream);
 }

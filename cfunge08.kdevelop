@@ -83,6 +83,18 @@
       <path>libghthash-0.6.2/src/ght_hash_table.h</path>
       <path>libghthash-0.6.2/src/hash_functions.c</path>
       <path>libghthash-0.6.2/src/hash_table.c</path>
+      <path>other</path>
+      <path>other/libghthash-0.6.2</path>
+      <path>other/libghthash-0.6.2/examples</path>
+      <path>other/libghthash-0.6.2/examples/alloc_example.c</path>
+      <path>other/libghthash-0.6.2/examples/dict_example.c</path>
+      <path>other/libghthash-0.6.2/examples/hash_test.c</path>
+      <path>other/libghthash-0.6.2/examples/interactive.c</path>
+      <path>other/libghthash-0.6.2/examples/iteration.c</path>
+      <path>other/libghthash-0.6.2/examples/simple.c</path>
+      <path>other/libghthash-0.6.2/src</path>
+      <path>other/libghthash-0.6.2/src/hash_functions.c</path>
+      <path>other/libghthash-0.6.2/src/hash_table.c</path>
     </blacklist>
     <other>
       <prio>0</prio>

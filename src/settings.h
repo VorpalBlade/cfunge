@@ -18,36 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_GLOBAL_H
-#define _HAD_SRC_GLOBAL_H
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+// This file contains global runtime settings
+#ifndef _HAD_SRC_SETTINGS_H
+#define _HAD_SRC_SETTINGS_H
 
-// For compatiblity with other compilers to prevent them
-// failing at things like: __attribute__((noreturn))
-#ifndef __GNUC__
-#  define  __attribute__(x)  /* NO-OP */
-#endif
-
-#include <support.h>
+#include <sys/types.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 
-// The type of the data cells
-#define FUNGEDATATYPE int_fast64_t
-// This version is for debugging where you want to make
-// gdb show the array as chars.
-//#define FUNGEDATATYPE char
+// Out of order to initialize to 0 :D
+// (A few bytes smaller binary that way)
+// (The standard one should be 0 always
+typedef enum { stdver98 = 0, stdver93, stdver08 } standardVersion;
 
-#define FUNGEVECTORTYPE int_fast64_t
+// What version we should simulate.
+// Affects space processing.
+extern standardVersion SettingCurrentStandard;
 
-// Handprint: CFUN
-#define FUNGEHANDPRINT 0x4346554e
-// Version: 0.0.1
-// Version: 0.0.1
-#define APPVERSION  "0.0.1"
-#define FUNGEVERSION 0x001
+extern uint_fast16_t SettingTraceLevel;
+extern bool SettingWarnings;
 
 #endif

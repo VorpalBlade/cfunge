@@ -86,7 +86,6 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 				StackPushVector(& (fungePosition) { .x = rect.w, .y = rect.h }, ip->stack);
 				break;
 			}
-			break;
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
 			{
 			time_t now;
@@ -113,13 +112,13 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 			break;
 		case 19: // Command line arguments
 			StackPush('\0', ip->stack);
-			for (int i = fungeargc - 1; i > 0; i--) {
-				StackPushString(strlen(fungeargv[i]), fungeargv[i], ip->stack);
+			for (int i = fungeargc - 1; i >= 0; i--) {
+				StackPushString(strlen(fungeargv[i]) + 1, fungeargv[i], ip->stack);
 			}
 			break;
 		case 20: // Environment variables
 			{
-				char * restrict tmp;
+				char * tmp;
 				int i = 0;
 				while (true) {
 					tmp = environ[i];
@@ -128,7 +127,6 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip)
 					StackPushString(strlen(tmp), tmp, ip->stack);
 					i++;
 				}
-				StackPush('\0', ip->stack);
 				break;
 			}
 		default:

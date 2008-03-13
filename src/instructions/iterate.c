@@ -25,8 +25,11 @@
 #include "../vector.h"
 #include "../stack.h"
 #include "../ip.h"
+#include "../settings.h"
 
-void RunIterate(instructionPointer * ip) {
+
+void RunIterate(instructionPointer * ip)
+{
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0)
 		ipForward(1, ip);
@@ -42,7 +45,8 @@ void RunIterate(instructionPointer * ip) {
 		if (kInstr == ' ' || kInstr == 'z')
 			return;
 		else if ((kInstr == 'k') || (kInstr == ';')) {
-			fprintf(stderr, "k at x=%ld y=%ld cannot execute: %c (%ld)\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
+			if (SettingWarnings)
+				fprintf(stderr, "WARN: k at x=%ld y=%ld cannot execute: %c (%ld)\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
 		} else {
 			// Ok we got to excute it!
@@ -62,7 +66,7 @@ void RunIterate(instructionPointer * ip) {
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x
 			    && oldpos.y == ip->position.y)
-			ipForward(1, ip);
+				ipForward(1, ip);
 		}
 	}
 }

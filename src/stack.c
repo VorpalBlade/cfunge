@@ -125,26 +125,32 @@ FUNGEDATATYPE StackPeek(fungeStack * stack)
  * Push and pop for data types. *
  ********************************/
 
-void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) {
+void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack)
+{
 	// TODO: Optimize
 	StackPush(value->x, stack);
 	StackPush(value->y, stack);
 }
 
-fungeVector StackPopVector (fungeStack * stack) {
+fungeVector StackPopVector(fungeStack * stack)
+{
 	// TODO Optimize
 	FUNGEVECTORTYPE x, y;
 	y = StackPop(stack);
 	x = StackPop(stack);
-	return (fungeVector) { .x = x, .y = y };
+	return (fungeVector) {
+		.x = x, .y = y
+	             };
 }
 
-void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) {
+void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack)
+{
 	for (ssize_t i = len; i >= 0; i--)
 		StackPush(str[i], stack);
 }
 
-char *StackPopString(fungeStack * stack) {
+char *StackPopString(fungeStack * stack)
+{
 	CORD_ec x;
 	FUNGEDATATYPE c;
 

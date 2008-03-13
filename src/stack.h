@@ -51,28 +51,28 @@ typedef struct {
 } fungeStackStack;
 
 
-extern fungeStack  * StackCreate (void) __attribute__((warn_unused_result));
-extern void          StackFree   (fungeStack * stack);
+extern fungeStack  * StackCreate(void) __attribute__((warn_unused_result));
+extern void          StackFree(fungeStack * stack);
 
-extern void          StackPush      (FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
-extern FUNGEDATATYPE StackPop       (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern void          StackPush(FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
+extern FUNGEDATATYPE StackPop(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 extern void          StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
 extern void          StackPopNDiscard(fungeStack * stack, size_t n) __attribute__((nonnull));
-extern FUNGEDATATYPE StackPeek      (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern FUNGEDATATYPE StackPeek(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 
 extern void          StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) __attribute__((nonnull));
-extern fungeVector   StackPopVector (fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern fungeVector   StackPopVector(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 extern void          StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) __attribute__((nonnull));
-extern char *        StackPopString(fungeStack * stack) __attribute__((nonnull,warn_unused_result));
+extern char *        StackPopString(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 
-extern void          StackClear     (fungeStack * stack) __attribute__((nonnull));
-extern void          StackDupTop    (fungeStack * stack) __attribute__((nonnull));
-extern void          StackSwapTop   (fungeStack * stack) __attribute__((nonnull));
+extern void          StackClear(fungeStack * stack) __attribute__((nonnull));
+extern void          StackDupTop(fungeStack * stack) __attribute__((nonnull));
+extern void          StackSwapTop(fungeStack * stack) __attribute__((nonnull));
 
 extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
 
-extern bool StackStackBegin(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset) __attribute__((nonnull,warn_unused_result));
-extern bool StackStackEnd(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count) __attribute__((nonnull,warn_unused_result));
+extern bool StackStackBegin(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result));
+extern bool StackStackEnd(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result));
 extern void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)  __attribute__((nonnull));
 
 #endif

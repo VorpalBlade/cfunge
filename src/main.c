@@ -21,22 +21,98 @@
 #include "global.h"
 
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include "interpreter.h"
+#include "settings.h"
 
+char **fungeargv = NULL;
+int fungeargc = 0;
+
+static void printHelp(void) __attribute__((noreturn));
+static void printVersion(void) __attribute__((noreturn));
+
+static void printHelp(void) {
+	puts("Usage: cfunge [OPTION] FILE [SCRIPT OPTIONS]");
+	puts("A fast befunge interpreter in C\n");
+	puts(" -h           Show this help and exit.");
+	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
+	puts(" -t level     Use given trace level. Default 0.");
+	puts(" -V           Show version information and exit.");
+	puts(" -W           Show warnings.");
+
+	exit(EXIT_SUCCESS);
+}
+
+static void printVersion(void) {
+	printf("cfunge %s\n", APPVERSION);
+
+	exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char *argv[])
 {
 	GC_all_interior_pointers = 1;
 	GC_INIT();
-	// No proper command line parsing I know.
-	if (argc > 1) {
-		return interpreterRun(argc, argv);
-	} else {
-		fprintf(stderr, "Usage %s file\n", argv[0]);
-		return EXIT_FAILURE;
+	/*
+	 * h            help
+	 * s (93|98|08) Standard
+	 * t <level>    trace
+	 * V            version
+	 * W Warnings
+	 */
+	{
+		int opt;
+		while ((opt = getopt(argc, argv, "+hs:t:Vw")) != -1) {
+			switch (opt) {
+				case 'h':
+					printHelp();
+					break;
+				case 's':
+					if (strncmp(optarg, "93", 2))
+						SettingCurrentStandard = stdver93;
+					else if (strncmp(optarg, "98", 2))
+						SettingCurrentStandard = stdver98;
+					else if (strncmp(optarg, "08", 2))
+						SettingCurrentStandard = stdver08;
+					else {
+					fprintf(stderr, "%s is not valid for -s.\n", optarg);
+					}
+					break;
+				case 't':
+					SettingTraceLevel = atoi(optarg);
+					break;
+				case 'V':
+					printVersion();
+					break;
+				case 'W':
+					SettingWarnings = true;
+					break;
+				default:
+					fprintf(stderr, "For help see: %s -h\n", argv[0]);
+					return EXIT_FAILURE;
+			}
+		}
+		if (optind >= argc) {
+			fputs("No file provided\n", stderr);
+			return EXIT_FAILURE;
+		} else {
+			// Copy the rest to the variables in interpreter.c/interpreter.h
+			// for later reuse by y instruction.
+			if (argc > 1) {
+				fungeargc = argc - optind;
+				fungeargv = cf_malloc(fungeargc * sizeof(char*));
+				for (int i = optind; i < argc; i++) {
+					fungeargv[i - optind] = cf_strdup(argv[i]);
+					if (fungeargv[i - optind] == NULL) {
+						perror("Couldn't store arguments in array and this even before file was loaded!\n");
+						abort();
+					}
+				}
+			}
+			return interpreterRun(argv[optind]);
+		}
 	}
-
 }

@@ -25,6 +25,7 @@
 #include "stack.h"
 #include "ip.h"
 #include "input.h"
+#include "settings.h"
 
 #include "instructions/iterate.h"
 #include "instructions/sysinfo.h"
@@ -40,9 +41,6 @@
 fungeSpace *fspace = NULL;
 static fungeStackStack *stackStack = NULL;
 static instructionPointer *IP = NULL;
-
-char **fungeargv = NULL;
-int fungeargc = 0;
 
 #define PUSHVAL(x, y) \
 	case (x): \
@@ -412,9 +410,9 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				}
 
 			default:
-				fprintf(stderr, "Unknown instruction at x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+				if (SettingWarnings)
+					fprintf(stderr, "WARN: Unknown instruction at x=%ld y=%ld: %c (%ld)\n", ip->position.x, ip->position.y, (char)opcode, opcode);
 				ipReverse(ip);
-				//exit(EXIT_FAILURE);
 		}
 	}
 }
@@ -432,8 +430,13 @@ static int interpreterMainLoop(void)
 
 	while (true) {
 		opcode = fungeSpaceGet(fspace, &IP->position);
-		//fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", IP->position.x, IP->position.y, (char)opcode, opcode);
-		//fprintf(stderr, "%c", (char)opcode);
+#ifndef DISABLE_TRACE
+		if (SettingTraceLevel > 3)
+			fprintf(stderr, "x=%ld y=%ld: %c (%ld)\n", IP->position.x, IP->position.y, (char)opcode, opcode);
+		else if (SettingTraceLevel > 2)
+			fprintf(stderr, "%c", (char)opcode);
+#endif
+
 		ExecuteInstruction(opcode, IP);
 		ipForward(1, IP);
 	}
@@ -441,18 +444,8 @@ static int interpreterMainLoop(void)
 	return 0;
 }
 
-int interpreterRun(int argc, char *argv[])
+int interpreterRun(const char *filename)
 {
-	fungeargc = argc;
-	fungeargv = cf_malloc(argc * sizeof(char*));
-	for (int i = 0; i < argc; i++) {
-		fungeargv[i] = cf_strdup(argv[i]);
-		if (fungeargv[i] == NULL) {
-			perror("Couldn't store arguments in array and this even before file was loaded!\n");
-			abort();
-		}
-	}
-
 	stackStack = StackStackCreate();
 	if (stackStack == NULL)
 		return EXIT_FAILURE;
@@ -462,11 +455,10 @@ int interpreterRun(int argc, char *argv[])
 	fspace = fungeSpaceCreate();
 	if (fspace == NULL)
 		return EXIT_FAILURE;
-	if (!fungeSpaceLoad(fspace, argv[1])) {
-		fprintf(stderr, "Failed to process file %s: %s\n", argv[1], strerror(errno));
+	if (!fungeSpaceLoad(fspace, filename)) {
+		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
 		return EXIT_FAILURE;
 	}
-
 	{
 		struct timeval tv;
 		if (gettimeofday(&tv, NULL)) {
