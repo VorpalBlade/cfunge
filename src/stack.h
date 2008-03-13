@@ -64,6 +64,7 @@ extern void          StackPushVector(const fungeVector * restrict value, fungeSt
 extern fungeVector   StackPopVector(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 extern void          StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) __attribute__((nonnull));
 extern char *        StackPopString(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+extern char *        StackPopSizedString(size_t len, fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 
 extern void          StackClear(fungeStack * stack) __attribute__((nonnull));
 extern void          StackDupTop(fungeStack * stack) __attribute__((nonnull));

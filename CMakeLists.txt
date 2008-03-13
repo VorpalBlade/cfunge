@@ -21,6 +21,11 @@ ELSE (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
 	MESSAGE(FATAL_ERROR "Could NOT find new enough Boehm GC (you need 7.x or later)")
 ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
 
+FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
+	${BoehmIncDir}
+)
+
+
 CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
 
 OPTION(USE_64BIT "Should 64-bit data types be used (otherwise 32-bit)." ON)
@@ -53,14 +58,17 @@ IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	ADD_DEFINITIONS(-DGC_DEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
+ADD_DEFINITIONS(-I${BOEHM_INCLUDE_DIR})
+
 include_directories (${CFUNGE08_SOURCE_DIR}/lib/libghthash/)
 include_directories (${CFUNGE08_SOURCE_DIR}/src/)
-include_directories (${CFUNGE08_SOURCE_DIR}/src/instructions/)
 include_directories (${CFUNGE08_SOURCE_DIR}/src/funge-space/)
+include_directories (${CFUNGE08_SOURCE_DIR}/src/instructions/)
+include_directories (${CFUNGE08_SOURCE_DIR}/src/fingerprints/)
 
 
 # list all source files here
-FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c)
+FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c src/fingerprints/*.c src/fingerprints/*/*.c)
 ADD_EXECUTABLE(cfunge08 ${CFUNGE08_SOURCES})
 
 # need to link to some other libraries ? just add them here

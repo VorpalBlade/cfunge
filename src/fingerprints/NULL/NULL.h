@@ -18,14 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "global.h"
+#ifndef _HAD_SRC_FINGERPRINTS_NULL_H
+#define _HAD_SRC_FINGERPRINTS_NULL_H
 
-#include "settings.h"
+#include "../../global.h"
+#include "../manager.h"
 
-// This file is just for some global variables.
+bool FingerNULLload(instructionPointer * ip);
 
-standardVersion SettingCurrentStandard = stdver98;
-
-uint_fast16_t SettingTraceLevel = 0;
-bool SettingWarnings = false;
-bool SettingEnableFingerprints = true;
+#endif

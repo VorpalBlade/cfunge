@@ -40,4 +40,7 @@ extern standardVersion SettingCurrentStandard;
 extern uint_fast16_t SettingTraceLevel;
 extern bool SettingWarnings;
 
+extern bool SettingEnableFingerprints;
+
+
 #endif

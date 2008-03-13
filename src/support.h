@@ -24,6 +24,8 @@
 #define _HAD_SRC_SUPPORT_H
 
 #include <gc/gc.h>
+#include <sys/types.h>
+#include <stdio.h>
 
 #define cf_malloc(x)           GC_MALLOC(x)
 // Use this for strings and other stuff containing no pointers when possible.
@@ -49,8 +51,6 @@
 #define cf_strdup(x)       GC_STRDUP(x)
 extern char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
 extern size_t cf_strnlen(const char *string, size_t maxlen);
-#include <sys/types.h>
-#include <stdio.h>
 
 // This is glibc specific, so here is a version from gnulib.
 extern ssize_t cf_getline (char **lineptr, size_t *n, FILE *stream);

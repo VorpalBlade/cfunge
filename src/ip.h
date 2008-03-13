@@ -33,15 +33,21 @@ typedef fungeVector ipDelta;
 
 typedef enum { ipmCODE = 0, ipmSTRING } ipMode;
 
+#ifndef fungeOpcodeStackDefined
+struct _fungeOpcodeStack;
+#endif
+#define FINGEROPCODECOUNT 26
+
 typedef struct _instructionPointer {
-	fungePosition     position;
-	ipDelta           delta;
-	ipMode            mode;
-	bool              StringLastWasSpace;
-	fungePosition     storageOffset;
-	fungeStackStack * stackstack;
+	fungePosition              position;
+	ipDelta                    delta;
+	ipMode                     mode;
+	bool                       StringLastWasSpace;
+	fungePosition              storageOffset;
+	fungeStackStack          * stackstack;
 	// Top stack.
-	fungeStack      * stack;
+	fungeStack               * stack;
+	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];
 } instructionPointer;
 #define ipDEFINED 1
 

@@ -18,14 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "global.h"
+#include "NULL.h"
 
-#include "settings.h"
+static void FingerNULLreverse(instructionPointer * ip) {
+	ipReverse(ip);
+}
 
-// This file is just for some global variables.
-
-standardVersion SettingCurrentStandard = stdver98;
-
-uint_fast16_t SettingTraceLevel = 0;
-bool SettingWarnings = false;
-bool SettingEnableFingerprints = true;
+bool FingerNULLload(instructionPointer * ip) {
+	for (char c = 'A'; c < 'Z'; c++)
+		// TODO: Leave in consistent state here?
+		if (!OpcodeStackAdd(ip, c, &FingerNULLreverse))
+			return false;
+	return true;
+}

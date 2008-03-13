@@ -30,6 +30,8 @@
 #include "instructions/iterate.h"
 #include "instructions/sysinfo.h"
 
+#include "fingerprints/manager.h"
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -64,8 +66,12 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 			StackPush(opcode, ip->stack);
 		}
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
-		// TODO fingerprints
-		ipReverse(ip);
+		if (!SettingEnableFingerprints)
+			ipReverse(ip);
+		else if (ip->fingerOpcodes && ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top] == NULL)
+			ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top](ip);
+		else
+			ipReverse(ip);
 	} else {
 		switch (opcode) {
 			case ' ':
@@ -393,9 +399,21 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 					FUNGEDATATYPE fpsize = StackPop(ip->stack);
 					if (fpsize < 0) {
 						ipReverse(ip);
-					} else {
+					} else if (!SettingEnableFingerprints) {
 						StackPopNDiscard(ip->stack, fpsize);
 						ipReverse(ip);
+					} else {
+						FUNGEDATATYPE fprint = 0;
+						while (fpsize--) {
+							fprint = fprint * 256 + StackPop(ip->stack);
+						}
+						if (opcode == '(') {
+							if (!ManagerLoad(ip, fprint))
+								ipReverse(ip);
+						} else {
+							if (!ManagerUnload(ip, fprint))
+								ipReverse(ip);
+						}
 					}
 					break;
 				}

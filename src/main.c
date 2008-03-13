@@ -37,6 +37,7 @@ static void printVersion(void) __attribute__((noreturn));
 static void printHelp(void) {
 	puts("Usage: cfunge [OPTION] FILE [SCRIPT OPTIONS]");
 	puts("A fast befunge interpreter in C\n");
+	puts(" -f           Disable all fingerprints.");
 	puts(" -h           Show this help and exit.");
 	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
 	puts(" -t level     Use given trace level. Default 0.");
@@ -71,8 +72,11 @@ int main(int argc, char *argv[])
 	 */
 	{
 		int opt;
-		while ((opt = getopt(argc, argv, "+hs:t:Vw")) != -1) {
+		while ((opt = getopt(argc, argv, "+fhs:t:Vw")) != -1) {
 			switch (opt) {
+				case 'f':
+					SettingEnableFingerprints = false;
+					break;
 				case 'h':
 					printHelp();
 					break;

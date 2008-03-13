@@ -22,6 +22,8 @@
 #include "ip.h"
 #include "vector.h"
 #include "interpreter.h"
+#include "settings.h"
+#include "manager.h"
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
@@ -41,6 +43,8 @@ ipCreate(fungeStackStack *stackstack)
 	tmp->storageOffset.y = 0;
 	tmp->stackstack = stackstack;
 	tmp->stack      = stackstack->stacks[stackstack->current];
+	if (SettingEnableFingerprints)
+		ManagerInit(tmp);
 	return tmp;
 }
 
