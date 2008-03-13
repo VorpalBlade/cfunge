@@ -1,4 +1,4 @@
-PROJECT(CFUNGE08)
+PROJECT(CFUNGE)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
@@ -60,17 +60,17 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
 ADD_DEFINITIONS(-I${BOEHM_INCLUDE_DIR})
 
-include_directories (${CFUNGE08_SOURCE_DIR}/lib/libghthash/)
-include_directories (${CFUNGE08_SOURCE_DIR}/src/)
-include_directories (${CFUNGE08_SOURCE_DIR}/src/funge-space/)
-include_directories (${CFUNGE08_SOURCE_DIR}/src/instructions/)
-include_directories (${CFUNGE08_SOURCE_DIR}/src/fingerprints/)
+include_directories (${CFUNGE_SOURCE_DIR}/lib/libghthash/)
+include_directories (${CFUNGE_SOURCE_DIR}/src/)
+include_directories (${CFUNGE_SOURCE_DIR}/src/funge-space/)
+include_directories (${CFUNGE_SOURCE_DIR}/src/instructions/)
+include_directories (${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 
 
 # list all source files here
-FILE(GLOB CFUNGE08_SOURCES RELATIVE ${CFUNGE08_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c src/fingerprints/*.c src/fingerprints/*/*.c)
-ADD_EXECUTABLE(cfunge08 ${CFUNGE08_SOURCES})
+FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c src/fingerprints/*.c src/fingerprints/*/*.c)
+ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
 # need to link to some other libraries ? just add them here
-TARGET_LINK_LIBRARIES(cfunge08 ${BoehmLinkFlags} cord)
-SET_TARGET_PROPERTIES(cfunge08 PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
+TARGET_LINK_LIBRARIES(cfunge ${BoehmLinkFlags} cord)
+SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")

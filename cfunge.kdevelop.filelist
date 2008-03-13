@@ -6,6 +6,12 @@ lib/libghthash/ght_hash_table.h
 lib/libghthash/hash_functions.c
 lib/libghthash/hash_table.c
 src
+src/fingerprints
+src/fingerprints/NULL
+src/fingerprints/NULL/NULL.c
+src/fingerprints/NULL/NULL.h
+src/fingerprints/manager.c
+src/fingerprints/manager.h
 src/funge-space
 src/funge-space/b93
 src/funge-space/b93/funge-space.c

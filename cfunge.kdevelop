@@ -12,7 +12,7 @@
     <secondaryLanguages>
       <language>C++</language>
     </secondaryLanguages>
-    <projectname>cfunge08</projectname>
+    <projectname>cfunge</projectname>
     <description/>
     <defaultencoding/>
     <versioncontrol/>
@@ -220,10 +220,10 @@
     </tree>
   </kdevfileview>
   <substmap>
-    <APPNAME>cfunge08</APPNAME>
-    <APPNAMELC>cfunge08</APPNAMELC>
-    <APPNAMESC>Cfunge08</APPNAMESC>
-    <APPNAMEUC>CFUNGE08</APPNAMEUC>
+    <APPNAME>cfunge</APPNAME>
+    <APPNAMELC>cfunge</APPNAMELC>
+    <APPNAMESC>Cfunge</APPNAMESC>
+    <APPNAMEUC>CFUNGE</APPNAMEUC>
     <AUTHOR>Arvid Norlander</AUTHOR>
     <EMAIL>anmaster@tele2.se</EMAIL>
     <LICENSE>GPL</LICENSE>

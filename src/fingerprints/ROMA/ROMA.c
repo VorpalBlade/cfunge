@@ -18,46 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_GLOBAL_H
-#define _HAD_SRC_GLOBAL_H
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-// For compatiblity with other compilers to prevent them
-// failing at things like: __attribute__((noreturn))
-#ifndef __GNUC__
-#  define  __attribute__(x)  /* NO-OP */
-#endif
-
-#include <support.h>
-#include <stdint.h>
-#include <inttypes.h>
+#include "ROMA.h"
+#include "../../stack.h"
 
 
-#ifdef USE64
-// The type of the data cells
-#  define FUNGEDATATYPE int_fast64_t
-#  define FUNGEDATAPRI PRIdFAST64
-// And of vector values
-#  define FUNGEVECTORTYPE int_fast64_t
-#  define FUNGEVECTORPRI PRIdFAST64
-#else
-// The type of the data cells
-#  define FUNGEDATATYPE int32_t
-#  define FUNGEDATAPRI PRId32
-// And of vector values
-#  define FUNGEVECTORTYPE int32_t
-#  define FUNGEVECTORPRI PRId32
+#define ROMAPUSH(x, y) \
+	static void FingerROMAPush ## x (instructionPointer * ip) { \
+		StackPush((FUNGEDATATYPE)y, ip->stack); \
+	}
 
-#endif
+ROMAPUSH(I, 1)
+ROMAPUSH(V, 5)
+ROMAPUSH(X, 10)
+ROMAPUSH(L, 50)
+ROMAPUSH(C, 100)
+ROMAPUSH(D, 500)
+ROMAPUSH(M, 1000)
 
-// Handprint: CFUN
-#define FUNGEHANDPRINT 0x4346554e
-// Version: 0.0.1
-// Version: 0.0.1
-#define APPVERSION  "0.1.0"
-#define FUNGEVERSION 10
 
-#endif
+
+bool FingerROMAload(instructionPointer * ip) {
+	if (!OpcodeStackAdd(ip, 'C', &FingerROMAPushC))
+		return false;
+	if (!OpcodeStackAdd(ip, 'D', &FingerROMAPushD))
+		return false;
+	if (!OpcodeStackAdd(ip, 'I', &FingerROMAPushI))
+		return false;
+	if (!OpcodeStackAdd(ip, 'L', &FingerROMAPushL))
+		return false;
+	if (!OpcodeStackAdd(ip, 'M', &FingerROMAPushM))
+		return false;
+	if (!OpcodeStackAdd(ip, 'V', &FingerROMAPushV))
+		return false;
+	if (!OpcodeStackAdd(ip, 'X', &FingerROMAPushX))
+		return false;
+	return true;
+}

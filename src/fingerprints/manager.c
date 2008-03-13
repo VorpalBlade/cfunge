@@ -1,5 +1,5 @@
 /*
- * cfunge08 - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - a conformant Befunge93/98/08 interpreter in C.
  * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@
 #include <stdbool.h>
 
 #include "NULL/NULL.h"
+#include "ROMA/ROMA.h"
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
@@ -41,6 +42,8 @@ typedef struct {
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// NULL
 	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
+	// ROMA
+	//{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
 };
