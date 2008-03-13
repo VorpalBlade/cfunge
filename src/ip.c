@@ -65,8 +65,8 @@ void ipForward(int_fast64_t steps, instructionPointer * ip)
 void
 ipReverse(instructionPointer * ip)
 {
-	ip->delta.x *= -1;
-	ip->delta.y *= -1;
+	ip->delta.x = -ip->delta.x;
+	ip->delta.y = -ip->delta.y;
 }
 
 void

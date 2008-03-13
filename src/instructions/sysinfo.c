@@ -33,6 +33,10 @@
 // Tmp variable used for pushing of stack size.
 static size_t stackSize = 0;
 
+#ifndef _GNU_SOURCE
+extern char **environ;
+#endif
+
 // Push a single request value
 // pushStack is stack to push on.
 static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeStack * pushStack)

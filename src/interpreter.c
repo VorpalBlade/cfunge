@@ -317,20 +317,20 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				{
 					FUNGEDATATYPE a = StackPop(ip->stack);
 					putchar((char)a);
-					fflush(stdout);
+					if (a == '\n') fflush(stdout);
 					break;
 				}
 			case '.':
 				{
 					FUNGEDATATYPE a = StackPop(ip->stack);
 					printf("%" FUNGEDATAPRI " ", a);
-					fflush(stdout);
 					break;
 				}
 
 			case '~':
 				{
 					FUNGEDATATYPE a = 0;
+					fflush(stdout);
 					a = input_getchar();
 					StackPush(a, ip->stack);
 					break;
@@ -339,6 +339,7 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 				{
 					FUNGEDATATYPE a = 0;
 					bool gotint = false;
+					fflush(stdout);
 					while (!gotint)
 						gotint = input_getint(&a);
 					StackPush(a, ip->stack);
