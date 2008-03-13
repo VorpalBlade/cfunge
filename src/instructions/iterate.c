@@ -50,13 +50,10 @@ void RunIterate(instructionPointer * ip)
 			ipReverse(ip);
 		} else {
 			// Ok we got to excute it!
-			// These notes are from CCBI and explains some of the odd stuff we do here:
-				// 0k^ doesn't execute ^
-				// 1k^ does    execute ^
-				/* meaning: k executes its operand from where k is, but skips over its operand
-				 * this, in turn, means that we have to get the next operand, go back and execute it,
-				 * and if it didn't affect our delta or position, move past it
-				 */
+			// The weird stuff below, is, as described by CCBI:
+			// Instruction executes *at* k
+			// If the instruction k executes, changes delta or position, we are finished.
+			// If it doesn't we should jump to *after* the instruction k executed.
 			ipDelta olddelta = ip->delta;
 			fungePosition oldpos = ip->position;
 
