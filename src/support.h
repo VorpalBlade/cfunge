@@ -48,7 +48,7 @@
 
 #define cf_strdup(x)       GC_STRDUP(x)
 extern char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
-
+extern size_t cf_strnlen(const char *string, size_t maxlen);
 #include <sys/types.h>
 #include <stdio.h>
 

@@ -27,13 +27,19 @@
 #include <stdlib.h>
 #include <errno.h>
 
+size_t cf_strnlen(const char *string, size_t maxlen)
+{
+	const char *end = memchr(string, '\0', maxlen);
+	return end ? (size_t) (end - string) : maxlen;
+}
+
 char * cf_strndup(char const *string, size_t n)
 {
 	if (!string || !*string)
 		return NULL;
 	// Keep gcc happy with variable decls
 	{
-		size_t len = strnlen(string, n);
+		size_t len = cf_strnlen(string, n);
 		char *newstr = cf_malloc_noptr(len + 1);
 
 		if (newstr == NULL)

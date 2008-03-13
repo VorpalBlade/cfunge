@@ -76,7 +76,7 @@ ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key)
 	assert(p_key);
 
 	for (i = 0; i < p_key->i_size; ++i) {
-		i_hash += ((unsigned char*)p_key->p_key)[i];
+		i_hash += ((const unsigned char*)p_key->p_key)[i];
 		i_hash += (i_hash << 10);
 		i_hash ^= (i_hash >> 6);
 	}
@@ -93,13 +93,14 @@ ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key)
  */
 ght_uint32_t ght_crc_hash(ght_hash_key_t *p_key)
 {
-	unsigned char *p, *p_end;
+	const unsigned char *p;
+	const unsigned char *p_end;
 	ght_uint32_t  crc;
 
 	assert(p_key);
 
 	crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
-	p = (unsigned char *)p_key->p_key;
+	p = (const unsigned char *)p_key->p_key;
 	p_end = p + p_key->i_size;
 	while (p < p_end)
 		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ *(p++)];
@@ -115,7 +116,7 @@ ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key)
 	assert(p_key);
 
 	for (i = 0; i < p_key->i_size; ++i) {
-		i_hash = (i_hash << 4) ^(i_hash >> 28) ^((unsigned char*)p_key->p_key)[i];
+		i_hash = (i_hash << 4) ^(i_hash >> 28) ^((const unsigned char*)p_key->p_key)[i];
 	}
 
 	return i_hash;

@@ -43,12 +43,12 @@
 /* Prototypes */
 static inline void              transpose(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_entry_t *p_entry);
 static inline void              move_to_front(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_entry_t *p_entry);
-static inline void              free_entry_chain(ght_hash_table_t *p_ht, ght_hash_entry_t *p_entry);
+static inline void              free_entry_chain(ght_hash_entry_t *p_entry);
 static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_key_t *p_key, unsigned char i_heuristics);
 
 static inline void              hk_fill(ght_hash_key_t *p_hk, int i_size, const void *p_key);
-static inline ght_hash_entry_t *he_create(ght_hash_table_t *p_ht, void *p_data, unsigned int i_key_size, const void *p_key_data);
-static inline void              he_finalize(ght_hash_table_t *p_ht, ght_hash_entry_t *p_he);
+static inline ght_hash_entry_t *he_create(void *p_data, unsigned int i_key_size, const void *p_key_data);
+static inline void              he_finalize(ght_hash_entry_t *p_he);
 
 /* --- private methods --- */
 
@@ -166,13 +166,13 @@ static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uin
 }
 
 /* Free a chain of entries (in a bucket) */
-static inline void free_entry_chain(ght_hash_table_t *p_ht, ght_hash_entry_t *p_entry)
+static inline void free_entry_chain(ght_hash_entry_t *p_entry)
 {
 	ght_hash_entry_t *p_e = p_entry;
 
 	while (p_e) {
 		ght_hash_entry_t *p_e_next = p_e->p_next;
-		he_finalize(p_ht, p_e);
+		he_finalize(p_e);
 		p_e = p_e_next;
 	}
 }
@@ -188,7 +188,7 @@ static inline void hk_fill(ght_hash_key_t *p_hk, int i_size, const void *p_key)
 }
 
 /* Create an hash entry */
-static inline ght_hash_entry_t *he_create(ght_hash_table_t *p_ht, void *p_data,
+static inline ght_hash_entry_t *he_create(void *p_data,
         unsigned int i_key_size, const void *p_key_data)
 {
 	ght_hash_entry_t *p_he;
@@ -227,7 +227,7 @@ static inline ght_hash_entry_t *he_create(ght_hash_table_t *p_ht, void *p_data,
 }
 
 /* Finalize (free) a hash entry */
-static inline void he_finalize(ght_hash_table_t *p_ht, ght_hash_entry_t *p_he)
+static inline void he_finalize(ght_hash_entry_t *p_he)
 {
 	assert(p_he);
 
@@ -382,7 +382,7 @@ int ght_insert(ght_hash_table_t *p_ht,
 		/* Don't insert if the key is already present. */
 		return -1;
 	}
-	if (!(p_entry = he_create(p_ht, p_entry_data,
+	if (!(p_entry = he_create(p_entry_data,
 	                          i_key_size, p_key_data))) {
 		return -2;
 	}
@@ -420,7 +420,7 @@ int ght_insert(ght_hash_table_t *p_ht,
 		remove_from_chain(p_ht, l_key, p); /* To allow it to be reinserted in fn_bucket_free */
 		p_ht->fn_bucket_free(p->p_data, p->key.p_key);
 
-		he_finalize(p_ht, p);
+		he_finalize(p);
 	} else {
 		p_ht->p_nr[l_key]++;
 
@@ -535,7 +535,7 @@ void *ght_remove(ght_hash_table_t *p_ht,
 #endif /* NDEBUG */
 
 		p_ret = p_out->p_data;
-		he_finalize(p_ht, p_out);
+		he_finalize(p_out);
 	}
 	/* else: UNLOCK: p_ht->pp_entries[l_key] */
 
@@ -632,7 +632,7 @@ void ght_finalize(ght_hash_table_t *p_ht)
 	if (p_ht->pp_entries) {
 		/* For each bucket, free all entries */
 		for (i = 0; i < p_ht->i_size; i++) {
-			free_entry_chain(p_ht, p_ht->pp_entries[i]);
+			free_entry_chain(p_ht->pp_entries[i]);
 			p_ht->pp_entries[i] = NULL;
 		}
 		cf_free(p_ht->pp_entries);
@@ -685,7 +685,7 @@ void ght_rehash(ght_hash_table_t *p_ht, size_t i_size)
 	for (i = 0; i < p_ht->i_size; i++) {
 		if (p_ht->pp_entries[i]) {
 			/* Delete the entries in the bucket */
-			free_entry_chain(p_ht, p_ht->pp_entries[i]);
+			free_entry_chain(p_ht->pp_entries[i]);
 			p_ht->pp_entries[i] = NULL;
 		}
 	}
