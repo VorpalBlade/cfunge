@@ -57,7 +57,7 @@
 #define FUNGEHANDPRINT 0x4346554e
 // Version: 0.0.1
 // Version: 0.0.1
-#define APPVERSION  "0.0.1"
-#define FUNGEVERSION 0x001
+#define APPVERSION  "0.1.0"
+#define FUNGEVERSION 10
 
 #endif
