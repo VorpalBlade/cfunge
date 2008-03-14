@@ -22,7 +22,11 @@
 #include "../../stack.h"
 
 // This was more or less taken from CCBI
-static FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y) {
+
+static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y) __attribute__((const));
+
+static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
+{
 	x /= y;
 	if (x < 0)
 		return x - 1;

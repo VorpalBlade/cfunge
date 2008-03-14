@@ -28,6 +28,7 @@
 #include "NULL/NULL.h"
 #include "ROMA/ROMA.h"
 #include "MODU/MODU.h"
+#include "REFC/REFC.h"
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
@@ -40,13 +41,16 @@ typedef struct {
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
+// NOTE: Keep sorted
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
-	// NULL
-	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
-	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
+	// NULL
+	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
+	// REFC - Referenced Cells Extension
+	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR" },
+	// ROMA - Roman Numerals
+	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
 };
