@@ -41,7 +41,7 @@ typedef struct {
 
 
 typedef struct {
-	size_t         size;
+	size_t         size;     /**< This is number of elements in stacks. */
 	size_t         current;  /**< Top stack and current stack */
 	fungeStack   * stacks[]; /**< Array of pointers to stacks */
 } fungeStackStack;

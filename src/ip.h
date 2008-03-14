@@ -58,8 +58,14 @@ typedef struct {
 	instructionPointer* entries;
 } ipList;
 
+/**
+ * Create a new instruction pointer.
+ */
 extern instructionPointer * ipCreate(fungeStackStack * stackstack) __attribute__((malloc,nonnull,warn_unused_result));
-extern void                 ipFree(instructionPointer * restrict ip);
+/**
+ * Free an instruction pointer.
+ */
+extern void ipFree(instructionPointer * restrict ip);
 
 /**
  * steps let you take several steps at once. You can also take negative

@@ -42,6 +42,9 @@ struct _fungeSpace {
 	size_t         allocarrayCurrent;
 };
 
+/**
+ * Check if position is in range.
+ */
 static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position) __attribute__((pure));
 
 static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position)
@@ -122,8 +125,13 @@ fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict 
 		return *result;
 }
 
+/**
+ * Allocate space for a cell.
+ * Allocates in chunks of FUNGESPACEALLOCCHUNK.
+ */
 static inline FUNGEDATATYPE*
-fungeSpaceInternalAlloc(fungeSpace * restrict me, FUNGEDATATYPE value) {
+fungeSpaceInternalAlloc(fungeSpace * restrict me, FUNGEDATATYPE value)
+{
 	if (me->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
 		me->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));

@@ -37,9 +37,12 @@ typedef enum { stdver98 = 0, stdver93, stdver08 } standardVersion;
 // Affects space processing.
 extern standardVersion SettingCurrentStandard;
 
+// Level of trace output
 extern uint_fast16_t SettingTraceLevel;
+// Should we enable warnings
 extern bool SettingWarnings;
 
+// Should fingerprints be enabled
 extern bool SettingEnableFingerprints;
 
 

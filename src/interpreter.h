@@ -39,6 +39,7 @@ extern char **fungeargv;
 extern int fungeargc;
 
 // Functions
+
 /**
  * Run instruction.
  */
