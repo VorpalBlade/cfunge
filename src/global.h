@@ -32,6 +32,7 @@
 #endif
 
 #include <support.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
 
@@ -43,6 +44,8 @@ typedef int_fast64_t FUNGEDATATYPE;
 // And of vector values
 typedef int_fast64_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRIdFAST64
+// FIXME: Will long long always be 64-bit?
+#  define ABS(x) llabs(x)
 #else
 // The type of the data cells
 typedef int32_t FUNGEDATATYPE;
@@ -50,7 +53,7 @@ typedef int32_t FUNGEDATATYPE;
 // And of vector values
 typedef int32_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRId32
-
+#  define ABS(x) abs(x)
 #endif
 
 // Handprint: CFUN

@@ -63,6 +63,8 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 /**
  * Create an opcode stack.
  */
+static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,warn_unused_result));
+
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)

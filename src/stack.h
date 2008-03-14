@@ -33,46 +33,106 @@ struct _instructionPointer;
 #endif
 
 typedef struct {
-	// This is current size of the array entries
-	size_t         size;
-	// This is current top item in stack (may not be last item)
-	// Note: One-indexed, as 0 = empty stack.
-	size_t         top;
+	size_t         size; /**< This is current size of the array entries */
+	size_t         top;  /**< This is current top item in stack (may not be last item).
+	                          Note: One-indexed, as 0 = empty stack. */
 	FUNGEDATATYPE *entries;
 } fungeStack;
 
 
 typedef struct {
 	size_t         size;
-	// Top stack and current stack
-	size_t         current;
-	// Array of pointers to stacks
-	fungeStack   * stacks[];
+	size_t         current;  /**< Top stack and current stack */
+	fungeStack   * stacks[]; /**< Array of pointers to stacks */
 } fungeStackStack;
 
+/**
+ * Create a new stack.
+ */
+extern fungeStack * StackCreate(void) __attribute__((malloc,warn_unused_result));
+/**
+ * Destroy a stack.
+ */
+extern void StackFree(fungeStack * stack);
 
-extern fungeStack  * StackCreate(void) __attribute__((malloc,warn_unused_result));
-extern void          StackFree(fungeStack * stack);
-
-extern void          StackPush(FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
+/**
+ * Push a item on the stack
+ */
+extern void StackPush(FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
+/**
+ * Pop item from stack.
+ */
 extern FUNGEDATATYPE StackPop(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
-extern void          StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
-extern void          StackPopNDiscard(fungeStack * stack, size_t n) __attribute__((nonnull));
+/**
+ * Pop one item and discard it.
+ */
+extern void StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
+/**
+ * Pop a number of items and discard them.
+ */
+extern void StackPopNDiscard(fungeStack * stack, size_t n) __attribute__((nonnull));
+/**
+ * Stack peek.
+ */
 extern FUNGEDATATYPE StackPeek(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 
-extern void          StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) __attribute__((nonnull));
-extern fungeVector   StackPopVector(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
-extern void          StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) __attribute__((nonnull));
-extern char *        StackPopString(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
-extern char *        StackPopSizedString(size_t len, fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+/**
+ * Push a vector.
+ */
+extern void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) __attribute__((nonnull));
+/**
+ * Pop a vector.
+ */
+extern fungeVector StackPopVector(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+/**
+ * Push a null-terminated string to a 0"gnirts".
+ */
+extern void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) __attribute__((nonnull));
+/**
+ * Pop a 0"gnirts" and return a null-terminated string
+ */
+extern char * StackPopString(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+/**
+ * Pop a fixed number of chars. Return as null-terminated string.
+ */
+extern char * StackPopSizedString(size_t len, fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 #define StackClear(stack) { stack->top = 0; }
-extern void          StackDupTop(fungeStack * stack) __attribute__((nonnull));
-extern void          StackSwapTop(fungeStack * stack) __attribute__((nonnull));
+/**
+ * Duplicate top element of the stack.
+ */
+extern void StackDupTop(fungeStack * stack) __attribute__((nonnull));
+/**
+ * Swap the top two elements of the stack.
+ */
+extern void StackSwapTop(fungeStack * stack) __attribute__((nonnull));
 
-extern fungeStackStack * StackStackCreate(void) __attribute__((warn_unused_result));
+//
+// Stack-stack functions
+//
 
-extern bool StackStackBegin(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result));
-extern bool StackStackEnd(struct _instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result));
+/**
+ * Create a new stack-stack
+ */
+extern fungeStackStack * StackStackCreate(void) __attribute__((malloc,warn_unused_result));
+
+/**
+ * Begin a new stack on the stack stack.
+ * count is how many arguments to copy over.
+ */
+extern bool StackStackBegin(struct _instructionPointer * restrict ip,
+                            fungeStackStack ** restrict me,
+                            FUNGEDATATYPE count,
+                            const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result));
+/**
+ * End a stack on the stack-stack
+ * count is how many items to copy over.
+ */
+extern bool StackStackEnd(struct _instructionPointer * restrict ip,
+                          fungeStackStack ** restrict me,
+                          FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result));
+/**
+ * Transfer items from one stack to another (not in order).
+ */
 extern void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)  __attribute__((nonnull));
 
 #endif

@@ -51,11 +51,8 @@ static void FingerMODUUnsignedResult(instructionPointer * ip) {
 	x = StackPop(ip->stack);
 	if (y) {
 		FUNGEDATATYPE r = x % y;
-		if (r < 0) {
-			// http://graphics.stanford.edu/~seander/bithacks.html#IntegerAbs
-			FUNGEDATATYPE mask = y >> (sizeof(FUNGEDATATYPE)*8 - 1);
-			r += (y + mask) ^ mask;
-		}
+		if (r < 0)
+			r = ABS(r);
 		StackPush(r, ip->stack);
 	} else {
 		StackPush(0, ip->stack);

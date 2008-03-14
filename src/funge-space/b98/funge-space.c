@@ -176,12 +176,12 @@ static inline void
 fungeSpaceWrapNoDelta(const fungeSpace * restrict me, fungePosition * restrict position)
 {
 	if (position->x < me->topLeftCorner.x)
-		position->x = me->bottomRightCorner.x - abs(position->x);
+		position->x = me->bottomRightCorner.x - ABS(position->x);
 	else
 		position->x = position->x % me->bottomRightCorner.x;
 
 	if (position->y < me->topLeftCorner.y)
-		position->y = me->bottomRightCorner.y - abs(position->y);
+		position->y = me->bottomRightCorner.y - ABS(position->y);
 	else
 		position->y = position->y % me->bottomRightCorner.y;
 }
