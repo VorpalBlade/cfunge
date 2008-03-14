@@ -169,7 +169,7 @@ fungeSpaceSetOff(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosit
 	fungeSpaceSet(me, value, &tmp);
 }
 
-#define ABS(i) ((i > 0) ? i : i)
+#define ABS(i) ((i < 0) ? -i : i)
 
 #if 0
 static void

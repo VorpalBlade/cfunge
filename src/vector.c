@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#define ABS(i) ((i > 0) ? i : i)
+#define ABS(i) ((i < 0) ? -i : i)
 
 bool VectorIsCardinal(const fungeVector * v)
 {

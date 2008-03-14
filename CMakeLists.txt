@@ -1,3 +1,21 @@
+# cfunge - a conformant Befunge93/98/08 interpreter in C.
+# Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at the proxy's option) any later version. Arvid Norlander is a
+# proxy who can decide which future versions of the GNU General Public
+# License can be used.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 PROJECT(CFUNGE)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
@@ -59,16 +77,25 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	ADD_DEFINITIONS(-Wmissing-include-dirs)
 	ADD_DEFINITIONS(-Wunused-function -Wunused-label -Wunused-value -Wunused-variable)
 	ADD_DEFINITIONS(-Wwrite-strings)
-	# Maintainer flags.
+	# Maintainer flags. Gives lots of false positives.
 	#ADD_DEFINITIONS(-Wunreachable-code -fno-inline -fno-inline-functions-called-once -fno-inline-functions -fkeep-inline-functions -Wno-inline)
-	ADD_DEFINITIONS(-Wunreachable-code)
+	# Even more false positives
+	#ADD_DEFINITIONS(-Wunreachable-code)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
+
 # Feature test macros for glibc headers.
 ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
+
 IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	REMOVE_DEFINITIONS(-O2)
 	ADD_DEFINITIONS(-DGC_DEBUG)
+ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+	ADD_DEFINITIONS(-fno-ident)
+	ADD_DEFINITIONS(-fvisibility=hidden)
+	REMOVE_DEFINITIONS(-DGC_DEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+
+
 
 ADD_DEFINITIONS(-I${BOEHM_INCLUDE_DIR})
 
@@ -84,5 +111,5 @@ FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR} lib/libghthash/*.c src/*.
 ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
 # need to link to some other libraries ? just add them here
-TARGET_LINK_LIBRARIES(cfunge ${BoehmLinkFlags} cord)
 SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
+TARGET_LINK_LIBRARIES(cfunge ${BoehmLinkFlags} cord)
