@@ -66,12 +66,15 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 			StackPush(opcode, ip->stack);
 		}
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
-		if (!SettingEnableFingerprints)
+		if (!SettingEnableFingerprints) {
 			ipReverse(ip);
-		else if (ip->fingerOpcodes && ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top - 1] != NULL)
-			ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top - 1](ip);
-		else
-			ipReverse(ip);
+		} else {
+			int_fast8_t entry = (char)opcode - 'A';
+			if ((ip->fingerOpcodes[entry]->top > 0) && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1])
+				ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
+			else
+				ipReverse(ip);
+		}
 	} else {
 		switch (opcode) {
 			case ' ':

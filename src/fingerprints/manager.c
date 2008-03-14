@@ -27,6 +27,7 @@
 
 #include "NULL/NULL.h"
 #include "ROMA/ROMA.h"
+#include "MODU/MODU.h"
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
@@ -44,6 +45,8 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
 	// ROMA - Roman Numerals
 	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
+	// MODU - Modulo Arithmetic
+	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
 };
