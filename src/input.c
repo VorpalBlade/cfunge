@@ -31,7 +31,7 @@ static char*  lastlineCurrent = NULL;
 
 static void getTheLine(void)
 {
-	if (!lastline || !lastlineCurrent || (lastlineCurrent == '\0')) {
+	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
 		cf_getline(&lastline, &linelength, stdin);
 		lastlineCurrent = lastline;
 	}

@@ -23,7 +23,7 @@
 #include "vector.h"
 #include "interpreter.h"
 #include "settings.h"
-#include "manager.h"
+#include "fingerprints/manager.h"
 #include "stack.h"
 #include "funge-space/funge-space.h"
 

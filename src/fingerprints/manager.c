@@ -61,10 +61,10 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  **************************/
 
 static fungeOpcodeStack* CreateOpcodeStack(void) {
-	fungeOpcodeStack * tmp = cf_malloc(sizeof(fungeOpcodeStack));
+	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
 		return NULL;
-	tmp->entries = cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(fingerprintOpcode));
+	tmp->entries = (fingerprintOpcode*)cf_malloc(ALLOCCHUNKSIZE * sizeof(fingerprintOpcode));
 	if (tmp->entries == NULL)
 		return NULL;
 	tmp->size = ALLOCCHUNKSIZE;
@@ -77,7 +77,7 @@ bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
-		stack->entries = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
+		stack->entries = (fingerprintOpcode*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
 		if (!stack->entries)
 			return false;
 		stack->entries[stack->top] = func;
