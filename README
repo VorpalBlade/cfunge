@@ -12,3 +12,4 @@ with some exceptions:
  * TRDS - Exceedingly complex and intrusive.
  * MODE - Intrusive into IP handling.
  * WIND - Too complex to implement.
+ * IMAP - Too intrusive.

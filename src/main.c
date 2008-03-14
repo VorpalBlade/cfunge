@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	GC_all_interior_pointers = 1;
 	GC_INIT();
 
-	while ((opt = getopt(argc, argv, "+fhs:t:Vw")) != -1) {
+	while ((opt = getopt(argc, argv, "+fhs:t:VW")) != -1) {
 		switch (opt) {
 			case 'f':
 				SettingEnableFingerprints = false;

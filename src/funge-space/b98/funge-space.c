@@ -23,6 +23,7 @@
 #include "../../../lib/libghthash/ght_hash_table.h"
 
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #define FUNGESPACEINITIALSIZE 200000
@@ -171,17 +172,16 @@ fungeSpaceSetOff(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosit
 
 #ifdef BROKEN
 
-#define ABS(i) ((i < 0) ? -i : i)
 static inline void
 fungeSpaceWrapNoDelta(const fungeSpace * restrict me, fungePosition * restrict position)
 {
 	if (position->x < me->topLeftCorner.x)
-		position->x = me->bottomRightCorner.x - ABS(position->x);
+		position->x = me->bottomRightCorner.x - abs(position->x);
 	else
 		position->x = position->x % me->bottomRightCorner.x;
 
 	if (position->y < me->topLeftCorner.y)
-		position->y = me->bottomRightCorner.y - ABS(position->y);
+		position->y = me->bottomRightCorner.y - abs(position->y);
 	else
 		position->y = position->y % me->bottomRightCorner.y;
 }

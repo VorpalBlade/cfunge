@@ -21,12 +21,12 @@
 #include "vector.h"
 
 #include <stdint.h>
-
-#define ABS(i) ((i < 0) ? -i : i)
+#include <stdlib.h>
 
 bool VectorIsCardinal(const fungeVector * v)
 {
-	if (ABS(v->x) > 1 || ABS(v->y) > 1)
+	// GCC makes abs a builtin.
+	if (abs(v->x) > 1 || abs(v->y) > 1)
 		return false;
 	if ((v->x) && (v->y))
 		return false;

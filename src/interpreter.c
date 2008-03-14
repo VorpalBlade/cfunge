@@ -55,6 +55,7 @@ static instructionPointer *IP = NULL;
 #define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
 
 void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) {
+	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
 			ip->mode = ipmCODE;
@@ -65,6 +66,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 			ip->StringLastWasSpace = true;
 			StackPush(opcode, ip->stack);
 		}
+	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (!SettingEnableFingerprints) {
 			ipReverse(ip);
@@ -75,6 +77,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 			else
 				ipReverse(ip);
 		}
+	// Ok a core instruction.
+	// Find what one and execute it.
 	} else {
 		switch (opcode) {
 			case ' ':
@@ -108,6 +112,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				break;
 			case 'j':
 				{
+					// Currently need to do it like this or wrapping
+					// won't work for j.
 					FUNGEDATATYPE jumps = StackPop(ip->stack);
 					if (jumps != 0) {
 						fungeVector tmp;
@@ -123,7 +129,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				}
 			case '?':
 				{
-					// FIXME: May not be uniform
+					// May not be perfectly uniform.
+					// If this matter for you, contact me (with a patch).
 					long int rnd = random() % 4;
 					assert((rnd >= 0) && (rnd <= 3));
 					switch (rnd) {
@@ -436,7 +443,9 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 
 			default:
 				if (SettingWarnings)
-					fprintf(stderr, "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n", ip->position.x, ip->position.y, (char)opcode, opcode);
+					fprintf(stderr,
+					        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+					        ip->position.x, ip->position.y, (char)opcode, opcode);
 				ipReverse(ip);
 		}
 	}

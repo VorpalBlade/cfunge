@@ -24,7 +24,13 @@
 #include "global.h"
 #include <stdbool.h>
 
-extern bool          input_getint(FUNGEDATATYPE * value);
-extern FUNGEDATATYPE input_getchar(void);
+/**
+ * For use in input instruction &
+ */
+extern bool input_getint(FUNGEDATATYPE * value) __attribute__((nonnull,warn_unused_result));
+/**
+ * For use in input instruction ~
+ */
+extern FUNGEDATATYPE input_getchar(void) __attribute__((warn_unused_result));
 
 #endif

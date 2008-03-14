@@ -58,7 +58,7 @@ typedef struct {
 	instructionPointer* entries;
 } ipList;
 
-extern instructionPointer * ipCreate(fungeStackStack * stackstack) __attribute__((nonnull,warn_unused_result));
+extern instructionPointer * ipCreate(fungeStackStack * stackstack) __attribute__((malloc,nonnull,warn_unused_result));
 extern void                 ipFree(instructionPointer * restrict ip);
 
 /**
@@ -70,7 +70,7 @@ extern void                 ipFree(instructionPointer * restrict ip);
 extern void ipForward(int_fast64_t steps, instructionPointer * restrict ip) __attribute__((nonnull));
 
 /**
- * Mirror IP direction
+ * Mirror IP direction.
  */
 extern void ipReverse(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull));

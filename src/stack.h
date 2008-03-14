@@ -51,7 +51,7 @@ typedef struct {
 } fungeStackStack;
 
 
-extern fungeStack  * StackCreate(void) __attribute__((warn_unused_result));
+extern fungeStack  * StackCreate(void) __attribute__((malloc,warn_unused_result));
 extern void          StackFree(fungeStack * stack);
 
 extern void          StackPush(FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
