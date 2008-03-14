@@ -32,7 +32,7 @@
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
-#define ALLOCCHUNKSIZE 1
+#define ALLOCCHUNKSIZE 2
 
 typedef struct {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint */
@@ -41,7 +41,7 @@ typedef struct {
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
-// NOTE: Keep sorted
+// NOTE: Keep sorted (apart from ending 0 entry).
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
@@ -60,6 +60,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  * Opcode Stack functions *
  **************************/
 
+/**
+ * Create an opcode stack.
+ */
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
@@ -90,7 +93,10 @@ bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func
 	return true;
 }
 
-static void OpcodeStackPop(fungeOpcodeStack * stack) {
+/**
+ * Pop an entry from an opcode stack.
+ */
+static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
 	if (stack->top == 0) {
 		return;
 	} else {
@@ -108,7 +114,10 @@ void ManagerInit(instructionPointer * ip) {
 	}
 }
 
-// Return value is index
+/**
+ * Return value is index into ImplementedFingerprints array.
+ * -1 means not found.
+ */
 static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint) {
 	int i = 0;
 	bool found = false;

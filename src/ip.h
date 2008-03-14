@@ -36,6 +36,8 @@ typedef enum { ipmCODE = 0, ipmSTRING } ipMode;
 #ifndef fungeOpcodeStackDefined
 struct _fungeOpcodeStack;
 #endif
+
+// This is for size of opcode array.
 #define FINGEROPCODECOUNT 26
 
 typedef struct _instructionPointer {
@@ -44,9 +46,8 @@ typedef struct _instructionPointer {
 	ipMode                     mode;
 	bool                       StringLastWasSpace;
 	fungePosition              storageOffset;
-	// Top stack.
-	fungeStack               * stack;
-	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];
+	fungeStack               * stack;               /**< Pointer to top stack. */
+	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
 	fungeStackStack          * stackstack;
 } instructionPointer;
 #define ipDEFINED 1
@@ -60,9 +61,17 @@ typedef struct {
 extern instructionPointer * ipCreate(fungeStackStack * stackstack) __attribute__((nonnull,warn_unused_result));
 extern void                 ipFree(instructionPointer * restrict ip);
 
-// steps let you take several steps at once.
+/**
+ * steps let you take several steps at once. You can also take negative
+ * count of steps.
+ * However if you will wrap, you probably want to set a temp delta instead and
+ * take one step for now.
+ */
 extern void ipForward(int_fast64_t steps, instructionPointer * restrict ip) __attribute__((nonnull));
 
+/**
+ * Mirror IP direction
+ */
 extern void ipReverse(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull));

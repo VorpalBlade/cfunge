@@ -45,23 +45,31 @@ typedef struct _fungeOpcodeStack {
 /**
  * Loads a fingerprint into IP. Should use OpcodeStackAdd!
  * Returs true if sucessful, otherwise false.
- * MUST be a clean state if it fails.
+ * Should leave things in a clean state if it fails.
  * Note, opcodes can be removed by manager at any point without
  * prior warning.
  */
 typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
- * Add a opcode.
+ * Add func to the correct opcode in ip.
  */
 extern bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) __attribute__((nonnull,warn_unused_result));
 
-
-// A-Z
-extern fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
-
+/**
+ * Initialize stacks for IP
+ */
 extern void ManagerInit(instructionPointer * ip) __attribute__((nonnull));
 
+/**
+ * Try to load fingerprint.
+ * Returns false if it failed (should reflect then), otherwise true.
+ */
 extern bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
+
+/**
+ * Try to unload fingerprint.
+ * Returns false if it failed (should reflect then), otherwise true.
+ */
 extern bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
 
 #endif

@@ -27,12 +27,14 @@
 #include <stdlib.h>
 #include <errno.h>
 
+// This function is from Gnulib, with some changes
 size_t cf_strnlen(const char *string, size_t maxlen)
 {
 	const char *end = memchr(string, '\0', maxlen);
 	return end ? (size_t) (end - string) : maxlen;
 }
 
+// This function is from Gnulib, with some changes
 char * cf_strndup(char const *string, size_t n)
 {
 	if (!string || !*string)

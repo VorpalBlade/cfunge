@@ -39,8 +39,14 @@ extern char **fungeargv;
 extern int fungeargc;
 
 // Functions
+/**
+ * Run instruction.
+ */
 extern void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
 
+/**
+ * Should only be called from main.c
+ */
 extern void interpreterRun(const char *filename) __attribute__((noreturn));
 
 #endif

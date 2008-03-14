@@ -169,11 +169,11 @@ fungeSpaceSetOff(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosit
 	fungeSpaceSet(me, value, &tmp);
 }
 
-#define ABS(i) ((i < 0) ? -i : i)
+#ifdef BROKEN
 
-#if 0
-static void
-fungeSpaceWrapNoDelta(fungeSpace * me, fungePosition * position)
+#define ABS(i) ((i < 0) ? -i : i)
+static inline void
+fungeSpaceWrapNoDelta(const fungeSpace * restrict me, fungePosition * restrict position)
 {
 	if (position->x < me->topLeftCorner.x)
 		position->x = me->bottomRightCorner.x - ABS(position->x);
@@ -190,9 +190,11 @@ fungeSpaceWrapNoDelta(fungeSpace * me, fungePosition * position)
 void
 fungeSpaceWrap(const fungeSpace * restrict me, fungePosition * restrict position, const fungeVector * restrict delta)
 {
-// 	if (VectorIsCardinal(delta))
-// 		fungeSpaceWrapNoDelta(me, position);
-// 	else {
+#ifdef BROKEN
+	if (VectorIsCardinal(delta))
+		fungeSpaceWrapNoDelta(me, position);
+	else {
+#endif
 		if (!fungeSpaceInRange(me, position)) {
 			do {
 				position->x -= delta->x;
@@ -201,7 +203,9 @@ fungeSpaceWrap(const fungeSpace * restrict me, fungePosition * restrict position
 				position->x += delta->x;
 				position->y += delta->y;
 		}
-// 	}
+#ifdef BROKEN
+	}
+#endif
 }
 
 

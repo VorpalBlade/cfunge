@@ -38,26 +38,26 @@
 
 #ifdef USE64
 // The type of the data cells
-#  define FUNGEDATATYPE int_fast64_t
+typedef int_fast64_t FUNGEDATATYPE;
 #  define FUNGEDATAPRI PRIdFAST64
 // And of vector values
-#  define FUNGEVECTORTYPE int_fast64_t
+typedef int_fast64_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRIdFAST64
 #else
 // The type of the data cells
-#  define FUNGEDATATYPE int32_t
+typedef int32_t FUNGEDATATYPE;
 #  define FUNGEDATAPRI PRId32
 // And of vector values
-#  define FUNGEVECTORTYPE int32_t
+typedef int32_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRId32
 
 #endif
 
 // Handprint: CFUN
 #define FUNGEHANDPRINT 0x4346554e
-// Version: 0.0.1
-// Version: 0.0.1
+// Version, for -V.
 #define APPVERSION  "0.1.0"
+// For y instruction.
 #define FUNGEVERSION 10
 
 #endif

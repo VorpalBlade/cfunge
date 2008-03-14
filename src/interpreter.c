@@ -423,11 +423,13 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				}
 
 			case '@':
+				fflush(stdout);
 				exit(0);
 				break;
 			case 'q':
 				{
 					FUNGEDATATYPE a = StackPop(ip->stack);
+					fflush(stdout);
 					exit((int)a);
 					break;
 				}
