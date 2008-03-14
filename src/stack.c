@@ -109,7 +109,6 @@ void StackPopNDiscard(fungeStack * stack, size_t n)
 }
 
 
-
 FUNGEDATATYPE StackPeek(fungeStack * stack)
 {
 	if (stack->top == 0) {
@@ -118,7 +117,6 @@ FUNGEDATATYPE StackPeek(fungeStack * stack)
 		return stack->entries[stack->top - 1];
 	}
 }
-
 
 
 /********************************
@@ -173,11 +171,6 @@ char *StackPopSizedString(size_t len, fungeStack * stack)
 /***************
  * Other stuff *
  ***************/
-void StackClear(fungeStack * stack)
-{
-	stack->top = 0;
-}
-
 void StackDupTop(fungeStack * stack)
 {
 	// TODO: Optimize instead of doing it this way
@@ -200,10 +193,11 @@ void StackSwapTop(fungeStack * stack)
 }
 
 
-
+#ifndef NDEBUG
 /*************
  * Debugging *
  *************/
+
 
 // For use with call in gdb
 void StackDump(fungeStack * stack) __attribute__((unused));
@@ -215,6 +209,7 @@ void StackDump(fungeStack * stack)
 	fputs("%\n", stderr);
 }
 
+#endif
 
 
 /****************

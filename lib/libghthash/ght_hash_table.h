@@ -83,7 +83,7 @@ extern "C"
 #endif
 
 // Use macros for some stuff.
-#define USE_MACROS
+#define GHT_USE_MACROS
 
 	/** unsigned 32 bit integer. */
 	typedef uint32_t ght_uint32_t;
@@ -256,7 +256,7 @@ extern "C"
 	 */
 	void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_bucket_free_callback_t fn);
 
-#ifdef USE_MACROS
+#ifdef GHT_USE_MACROS
 #  define ght_size(p_ht) (p_ht->i_items)
 #else
 	/**
@@ -269,7 +269,7 @@ extern "C"
 	size_t ght_size(ght_hash_table_t *p_ht);
 #endif
 
-#ifdef USE_MACROS
+#ifdef GHT_USE_MACROS
 #  define ght_table_size(p_ht) (p_ht->i_size)
 #else
 	/**
@@ -316,9 +316,9 @@ extern "C"
 	 *
 	 * @return 0 if the element could be inserted, -1 otherwise.
 	 */
-	int ght_insert(ght_hash_table_t *p_ht,
-	               void *p_entry_data,
-	               unsigned int i_key_size, const void *p_key_data);
+	int ght_insert(ght_hash_table_t * restrict p_ht,
+	               void * restrict p_entry_data,
+	               unsigned int i_key_size, const void * restrict p_key_data);
 
 	/**
 	 * Replace an entry in the hash table. This function will return an
@@ -333,9 +333,9 @@ extern "C"
 	 *
 	 * @return a pointer to the <I>old</I> value or NULL if the operation failed.
 	 */
-	void *ght_replace(ght_hash_table_t *p_ht,
-	                  void *p_entry_data,
-	                  unsigned int i_key_size, const void *p_key_data);
+	void *ght_replace(ght_hash_table_t * restrict p_ht,
+	                  void * restrict p_entry_data,
+	                  unsigned int i_key_size, const void * restrict p_key_data);
 
 
 	/**
@@ -348,8 +348,8 @@ extern "C"
 	 *
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
-	void *ght_get(ght_hash_table_t *p_ht,
-	              unsigned int i_key_size, const void *p_key_data);
+	void *ght_get(ght_hash_table_t * restrict p_ht,
+	              unsigned int i_key_size, const void * restrict p_key_data);
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -361,8 +361,8 @@ extern "C"
 	 *
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
-	void *ght_remove(ght_hash_table_t *p_ht,
-	                 unsigned int i_key_size, const void *p_key_data);
+	void *ght_remove(ght_hash_table_t * restrict p_ht,
+	                 unsigned int i_key_size, const void * restrict p_key_data);
 
 	/**
 	 * Return the first entry in the hash table. This function should be
@@ -535,6 +535,7 @@ extern "C"
 	 */
 	ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key);
 
+#if 0
 	/**
 	 * Rotating hash. Not so good hash function. This was found in a
 	 * DrDobbs article, see http://burtleburtle.net/bob/hash/doobs.html
@@ -546,6 +547,7 @@ extern "C"
 	 * @see ght_one_at_a_time_hash(), ght_crc_hash()
 	 */
 	ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key);
+#endif
 
 	/**
 	 * CRC32 hash. CRC32 hash is a good hash function. This came from Dru

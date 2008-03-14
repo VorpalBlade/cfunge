@@ -23,6 +23,7 @@
 #include "../../vector.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 #define ALLOCCHUNK 5
 static fungePosition *references = NULL;
@@ -59,11 +60,8 @@ static void FingerREFCDereference(instructionPointer * ip) {
 	StackPushVector(&references[ref], ip->stack);
 }
 
-static bool InitReferences(void) {
-	if (references) {
-		fputs("REFC: InitReferences called twice??\n", stderr);
-		return true;
-	}
+static inline bool InitReferences(void) {
+	assert(!references);
 	references = cf_malloc(ALLOCCHUNK * sizeof(fungePosition));
 	if (!references)
 		return false;

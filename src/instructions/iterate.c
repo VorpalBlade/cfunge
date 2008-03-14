@@ -58,7 +58,7 @@ void RunIterate(instructionPointer * ip)
 			fungePosition oldpos = ip->position;
 
 			while (iters--)
-				RunInstruction(kInstr, ip);
+				ExecuteInstruction(kInstr, ip);
 			if (olddelta.x == ip->delta.x
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x

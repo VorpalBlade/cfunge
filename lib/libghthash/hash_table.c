@@ -351,7 +351,7 @@ void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_
 	}
 }
 
-#ifndef USE_MACROS
+#ifndef GHT_USE_MACROS
 /* Get the number of items in the hash table */
 size_t ght_size(ght_hash_table_t *p_ht)
 {
@@ -366,9 +366,9 @@ size_t ght_table_size(ght_hash_table_t *p_ht)
 #endif
 
 /* Insert an entry into the hash table */
-int ght_insert(ght_hash_table_t *p_ht,
-               void *p_entry_data,
-               unsigned int i_key_size, const void *p_key_data)
+int ght_insert(ght_hash_table_t * restrict p_ht,
+               void * restrict p_entry_data,
+               unsigned int i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_entry;
 	ght_uint32_t l_key;
@@ -444,8 +444,8 @@ int ght_insert(ght_hash_table_t *p_ht,
 }
 
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-void *ght_get(ght_hash_table_t *p_ht,
-              unsigned int i_key_size, const void *p_key_data)
+void *ght_get(ght_hash_table_t * restrict p_ht,
+              unsigned int i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -468,9 +468,9 @@ void *ght_get(ght_hash_table_t *p_ht,
 }
 
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-void *ght_replace(ght_hash_table_t *p_ht,
-                  void *p_entry_data,
-                  unsigned int i_key_size, const void *p_key_data)
+void *ght_replace(ght_hash_table_t * restrict p_ht,
+                  void * restrict p_entry_data,
+                  unsigned int i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -501,8 +501,8 @@ void *ght_replace(ght_hash_table_t *p_ht,
 
 /* Remove an entry from the hash table. The removed entry, or NULL, is
    returned (and NOT free'd). */
-void *ght_remove(ght_hash_table_t *p_ht,
-                 unsigned int i_key_size, const void *p_key_data)
+void *ght_remove(ght_hash_table_t * restrict p_ht,
+                 unsigned int i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_out;
 	ght_hash_key_t key;

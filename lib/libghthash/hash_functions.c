@@ -107,6 +107,7 @@ ght_uint32_t ght_crc_hash(ght_hash_key_t *p_key)
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
 
+#if 0
 /* Rotating hash function. */
 ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key)
 {
@@ -121,3 +122,4 @@ ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key)
 
 	return i_hash;
 }
+#endif

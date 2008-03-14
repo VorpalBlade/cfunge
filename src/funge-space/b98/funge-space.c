@@ -41,6 +41,8 @@ struct _fungeSpace {
 	size_t         allocarrayCurrent;
 };
 
+static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position) __attribute__((pure));
+
 static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position)
 {
 	if ((position->x > me->bottomRightCorner.x) || (position->x < me->topLeftCorner.x))
@@ -54,7 +56,11 @@ fungeSpace*
 fungeSpaceCreate(void)
 {
 	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
+	if (!tmp)
+		return NULL;
 	tmp->entries = ght_create(FUNGESPACEINITIALSIZE);
+	if (!tmp->entries)
+		return NULL;
 	//ght_set_heuristics(tmp->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(tmp->entries, true);
 	tmp->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
@@ -115,7 +121,7 @@ fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict 
 		return *result;
 }
 
-static FUNGEDATATYPE*
+static inline FUNGEDATATYPE*
 fungeSpaceInternalAlloc(fungeSpace * restrict me, FUNGEDATATYPE value) {
 	if (me->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
@@ -200,7 +206,7 @@ fungeSpaceWrap(const fungeSpace * restrict me, fungePosition * restrict position
 
 
 bool
-fungeSpaceLoad(fungeSpace * me, const char * filename)
+fungeSpaceLoad(fungeSpace * restrict me, const char * restrict filename)
 {
 	FILE * file;
 	char * line = NULL;

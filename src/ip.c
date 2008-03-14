@@ -28,7 +28,7 @@
 #include "funge-space/funge-space.h"
 
 instructionPointer *
-ipCreate(fungeStackStack *stackstack)
+ipCreate(fungeStackStack * stackstack)
 {
 	instructionPointer * tmp = cf_malloc(sizeof(instructionPointer));
 	if (!tmp)
@@ -49,7 +49,7 @@ ipCreate(fungeStackStack *stackstack)
 }
 
 void
-ipFree(instructionPointer * ip)
+ipFree(instructionPointer * restrict ip)
 {
 	// TODO: Should we free stackstack?
 	ip->stackstack = NULL;
@@ -58,7 +58,7 @@ ipFree(instructionPointer * ip)
 }
 
 
-void ipForward(int_fast64_t steps, instructionPointer * ip)
+void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 {
 	ip->position.x += ip->delta.x * steps;
 	ip->position.y += ip->delta.y * steps;
@@ -67,14 +67,14 @@ void ipForward(int_fast64_t steps, instructionPointer * ip)
 
 
 void
-ipReverse(instructionPointer * ip)
+ipReverse(instructionPointer * restrict ip)
 {
 	ip->delta.x = -ip->delta.x;
 	ip->delta.y = -ip->delta.y;
 }
 
 void
-ipTurnRight(instructionPointer * ip)
+ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 	tmpX        = ip->delta.x;
@@ -83,7 +83,7 @@ ipTurnRight(instructionPointer * ip)
 }
 
 void
-ipTurnLeft(instructionPointer * ip)
+ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 	tmpX        = ip->delta.x;
@@ -92,7 +92,7 @@ ipTurnLeft(instructionPointer * ip)
 }
 
 void
-ipSetDelta(instructionPointer * ip, const ipDelta * delta)
+ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	ip->delta.x = delta->x;
 	ip->delta.y = delta->y;

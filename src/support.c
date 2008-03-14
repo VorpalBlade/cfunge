@@ -58,7 +58,7 @@ char * cf_strndup(char const *string, size_t n)
 #endif
 
 // This function is from Gnulib
-static ssize_t
+static inline ssize_t
 cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 {
 	ssize_t result;

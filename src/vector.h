@@ -31,6 +31,6 @@ typedef struct {
 
 typedef fungePosition fungeVector;
 
-extern bool VectorIsCardinal(const fungeVector * v);
+extern bool VectorIsCardinal(const fungeVector * v) __attribute__((pure));
 
 #endif

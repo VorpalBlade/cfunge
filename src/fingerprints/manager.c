@@ -35,9 +35,9 @@ fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 #define ALLOCCHUNKSIZE 1
 
 typedef struct {
-	FUNGEDATATYPE     fprint;   /**< Fingerprint */
-	fingerprintLoader loader;   /**< Loader function pointer */
-	const char*       opcodes;  /**< Sorted string with all implemented opcodes */
+	const FUNGEDATATYPE     fprint;   /**< Fingerprint */
+	const fingerprintLoader loader;   /**< Loader function pointer */
+	const char*             opcodes;  /**< Sorted string with all implemented opcodes */
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
@@ -60,7 +60,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  * Opcode Stack functions *
  **************************/
 
-static fungeOpcodeStack* CreateOpcodeStack(void) {
+static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
 		return NULL;
@@ -125,9 +125,9 @@ static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint) {
 
 bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
 	ssize_t index = FindFingerPrint(fingerprint);
-	if (index == -1)
+	if (index == -1) {
 		return false;
-	{
+	} else {
 		bool gotLoaded = ImplementedFingerprints[index].loader(ip);
 		if (gotLoaded) {
 			StackPush(fingerprint, ip->stack);

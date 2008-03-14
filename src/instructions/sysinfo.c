@@ -19,7 +19,6 @@
  */
 
 #include "../global.h"
-#include <unistd.h>
 #include "sysinfo.h"
 #include "../interpreter.h"
 #include "../funge-space/funge-space.h"
@@ -27,8 +26,11 @@
 #include "../rect.h"
 #include "../stack.h"
 #include "../ip.h"
+
+#include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
 // Tmp variable used for pushing of stack size.
 static size_t stackSize = 0;
@@ -138,9 +140,11 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeSta
 				}
 				break;
 			}
+#ifndef NDEBUG
 		default:
-			fprintf(stderr, "request was %" FUNGEDATAPRI "\n", request);
-			ipReverse(ip);
+			fprintf(stderr, "request was %" FUNGEDATAPRI "\nThis should not happen!\n", request);
+			abort();
+#endif
 	}
 }
 

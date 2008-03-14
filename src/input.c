@@ -29,14 +29,14 @@ static char*  lastline = NULL;
 static size_t linelength = 0;
 static char*  lastlineCurrent = NULL;
 
-static void getTheLine(void)
+static inline void getTheLine(void)
 {
 	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
 		cf_getline(&lastline, &linelength, stdin);
 		lastlineCurrent = lastline;
 	}
 }
-static void discardTheLine(void)
+static inline void discardTheLine(void)
 {
 	lastline = NULL;
 	lastlineCurrent = NULL;

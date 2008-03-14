@@ -39,7 +39,7 @@ extern char **fungeargv;
 extern int fungeargc;
 
 // Functions
-extern void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip);
+extern void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
 
 extern void interpreterRun(const char *filename) __attribute__((noreturn));
 

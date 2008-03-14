@@ -54,7 +54,7 @@ static instructionPointer *IP = NULL;
 #define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = -1 });
 #define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
 
-static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *ip) {
+void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) {
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
 			ip->mode = ipmCODE;
@@ -440,17 +440,9 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 	}
 }
 
+static inline void interpreterMainLoop(void) __attribute__((noreturn));
 
-// Wrapper, to allow real function to be inlined
-void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip)
-{
-	ExecuteInstruction(instruction, ip);
-}
-
-static void interpreterMainLoop(void) __attribute__((noreturn));
-
-
-static void interpreterMainLoop(void)
+static inline void interpreterMainLoop(void)
 {
 	FUNGEDATATYPE opcode;
 
