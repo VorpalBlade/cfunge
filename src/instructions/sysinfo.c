@@ -163,7 +163,7 @@ void RunSysInfo(instructionPointer *ip)
 		fungeStack * tmp = StackCreate();
 		for (int i = 1; i <= HIGHESTREQUEST; i++)
 			PushRequest(i, ip, tmp);
-		if (tmp->top > request)
+		if (tmp->top > (size_t)request)
 			StackPush(tmp->entries[request -1], ip->stack);
 		else
 			StackPush(ip->stack->entries[ip->stack->top - (request - tmp->top)], ip->stack);

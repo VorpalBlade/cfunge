@@ -41,6 +41,6 @@ extern int fungeargc;
 // Functions
 extern void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip);
 
-extern int interpreterRun(const char *filename) __attribute__((warn_unused_result));
+extern void interpreterRun(const char *filename) __attribute__((noreturn));
 
 #endif

@@ -61,68 +61,61 @@ static void printVersion(void) {
 
 int main(int argc, char *argv[])
 {
+	int opt;
+
 	GC_all_interior_pointers = 1;
 	GC_INIT();
-	/*
-	 * h            help
-	 * s (93|98|08) Standard
-	 * t <level>    trace
-	 * V            version
-	 * W Warnings
-	 */
-	{
-		int opt;
-		while ((opt = getopt(argc, argv, "+fhs:t:Vw")) != -1) {
-			switch (opt) {
-				case 'f':
-					SettingEnableFingerprints = false;
-					break;
-				case 'h':
-					printHelp();
-					break;
-				case 's':
-					if (strncmp(optarg, "93", 2))
-						SettingCurrentStandard = stdver93;
-					else if (strncmp(optarg, "98", 2))
-						SettingCurrentStandard = stdver98;
-					else if (strncmp(optarg, "08", 2))
-						SettingCurrentStandard = stdver08;
-					else {
-					fprintf(stderr, "%s is not valid for -s.\n", optarg);
-					}
-					break;
-				case 't':
-					SettingTraceLevel = atoi(optarg);
-					break;
-				case 'V':
-					printVersion();
-					break;
-				case 'W':
-					SettingWarnings = true;
-					break;
-				default:
-					fprintf(stderr, "For help see: %s -h\n", argv[0]);
-					return EXIT_FAILURE;
-			}
+
+	while ((opt = getopt(argc, argv, "+fhs:t:Vw")) != -1) {
+		switch (opt) {
+			case 'f':
+				SettingEnableFingerprints = false;
+				break;
+			case 'h':
+				printHelp();
+				break;
+			case 's':
+				if (strncmp(optarg, "93", 2))
+					SettingCurrentStandard = stdver93;
+				else if (strncmp(optarg, "98", 2))
+					SettingCurrentStandard = stdver98;
+				else if (strncmp(optarg, "08", 2))
+					SettingCurrentStandard = stdver08;
+				else {
+				fprintf(stderr, "%s is not valid for -s.\n", optarg);
+				}
+				break;
+			case 't':
+				SettingTraceLevel = atoi(optarg);
+				break;
+			case 'V':
+				printVersion();
+				break;
+			case 'W':
+				SettingWarnings = true;
+				break;
+			default:
+				fprintf(stderr, "For help see: %s -h\n", argv[0]);
+				return EXIT_FAILURE;
 		}
-		if (optind >= argc) {
-			fputs("No file provided\n", stderr);
-			return EXIT_FAILURE;
-		} else {
-			// Copy the rest to the variables in interpreter.c/interpreter.h
-			// for later reuse by y instruction.
-			if (argc > 1) {
-				fungeargc = argc - optind;
-				fungeargv = cf_malloc(fungeargc * sizeof(char*));
-				for (int i = optind; i < argc; i++) {
-					fungeargv[i - optind] = cf_strdup(argv[i]);
-					if (fungeargv[i - optind] == NULL) {
-						perror("Couldn't store arguments in array and this even before file was loaded!\n");
-						abort();
-					}
+	}
+	if (optind >= argc) {
+		fputs("No file provided\n", stderr);
+		return EXIT_FAILURE;
+	} else {
+		// Copy the rest to the variables in interpreter.c/interpreter.h
+		// for later reuse by y instruction.
+		if (argc > 1) {
+			fungeargc = argc - optind;
+			fungeargv = cf_malloc(fungeargc * sizeof(char*));
+			for (int i = optind; i < argc; i++) {
+				fungeargv[i - optind] = cf_strdup(argv[i]);
+				if (fungeargv[i - optind] == NULL) {
+					perror("Couldn't store arguments in array and this even before file was loaded!\n");
+					abort();
 				}
 			}
-			return interpreterRun(argv[optind]);
 		}
+		interpreterRun(argv[optind]);
 	}
 }

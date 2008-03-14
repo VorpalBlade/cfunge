@@ -161,7 +161,6 @@ char *StackPopString(fungeStack * stack)
 char *StackPopSizedString(size_t len, fungeStack * stack)
 {
 	char * x = cf_malloc_noptr((len + 1) * sizeof(char));
-	FUNGEDATATYPE c;
 
 	for (size_t i = 0; i < len; i++) {
 		x[i] = StackPop(stack);

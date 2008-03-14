@@ -405,7 +405,8 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 					} else {
 						FUNGEDATATYPE fprint = 0;
 						while (fpsize--) {
-							fprint = fprint * 256 + StackPop(ip->stack);
+							fprint <<= 8;
+							fprint += StackPop(ip->stack);
 						}
 						if (opcode == '(') {
 							if (!ManagerLoad(ip, fprint))
@@ -443,7 +444,10 @@ void RunInstruction(FUNGEDATATYPE instruction, instructionPointer *ip)
 	ExecuteInstruction(instruction, ip);
 }
 
-static int interpreterMainLoop(void)
+static void interpreterMainLoop(void) __attribute__((noreturn));
+
+
+static void interpreterMainLoop(void)
 {
 	FUNGEDATATYPE opcode;
 
@@ -459,24 +463,22 @@ static int interpreterMainLoop(void)
 		ExecuteInstruction(opcode, IP);
 		ipForward(1, IP);
 	}
-
-	return 0;
 }
 
-int interpreterRun(const char *filename)
+void interpreterRun(const char *filename)
 {
 	stackStack = StackStackCreate();
 	if (stackStack == NULL)
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	IP = ipCreate(stackStack);
 	if (IP == NULL)
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	fspace = fungeSpaceCreate();
 	if (fspace == NULL)
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	if (!fungeSpaceLoad(fspace, filename)) {
 		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	{
 		struct timeval tv;
@@ -488,5 +490,5 @@ int interpreterRun(const char *filename)
 		srandom(tv.tv_usec);
 	}
 
-	return interpreterMainLoop();
+	interpreterMainLoop();
 }
