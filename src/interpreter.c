@@ -68,8 +68,8 @@ static inline void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer *
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (!SettingEnableFingerprints)
 			ipReverse(ip);
-		else if (ip->fingerOpcodes && ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top] == NULL)
-			ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top](ip);
+		else if (ip->fingerOpcodes && ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top - 1] != NULL)
+			ip->fingerOpcodes[(char)opcode - 'A']->entries[ip->fingerOpcodes[(char)opcode - 'A']->top - 1](ip);
 		else
 			ipReverse(ip);
 	} else {

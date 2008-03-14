@@ -43,7 +43,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// NULL
 	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
 	// ROMA - Roman Numerals
-	//{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
+	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
 };
