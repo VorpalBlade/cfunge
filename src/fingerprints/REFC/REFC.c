@@ -43,7 +43,7 @@ static void FingerREFCReference(instructionPointer * ip) {
 		}
 		referencesSize += ALLOCCHUNK;
 	}
-
+	// TODO: Return same value for the same cell each time!
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
 	StackPush(referencesTop, ip->stack);
