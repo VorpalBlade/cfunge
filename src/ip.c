@@ -97,3 +97,9 @@ ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 	ip->delta.x = delta->x;
 	ip->delta.y = delta->y;
 }
+
+void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) {
+	ip->position.x = position->x;
+	ip->position.y = position->y;
+	fungeSpaceWrap(fspace, &ip->position, &ip->delta);
+}

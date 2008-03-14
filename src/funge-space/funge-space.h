@@ -33,11 +33,11 @@ typedef struct _fungeSpace fungeSpace;
 /**
  * Create a funge-space.
  */
-extern fungeSpace    * fungeSpaceCreate(void) __attribute__((malloc,warn_unused_result));
+extern fungeSpace * fungeSpaceCreate(void) __attribute__((malloc,warn_unused_result));
 /**
  * Destroy a funge-space.
  */
-extern void            fungeSpaceFree(fungeSpace * me);
+extern void fungeSpaceFree(fungeSpace * me);
 /**
  * Get a cell.
  */

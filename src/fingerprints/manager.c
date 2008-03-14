@@ -25,10 +25,11 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "NULL/NULL.h"
-#include "ROMA/ROMA.h"
 #include "MODU/MODU.h"
+#include "NULL/NULL.h"
+#include "ORTH/ORTH.h"
 #include "REFC/REFC.h"
+#include "ROMA/ROMA.h"
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
@@ -47,6 +48,8 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
 	// NULL
 	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
+	// ORTH - Orthogonal Easement Library
+	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ" },
 	// REFC - Referenced Cells Extension
 	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR" },
 	// ROMA - Roman Numerals

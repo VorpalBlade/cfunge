@@ -82,5 +82,6 @@ extern void ipReverse(instructionPointer * restrict ip) __attribute__((nonnull))
 extern void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull));
+extern void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull));
 
 #endif
