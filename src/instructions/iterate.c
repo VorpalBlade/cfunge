@@ -27,8 +27,11 @@
 #include "../ip.h"
 #include "../settings.h"
 
-
+#ifdef CONCURRENT_FUNGE
+void RunIterate(instructionPointer * restrict ip, FUNGEDATATYPE * restrict threadindex)
+#else
 void RunIterate(instructionPointer * ip)
+#endif
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0) {
@@ -58,7 +61,11 @@ void RunIterate(instructionPointer * ip)
 			fungePosition oldpos = ip->position;
 
 			while (iters--)
+#ifdef CONCURRENT_FUNGE
+				ExecuteInstruction(kInstr, ip, threadindex);
+#else
 				ExecuteInstruction(kInstr, ip);
+#endif
 			if (olddelta.x == ip->delta.x
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x

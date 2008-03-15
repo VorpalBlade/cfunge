@@ -61,6 +61,24 @@ void StackFree(fungeStack * stack)
 }
 
 
+static inline fungeStack * StackDuplicate(const fungeStack * old) __attribute__((malloc,nonnull,warn_unused_result));
+// Used for concurrency
+static inline fungeStack * StackDuplicate(const fungeStack * old)
+{
+	fungeStack * tmp = cf_malloc(sizeof(fungeStack));
+	if (tmp == NULL)
+		return NULL;
+	tmp->entries = cf_malloc_noptr((old->top + 1) * sizeof(FUNGEDATATYPE));
+	if (tmp->entries == NULL)
+		return NULL;
+	tmp->size = old->top + 1;
+	tmp->top = old->top;
+	for (size_t i = 0; i < tmp->top; i++)
+		tmp->entries[i] = old->entries[i];
+	return tmp;
+}
+
+
 
 /************************
  * Basic push/pop/peeks *
@@ -238,7 +256,7 @@ void StackDump(fungeStack * stack)
 	fprintf(stderr, "%zu elements:\n", stack->top);
 	for (size_t i = 0; i < stack->top; i++)
 		fprintf(stderr, "%" FUNGEDATAPRI " ", stack->entries[i]);
-	fputs("%\n", stderr);
+	fputs("\n", stderr);
 }
 
 #endif
@@ -277,6 +295,28 @@ void StackStackFree(fungeStackStack * me)
 
 	cf_free(me);
 }
+
+fungeStackStack * StackStackDuplicate(fungeStackStack * old)
+{
+	fungeStackStack * stackStack;
+
+	assert(old);
+
+	stackStack = cf_malloc(sizeof(fungeStackStack) + old->size * sizeof(fungeStack*));
+	if (!stackStack)
+		return NULL;
+
+	for (size_t i = 0; i <= old->current; i++) {
+		stackStack->stacks[i] = StackDuplicate(old->stacks[i]);
+		if (!stackStack->stacks[i])
+			return NULL;
+	}
+
+	stackStack->size = old->size;
+	stackStack->current = old->current;
+	return stackStack;
+}
+
 
 bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {

@@ -69,7 +69,7 @@ fungeSpaceCreate(void)
 	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace->entries)
 		return false;
-	//ght_set_hash(fspace->entries, &ght_crc_hash);
+	ght_set_hash(fspace->entries, &ght_crc_hash);
 	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
 	fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));

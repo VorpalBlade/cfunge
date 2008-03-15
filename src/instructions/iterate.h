@@ -28,6 +28,10 @@
 #include "../funge-space/funge-space.h"
 
 
+#ifdef CONCURRENT_FUNGE
+extern void RunIterate(instructionPointer * restrict ip, FUNGEDATATYPE * restrict threadindex) __attribute__((nonnull));
+#else
 extern void RunIterate(instructionPointer * ip) __attribute__((nonnull));
+#endif
 
 #endif

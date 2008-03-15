@@ -46,6 +46,7 @@ typedef struct _instructionPointer {
 	ipMode                     mode;     /**< String or code mode. */
 	bool                       StringLastWasSpace; /**< Used in string mode for SGML style spaces. */
 	bool                       NeedMove; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
+	FUNGEDATATYPE              ID;
 	fungePosition              storageOffset;
 	fungeStack               * stack;                             /**< Pointer to top stack. */
 	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
@@ -53,11 +54,19 @@ typedef struct _instructionPointer {
 } instructionPointer;
 #define ipDEFINED 1
 
-
+#ifdef CONCURRENT_FUNGE
+// For concurrent funge
 typedef struct {
-	size_t              size;
-	instructionPointer* entries[];
+	size_t              size; /**< Total size */
+	size_t              top; /**< Top running one */
+	size_t              highestID; /**< Currently highest ID, they are unique. */
+	/**
+	 * This array is slightly complex for speed reasons.
+	 * Main loop must iterate over it *backwards*, this allow easy splitting of last ip.
+	 */
+	instructionPointer  ips[];
 } ipList;
+#endif
 
 /**
  * Create a new instruction pointer.
@@ -81,13 +90,36 @@ extern void ipForward(int_fast64_t steps, instructionPointer * restrict ip) __at
  */
 #define ipReverse(ip) \
 	{ \
-		ip->delta.x = -ip->delta.x; \
-		ip->delta.y = -ip->delta.y; \
+		(ip)->delta.x *= -1; \
+		(ip)->delta.y *= -1; \
 	}
 
 extern void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull));
 extern void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull));
+
+#ifdef CONCURRENT_FUNGE
+/**
+ * Create a new IP list with the single default IP in it.
+ */
+extern ipList* ipListCreate(void) __attribute__((malloc,warn_unused_result));
+/**
+ * Free IP list.
+ */
+extern void ipListFree(ipList* me);
+/**
+ * Add a new IP, one place before current one.
+ * Returns index of next to execute as that may have changed after this call.
+ * A value of -1 = failed to create IP.
+ */
+extern ssize_t ipListDuplicateIP(ipList** me, size_t index) __attribute__((nonnull,warn_unused_result));
+/**
+ * Terminate an ip.
+ * Returns index of next to execute as that may have changed after this call.
+ */
+extern ssize_t ipListTerminateIP(ipList** me, size_t index) __attribute__((nonnull,warn_unused_result));
+#endif
+
 
 #endif

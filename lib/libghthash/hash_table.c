@@ -404,7 +404,7 @@ int ght_insert(ght_hash_table_t * restrict p_ht,
 
 	/* If this is a limited bucket hash table, potentially remove the last item */
 	if (p_ht->bucket_limit != 0 &&
-	    (unsigned int)p_ht->p_nr[l_key] >= p_ht->bucket_limit) {
+	    p_ht->p_nr[l_key] >= p_ht->bucket_limit) {
 		ght_hash_entry_t *p;
 
 		/* Loop through entries until the last

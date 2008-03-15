@@ -40,7 +40,11 @@
 #include <sys/time.h>
 #include <assert.h>
 
+#ifdef CONCURRENT_FUNGE
+static ipList *IPList = NULL;
+#else
 static instructionPointer *IP = NULL;
+#endif
 
 #define PUSHVAL(x, y) \
 	case (x): \
@@ -52,7 +56,12 @@ static instructionPointer *IP = NULL;
 #define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = -1 });
 #define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
 
-void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) {
+#ifdef CONCURRENT_FUNGE
+bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, FUNGEDATATYPE * threadindex)
+#else
+void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+#endif
+{
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
@@ -86,15 +95,15 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					} while (fungeSpaceGet(&ip->position) == ' ');
 					ip->NeedMove = false;
 				}
-				return;
+				return true;
 			case 'z':
-				return;
+				return false;
 			case ';':
 				{
 					do {
 						ipForward(1, ip);
 					} while (fungeSpaceGet(&ip->position) != ';');
-					return;
+					return true;
 				}
 			case '^':
 				GO_NORTH
@@ -216,7 +225,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				}
 
 			case 'k':
+#ifdef CONCURRENT_FUNGE
+				RunIterate(ip, threadindex);
+#else
 				RunIterate(ip);
+#endif
 				break;
 
 			case '-':
@@ -426,9 +439,25 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					break;
 				}
 
+#ifdef CONCURRENT_FUNGE
+			case 't':
+				{
+					*threadindex = ipListDuplicateIP(&IPList, *threadindex);
+					break;
+				}
+
+#endif /* CONCURRENT_FUNGE */
+
 			case '@':
 				fflush(stdout);
+#ifdef CONCURRENT_FUNGE
+				if (IPList->top == 0)
+					exit(0);
+				else
+					*threadindex = ipListTerminateIP(&IPList, *threadindex);
+#else
 				exit(0);
+#endif /* CONCURRENT_FUNGE */
 				break;
 			case 'q':
 				{
@@ -446,22 +475,56 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				ipReverse(ip);
 		}
 	}
+	return false;
+}
+
+static inline void ThreadForward(instructionPointer * ip)
+{
+	if (ip->NeedMove)
+		ipForward(1, ip);
+	else
+		ip->NeedMove = true;
 }
 
 static inline void interpreterMainLoop(void) __attribute__((noreturn));
 
 static inline void interpreterMainLoop(void)
 {
-	FUNGEDATATYPE opcode;
-
+#ifdef CONCURRENT_FUNGE
 	while (true) {
+		ssize_t i = IPList->top;
+		while(i >= 0) {
+			bool retval;
+			FUNGEDATATYPE opcode;
+
+			opcode = fungeSpaceGet(&IPList->ips[i].position);
+#    ifndef DISABLE_TRACE
+			if (SettingTraceLevel > 3)
+				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+				        i, IPList->ips[i].ID,
+				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
+			else if (SettingTraceLevel > 2)
+				fprintf(stderr, "%c", (char)opcode);
+#    endif /* DISABLE_TRACE */
+
+			retval = ExecuteInstruction(opcode, &IPList->ips[i], &i);
+			ThreadForward(&IPList->ips[i]);
+			if (!retval)
+				i--;
+		}
+	}
+#else
+	while (true) {
+		FUNGEDATATYPE opcode;
+
 		opcode = fungeSpaceGet(&IP->position);
-#ifndef DISABLE_TRACE
+#    ifndef DISABLE_TRACE
 		if (SettingTraceLevel > 3)
-			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n", IP->position.x, IP->position.y, (char)opcode, opcode);
+			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+			        IP->position.x, IP->position.y, (char)opcode, opcode);
 		else if (SettingTraceLevel > 2)
 			fprintf(stderr, "%c", (char)opcode);
-#endif
+#    endif /* DISABLE_TRACE */
 
 		ExecuteInstruction(opcode, IP);
 		if (IP->NeedMove)
@@ -469,21 +532,33 @@ static inline void interpreterMainLoop(void)
 		else
 			IP->NeedMove = true;
 	}
+#endif
 }
 
+
 #ifndef NDEBUG
-// Used with valgrind debugging.
+// Used with debugging for freeing stuff at end of program
+// not needed, but useful to check that free functions works.
 static void DebugFreeThings(void) {
+# ifdef CONCURRENT_FUNGE
+	ipListFree(IPList);
+# else
 	ipFree(IP);
-	fungeSpaceFree();
+# endif
 }
 #endif
 
 void interpreterRun(const char *filename)
 {
+#ifdef CONCURRENT_FUNGE
+	IPList = ipListCreate();
+	if (IPList == NULL)
+		exit(EXIT_FAILURE);
+#else
 	IP = ipCreate();
 	if (IP == NULL)
 		exit(EXIT_FAILURE);
+#endif
 	if(!fungeSpaceCreate())
 		exit(EXIT_FAILURE);
 	if (!fungeSpaceLoad(filename)) {

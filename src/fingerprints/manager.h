@@ -66,6 +66,12 @@ extern void ManagerCreate(instructionPointer * ip) __attribute__((nonnull));
 extern void ManagerFree(instructionPointer * ip) __attribute__((nonnull));
 
 /**
+ * Duplicate a loaded fingerprints.
+ */
+extern bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * newip) __attribute__((nonnull,warn_unused_result));
+
+
+/**
  * Try to load fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */

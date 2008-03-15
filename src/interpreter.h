@@ -40,7 +40,12 @@ extern int fungeargc;
 /**
  * Run instruction.
  */
+#ifdef CONCURRENT_FUNGE
+// If true, we executed an instruction that took 0 ticks, so call me again!
+extern bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, FUNGEDATATYPE * threadindex);
+#else
 extern void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
+#endif
 
 /**
  * Should only be called from main.c

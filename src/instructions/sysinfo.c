@@ -46,7 +46,11 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 	switch (request) {
 		case 1: // Flags
 			//StackPush(0x20, ip->stack);
+#ifdef CONCURRENT_FUNGE
+			StackPush(0x01, pushStack);
+#else
 			StackPush(0x0, pushStack);
+#endif
 			break;
 		case 2: // Cell size
 			StackPush(sizeof(FUNGEDATATYPE), pushStack);
@@ -67,7 +71,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			StackPush(2, pushStack);
 			break;
 		case 8: // IP ID
-			StackPush(0, pushStack);
+			StackPush(ip->ID, pushStack);
 			break;
 		case 9: // TEAM ID
 			StackPush(0, pushStack);
