@@ -259,5 +259,7 @@ fungeSpaceLoad(const char * restrict filename)
 	if (fspace->bottomRightCorner.y < y)
 		fspace->bottomRightCorner.y = y;
 	fclose(file);
+	if (line != NULL)
+		cf_free(line);
 	return true;
 }

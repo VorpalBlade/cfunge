@@ -31,7 +31,7 @@
 // Out of order to initialize to 0 :D
 // (A few bytes smaller binary that way)
 // (The standard one should be 0 always
-typedef enum { stdver98 = 0, stdver93, stdver08 } standardVersion;
+typedef enum { stdver98 = 0, stdver93 = 1, stdver08 = 2 } standardVersion;
 
 // What version we should simulate.
 // Affects space processing.

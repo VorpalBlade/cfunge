@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
 	int opt;
 
 #ifndef DISABLE_GC
+//	GC_find_leak = 1;
+//	atexit(&GC_gcollect);
 	GC_all_interior_pointers = 1;
 	GC_INIT();
 #endif
@@ -77,14 +79,15 @@ int main(int argc, char *argv[])
 				printHelp();
 				break;
 			case 's':
-				if (strncmp(optarg, "93", 2))
+				if (strncmp(optarg, "93", 2) == 0)
 					SettingCurrentStandard = stdver93;
-				else if (strncmp(optarg, "98", 2))
+				else if (strncmp(optarg, "98", 2) == 0)
 					SettingCurrentStandard = stdver98;
-				else if (strncmp(optarg, "08", 2))
+				else if (strncmp(optarg, "08", 2) == 0)
 					SettingCurrentStandard = stdver08;
 				else {
-				fprintf(stderr, "%s is not valid for -s.\n", optarg);
+					fprintf(stderr, "%s is not valid for -s.\n", optarg);
+					return EXIT_FAILURE;
 				}
 				break;
 			case 't':

@@ -41,7 +41,7 @@ extern char **environ;
 
 // Push a single request value
 // pushStack is stack to push on.
-static void PushRequest(FUNGEDATATYPE request, instructionPointer * ip, fungeStack * pushStack)
+static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
 {
 	switch (request) {
 		case 1: // Flags
@@ -155,6 +155,8 @@ void RunSysInfo(instructionPointer *ip)
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	stackSize = ip->stack->top;
 	// Speed this one up for mycology
+	// TODO: Remove this once size of multiple stacks
+	//        are coded as this would break then.
 	if (request == 23) {
 		PushRequest(18, ip, ip->stack);
 	} else if (request <= 0) {

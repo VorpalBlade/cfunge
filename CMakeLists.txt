@@ -48,14 +48,14 @@ ELSE(LEAK_MODE)
 	ELSE (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
 		MESSAGE(FATAL_ERROR "Could NOT find new enough Boehm GC (you need 7.x or later)")
 	ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-	
+
 	FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
 		${BoehmIncDir}
 	)
 	FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
 		${BoehmIncDir}
 	)
-	
+
 	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
 		PATHS
 		${BoehmLinkDir}

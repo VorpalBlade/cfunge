@@ -68,7 +68,9 @@ static void FingerORTHput(instructionPointer * ip) {
 // output string
 static void FingerORTHoutputString(instructionPointer * ip) {
 	// puts add newline, we therefore do fputs on stdout
-	fputs(StackPopString(ip->stack), stdout);
+	char * str = StackPopString(ip->stack);
+	fputs(str, stdout);
+	cf_free(str);
 }
 
 // change dx

@@ -51,10 +51,12 @@ fungeStack * StackCreate(void)
 
 void StackFree(fungeStack * stack)
 {
-	if (!stack || !stack->entries)
+	if (!stack)
 		return;
-	cf_free(stack->entries);
-	stack->entries = NULL;
+	if (stack->entries) {
+		cf_free(stack->entries);
+		stack->entries = NULL;
+	}
 	cf_free(stack);
 }
 
@@ -217,8 +219,9 @@ void StackDump(fungeStack * stack) __attribute__((unused));
 
 void StackDump(fungeStack * stack)
 {
+	fprintf(stderr, "%zu elements:\n", stack->top);
 	for (size_t i = 0; i < stack->top; i++)
-		fprintf(stderr, "%zu=%" FUNGEDATAPRI " ", i, stack->entries[i]);
+		fprintf(stderr, "%" FUNGEDATAPRI " ", stack->entries[i]);
 	fputs("%\n", stderr);
 }
 
@@ -328,6 +331,7 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** restrict
 	stackStack->current--;
 	*me = stackStack;
 	ip->stackstack = stackStack;
+	StackFree(TOSS);
 	return true;
 }
 

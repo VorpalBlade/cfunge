@@ -1,7 +1,10 @@
 This is cfunge08 a fast Beunge93/98/08 interpreter in C.
 
-You will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/)
-version 7 or later installed to run or compile this software.
+You will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version
+7 or later installed to run or compile this software. If you lack it you could
+try building without garbage collector but IT IS UNSUPPORTED. If you still want
+to try, enable LEAK_MODE option in cmake. If a bug only happens in this mode,
+it probably won't get fixed.
 
 Further you will need cmake (http://www.cmake.org/) to compile it.
 
@@ -13,3 +16,11 @@ with some exceptions:
  * MODE - Intrusive into IP handling.
  * WIND - Too complex to implement.
  * IMAP - Too intrusive.
+
+The Befunge98 standard leaves some things undefined, here is what we do for
+some of those cases:
+* y pushes time in UTC not local time.
+* k with a negative argument reflects.
+* # across edge of funge space may or may not skip first char
+  after wrapping depending on exact situation.
+* ( and ) with a negative count reflects and doesn't pop any fingerprint.

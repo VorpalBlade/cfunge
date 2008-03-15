@@ -61,7 +61,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 		} else if (opcode != ' ') {
 			ip->StringLastWasSpace = false;
 			StackPush(opcode, ip->stack);
-		} else if ((opcode == ' ') && (!ip->StringLastWasSpace)) {
+		} else if (((opcode == ' ') && (!ip->StringLastWasSpace)) || (SettingCurrentStandard == stdver93)) {
 			ip->StringLastWasSpace = true;
 			StackPush(opcode, ip->stack);
 		}
