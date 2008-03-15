@@ -31,7 +31,7 @@
 #include "funge-space/funge-space.h"
 
 // DO NOT MODIFY these two!
-// (they are declared in main.c btw)
+// (They are declared in main.c by the way.)
 extern char **fungeargv;
 extern int fungeargc;
 

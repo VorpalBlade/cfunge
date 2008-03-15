@@ -61,7 +61,7 @@ extern void fungeSpaceSetOff(FUNGEDATATYPE value,
 extern void fungeSpaceWrap(fungePosition * restrict position,
                            const fungeVector * restrict delta) __attribute__((nonnull));
 /**
- * Load a file into fungespace.
+ * Load a file into funge-space.
  */
 extern bool fungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
 /**

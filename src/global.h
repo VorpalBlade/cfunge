@@ -25,7 +25,7 @@
 #  include <config.h>
 #endif
 
-// For compatiblity with other compilers to prevent them
+// For compatibility with other compilers to prevent them
 // failing at things like: __attribute__((noreturn))
 #ifndef __GNUC__
 #  define  __attribute__(x)  /* NO-OP */

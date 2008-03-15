@@ -49,7 +49,7 @@ void RunIterate(instructionPointer * ip)
 				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
 		} else {
-			// Ok we got to excute it!
+			// Ok we got to execute it!
 			// The weird stuff below, is, as described by CCBI:
 			// Instruction executes *at* k
 			// If the instruction k executes, changes delta or position, we are finished.

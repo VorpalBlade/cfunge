@@ -28,7 +28,7 @@
 #include <stdbool.h>
 
 
-// Out of order to initialize to 0 :D
+// Out of order to initialise to 0 :D
 // (A few bytes smaller binary that way)
 // (The standard one should be 0 always
 typedef enum { stdver98 = 0, stdver93 = 1, stdver08 = 2 } standardVersion;

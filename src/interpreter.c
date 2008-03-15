@@ -75,7 +75,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 			else
 				ipReverse(ip);
 		}
-	// Ok a core instruction.
+	// OK a core instruction.
 	// Find what one and execute it.
 	} else {
 		switch (opcode) {
