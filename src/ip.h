@@ -41,12 +41,13 @@ struct _fungeOpcodeStack;
 #define FINGEROPCODECOUNT 26
 
 typedef struct _instructionPointer {
-	fungePosition              position;
-	ipDelta                    delta;
-	ipMode                     mode;
-	bool                       StringLastWasSpace;
+	fungePosition              position; /**< Current position. */
+	ipDelta                    delta;    /**< Current delta. */
+	ipMode                     mode;     /**< String or code mode. */
+	bool                       StringLastWasSpace; /**< Used in string mode for SGML style spaces. */
+	bool                       NeedMove; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
 	fungePosition              storageOffset;
-	fungeStack               * stack;               /**< Pointer to top stack. */
+	fungeStack               * stack;                             /**< Pointer to top stack. */
 	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
 	fungeStackStack          * stackstack;
 } instructionPointer;
@@ -61,7 +62,7 @@ typedef struct {
 /**
  * Create a new instruction pointer.
  */
-extern instructionPointer * ipCreate(fungeStackStack * stackstack) __attribute__((malloc,nonnull,warn_unused_result));
+extern instructionPointer * ipCreate(void) __attribute__((malloc,warn_unused_result));
 /**
  * Free an instruction pointer.
  */

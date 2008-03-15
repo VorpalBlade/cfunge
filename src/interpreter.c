@@ -40,7 +40,6 @@
 #include <sys/time.h>
 #include <assert.h>
 
-static fungeStackStack *stackStack = NULL;
 static instructionPointer *IP = NULL;
 
 #define PUSHVAL(x, y) \
@@ -85,7 +84,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					do {
 						ipForward(1, ip);
 					} while (fungeSpaceGet(&ip->position) == ' ');
-					ipForward(-1, ip);
+					ip->NeedMove = false;
 				}
 				return;
 			case 'z':
@@ -465,16 +464,16 @@ static inline void interpreterMainLoop(void)
 #endif
 
 		ExecuteInstruction(opcode, IP);
-		ipForward(1, IP);
+		if (IP->NeedMove)
+			ipForward(1, IP);
+		else
+			IP->NeedMove = true;
 	}
 }
 
 void interpreterRun(const char *filename)
 {
-	stackStack = StackStackCreate();
-	if (stackStack == NULL)
-		exit(EXIT_FAILURE);
-	IP = ipCreate(stackStack);
+	IP = ipCreate();
 	if (IP == NULL)
 		exit(EXIT_FAILURE);
 	if(!fungeSpaceCreate())

@@ -48,7 +48,7 @@ static void FingerSUBRCall(instructionPointer * ip) {
 
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
-	ipForward(-1, ip);
+	ip->NeedMove = false;
 }
 
 static void FingerSUBRJump(instructionPointer * ip) {
@@ -56,7 +56,7 @@ static void FingerSUBRJump(instructionPointer * ip) {
 	pos = StackPopVector(ip->stack);
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
-	ipForward(-1, ip);
+	ip->NeedMove = false;
 }
 
 static void FingerSUBRReturn(instructionPointer * ip) {

@@ -28,21 +28,24 @@
 #include "funge-space/funge-space.h"
 
 instructionPointer *
-ipCreate(fungeStackStack * stackstack)
+ipCreate(void)
 {
 	instructionPointer * tmp = cf_malloc(sizeof(instructionPointer));
 	if (!tmp)
 		return NULL;
-
-	tmp->position.x = 0;
-	tmp->position.y = 0;
-	tmp->mode       = ipmCODE;
-	tmp->delta.x    = 1;
-	tmp->delta.y    = 0;
-	tmp->storageOffset.x = 0;
-	tmp->storageOffset.y = 0;
-	tmp->stackstack = stackstack;
-	tmp->stack      = stackstack->stacks[stackstack->current];
+	tmp->position.x         = 0;
+	tmp->position.y         = 0;
+	tmp->mode               = ipmCODE;
+	tmp->delta.x            = 1;
+	tmp->delta.y            = 0;
+	tmp->NeedMove           = true;
+	tmp->StringLastWasSpace = false;
+	tmp->storageOffset.x    = 0;
+	tmp->storageOffset.y    = 0;
+	tmp->stackstack         = StackStackCreate();
+	if (!tmp->stackstack)
+		return NULL;
+	tmp->stack              = tmp->stackstack->stacks[tmp->stackstack->current];
 	if (SettingEnableFingerprints) {
 		ManagerInit(tmp);
 	}
@@ -52,12 +55,11 @@ ipCreate(fungeStackStack * stackstack)
 void
 ipFree(instructionPointer * restrict ip)
 {
-	// TODO: Should we free stackstack?
+	// TODO: Free stackstack
 	ip->stackstack = NULL;
 	ip->stack      = NULL;
 	cf_free(ip);
 }
-
 
 void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 {
