@@ -62,7 +62,7 @@ void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 {
 	ip->position.x += ip->delta.x * steps;
 	ip->position.y += ip->delta.y * steps;
-	fungeSpaceWrap(fspace, &ip->position, &ip->delta);
+	fungeSpaceWrap(&ip->position, &ip->delta);
 }
 
 
@@ -101,5 +101,5 @@ ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) {
 	ip->position.x = position->x;
 	ip->position.y = position->y;
-	fungeSpaceWrap(fspace, &ip->position, &ip->delta);
+	fungeSpaceWrap(&ip->position, &ip->delta);
 }

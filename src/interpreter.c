@@ -40,7 +40,6 @@
 #include <sys/time.h>
 #include <assert.h>
 
-fungeSpace *fspace = NULL;
 static fungeStackStack *stackStack = NULL;
 static instructionPointer *IP = NULL;
 
@@ -85,7 +84,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				{
 					do {
 						ipForward(1, ip);
-					} while (fungeSpaceGet(fspace, &ip->position) == ' ');
+					} while (fungeSpaceGet(&ip->position) == ' ');
 					ipForward(-1, ip);
 				}
 				return;
@@ -95,7 +94,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				{
 					do {
 						ipForward(1, ip);
-					} while (fungeSpaceGet(fspace, &ip->position) != ';');
+					} while (fungeSpaceGet(&ip->position) != ';');
 					return;
 				}
 			case '^':
@@ -290,7 +289,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
 					a = StackPop(ip->stack);
-					fungeSpaceSetOff(fspace, a, &pos, &ip->storageOffset);
+					fungeSpaceSetOff(a, &pos, &ip->storageOffset);
 					break;
 				}
 			case 'g':
@@ -298,7 +297,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					fungePosition pos;
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
-					a = fungeSpaceGetOff(fspace, &pos, &ip->storageOffset);
+					a = fungeSpaceGetOff(&pos, &ip->storageOffset);
 					StackPush(a, ip->stack);
 					break;
 				}
@@ -306,7 +305,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				{
 					FUNGEDATATYPE a;
 					ipForward(1, ip);
-					a = fungeSpaceGet(fspace, &ip->position);
+					a = fungeSpaceGet(&ip->position);
 					StackPush(a, ip->stack);
 					break;
 				}
@@ -315,7 +314,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 					FUNGEDATATYPE a;
 					a = StackPop(ip->stack);
 					ipForward(1, ip);
-					fungeSpaceSet(fspace, a, &ip->position);
+					fungeSpaceSet(a, &ip->position);
 					break;
 				}
 
@@ -458,7 +457,7 @@ static inline void interpreterMainLoop(void)
 	FUNGEDATATYPE opcode;
 
 	while (true) {
-		opcode = fungeSpaceGet(fspace, &IP->position);
+		opcode = fungeSpaceGet(&IP->position);
 #ifndef DISABLE_TRACE
 		if (SettingTraceLevel > 3)
 			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n", IP->position.x, IP->position.y, (char)opcode, opcode);
@@ -479,10 +478,9 @@ void interpreterRun(const char *filename)
 	IP = ipCreate(stackStack);
 	if (IP == NULL)
 		exit(EXIT_FAILURE);
-	fspace = fungeSpaceCreate();
-	if (fspace == NULL)
+	if(!fungeSpaceCreate())
 		exit(EXIT_FAILURE);
-	if (!fungeSpaceLoad(fspace, filename)) {
+	if (!fungeSpaceLoad(filename)) {
 		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
 	}

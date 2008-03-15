@@ -35,7 +35,7 @@ static void printHelp(void) __attribute__((noreturn));
 static void printVersion(void) __attribute__((noreturn));
 
 static void printHelp(void) {
-	puts("Usage: cfunge [OPTION] FILE [SCRIPT OPTIONS]");
+	puts("Usage: cfunge [OPTION] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast befunge interpreter in C\n");
 	puts(" -f           Disable all fingerprints.");
 	puts(" -h           Show this help and exit.");

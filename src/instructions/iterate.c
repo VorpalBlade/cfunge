@@ -39,7 +39,7 @@ void RunIterate(instructionPointer * ip)
 		FUNGEDATATYPE kInstr;
 		// Fetch instruction
 		ipForward(1, ip);
-		kInstr = fungeSpaceGet(fspace, &ip->position);
+		kInstr = fungeSpaceGet(&ip->position);
 		ipForward(-1, ip);
 
 		if (kInstr == ' ' || kInstr == 'z')

@@ -42,66 +42,68 @@ struct _fungeSpace {
 	size_t         allocarrayCurrent;
 };
 
+static fungeSpace *fspace = NULL;
+
 /**
  * Check if position is in range.
  */
-static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position) __attribute__((pure));
+static inline bool fungeSpaceInRange(const fungePosition * restrict position) __attribute__((pure));
 
-static inline bool fungeSpaceInRange(const fungeSpace * restrict me, const fungePosition * restrict position)
+static inline bool fungeSpaceInRange(const fungePosition * restrict position)
 {
-	if ((position->x > me->bottomRightCorner.x) || (position->x < me->topLeftCorner.x))
+	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
 		return false;
-	if ((position->y > me->bottomRightCorner.y) || (position->y < me->topLeftCorner.y))
+	if ((position->y > fspace->bottomRightCorner.y) || (position->y < fspace->topLeftCorner.y))
 		return false;
 	return true;
 }
 
-fungeSpace*
+bool
 fungeSpaceCreate(void)
 {
-	fungeSpace * tmp = cf_malloc(sizeof(fungeSpace));
-	if (!tmp)
-		return NULL;
-	tmp->entries = ght_create(FUNGESPACEINITIALSIZE);
-	if (!tmp->entries)
-		return NULL;
+	fspace = cf_malloc(sizeof(fungeSpace));
+	if (!fspace)
+		return false;
+	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
+	if (!fspace->entries)
+		return false;
 	//ght_set_heuristics(tmp->entries, GHT_HEURISTICS_TRANSPOSE);
-	ght_set_rehash(tmp->entries, true);
-	tmp->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
-	tmp->allocarrayCurrent = 0;
+	ght_set_rehash(fspace->entries, true);
+	fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+	fspace->allocarrayCurrent = 0;
 
-	tmp->topLeftCorner.x = 0;
-	tmp->topLeftCorner.y = 0;
-	tmp->bottomRightCorner.x = 0;
-	tmp->bottomRightCorner.y = 0;
-	return tmp;
+	fspace->topLeftCorner.x = 0;
+	fspace->topLeftCorner.y = 0;
+	fspace->bottomRightCorner.x = 0;
+	fspace->bottomRightCorner.y = 0;
+	return true;
 }
 
 
 void
-fungeSpaceFree(fungeSpace * me)
+fungeSpaceFree(void)
 {
-	if (!me)
+	if (!fspace)
 		return;
-	ght_finalize(me->entries);
-	cf_free(me);
+	ght_finalize(fspace->entries);
+	cf_free(fspace);
 }
 
 void
-fungeSpaceGetBoundRect(const fungeSpace * restrict me, fungeRect * restrict rect) {
-	rect->x = me->topLeftCorner.x;
-	rect->y = me->topLeftCorner.y;
-	rect->w = me->bottomRightCorner.x - me->topLeftCorner.x - 1;
-	rect->h = me->bottomRightCorner.y - me->topLeftCorner.y - 1;
+fungeSpaceGetBoundRect(fungeRect * restrict rect) {
+	rect->x = fspace->topLeftCorner.x;
+	rect->y = fspace->topLeftCorner.y;
+	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x - 1;
+	rect->h = fspace->bottomRightCorner.y - fspace->topLeftCorner.y - 1;
 }
 
 
 FUNGEDATATYPE
-fungeSpaceGet(const fungeSpace * restrict me, const fungePosition * restrict position)
+fungeSpaceGet(const fungePosition * restrict position)
 {
 	FUNGEDATATYPE *tmp;
 
-	tmp = ght_get(me->entries, sizeof(fungePosition), position);
+	tmp = ght_get(fspace->entries, sizeof(fungePosition), position);
 	if (!tmp)
 		return ' ';
 	else
@@ -110,7 +112,7 @@ fungeSpaceGet(const fungeSpace * restrict me, const fungePosition * restrict pos
 
 
 FUNGEDATATYPE
-fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict position, const fungePosition * restrict offset)
+fungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
 	FUNGEDATATYPE *result;
@@ -118,7 +120,7 @@ fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = ght_get(me->entries, sizeof(fungePosition), &tmp);
+	result = ght_get(fspace->entries, sizeof(fungePosition), &tmp);
 	if (!result)
 		return ' ';
 	else
@@ -130,95 +132,95 @@ fungeSpaceGetOff(const fungeSpace * restrict me, const fungePosition * restrict 
  * Allocates in chunks of FUNGESPACEALLOCCHUNK.
  */
 static inline FUNGEDATATYPE*
-fungeSpaceInternalAlloc(fungeSpace * restrict me, FUNGEDATATYPE value)
+fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 {
-	if (me->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
+	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
-		me->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
-		me->allocarrayCurrent = 0;
+		fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+		fspace->allocarrayCurrent = 0;
 	} else {
 		// Allocate from array
-		me->allocarrayCurrent++;
+		fspace->allocarrayCurrent++;
 	}
-	me->allocarray[me->allocarrayCurrent] = value;
+	fspace->allocarray[fspace->allocarrayCurrent] = value;
 
-	return &me->allocarray[me->allocarrayCurrent];
+	return &fspace->allocarray[fspace->allocarrayCurrent];
 }
 
 
 void
-fungeSpaceSet(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosition * restrict position)
+fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	if (value == ' ')
-		ght_remove(me->entries, sizeof(fungePosition), position);
+		ght_remove(fspace->entries, sizeof(fungePosition), position);
 	else {
 		// TODO: Reuse cell?
-		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(me, value);
-		if (ght_insert(me->entries, tmp, sizeof(fungePosition), position) == -1) {
-			ght_replace(me->entries, tmp, sizeof(fungePosition), position);
+		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(value);
+		if (ght_insert(fspace->entries, tmp, sizeof(fungePosition), position) == -1) {
+			ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
 		}
 	}
-	if (me->bottomRightCorner.y < position->y)
-		me->bottomRightCorner.y = position->y;
-	if (me->bottomRightCorner.x < position->x)
-		me->bottomRightCorner.x = position->x;
-	if (me->topLeftCorner.y > position->y)
-		me->topLeftCorner.y = position->y;
-	if (me->topLeftCorner.x > position->x)
-		me->topLeftCorner.x = position->x;
+	if (fspace->bottomRightCorner.y < position->y)
+		fspace->bottomRightCorner.y = position->y;
+	if (fspace->bottomRightCorner.x < position->x)
+		fspace->bottomRightCorner.x = position->x;
+	if (fspace->topLeftCorner.y > position->y)
+		fspace->topLeftCorner.y = position->y;
+	if (fspace->topLeftCorner.x > position->x)
+		fspace->topLeftCorner.x = position->x;
 }
 
 void
-fungeSpaceSetOff(fungeSpace * restrict me, FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
+fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	fungeSpaceSet(me, value, &tmp);
+	fungeSpaceSet(value, &tmp);
 }
 
-#ifdef BROKEN
+#if 0
 
 static inline void
-fungeSpaceWrapNoDelta(const fungeSpace * restrict me, fungePosition * restrict position)
+fungeSpaceWrapNoDelta(fungePosition * restrict position)
 {
-	if (position->x < me->topLeftCorner.x)
-		position->x = me->bottomRightCorner.x - ABS(position->x);
+	if (position->x < fspace->topLeftCorner.x)
+		position->x = fspace->bottomRightCorner.x - ABS(position->x);
 	else
-		position->x = position->x % me->bottomRightCorner.x;
+		position->x = position->x % fspace->bottomRightCorner.x;
 
-	if (position->y < me->topLeftCorner.y)
-		position->y = me->bottomRightCorner.y - ABS(position->y);
+	if (position->y < fspace->topLeftCorner.y)
+		position->y = fspace->bottomRightCorner.y - ABS(position->y);
 	else
-		position->y = position->y % me->bottomRightCorner.y;
+		position->y = position->y % fspace->bottomRightCorner.y;
 }
 #endif
 
 void
-fungeSpaceWrap(const fungeSpace * restrict me, fungePosition * restrict position, const fungeVector * restrict delta)
+fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
 {
-#ifdef BROKEN
+#if 0
 	if (VectorIsCardinal(delta))
-		fungeSpaceWrapNoDelta(me, position);
+		fungeSpaceWrapNoDelta(position);
 	else {
 #endif
-		if (!fungeSpaceInRange(me, position)) {
+		if (!fungeSpaceInRange(position)) {
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
-			} while (fungeSpaceInRange(me, position));
+			} while (fungeSpaceInRange(position));
 				position->x += delta->x;
 				position->y += delta->y;
 		}
-#ifdef BROKEN
+#if 0
 	}
 #endif
 }
 
 
 bool
-fungeSpaceLoad(fungeSpace * restrict me, const char * restrict filename)
+fungeSpaceLoad(const char * restrict filename)
 {
 	FILE * file;
 	char * line = NULL;
@@ -236,25 +238,25 @@ fungeSpaceLoad(fungeSpace * restrict me, const char * restrict filename)
 			if (line[i] == '\0') {
 				break;
 			} else if (line[i] == '\r' && line[i+1] == '\n') {
-				if (me->bottomRightCorner.x < x)
-					me->bottomRightCorner.x = x;
+				if (fspace->bottomRightCorner.x < x)
+					fspace->bottomRightCorner.x = x;
 				x = 0;
 				y++;
 				i++;
 				continue;
 			} else if (line[i] == '\n' || line[i] == '\r') {
-				if (me->bottomRightCorner.x < x)
-					me->bottomRightCorner.x = x;
+				if (fspace->bottomRightCorner.x < x)
+					fspace->bottomRightCorner.x = x;
 				x = 0;
 				y++;
 				continue;
 			}
-			fungeSpaceSet(me, (FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
+			fungeSpaceSet((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
 			x++;
 		}
 	}
-	if (me->bottomRightCorner.y < y)
-		me->bottomRightCorner.y = y;
+	if (fspace->bottomRightCorner.y < y)
+		fspace->bottomRightCorner.y = y;
 	fclose(file);
 	return true;
 }
