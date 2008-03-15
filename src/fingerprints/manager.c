@@ -30,6 +30,7 @@
 #include "ORTH/ORTH.h"
 #include "REFC/REFC.h"
 #include "ROMA/ROMA.h"
+#include "SUBR/SUBR.h"
 
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
@@ -54,6 +55,8 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR" },
 	// ROMA - Roman Numerals
 	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
+	// SUBR - Subroutine extension
+	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR" },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
 };

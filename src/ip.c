@@ -43,8 +43,9 @@ ipCreate(fungeStackStack * stackstack)
 	tmp->storageOffset.y = 0;
 	tmp->stackstack = stackstack;
 	tmp->stack      = stackstack->stacks[stackstack->current];
-	if (SettingEnableFingerprints)
+	if (SettingEnableFingerprints) {
 		ManagerInit(tmp);
+	}
 	return tmp;
 }
 
