@@ -24,6 +24,11 @@ MARK_AS_ADVANCED(
 	CMAKE_BACKWARDS_COMPATIBILITY
 	EXECUTABLE_OUTPUT_PATH
 	LIBRARY_OUTPUT_PATH
+	USE_WERROR
+	BOEHM_INCLUDE_DIR
+	BOEHM_CORD_INCLUDE_DIR
+	BOEHM_LIBRARY_GC
+	BOEHM_LIBRARY_CORD
 )
 
 # if you want the full compiler output, uncomment the following line
@@ -42,6 +47,18 @@ ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
 FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
 	${BoehmIncDir}
 )
+FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
+	${BoehmIncDir}
+)
+
+FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
+	PATHS
+	${BoehmLinkDir}
+)
+FIND_LIBRARY(BOEHM_LIBRARY_CORD NAMES cord libcord
+	PATHS
+	${BoehmLinkDir}
+)
 
 
 CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
@@ -52,6 +69,13 @@ IF(USE_64BIT)
 ELSE(USE_64BIT)
 	ADD_DEFINITIONS(-DUSE32)
 ENDIF(USE_64BIT)
+
+OPTION(USE_WERROR "Should we build with -Werror" OFF)
+IF(USE_WERROR)
+	IF (CMAKE_COMPILER_IS_GNUCC)
+		ADD_DEFINITIONS(-Werror)
+	ENDIF (CMAKE_COMPILER_IS_GNUCC)
+ENDIF(USE_WERROR)
 
 # add definitions, compiler switches, etc.
 ADD_DEFINITIONS(-std=c99)
@@ -95,15 +119,15 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	REMOVE_DEFINITIONS(-DGC_DEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
+INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
+LINK_DIRECTORIES(${BoehmLinkDir})
 
-
-ADD_DEFINITIONS(-I${BOEHM_INCLUDE_DIR})
-
-include_directories (${CFUNGE_SOURCE_DIR}/lib/libghthash/)
-include_directories (${CFUNGE_SOURCE_DIR}/src/)
-include_directories (${CFUNGE_SOURCE_DIR}/src/funge-space/)
-include_directories (${CFUNGE_SOURCE_DIR}/src/instructions/)
-include_directories (${CFUNGE_SOURCE_DIR}/src/fingerprints/)
+INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/)
+INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/lib/libghthash/)
+INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/funge-space/)
+INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/instructions/)
+INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 
 
 # list all source files here
@@ -112,4 +136,4 @@ ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
 # need to link to some other libraries ? just add them here
 SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
-TARGET_LINK_LIBRARIES(cfunge ${BoehmLinkFlags} cord)
+TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC} ${BOEHM_LIBRARY_CORD})
