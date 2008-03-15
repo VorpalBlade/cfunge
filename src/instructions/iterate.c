@@ -31,11 +31,11 @@
 void RunIterate(instructionPointer * ip)
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
-	if (iters == 0)
+	if (iters == 0) {
 		ipForward(1, ip);
-	else if (iters < 0)
+	} else if (iters < 0) {
 		ipReverse(ip);
-	else {
+	} else {
 		FUNGEDATATYPE kInstr;
 		// Fetch instruction
 		ipForward(1, ip);

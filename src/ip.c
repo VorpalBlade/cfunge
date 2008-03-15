@@ -65,14 +65,6 @@ void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 	fungeSpaceWrap(&ip->position, &ip->delta);
 }
 
-
-void
-ipReverse(instructionPointer * restrict ip)
-{
-	ip->delta.x = -ip->delta.x;
-	ip->delta.y = -ip->delta.y;
-}
-
 void
 ipTurnRight(instructionPointer * restrict ip)
 {

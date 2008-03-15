@@ -78,7 +78,12 @@ extern void ipForward(int_fast64_t steps, instructionPointer * restrict ip) __at
 /**
  * Mirror IP direction.
  */
-extern void ipReverse(instructionPointer * restrict ip) __attribute__((nonnull));
+#define ipReverse(ip) \
+	{ \
+		ip->delta.x = -ip->delta.x; \
+		ip->delta.y = -ip->delta.y; \
+	}
+
 extern void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull));
 extern void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull));

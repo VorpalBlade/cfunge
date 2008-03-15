@@ -401,7 +401,6 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip) 
 				break;
 
 
-			// TODO: insert fingerprint code here.
 			case '(':
 			case ')':
 				{
