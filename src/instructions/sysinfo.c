@@ -98,19 +98,19 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
 			{
 				time_t now;
-				struct tm curTime;
+				struct tm *curTime;
 				now = time(NULL);
-				gmtime_r(&now, &curTime);
-				StackPush((FUNGEDATATYPE)(curTime.tm_year * 256 * 256 + (curTime.tm_mon + 1) * 256 + curTime.tm_mday), pushStack);
+				curTime = gmtime(&now);
+				StackPush((FUNGEDATATYPE)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday), pushStack);
 				break;
 			}
 		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second)
 			{
 				time_t now;
-				struct tm curTime;
+				struct tm *curTime;
 				now = time(NULL);
-				gmtime_r(&now, &curTime);
-				StackPush((FUNGEDATATYPE)(curTime.tm_hour * 256 * 256 + curTime.tm_min * 256 + curTime.tm_sec), pushStack);
+				curTime = gmtime(&now);
+				StackPush((FUNGEDATATYPE)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec), pushStack);
 				break;
 			}
 		case 17: // Number of stacks on stack stack

@@ -68,6 +68,8 @@ void StackFree(fungeStack * stack)
 
 void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 {
+	assert(stack != NULL);
+
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
 		stack->entries = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
@@ -82,6 +84,8 @@ void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 
 FUNGEDATATYPE StackPop(fungeStack * stack)
 {
+	assert(stack != NULL);
+
 	if (stack->top == 0) {
 		return 0;
 	} else {
@@ -93,6 +97,8 @@ FUNGEDATATYPE StackPop(fungeStack * stack)
 
 void StackPopDiscard(fungeStack * stack)
 {
+	assert(stack != NULL);
+
 	if (stack->top == 0) {
 		return;
 	} else {
@@ -102,6 +108,8 @@ void StackPopDiscard(fungeStack * stack)
 
 void StackPopNDiscard(fungeStack * stack, size_t n)
 {
+	assert(stack != NULL);
+
 	if (stack->top == 0) {
 		return;
 	} else {
@@ -115,6 +123,8 @@ void StackPopNDiscard(fungeStack * stack, size_t n)
 
 FUNGEDATATYPE StackPeek(fungeStack * stack)
 {
+	assert(stack != NULL);
+
 	if (stack->top == 0) {
 		return 0;
 	} else {
@@ -145,6 +155,9 @@ fungeVector StackPopVector(fungeStack * stack)
 
 void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack)
 {
+	assert(str != NULL);
+	assert(stack != NULL);
+
 	for (ssize_t i = len; i >= 0; i--)
 		StackPush(str[i], stack);
 }
@@ -163,6 +176,7 @@ char *StackPopString(fungeStack * stack)
 #else
 	size_t index = 0;
 	char * x = cf_calloc_noptr(stack->top, sizeof(char));
+
 	while ((c = StackPop(stack)) != '\0') {
 		x[index] = (char)c;
 		index++;
@@ -219,6 +233,8 @@ void StackDump(fungeStack * stack) __attribute__((unused));
 
 void StackDump(fungeStack * stack)
 {
+	if (!stack)
+		return;
 	fprintf(stderr, "%zu elements:\n", stack->top);
 	for (size_t i = 0; i < stack->top; i++)
 		fprintf(stderr, "%" FUNGEDATAPRI " ", stack->entries[i]);
@@ -255,6 +271,10 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restri
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
+
+	assert(ip != NULL);
+	assert(me != NULL);
+	assert(storageOffset != NULL);
 
 	// Set up variables
 	stackStack = *me;
@@ -301,6 +321,10 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** restrict
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
 	fungePosition    storageOffset;
+
+	assert(ip != NULL);
+	assert(me != NULL);
+
 	// Set up variables
 	stackStack = *me;
 	TOSS = stackStack->stacks[stackStack->current];

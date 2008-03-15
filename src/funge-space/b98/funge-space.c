@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define FUNGESPACEINITIALSIZE 200000
 // We allocate *cells* this many at a time.
@@ -68,7 +69,8 @@ fungeSpaceCreate(void)
 	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace->entries)
 		return false;
-	//ght_set_heuristics(tmp->entries, GHT_HEURISTICS_TRANSPOSE);
+	//ght_set_hash(fspace->entries, &ght_crc_hash);
+	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
 	fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
 	fspace->allocarrayCurrent = 0;
@@ -104,6 +106,8 @@ fungeSpaceGet(const fungePosition * restrict position)
 {
 	FUNGEDATATYPE *tmp;
 
+	assert(position != NULL);
+
 	tmp = ght_get(fspace->entries, sizeof(fungePosition), position);
 	if (!tmp)
 		return ' ';
@@ -117,6 +121,9 @@ fungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 {
 	fungePosition tmp;
 	FUNGEDATATYPE *result;
+
+	assert(position != NULL);
+	assert(offset != NULL);
 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
@@ -152,6 +159,7 @@ fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 void
 fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
+	assert(position != NULL);
 	if (value == ' ')
 		ght_remove(fspace->entries, sizeof(fungePosition), position);
 	else {
@@ -175,6 +183,10 @@ void
 fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
+
+	assert(position != NULL);
+	assert(offset != NULL);
+
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
@@ -229,6 +241,8 @@ fungeSpaceLoad(const char * restrict filename)
 	// Row in fungespace
 	int    y = 0;
 	int    x = 0;
+
+	assert(filename != NULL);
 
 	file = fopen(filename, "r");
 	if (!file)
