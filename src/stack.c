@@ -267,6 +267,17 @@ fungeStackStack * StackStackCreate(void)
 	return stackStack;
 }
 
+void StackStackFree(fungeStackStack * me)
+{
+	if (!me)
+		return;
+
+	for (size_t i = 0; i < me->size; i++)
+		StackFree(me->stacks[i]);
+
+	cf_free(me);
+}
+
 bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {
 	fungeStackStack *stackStack;

@@ -55,8 +55,8 @@ typedef struct _instructionPointer {
 
 
 typedef struct {
-	size_t              count;
-	instructionPointer* entries;
+	size_t              size;
+	instructionPointer* entries[];
 } ipList;
 
 /**

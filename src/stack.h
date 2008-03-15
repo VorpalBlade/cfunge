@@ -114,6 +114,11 @@ extern void StackSwapTop(fungeStack * stack) __attribute__((nonnull));
  * Create a new stack-stack
  */
 extern fungeStackStack * StackStackCreate(void) __attribute__((malloc,warn_unused_result));
+/**
+ * Free a stack-stack and any stacks it contain.
+ */
+extern void StackStackFree(fungeStackStack * me);
+
 
 /**
  * Begin a new stack on the stack stack.

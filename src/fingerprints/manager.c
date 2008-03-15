@@ -70,6 +70,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  * Create an opcode stack.
  */
 static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,warn_unused_result));
+static inline void FreeOpcodeStack(fungeOpcodeStack *me) __attribute__((nonnull));
 
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
@@ -83,6 +84,15 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	tmp->entries[0] = NULL;
 	return tmp;
 }
+
+static inline void FreeOpcodeStack(fungeOpcodeStack *me) {
+	if (!me)
+		return;
+	if (me->entries)
+		cf_free(me->entries);
+	cf_free(me);
+}
+
 
 bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
@@ -116,11 +126,20 @@ static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
  * Opcode Manager functions *
  ****************************/
 
-void ManagerInit(instructionPointer * ip) {
+void ManagerCreate(instructionPointer * ip) {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
 	}
 }
+
+void ManagerFree(instructionPointer * ip) {
+	if (!ip)
+		return;
+	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
+		FreeOpcodeStack(ip->fingerOpcodes[i]);
+	}
+}
+
 
 /**
  * Return value is index into ImplementedFingerprints array.

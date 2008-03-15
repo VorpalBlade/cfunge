@@ -47,7 +47,7 @@ ipCreate(void)
 		return NULL;
 	tmp->stack              = tmp->stackstack->stacks[tmp->stackstack->current];
 	if (SettingEnableFingerprints) {
-		ManagerInit(tmp);
+		ManagerCreate(tmp);
 	}
 	return tmp;
 }
@@ -55,9 +55,12 @@ ipCreate(void)
 void
 ipFree(instructionPointer * restrict ip)
 {
-	// TODO: Free stackstack
+	StackStackFree(ip->stackstack);
 	ip->stackstack = NULL;
 	ip->stack      = NULL;
+	if (SettingEnableFingerprints) {
+		ManagerFree(ip);
+	}
 	cf_free(ip);
 }
 

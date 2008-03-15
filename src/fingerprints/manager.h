@@ -58,7 +58,12 @@ extern bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpco
 /**
  * Initialize stacks for IP
  */
-extern void ManagerInit(instructionPointer * ip) __attribute__((nonnull));
+extern void ManagerCreate(instructionPointer * ip) __attribute__((nonnull));
+
+/**
+ * Free stacks for IP
+ */
+extern void ManagerFree(instructionPointer * ip) __attribute__((nonnull));
 
 /**
  * Try to load fingerprint.

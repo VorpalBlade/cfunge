@@ -471,6 +471,14 @@ static inline void interpreterMainLoop(void)
 	}
 }
 
+#ifndef NDEBUG
+// Used with valgrind debugging.
+static void DebugFreeThings(void) {
+	ipFree(IP);
+	fungeSpaceFree();
+}
+#endif
+
 void interpreterRun(const char *filename)
 {
 	IP = ipCreate();
@@ -491,6 +499,8 @@ void interpreterRun(const char *filename)
 		// Set up randomness
 		srandom(tv.tv_usec);
 	}
-
+#ifndef NDEBUG
+	atexit(&DebugFreeThings);
+#endif
 	interpreterMainLoop();
 }

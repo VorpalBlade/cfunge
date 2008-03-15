@@ -79,6 +79,8 @@ static void FingerSUBRReturn(instructionPointer * ip) {
 
 	while (n--)
 		StackPush(StackPop(tmpstack), ip->stack);
+
+	StackFree(tmpstack);
 }
 
 
