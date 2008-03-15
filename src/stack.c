@@ -24,8 +24,10 @@
 #include "ip.h"
 #include <assert.h>
 #include <string.h>
-#include <gc/cord.h>
-#include <gc/ec.h>
+#ifndef DISABLE_GC
+#  include <gc/cord.h>
+#  include <gc/ec.h>
+#endif
 
 // How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 16
@@ -147,15 +149,26 @@ void StackPushString(size_t len, const char * restrict str, fungeStack * restric
 
 char *StackPopString(fungeStack * stack)
 {
-	CORD_ec x;
 	FUNGEDATATYPE c;
+#ifndef DISABLE_GC
+	CORD_ec x;
 
 	CORD_ec_init(x);
 	while ((c = StackPop(stack)) != '\0')
 		CORD_ec_append(x, (char)c);
 
 	return CORD_to_char_star(CORD_ec_to_cord(x));
+#else
+	size_t index = 0;
+	char * x = cf_calloc_noptr(stack->top, sizeof(char));
+	while ((c = StackPop(stack)) != '\0') {
+		x[index] = (char)c;
+		index++;
+	}
+	return x;
+#endif
 }
+
 char *StackPopSizedString(size_t len, fungeStack * stack)
 {
 	char * x = cf_malloc_noptr((len + 1) * sizeof(char));

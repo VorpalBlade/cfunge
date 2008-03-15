@@ -29,6 +29,7 @@ MARK_AS_ADVANCED(
 	BOEHM_CORD_INCLUDE_DIR
 	BOEHM_LIBRARY_GC
 	BOEHM_LIBRARY_CORD
+	LEAK_MODE
 )
 
 # if you want the full compiler output, uncomment the following line
@@ -36,30 +37,37 @@ MARK_AS_ADVANCED(
 
 INCLUDE(UsePkgConfig)
 INCLUDE(CheckTypeSize)
-PKGCONFIG(bdw-gc BoehmIncDir BoehmLinkDir BoehmLinkFlags BoehmCflags)
 
-IF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-	MESSAGE(STATUS "Found Boehm GC")
-ELSE (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-	MESSAGE(FATAL_ERROR "Could NOT find new enough Boehm GC (you need 7.x or later)")
-ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-
-FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
-	${BoehmIncDir}
-)
-FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
-	${BoehmIncDir}
-)
-
-FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
-	PATHS
-	${BoehmLinkDir}
-)
-FIND_LIBRARY(BOEHM_LIBRARY_CORD NAMES cord libcord
-	PATHS
-	${BoehmLinkDir}
-)
-
+OPTION(LEAK_MODE "If this is enabled, do not use boehm-gc. Do not enable unless you know what you are doing." OFF)
+IF(LEAK_MODE)
+	ADD_DEFINITIONS(-DDISABLE_GC)
+ELSE(LEAK_MODE)
+	PKGCONFIG(bdw-gc BoehmIncDir BoehmLinkDir BoehmLinkFlags BoehmCflags)
+	IF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
+		MESSAGE(STATUS "Found Boehm GC")
+	ELSE (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
+		MESSAGE(FATAL_ERROR "Could NOT find new enough Boehm GC (you need 7.x or later)")
+	ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
+	
+	FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
+		${BoehmIncDir}
+	)
+	FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
+		${BoehmIncDir}
+	)
+	
+	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
+		PATHS
+		${BoehmLinkDir}
+	)
+	FIND_LIBRARY(BOEHM_LIBRARY_CORD NAMES cord libcord
+		PATHS
+		${BoehmLinkDir}
+	)
+	INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
+	INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
+	LINK_DIRECTORIES(${BoehmLinkDir})
+ENDIF(LEAK_MODE)
 
 CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
 
@@ -119,10 +127,6 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	REMOVE_DEFINITIONS(-DGC_DEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
-INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
-LINK_DIRECTORIES(${BoehmLinkDir})
-
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/)
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/lib/libghthash/)
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/funge-space/)
@@ -136,4 +140,6 @@ ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
 # need to link to some other libraries ? just add them here
 SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
-TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC} ${BOEHM_LIBRARY_CORD})
+IF(NOT LEAK_MODE)
+	TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC} ${BOEHM_LIBRARY_CORD})
+ENDIF(NOT LEAK_MODE)

@@ -23,9 +23,13 @@
 #ifndef _HAD_SRC_SUPPORT_H
 #define _HAD_SRC_SUPPORT_H
 
-#include <gc/gc.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
+
+#ifndef DISABLE_GC
+
+#include <gc/gc.h>
 
 #define cf_malloc(x)           GC_MALLOC(x)
 // Use this for strings and other stuff containing no pointers when possible.
@@ -40,6 +44,27 @@
 #define gc_collect_full()      GC_gcollect()
 #define gc_collect_some()      GC_collect_a_little()
 
+#define cf_strdup(x)       GC_STRDUP(x)
+
+#else
+
+#define cf_malloc(x)           malloc(x)
+// Use this for strings and other stuff containing no pointers when possible.
+#define cf_malloc_noptr(x)     malloc(x)
+// This memory is not collectable. Avoid using this unless you have to.
+#define cf_malloc_nocollect(x) malloc(x)
+#define cf_free(x)             free(x)
+#define cf_realloc(x,y)        realloc(x, y)
+#define cf_calloc(x,y)         calloc((x), (y))
+#define cf_calloc_noptr(x,y)   calloc((x), (y))
+
+#define gc_collect_full()      /* NO OP */
+#define gc_collect_some()      /* NO OP */
+
+#define cf_strdup(x)           strdup(x)
+
+#endif
+
 // Use these only if you have to, for example if some external library
 // did the malloc
 #define malloc_nogc(x)         malloc(x)
@@ -47,8 +72,6 @@
 #define realloc_nogc(x,y)      realloc(x, y)
 #define free_nogc(x)           free(x);
 
-
-#define cf_strdup(x)       GC_STRDUP(x)
 extern char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
 extern size_t cf_strnlen(const char *string, size_t maxlen);
 

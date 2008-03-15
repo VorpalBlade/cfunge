@@ -63,8 +63,10 @@ int main(int argc, char *argv[])
 {
 	int opt;
 
+#ifndef DISABLE_GC
 	GC_all_interior_pointers = 1;
 	GC_INIT();
+#endif
 
 	while ((opt = getopt(argc, argv, "+fhs:t:VW")) != -1) {
 		switch (opt) {
