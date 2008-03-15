@@ -30,7 +30,7 @@
 // We allocate *cells* this many at a time.
 #define FUNGESPACEALLOCCHUNK 512
 
-struct _fungeSpace {
+typedef struct _fungeSpace {
 	// These two form a rectangle for the program size
 	fungePosition topLeftCorner;
 	fungePosition bottomRightCorner;
@@ -40,8 +40,9 @@ struct _fungeSpace {
 	// We will replace it when we need to. Size MUST be FUNGESPACEALLOCCHUNK
 	FUNGEDATATYPE *allocarray;
 	size_t         allocarrayCurrent;
-};
+} fungeSpace;
 
+// Funge space storage.
 static fungeSpace *fspace = NULL;
 
 /**

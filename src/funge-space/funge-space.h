@@ -27,9 +27,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-struct _fungeSpace;
-typedef struct _fungeSpace fungeSpace;
-
 /**
  * Create a funge-space.
  */

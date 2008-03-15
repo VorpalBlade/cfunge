@@ -30,9 +30,6 @@
 #include "ip.h"
 #include "funge-space/funge-space.h"
 
-// Variables
-extern fungeSpace *fspace;
-
 // DO NOT MODIFY these two!
 // (they are declared in main.c btw)
 extern char **fungeargv;
