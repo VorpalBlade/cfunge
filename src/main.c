@@ -27,6 +27,7 @@
 #include <errno.h>
 #include "interpreter.h"
 #include "settings.h"
+#include "fingerprints/manager.h"
 
 char **fungeargv = NULL;
 int fungeargc = 0;
@@ -37,7 +38,8 @@ static void printVersion(void) __attribute__((noreturn));
 static void printHelp(void) {
 	puts("Usage: cfunge [OPTION] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
-	puts(" -f           Disable all fingerprints.");
+	puts(" -F           Disable all fingerprints.");
+	puts(" -f           Show list of implemented fingerprints.");
 	puts(" -h           Show this help and exit.");
 	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
 	puts(" -t level     Use given trace level. Default 0.");
@@ -70,10 +72,13 @@ int main(int argc, char *argv[])
 	GC_INIT();
 #endif
 
-	while ((opt = getopt(argc, argv, "+fhs:t:VW")) != -1) {
+	while ((opt = getopt(argc, argv, "+Ffhs:t:VW")) != -1) {
 		switch (opt) {
-			case 'f':
+			case 'F':
 				SettingEnableFingerprints = false;
+				break;
+			case 'f':
+				ManagerList();
 				break;
 			case 'h':
 				printHelp();

@@ -24,6 +24,7 @@
 
 #include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
@@ -223,4 +224,17 @@ bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
 	for (size_t i = 0; i < strlen(ImplementedFingerprints[index].opcodes); i++)
 		OpcodeStackPop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
+}
+
+void ManagerList(void) {
+	int i = 0;
+	puts("Supported fingerprints in this binary:");
+	do {
+		// This mess is the reconstruct the name from the fingerprint.
+		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
+		char fprintname[4] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint};
+
+		printf("0x%x %s\n", (unsigned)fprint, fprintname);
+	} while (ImplementedFingerprints[++i].fprint != 0);
+	exit(0);
 }

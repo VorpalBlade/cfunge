@@ -84,4 +84,10 @@ extern bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) __at
  */
 extern bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
 
+/**
+ * Print out list of supported fingerprints
+ */
+extern void ManagerList(void) __attribute__((noreturn));
+
+
 #endif
