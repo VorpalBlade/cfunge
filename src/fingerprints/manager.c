@@ -71,7 +71,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  */
 static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,warn_unused_result));
 static inline void FreeOpcodeStack(fungeOpcodeStack *me) __attribute__((nonnull));
+#ifdef CONCURRENT_FUNGE
 static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old) __attribute__((malloc,nonnull,warn_unused_result));
+#endif
 
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
@@ -94,6 +96,7 @@ static inline void FreeOpcodeStack(fungeOpcodeStack *me) {
 	cf_free(me);
 }
 
+#ifdef CONCURRENT_FUNGE
 static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old) {
 	fungeOpcodeStack * tmp;
 
@@ -112,7 +115,7 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old
 		tmp->entries[i] = old->entries[i];
 	return tmp;
 }
-
+#endif
 
 
 bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) {
@@ -147,10 +150,13 @@ static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
  * Opcode Manager functions *
  ****************************/
 
-void ManagerCreate(instructionPointer * ip) {
+bool ManagerCreate(instructionPointer * ip) {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
+		if (!ip->fingerOpcodes[i])
+			return false;
 	}
+	return true;
 }
 
 void ManagerFree(instructionPointer * ip) {
@@ -161,6 +167,7 @@ void ManagerFree(instructionPointer * ip) {
 	}
 }
 
+#ifdef CONCURRENT_FUNGE
 bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * newip) {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		newip->fingerOpcodes[i] = DuplicateOpcodeStack(oldip->fingerOpcodes[i]);
@@ -173,6 +180,7 @@ bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * new
 	}
 	return true;
 }
+#endif
 
 /**
  * Return value is index into ImplementedFingerprints array.

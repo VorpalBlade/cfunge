@@ -29,7 +29,7 @@
 
 
 #ifdef CONCURRENT_FUNGE
-extern void RunIterate(instructionPointer * restrict ip, FUNGEDATATYPE * restrict threadindex) __attribute__((nonnull));
+extern void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex) __attribute__((nonnull));
 #else
 extern void RunIterate(instructionPointer * ip) __attribute__((nonnull));
 #endif

@@ -49,7 +49,8 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 		return false;
 	me->stack              = me->stackstack->stacks[me->stackstack->current];
 	if (SettingEnableFingerprints) {
-		ManagerCreate(me);
+		if (!ManagerCreate(me))
+			return false;
 	}
 	return true;
 }
@@ -62,6 +63,7 @@ instructionPointer * ipCreate(void)
 	return tmp;
 }
 
+#ifdef CONCURRENT_FUNGE
 static inline bool ipDuplicateInPlace(const instructionPointer *old, instructionPointer *new) {
 	assert(old);
 	assert(new);
@@ -85,6 +87,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer *old, instruction
 	}
 	return true;
 }
+#endif
 
 static void ipFreeResources(instructionPointer * restrict ip)
 {
@@ -176,9 +179,11 @@ ipList* ipListCreate(void)
 
 extern void ipListFree(ipList* me)
 {
-	// TODO
 	if (!me)
 		return;
+	for (size_t i = 0; i <= me->top; i++) {
+		ipFreeResources(&me->ips[i]);
+	}
 	cf_free(me);
 }
 
@@ -227,7 +232,7 @@ extern ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	ipForward(1, &list->ips[index]);
 	list->ips[index].ID = ++list->highestID;
 	list->top++;
-	return --index;
+	return index - 1;
 }
 
 extern ssize_t ipListTerminateIP(ipList** me, size_t index)

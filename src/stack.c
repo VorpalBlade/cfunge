@@ -60,7 +60,7 @@ void StackFree(fungeStack * stack)
 	cf_free(stack);
 }
 
-
+#ifdef CONCURRENT_FUNGE
 static inline fungeStack * StackDuplicate(const fungeStack * old) __attribute__((malloc,nonnull,warn_unused_result));
 // Used for concurrency
 static inline fungeStack * StackDuplicate(const fungeStack * old)
@@ -77,7 +77,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 		tmp->entries[i] = old->entries[i];
 	return tmp;
 }
-
+#endif
 
 
 /************************
@@ -91,6 +91,10 @@ void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
 		stack->entries = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
+		if (!stack->entries) {
+			perror("Emergency! Failed to allocate enough memory for new stack items");
+			abort();
+		}
 		stack->entries[stack->top] = value;
 		stack->top++;
 		stack->size += ALLOCCHUNKSIZE;
@@ -296,6 +300,7 @@ void StackStackFree(fungeStackStack * me)
 	cf_free(me);
 }
 
+#ifdef CONCURRENT_FUNGE
 fungeStackStack * StackStackDuplicate(fungeStackStack * old)
 {
 	fungeStackStack * stackStack;
@@ -316,7 +321,7 @@ fungeStackStack * StackStackDuplicate(fungeStackStack * old)
 	stackStack->current = old->current;
 	return stackStack;
 }
-
+#endif
 
 bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {

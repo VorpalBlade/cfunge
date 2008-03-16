@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#define FUNGESPACEINITIALSIZE 200000
+#define FUNGESPACEINITIALSIZE 150000
 // We allocate *cells* this many at a time.
 #define FUNGESPACEALLOCCHUNK 512
 

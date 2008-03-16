@@ -42,7 +42,7 @@ extern int fungeargc;
  */
 #ifdef CONCURRENT_FUNGE
 // If true, we executed an instruction that took 0 ticks, so call me again!
-extern bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, FUNGEDATATYPE * threadindex);
+extern bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, ssize_t * threadindex);
 #else
 extern void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
 #endif

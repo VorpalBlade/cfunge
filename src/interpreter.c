@@ -57,7 +57,13 @@ static instructionPointer *IP = NULL;
 #define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
 
 #ifdef CONCURRENT_FUNGE
-bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, FUNGEDATATYPE * threadindex)
+#  define ReturnFromExecuteInstruction(x) return (x)
+#else
+#  define ReturnFromExecuteInstruction(x) return
+#endif
+
+#ifdef CONCURRENT_FUNGE
+bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, ssize_t * threadindex)
 #else
 void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 #endif
@@ -95,15 +101,15 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					} while (fungeSpaceGet(&ip->position) == ' ');
 					ip->NeedMove = false;
 				}
-				return true;
+				ReturnFromExecuteInstruction(true);
 			case 'z':
-				return false;
+				break;
 			case ';':
 				{
 					do {
 						ipForward(1, ip);
 					} while (fungeSpaceGet(&ip->position) != ';');
-					return true;
+					ReturnFromExecuteInstruction(true);
 				}
 			case '^':
 				GO_NORTH
@@ -475,7 +481,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				ipReverse(ip);
 		}
 	}
-	return false;
+	ReturnFromExecuteInstruction(false);
 }
 
 static inline void ThreadForward(instructionPointer * ip)
@@ -513,7 +519,7 @@ static inline void interpreterMainLoop(void)
 				i--;
 		}
 	}
-#else
+#else /* CONCURRENT_FUNGE */
 	while (true) {
 		FUNGEDATATYPE opcode;
 
@@ -532,19 +538,21 @@ static inline void interpreterMainLoop(void)
 		else
 			IP->NeedMove = true;
 	}
-#endif
+#endif /* CONCURRENT_FUNGE */
 }
 
 
 #ifndef NDEBUG
 // Used with debugging for freeing stuff at end of program
-// not needed, but useful to check that free functions works.
+// not needed, but useful to check that free functions works,
+// and for detecting real memory leaks.
 static void DebugFreeThings(void) {
 # ifdef CONCURRENT_FUNGE
 	ipListFree(IPList);
 # else
 	ipFree(IP);
 # endif
+	fungeSpaceFree();
 }
 #endif
 
@@ -552,15 +560,21 @@ void interpreterRun(const char *filename)
 {
 #ifdef CONCURRENT_FUNGE
 	IPList = ipListCreate();
-	if (IPList == NULL)
+	if (IPList == NULL) {
+		perror("Couldn't create instruction pointer list!?");
 		exit(EXIT_FAILURE);
+	}
 #else
 	IP = ipCreate();
-	if (IP == NULL)
+	if (IP == NULL) {
+		perror("Couldn't create instruction pointer!?");
 		exit(EXIT_FAILURE);
+	}
 #endif
-	if(!fungeSpaceCreate())
+	if(!fungeSpaceCreate()) {
+		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
+	}
 	if (!fungeSpaceLoad(filename)) {
 		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
@@ -569,7 +583,7 @@ void interpreterRun(const char *filename)
 		struct timeval tv;
 		if (gettimeofday(&tv, NULL)) {
 			perror("Couldn't get time of day?!");
-			abort();
+			exit(EXIT_FAILURE);
 		}
 		// Set up randomness
 		srandom(tv.tv_usec);

@@ -50,10 +50,7 @@ static void FingerMODUUnsignedResult(instructionPointer * ip) {
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {
-		FUNGEDATATYPE r = x % y;
-		if (r < 0)
-			r = ABS(r);
-		StackPush(r, ip->stack);
+		StackPush(ABS(x % y), ip->stack);
 	} else {
 		StackPush(0, ip->stack);
 	}
@@ -66,7 +63,7 @@ static void FingerMODURemainder(instructionPointer * ip) {
 	x = StackPop(ip->stack);
 
 	if (y) {
-		// Well that's easy, this is C.
+		// Well that's easy, this *is* C.
 		StackPush(x % y, ip->stack);
 	} else {
 		StackPush(0, ip->stack);

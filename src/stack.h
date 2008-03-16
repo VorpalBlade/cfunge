@@ -119,11 +119,12 @@ extern fungeStackStack * StackStackCreate(void) __attribute__((malloc,warn_unuse
  */
 extern void StackStackFree(fungeStackStack * me);
 
+#ifdef CONCURRENT_FUNGE
 /**
  * Deep copy a stack-stack, used for concurrency
  */
 extern fungeStackStack * StackStackDuplicate(fungeStackStack * old) __attribute__((malloc,nonnull,warn_unused_result));
-
+#endif
 
 /**
  * Begin a new stack on the stack stack.

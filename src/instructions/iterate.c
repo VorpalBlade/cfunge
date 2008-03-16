@@ -28,7 +28,7 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-void RunIterate(instructionPointer * restrict ip, FUNGEDATATYPE * restrict threadindex)
+void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex)
 #else
 void RunIterate(instructionPointer * ip)
 #endif
