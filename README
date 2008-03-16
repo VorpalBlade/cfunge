@@ -8,7 +8,8 @@ it probably won't get fixed.
 
 Further you will need cmake (http://www.cmake.org/) to compile it.
 
-Fingerprints:
+Fingerprints
+------------
 It is planned to implement most or all of the existing fingerprints,
 with some exceptions:
  * FNGR - Contradicts with 98 standard.
@@ -17,10 +18,22 @@ with some exceptions:
  * WIND - Too complex to implement.
  * IMAP - Too intrusive.
 
+Undefined behaviour
+-------------------
 The Befunge98 standard leaves some things undefined, here is what we do for
 some of those cases:
 * y pushes time in UTC not local time.
 * k with a negative argument reflects.
-* # across edge of funge space may or may not skip first char
+* # across edge of funge-space may or may not skip first char
   after wrapping depending on exact situation.
 * ( and ) with a negative count reflects and doesn't pop any fingerprint.
+
+Notes on different standards
+----------------------------
+The option -s 93 does not prevent the program from accessing outside the first
+80x25 cells. Nor does it disallow instructions that didn't exist in 93. It does
+however change space behaviour to match 93 style.
+
+If a program depends on a instruction that is undefined in 93 to reflect, it
+should be easy to replace such instructions with a r for reflect or any in the
+range A-Z (and not load any fingerprint).

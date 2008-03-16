@@ -96,7 +96,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			{
 				fungeRect rect;
 				fungeSpaceGetBoundRect(&rect);
-				StackPushVector(& (fungePosition) { .x = rect.w, .y = rect.h }, pushStack);
+				StackPushVector(& (fungePosition) { .x = rect.x + rect.w, .y = rect.y + rect.h }, pushStack);
 				break;
 			}
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)

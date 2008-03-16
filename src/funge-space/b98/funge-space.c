@@ -96,8 +96,8 @@ void
 fungeSpaceGetBoundRect(fungeRect * restrict rect) {
 	rect->x = fspace->topLeftCorner.x;
 	rect->y = fspace->topLeftCorner.y;
-	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x - 1;
-	rect->h = fspace->bottomRightCorner.y - fspace->topLeftCorner.y - 1;
+	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x;
+	rect->h = fspace->bottomRightCorner.y - fspace->topLeftCorner.y;
 }
 
 
