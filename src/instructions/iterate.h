@@ -29,9 +29,9 @@
 
 
 #ifdef CONCURRENT_FUNGE
-extern void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex) __attribute__((nonnull));
+void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex) __attribute__((nonnull));
 #else
-extern void RunIterate(instructionPointer * ip) __attribute__((nonnull));
+void RunIterate(instructionPointer * ip) __attribute__((nonnull));
 #endif
 
 #endif

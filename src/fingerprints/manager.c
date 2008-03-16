@@ -230,7 +230,8 @@ void ManagerList(void) {
 	int i = 0;
 	puts("Supported fingerprints in this binary:");
 	do {
-		// This mess is the reconstruct the name from the fingerprint.
+		// This hack is here to reconstruct the name from the fingerprint.
+		// It will break if char isn't 8 bits.
 		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[4] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint};
 

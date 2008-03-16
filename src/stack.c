@@ -84,7 +84,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
  * Basic push/pop/peeks *
  ************************/
 
-void StackPush(FUNGEDATATYPE value, fungeStack * stack)
+inline void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 {
 	assert(stack != NULL);
 
@@ -104,7 +104,7 @@ void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 	}
 }
 
-FUNGEDATATYPE StackPop(fungeStack * stack)
+inline FUNGEDATATYPE StackPop(fungeStack * stack)
 {
 	assert(stack != NULL);
 

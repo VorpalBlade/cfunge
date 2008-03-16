@@ -53,41 +53,41 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
  * Add func to the correct opcode in ip.
  */
-extern bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) __attribute__((nonnull,warn_unused_result));
+bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Initialize stacks for IP
  */
-extern bool ManagerCreate(instructionPointer * ip) __attribute__((nonnull,warn_unused_result));
+bool ManagerCreate(instructionPointer * ip) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Free stacks for IP
  */
-extern void ManagerFree(instructionPointer * ip) __attribute__((nonnull));
+void ManagerFree(instructionPointer * ip) __attribute__((nonnull));
 
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate a loaded fingerprints.
  */
-extern bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * newip) __attribute__((nonnull,warn_unused_result));
+bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * newip) __attribute__((nonnull,warn_unused_result));
 #endif
 
 /**
  * Try to load fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-extern bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
+bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Try to unload fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-extern bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
+bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Print out list of supported fingerprints
  */
-extern void ManagerList(void) __attribute__((noreturn));
+void ManagerList(void) __attribute__((noreturn));
 
 
 #endif

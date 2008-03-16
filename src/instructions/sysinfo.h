@@ -28,6 +28,6 @@
 #include "../funge-space/funge-space.h"
 
 
-extern void RunSysInfo(instructionPointer * ip) __attribute__((nonnull));
+void RunSysInfo(instructionPointer * ip) __attribute__((nonnull));
 
 #endif

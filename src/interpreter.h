@@ -42,14 +42,14 @@ extern int fungeargc;
  */
 #ifdef CONCURRENT_FUNGE
 // If true, we executed an instruction that took 0 ticks, so call me again!
-extern bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, ssize_t * threadindex);
+bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, ssize_t * threadindex);
 #else
-extern void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
+void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip);
 #endif
 
 /**
  * Should only be called from main.c
  */
-extern void interpreterRun(const char *filename) __attribute__((noreturn));
+void interpreterRun(const char *filename) __attribute__((noreturn));
 
 #endif

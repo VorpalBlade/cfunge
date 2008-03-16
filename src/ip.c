@@ -118,31 +118,27 @@ void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 	fungeSpaceWrap(&ip->position, &ip->delta);
 }
 
-void
+inline void
 ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
-
-	assert(ip != NULL);
 
 	tmpX        = ip->delta.x;
 	ip->delta.x = -ip->delta.y;
 	ip->delta.y = tmpX;
 }
 
-void
+inline void
 ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
-
-	assert(ip != NULL);
 
 	tmpX        = ip->delta.x;
 	ip->delta.x = ip->delta.y;
 	ip->delta.y = -tmpX;
 }
 
-void
+inline void
 ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
@@ -177,7 +173,7 @@ ipList* ipListCreate(void)
 	return tmp;
 }
 
-extern void ipListFree(ipList* me)
+void ipListFree(ipList* me)
 {
 	if (!me)
 		return;
@@ -187,7 +183,7 @@ extern void ipListFree(ipList* me)
 	cf_free(me);
 }
 
-extern ssize_t ipListDuplicateIP(ipList** me, size_t index)
+ssize_t ipListDuplicateIP(ipList** me, size_t index)
 {
 	ipList *list;
 
@@ -235,7 +231,7 @@ extern ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	return index - 1;
 }
 
-extern ssize_t ipListTerminateIP(ipList** me, size_t index)
+ssize_t ipListTerminateIP(ipList** me, size_t index)
 {
 	ipList *list;
 

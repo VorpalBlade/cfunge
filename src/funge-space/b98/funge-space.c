@@ -29,7 +29,7 @@
 
 #define FUNGESPACEINITIALSIZE 150000
 // We allocate *cells* this many at a time.
-#define FUNGESPACEALLOCCHUNK 512
+#define FUNGESPACEALLOCCHUNK 1024
 
 typedef struct _fungeSpace {
 	// These two form a rectangle for the program size
@@ -156,8 +156,8 @@ fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 }
 
 
-void
-fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
+static inline void
+fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
 	if (value == ' ')
@@ -169,6 +169,13 @@ fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 			ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
 		}
 	}
+}
+
+void
+fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
+{
+	assert(position != NULL);
+	fungeSpaceSetNoBoundUpdate(value, position);
 	if (fspace->bottomRightCorner.y < position->y)
 		fspace->bottomRightCorner.y = position->y;
 	if (fspace->bottomRightCorner.x < position->x)
@@ -194,7 +201,6 @@ fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, c
 }
 
 #if 0
-
 static inline void
 fungeSpaceWrapNoDelta(fungePosition * restrict position)
 {
@@ -241,7 +247,6 @@ fungeSpaceLoad(const char * restrict filename)
 	// Row in fungespace
 	int    y = 0;
 	int    x = 0;
-
 	assert(filename != NULL);
 
 	file = fopen(filename, "r");
@@ -266,7 +271,7 @@ fungeSpaceLoad(const char * restrict filename)
 				y++;
 				continue;
 			}
-			fungeSpaceSet((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
+			fungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
 			x++;
 		}
 	}

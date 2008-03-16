@@ -30,44 +30,44 @@
 /**
  * Create a funge-space.
  */
-extern bool fungeSpaceCreate(void) __attribute__((warn_unused_result));
+bool fungeSpaceCreate(void) __attribute__((warn_unused_result));
 /**
  * Destroy a funge-space.
  */
-extern void fungeSpaceFree(void);
+void fungeSpaceFree(void);
 /**
  * Get a cell.
  */
-extern FUNGEDATATYPE fungeSpaceGet(const fungePosition * restrict position) __attribute__((nonnull,warn_unused_result));
+FUNGEDATATYPE fungeSpaceGet(const fungePosition * restrict position) __attribute__((nonnull,warn_unused_result));
 /**
  * Get a cell, with an offset.
  */
-extern FUNGEDATATYPE fungeSpaceGetOff(const fungePosition * restrict position,
-                                      const fungePosition * restrict offset) __attribute__((nonnull,warn_unused_result));
+FUNGEDATATYPE fungeSpaceGetOff(const fungePosition * restrict position,
+                               const fungePosition * restrict offset) __attribute__((nonnull,warn_unused_result));
 /**
  * Set a cell.
  */
-extern void fungeSpaceSet(FUNGEDATATYPE value,
+void fungeSpaceSet(FUNGEDATATYPE value,
                           const fungePosition * restrict position) __attribute__((nonnull));
 /**
  * Set a cell, with an offset.
  */
-extern void fungeSpaceSetOff(FUNGEDATATYPE value,
-                             const fungePosition * restrict position,
-                             const fungePosition * restrict offset) __attribute__((nonnull));
+void fungeSpaceSetOff(FUNGEDATATYPE value,
+                      const fungePosition * restrict position,
+                      const fungePosition * restrict offset) __attribute__((nonnull));
 /**
  * Used for IP wrapping.
  */
-extern void fungeSpaceWrap(fungePosition * restrict position,
-                           const fungeVector * restrict delta) __attribute__((nonnull));
+void fungeSpaceWrap(fungePosition * restrict position,
+                    const fungeVector * restrict delta) __attribute__((nonnull));
 /**
  * Load a file into funge-space.
  */
-extern bool fungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
+bool fungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
 /**
  * Get the bounding rectangle for the part of funge-space that isn't empty.
  * It won't be too small, but it may be too big.
  */
-extern void fungeSpaceGetBoundRect(fungeRect * restrict rect) __attribute__((nonnull));
+void fungeSpaceGetBoundRect(fungeRect * restrict rect) __attribute__((nonnull));
 
 #endif

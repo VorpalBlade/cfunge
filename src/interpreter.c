@@ -51,10 +51,10 @@ static instructionPointer *IP = NULL;
 		StackPush((FUNGEDATATYPE)y, ip->stack); \
 		break;
 
-#define GO_WEST ipSetDelta(ip, & (fungeVector) { .x = -1, .y = 0 });
-#define GO_EAST ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
-#define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = -1 });
-#define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x = 0, .y = 1 });
+#define GO_WEST  ipSetDelta(ip, & (fungeVector) { .x = -1, .y =  0 });
+#define GO_EAST  ipSetDelta(ip, & (fungeVector) { .x =  1, .y =  0 });
+#define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x =  0, .y = -1 });
+#define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x =  0, .y =  1 });
 
 #ifdef CONCURRENT_FUNGE
 #  define ReturnFromExecuteInstruction(x) return (x)

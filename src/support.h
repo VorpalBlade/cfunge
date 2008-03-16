@@ -72,10 +72,10 @@
 #define realloc_nogc(x,y)      realloc(x, y)
 #define free_nogc(x)           free(x);
 
-extern char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
-extern size_t cf_strnlen(const char *string, size_t maxlen);
+char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));
+size_t cf_strnlen(const char *string, size_t maxlen);
 
 // This is glibc specific, so here is a version from gnulib.
-extern ssize_t cf_getline (char **lineptr, size_t *n, FILE *stream);
+ssize_t cf_getline (char **lineptr, size_t *n, FILE *stream);
 
 #endif

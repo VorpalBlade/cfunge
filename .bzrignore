@@ -6,3 +6,4 @@ Makefile
 ./cfunge.kdevelop.pcs
 *.gcno
 *.gcda
+*.gcov

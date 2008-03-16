@@ -63,4 +63,6 @@ typedef int32_t FUNGEVECTORTYPE;
 // For y instruction.
 #define FUNGEVERSION 10
 
+#define HASH_OPTIMIZE
+
 #endif

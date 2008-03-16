@@ -27,6 +27,8 @@
 
 #define ALLOCCHUNK 8
 
+static const ipDelta SUBRnewDelta = { .x = 1, .y = 0 };
+
 static void FingerSUBRCall(instructionPointer * ip) {
 	FUNGEDATATYPE n;
 	fungePosition pos;
@@ -47,15 +49,16 @@ static void FingerSUBRCall(instructionPointer * ip) {
 	StackFree(tmpstack);
 
 	ipSetPosition(ip, &pos);
-	ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
+	ipSetDelta(ip, &SUBRnewDelta);
 	ip->NeedMove = false;
 }
 
 static void FingerSUBRJump(instructionPointer * ip) {
 	fungePosition pos;
+
 	pos = StackPopVector(ip->stack);
 	ipSetPosition(ip, &pos);
-	ipSetDelta(ip, & (fungeVector) { .x = 1, .y = 0 });
+	ipSetDelta(ip, &SUBRnewDelta);
 	ip->NeedMove = false;
 }
 
