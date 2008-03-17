@@ -128,6 +128,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 # Feature test macros for glibc headers.
+# Shouldn't hurt other systems.
 ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
 
 IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
@@ -150,9 +151,12 @@ INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c src/fingerprints/*.c src/fingerprints/*/*.c)
 ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
-# need to link to some other libraries ? just add them here
-
 SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
+
+# We need to link to some other libraries, they are below
+
+# Need -lm for some fingerprints.
+TARGET_LINK_LIBRARIES(cfunge m)
 
 IF(NOT LEAK_MODE)
 	TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC} ${BOEHM_LIBRARY_CORD})

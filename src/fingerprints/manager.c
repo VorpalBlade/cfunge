@@ -26,6 +26,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "BASE/BASE.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
@@ -46,6 +47,8 @@ typedef struct {
 // Implemented fingerprints
 // NOTE: Keep sorted (apart from ending 0 entry).
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
+	// BASE - I/O for numbers in other bases
+	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO" },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
 	// NULL

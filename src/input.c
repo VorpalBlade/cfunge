@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 // We use a static buffer for input.
 static char*  lastline = NULL;
@@ -55,7 +56,11 @@ FUNGEDATATYPE input_getchar(void)
 	return tmp;
 }
 
-bool input_getint(FUNGEDATATYPE * value)
+static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+// Note, no need to optimize really, this is user input
+// bound anyway.
+bool input_getint(FUNGEDATATYPE * value, int base)
 {
 	bool found = false;
 	char* endptr = NULL;
@@ -63,10 +68,19 @@ bool input_getint(FUNGEDATATYPE * value)
 	getTheLine();
 	// Find first char that is a number, then convert number.
 	do {
-		if (!isdigit(*lastlineCurrent))
-			continue;
+		if (base == 10) {
+			if (!isdigit(*lastlineCurrent))
+				continue;
+		} else if (base == 16) {
+			if (!isdigit(*lastlineCurrent))
+				continue;
+		} else {
+			const char * p = strchr(digits, *lastlineCurrent);
+			if (!p || ((p - digits) >= (ptrdiff_t)base))
+				continue;
+		}
 		found = true;
-		*value = strtoll(lastlineCurrent, &endptr, 10);
+		*value = strtoll(lastlineCurrent, &endptr, base);
 		break;
 	} while (*(lastlineCurrent++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.

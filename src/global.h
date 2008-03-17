@@ -39,8 +39,13 @@
 
 #ifdef USE64
 // The type of the data cells
-typedef int_fast64_t FUNGEDATATYPE;
+typedef int_fast64_t  FUNGEDATATYPE;
+typedef uint_fast64_t FUNGEunsignedDATATYPE;
+// Generic print
 #  define FUNGEDATAPRI PRIdFAST64
+// Specific ones:
+#  define FUNGEDATAoctPRI PRIoFAST64
+#  define FUNGEDATAhexPRI PRIxFAST64
 // And of vector values
 typedef int_fast64_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRIdFAST64
@@ -49,7 +54,12 @@ typedef int_fast64_t FUNGEVECTORTYPE;
 #else
 // The type of the data cells
 typedef int32_t FUNGEDATATYPE;
+typedef uint32_t FUNGEunsignedDATATYPE;
+// Generic print
 #  define FUNGEDATAPRI PRId32
+// Specific ones:
+#  define FUNGEDATAoctPRI PRIo32
+#  define FUNGEDATAhexPRI PRIx32
 // And of vector values
 typedef int32_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRId32

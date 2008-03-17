@@ -374,7 +374,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					bool gotint = false;
 					fflush(stdout);
 					while (!gotint)
-						gotint = input_getint(&a);
+						gotint = input_getint(&a, 10);
 					StackPush(a, ip->stack);
 					break;
 				}

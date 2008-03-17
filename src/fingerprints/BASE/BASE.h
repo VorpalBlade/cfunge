@@ -18,19 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HAD_SRC_INPUT_H
-#define _HAD_SRC_INPUT_H
+#ifndef _HAD_SRC_FINGERPRINTS_BASE_H
+#define _HAD_SRC_FINGERPRINTS_BASE_H
 
-#include "global.h"
-#include <stdbool.h>
+#include "../../global.h"
+#include "../manager.h"
 
-/**
- * For use in input instruction &
- */
-bool input_getint(FUNGEDATATYPE * value, int base) __attribute__((nonnull,warn_unused_result));
-/**
- * For use in input instruction ~
- */
-FUNGEDATATYPE input_getchar(void) __attribute__((warn_unused_result));
+bool FingerBASEload(instructionPointer * ip);
 
 #endif

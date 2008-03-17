@@ -71,7 +71,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 		return -1;
 	}
 
-	flockfile(fp);
+	//flockfile(fp);
 
 	if (*lineptr == NULL || *n == 0) {
 		*n = 120;
@@ -126,7 +126,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 	result = cur_len ? (ssize_t)cur_len : result;
 
 unlock_return:
-	funlockfile(fp);  /* doesn't set errno */
+	//funlockfile(fp);  /* doesn't set errno */
 
 	return result;
 }
