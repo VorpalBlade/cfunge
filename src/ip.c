@@ -89,7 +89,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer *old, instruction
 }
 #endif
 
-static void ipFreeResources(instructionPointer * restrict ip)
+static inline void ipFreeResources(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
@@ -118,8 +118,7 @@ void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 	fungeSpaceWrap(&ip->position, &ip->delta);
 }
 
-inline void
-ipTurnRight(instructionPointer * restrict ip)
+void ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -128,8 +127,7 @@ ipTurnRight(instructionPointer * restrict ip)
 	ip->delta.y = tmpX;
 }
 
-inline void
-ipTurnLeft(instructionPointer * restrict ip)
+void ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -138,8 +136,7 @@ ipTurnLeft(instructionPointer * restrict ip)
 	ip->delta.y = -tmpX;
 }
 
-inline void
-ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
+void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
 	ip->delta.x = delta->x;

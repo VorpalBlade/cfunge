@@ -32,20 +32,60 @@
 char **fungeargv = NULL;
 int fungeargc = 0;
 
-static void printHelp(void) __attribute__((noreturn));
-static void printVersion(void) __attribute__((noreturn));
+// These are NOT worth inlineing
+static void printHelp(void) __attribute__((noreturn,noinline));
+static void printVersion(void) __attribute__((noreturn,noinline));
+static void printFeatures(void) __attribute__((noreturn,noinline));
+
+
+static void printFeatures(void) {
+	puts("Features compiled into this binary:");
+#ifdef CONCURRENT_FUNGE
+	puts(" + Concurrency using t instruction is enabled.");
+#else
+	puts(" - Concurrency using t instruction is disabled.");
+#endif
+
+#ifndef DISABLE_TRACE
+	puts(" + Tracing using -t <level> option is enabled.");
+#else
+	puts(" - Tracing using -t <level> option is disabled.");
+#endif
+
+#ifndef DISABLE_GC
+	puts(" + This binary uses Boehm GC.");
+#else
+	puts(" - This binary does NOT use Boehm GC!");
+	puts("   You are on your own if you disable Boehm GC!");
+#endif
+
+#if defined(USE64)
+	puts(" * Cell size is 64 bits (8 bytes).");
+#elif defined(USE32)
+	puts(" * Cell size is 32 bits (4 bytes).");
+#else
+	puts(" * Err, this shouldn't happen, it seems cell size is not known...");
+#endif
+
+	putchar('\n');
+	// This call does not return.
+	ManagerList();
+}
 
 static void printHelp(void) {
 	puts("Usage: cfunge [OPTION] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
 	puts(" -F           Disable all fingerprints.");
-	puts(" -f           Show list of implemented fingerprints.");
+	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
 	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
 	puts(" -t level     Use given trace level. Default 0.");
 	puts(" -V           Show version information and exit.");
 	puts(" -W           Show warnings.");
 
+#ifdef DISABLE_TRACE
+	puts("\nNote that someone disabled trace in this binary, so -t will have no effect.");
+#endif
 	exit(EXIT_SUCCESS);
 }
 
@@ -78,7 +118,7 @@ int main(int argc, char *argv[])
 				SettingEnableFingerprints = false;
 				break;
 			case 'f':
-				ManagerList();
+				printFeatures();
 				break;
 			case 'h':
 				printHelp();

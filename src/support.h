@@ -67,9 +67,9 @@
 
 // Use these only if you have to, for example if some external library
 // did the malloc
-#define malloc_nogc(x)         malloc(x)
-#define calloc_nogc(x,y)       calloc(x, y)
-#define realloc_nogc(x,y)      realloc(x, y)
+#define malloc_nogc(x)         malloc((x))
+#define calloc_nogc(x,y)       calloc((x), (y))
+#define realloc_nogc(x,y)      realloc((x), (y))
 #define free_nogc(x)           free(x);
 
 char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result));

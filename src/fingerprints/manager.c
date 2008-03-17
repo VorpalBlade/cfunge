@@ -239,9 +239,9 @@ void ManagerList(void) {
 	puts("Supported fingerprints in this binary:");
 	do {
 		// This hack is here to reconstruct the name from the fingerprint.
-		// It will break if char isn't 8 bits.
+		// It will probably break if char isn't 8 bits.
 		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
-		char fprintname[4] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint};
+		char fprintname[5] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint, '\0'};
 
 		printf("0x%x %s\n", (unsigned)fprint, fprintname);
 	} while (ImplementedFingerprints[++i].fprint != 0);
