@@ -74,7 +74,7 @@ void StackPopNDiscard(fungeStack * stack, size_t n) __attribute__((nonnull));
 /**
  * Stack peek.
  */
-FUNGEDATATYPE StackPeek(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+FUNGEDATATYPE StackPeek(const fungeStack * stack) __attribute__((nonnull, warn_unused_result));
 
 /**
  * Push a vector.
@@ -123,7 +123,7 @@ void StackStackFree(fungeStackStack * me);
 /**
  * Deep copy a stack-stack, used for concurrency
  */
-fungeStackStack * StackStackDuplicate(fungeStackStack * old) __attribute__((malloc,nonnull,warn_unused_result));
+fungeStackStack * StackStackDuplicate(const fungeStackStack * old) __attribute__((malloc,nonnull,warn_unused_result));
 #endif
 
 /**

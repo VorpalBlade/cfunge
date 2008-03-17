@@ -25,11 +25,16 @@
 #include <stdbool.h>
 
 /**
- * For use in input instruction &
+ * For use in input instruction & and in some fingerprints.
+ * Returns true if it got an integer in the given base, otherwise false.
+ * The read integer is returned in the value parameter.
  */
 bool input_getint(FUNGEDATATYPE * value, int base) __attribute__((nonnull,warn_unused_result));
 /**
- * For use in input instruction ~
+ * For use in input instruction ~ and in some fingerprints.
+ * This uses a buffer and read in one line (if the buffer is empty,
+ * otherwise it reuse the values from the old buffer).
+ * Returns next char from the buffer.
  */
 FUNGEDATATYPE input_getchar(void) __attribute__((warn_unused_result));
 

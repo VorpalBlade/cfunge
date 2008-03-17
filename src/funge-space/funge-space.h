@@ -48,7 +48,7 @@ FUNGEDATATYPE fungeSpaceGetOff(const fungePosition * restrict position,
  * Set a cell.
  */
 void fungeSpaceSet(FUNGEDATATYPE value,
-                          const fungePosition * restrict position) __attribute__((nonnull));
+                   const fungePosition * restrict position) __attribute__((nonnull));
 /**
  * Set a cell, with an offset.
  */

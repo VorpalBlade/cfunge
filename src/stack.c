@@ -84,7 +84,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
  * Basic push/pop/peeks *
  ************************/
 
-inline void StackPush(FUNGEDATATYPE value, fungeStack * stack)
+void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 {
 	assert(stack != NULL);
 
@@ -143,7 +143,7 @@ void StackPopNDiscard(fungeStack * stack, size_t n)
 }
 
 
-FUNGEDATATYPE StackPeek(fungeStack * stack)
+FUNGEDATATYPE StackPeek(const fungeStack * stack)
 {
 	assert(stack != NULL);
 
@@ -251,9 +251,9 @@ void StackSwapTop(fungeStack * stack)
 
 
 // For use with call in gdb
-void StackDump(fungeStack * stack) __attribute__((unused));
+void StackDump(const fungeStack * stack) __attribute__((unused));
 
-void StackDump(fungeStack * stack)
+void StackDump(const fungeStack * stack)
 {
 	if (!stack)
 		return;
@@ -301,7 +301,7 @@ void StackStackFree(fungeStackStack * me)
 }
 
 #ifdef CONCURRENT_FUNGE
-fungeStackStack * StackStackDuplicate(fungeStackStack * old)
+fungeStackStack * StackStackDuplicate(const fungeStackStack * old)
 {
 	fungeStackStack * stackStack;
 

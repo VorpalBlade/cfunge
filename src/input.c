@@ -26,7 +26,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-// We use a static buffer for input.
+// We use static buffer for input to save input
+// from one read to the next if there was any
+// left.
 static char*  lastline = NULL;
 static size_t linelength = 0;
 static char*  lastlineCurrent = NULL;

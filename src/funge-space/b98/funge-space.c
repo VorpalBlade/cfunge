@@ -256,6 +256,8 @@ fungeSpaceLoad(const char * restrict filename)
 	while (cf_getline(&line, &linelen, file) != -1) {
 		for (size_t i = 0; i < (strlen(line) + 1); i++) {
 			if (line[i] == '\0') {
+				if (fspace->bottomRightCorner.x < x)
+					fspace->bottomRightCorner.x = x;
 				break;
 			} else if (line[i] == '\r' && line[i+1] == '\n') {
 				if (fspace->bottomRightCorner.x < x)

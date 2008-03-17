@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "BASE/BASE.h"
 #include "MODU/MODU.h"
@@ -228,6 +229,10 @@ bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
 		OpcodeStackPop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
 }
+
+#if CHAR_BIT != 8
+#  error CHAR_BIT != 8, please make sure the function below the location of this error works on your system.
+#endif
 
 void ManagerList(void) {
 	int i = 0;
