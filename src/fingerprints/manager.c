@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <limits.h>
+#include <assert.h>
 
 #include "BASE/BASE.h"
 #include "MODU/MODU.h"
@@ -77,8 +78,18 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
  * Create an opcode stack.
  */
 static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,warn_unused_result));
+/**
+ * Free an opcode stack.
+ */
 static inline void FreeOpcodeStack(fungeOpcodeStack *me) __attribute__((nonnull));
+/**
+ * Pop a function pointer from an opcode stack, discarding it.
+ */
+static inline void OpcodeStackPop(fungeOpcodeStack * stack) __attribute__((nonnull));
 #ifdef CONCURRENT_FUNGE
+/**
+ * Duplicate an opcode stack, used for split (t).
+ */
 static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old) __attribute__((malloc,nonnull,warn_unused_result));
 #endif
 
@@ -146,6 +157,8 @@ bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func
  * Pop an entry from an opcode stack.
  */
 static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
+	assert(stack != NULL);
+
 	if (stack->top == 0) {
 		return;
 	} else {
@@ -175,7 +188,9 @@ void ManagerFree(instructionPointer * ip) {
 }
 
 #ifdef CONCURRENT_FUNGE
-bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * newip) {
+bool ManagerDuplicate(const instructionPointer * oldip,
+                      instructionPointer * newip)
+{
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		newip->fingerOpcodes[i] = DuplicateOpcodeStack(oldip->fingerOpcodes[i]);
 		if (!newip->fingerOpcodes[i]) {
@@ -193,12 +208,15 @@ bool ManagerDuplicate(const instructionPointer * oldip, instructionPointer * new
  * Return value is index into ImplementedFingerprints array.
  * -1 means not found.
  */
-static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint) {
+static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
+{
 	int i = 0;
 	bool found = false;
 	do {
 		if (fingerprint == ImplementedFingerprints[i].fprint) {
 			// If we run in a sandbox, can fingerprint be loaded?
+			// If not: break, as we know we found the right fingerprint,
+			// so no need to search more.
 			if (SettingSandbox && !ImplementedFingerprints[i].safe)
 				break;
 			found = true;

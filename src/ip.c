@@ -64,7 +64,7 @@ instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline bool ipDuplicateInPlace(const instructionPointer *old, instructionPointer *new) {
+static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
 	assert(old);
 	assert(new);
 	new->position.x         = old->position.x;
@@ -122,6 +122,8 @@ void ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
+	assert(ip != NULL);
+
 	tmpX        = ip->delta.x;
 	ip->delta.x = -ip->delta.y;
 	ip->delta.y = tmpX;
@@ -131,6 +133,8 @@ void ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
+	assert(ip != NULL);
+
 	tmpX        = ip->delta.x;
 	ip->delta.x = ip->delta.y;
 	ip->delta.y = -tmpX;
@@ -139,6 +143,7 @@ void ipTurnLeft(instructionPointer * restrict ip)
 void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
+	assert(delta != NULL);
 	ip->delta.x = delta->x;
 	ip->delta.y = delta->y;
 }
@@ -146,6 +151,7 @@ void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta
 void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
 {
 	assert(ip != NULL);
+	assert(position != NULL);
 	ip->position.x = position->x;
 	ip->position.y = position->y;
 	fungeSpaceWrap(&ip->position, &ip->delta);

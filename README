@@ -40,9 +40,9 @@ range A-Z (and not load any fingerprint).
 
 Sandbox mode
 ------------
-Sandbox mode prevents befunge programs from doing "harmful" things, this includes,
-but is not limited to:
+Sandbox mode prevents befunge programs from doing "harmful" things, this
+includes, but is not limited to:
  * Any file or filesystem IO is forbidden.
- * The program can not access network using network fingerprints.
  * The environment variables it can see are restricted.
- * Non-safe fingerprints can not be loaded.
+ * Non-safe fingerprints can not be loaded (this includes network, file system
+   access and possibly more).

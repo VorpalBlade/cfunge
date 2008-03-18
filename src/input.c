@@ -42,6 +42,8 @@ static inline void getTheLine(void)
 }
 static inline void discardTheLine(void)
 {
+	if (lastline != NULL)
+		cf_free(lastline);
 	lastline = NULL;
 	lastlineCurrent = NULL;
 }
