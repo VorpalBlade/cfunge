@@ -45,5 +45,15 @@ extern bool SettingWarnings;
 // Should fingerprints be enabled
 extern bool SettingEnableFingerprints;
 
+// If true:
+// * Any file or filesystem IO is forbidden.
+// * The program can not access network using network fingerprints.
+// * The environment variables it can see are restricted.
+// Summary:
+// * In core opcodes: =, o and i are forbidden.
+// * In fingerprints: Non-safe fingerprints are not loaded.
+extern bool SettingSandbox;
+
+
 
 #endif

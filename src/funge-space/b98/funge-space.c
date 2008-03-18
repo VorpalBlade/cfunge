@@ -145,6 +145,10 @@ fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
 		fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+		if (!fspace->allocarray) {
+			perror("Out of memory, couldn't allocate cell(s) for funge space");
+			abort();
+		}
 		fspace->allocarrayCurrent = 0;
 	} else {
 		// Allocate from array
@@ -254,7 +258,7 @@ fungeSpaceLoad(const char * restrict filename)
 		return false;
 
 	while (cf_getline(&line, &linelen, file) != -1) {
-		for (size_t i = 0; i < (strlen(line) + 1); i++) {
+		for (size_t i = 0; i < (linelen + 1); i++) {
 			if (line[i] == '\0') {
 				if (fspace->bottomRightCorner.x < x)
 					fspace->bottomRightCorner.x = x;

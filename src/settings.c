@@ -29,3 +29,4 @@ standardVersion SettingCurrentStandard = stdver98;
 uint_fast16_t SettingTraceLevel = 0;
 bool SettingWarnings = false;
 bool SettingEnableFingerprints = true;
+bool SettingSandbox = false;

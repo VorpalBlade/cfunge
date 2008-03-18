@@ -22,11 +22,11 @@ Undefined behaviour
 -------------------
 The Befunge98 standard leaves some things undefined, here is what we do for
 some of those cases:
-* y pushes time in UTC not local time.
-* k with a negative argument reflects.
-* # across edge of funge-space may or may not skip first char
-  after wrapping depending on exact situation.
-* ( and ) with a negative count reflects and doesn't pop any fingerprint.
+ * y pushes time in UTC not local time.
+ * k with a negative argument reflects.
+ * # across edge of funge-space may or may not skip first char
+   after wrapping depending on exact situation.
+ * ( and ) with a negative count reflects and doesn't pop any fingerprint.
 
 Notes on different standards
 ----------------------------
@@ -37,3 +37,12 @@ however change space behaviour to match 93 style.
 If a program depends on a instruction that is undefined in 93 to reflect, it
 should be easy to replace such instructions with a r for reflect or any in the
 range A-Z (and not load any fingerprint).
+
+Sandbox mode
+------------
+Sandbox mode prevents befunge programs from doing "harmful" things, this includes,
+but is not limited to:
+ * Any file or filesystem IO is forbidden.
+ * The program can not access network using network fingerprints.
+ * The environment variables it can see are restricted.
+ * Non-safe fingerprints can not be loaded.

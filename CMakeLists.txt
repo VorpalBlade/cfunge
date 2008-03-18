@@ -35,6 +35,8 @@ MARK_AS_ADVANCED(
 
 # if you want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
+# http://www.cmake.org/pipermail/cmake/2007-October/016786.html
+SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 INCLUDE(UsePkgConfig)
 INCLUDE(CheckTypeSize)

@@ -21,6 +21,7 @@
 #include "../global.h"
 #include "manager.h"
 #include "../ip.h"
+#include "../settings.h"
 
 #include <string.h>
 #include <stdbool.h>
@@ -43,27 +44,28 @@ typedef struct {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint */
 	const fingerprintLoader loader;   /**< Loader function pointer */
 	const char*             opcodes;  /**< Sorted string with all implemented opcodes */
+	const bool              safe;     /**< If true, this fingerprint is safe in sandbox mode. */
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
 // NOTE: Keep sorted (apart from ending 0 entry).
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
-	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO" },
+	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .safe = true },
 	// MODU - Modulo Arithmetic
-	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU" },
+	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .safe = true },
 	// NULL
-	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ" },
+	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ", .safe = true },
 	// ORTH - Orthogonal Easement Library
-	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ" },
+	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ", .safe = true },
 	// REFC - Referenced Cells Extension
-	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR" },
+	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR", .safe = true },
 	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX" },
+	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR" },
+	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR", .safe = true },
 	// Last should be 0
-	{ .fprint = 0, .loader = NULL, .opcodes = NULL }
+	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .safe = true }
 };
 
 
@@ -196,6 +198,9 @@ static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint) {
 	bool found = false;
 	do {
 		if (fingerprint == ImplementedFingerprints[i].fprint) {
+			// If we run in a sandbox, can fingerprint be loaded?
+			if (SettingSandbox && !ImplementedFingerprints[i].safe)
+				break;
 			found = true;
 			break;
 		}

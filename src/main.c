@@ -78,6 +78,7 @@ static void printHelp(void) {
 	puts(" -F           Disable all fingerprints.");
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
+	puts(" -S           Enable sandbox mode (see docs).");
 	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
 	puts(" -t level     Use given trace level. Default 0.");
 	puts(" -V           Show version information and exit.");
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
 	GC_INIT();
 #endif
 
-	while ((opt = getopt(argc, argv, "+Ffhs:t:VW")) != -1) {
+	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
 		switch (opt) {
 			case 'F':
 				SettingEnableFingerprints = false;
@@ -122,6 +123,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'h':
 				printHelp();
+				break;
+			case 'S':
+				SettingSandbox = true;
 				break;
 			case 's':
 				if (strncmp(optarg, "93", 2) == 0)
