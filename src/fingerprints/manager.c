@@ -81,16 +81,16 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,wa
 /**
  * Free an opcode stack.
  */
-static inline void FreeOpcodeStack(fungeOpcodeStack *me) __attribute__((nonnull));
+static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) __attribute__((nonnull));
 /**
  * Pop a function pointer from an opcode stack, discarding it.
  */
-static inline void OpcodeStackPop(fungeOpcodeStack * stack) __attribute__((nonnull));
+static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) __attribute__((nonnull));
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate an opcode stack, used for split (t).
  */
-static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old) __attribute__((malloc,nonnull,warn_unused_result));
+static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) __attribute__((malloc,nonnull,warn_unused_result));
 #endif
 
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
@@ -106,7 +106,7 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	return tmp;
 }
 
-static inline void FreeOpcodeStack(fungeOpcodeStack *me) {
+static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) {
 	if (!me)
 		return;
 	if (me->entries)
@@ -115,7 +115,7 @@ static inline void FreeOpcodeStack(fungeOpcodeStack *me) {
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old) {
+static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) {
 	fungeOpcodeStack * tmp;
 
 	if (!old)
@@ -136,7 +136,7 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack* old
 #endif
 
 
-bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func) {
+bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
@@ -156,7 +156,7 @@ bool OpcodeStackAdd(instructionPointer * ip, char opcode, fingerprintOpcode func
 /**
  * Pop an entry from an opcode stack.
  */
-static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
+static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) {
 	assert(stack != NULL);
 
 	if (stack->top == 0) {
@@ -170,7 +170,7 @@ static inline void OpcodeStackPop(fungeOpcodeStack * stack) {
  * Opcode Manager functions *
  ****************************/
 
-bool ManagerCreate(instructionPointer * ip) {
+bool ManagerCreate(instructionPointer * restrict ip) {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
 		if (!ip->fingerOpcodes[i])
@@ -179,7 +179,7 @@ bool ManagerCreate(instructionPointer * ip) {
 	return true;
 }
 
-void ManagerFree(instructionPointer * ip) {
+void ManagerFree(instructionPointer * restrict ip) {
 	if (!ip)
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -188,8 +188,8 @@ void ManagerFree(instructionPointer * ip) {
 }
 
 #ifdef CONCURRENT_FUNGE
-bool ManagerDuplicate(const instructionPointer * oldip,
-                      instructionPointer * newip)
+bool ManagerDuplicate(const instructionPointer * restrict oldip,
+                      instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		newip->fingerOpcodes[i] = DuplicateOpcodeStack(oldip->fingerOpcodes[i]);
@@ -228,7 +228,7 @@ static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
 	return i;
 }
 
-bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
+bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1) {
 		return false;
@@ -244,7 +244,7 @@ bool ManagerLoad(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
 	}
 }
 
-bool ManagerUnload(instructionPointer * ip, FUNGEDATATYPE fingerprint) {
+bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1)
 		return false;
@@ -266,7 +266,7 @@ void ManagerList(void) {
 		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[5] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint, '\0'};
 
-		printf("0x%x %s\n", (unsigned)fprint, fprintname);
+		printf("0x%x %s%s\n", (unsigned)fprint, fprintname, ImplementedFingerprints[i].safe ? "" : " (not available in sandbox mode)");
 	} while (ImplementedFingerprints[++i].fprint != 0);
 	exit(0);
 }

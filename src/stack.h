@@ -58,23 +58,23 @@ void StackFree(fungeStack * stack);
 /**
  * Push a item on the stack
  */
-void StackPush(FUNGEDATATYPE value, fungeStack * stack) __attribute__((nonnull));
+void StackPush(FUNGEDATATYPE value, fungeStack * restrict stack) __attribute__((nonnull));
 /**
  * Pop item from stack.
  */
-FUNGEDATATYPE StackPop(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+FUNGEDATATYPE StackPop(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
 /**
  * Pop one item and discard it.
  */
-void StackPopDiscard(fungeStack * stack) __attribute__((nonnull));
+void StackPopDiscard(fungeStack * restrict stack) __attribute__((nonnull));
 /**
  * Pop a number of items and discard them.
  */
-void StackPopNDiscard(fungeStack * stack, size_t n) __attribute__((nonnull));
+void StackPopNDiscard(fungeStack * restrict stack, size_t n) __attribute__((nonnull));
 /**
  * Stack peek.
  */
-FUNGEDATATYPE StackPeek(const fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+FUNGEDATATYPE StackPeek(const fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
 
 /**
  * Push a vector.
@@ -83,7 +83,7 @@ void StackPushVector(const fungeVector * restrict value, fungeStack * restrict s
 /**
  * Pop a vector.
  */
-fungeVector StackPopVector(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+fungeVector StackPopVector(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
 /**
  * Push a null-terminated string to a 0"gnirts".
  */
@@ -91,20 +91,20 @@ void StackPushString(size_t len, const char * restrict str, fungeStack * restric
 /**
  * Pop a 0"gnirts" and return a null-terminated string
  */
-char * StackPopString(fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+char * StackPopString(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
 /**
  * Pop a fixed number of chars. Return as null-terminated string.
  */
-char * StackPopSizedString(size_t len, fungeStack * stack) __attribute__((nonnull, warn_unused_result));
+char * StackPopSizedString(size_t len, fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
 #define StackClear(stack) { stack->top = 0; }
 /**
  * Duplicate top element of the stack.
  */
-void StackDupTop(fungeStack * stack) __attribute__((nonnull));
+void StackDupTop(fungeStack * restrict stack) __attribute__((nonnull));
 /**
  * Swap the top two elements of the stack.
  */
-void StackSwapTop(fungeStack * stack) __attribute__((nonnull));
+void StackSwapTop(fungeStack * restrict stack) __attribute__((nonnull));
 
 //
 // Stack-stack functions
@@ -123,7 +123,7 @@ void StackStackFree(fungeStackStack * me);
 /**
  * Deep copy a stack-stack, used for concurrency
  */
-fungeStackStack * StackStackDuplicate(const fungeStackStack * old) __attribute__((malloc,nonnull,warn_unused_result));
+fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __attribute__((malloc,nonnull,warn_unused_result));
 #endif
 
 /**
@@ -131,7 +131,7 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * old) __attribute__
  * count is how many arguments to copy over.
  */
 bool StackStackBegin(struct _instructionPointer * restrict ip,
-                     fungeStackStack ** restrict me,
+                     fungeStackStack ** me,
                      FUNGEDATATYPE count,
                      const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result));
 /**
@@ -139,7 +139,7 @@ bool StackStackBegin(struct _instructionPointer * restrict ip,
  * count is how many items to copy over.
  */
 bool StackStackEnd(struct _instructionPointer * restrict ip,
-                   fungeStackStack ** restrict me,
+                   fungeStackStack ** me,
                    FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result));
 /**
  * Transfer items from one stack to another (not in order).

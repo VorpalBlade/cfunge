@@ -19,8 +19,8 @@
  */
 
 #include "global.h"
-#include "vector.h"
 #include "stack.h"
+#include "vector.h"
 #include "ip.h"
 #include <assert.h>
 #include <string.h>
@@ -84,7 +84,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
  * Basic push/pop/peeks *
  ************************/
 
-void StackPush(FUNGEDATATYPE value, fungeStack * stack)
+void StackPush(FUNGEDATATYPE value, fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -104,7 +104,7 @@ void StackPush(FUNGEDATATYPE value, fungeStack * stack)
 	}
 }
 
-inline FUNGEDATATYPE StackPop(fungeStack * stack)
+inline FUNGEDATATYPE StackPop(fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -117,7 +117,7 @@ inline FUNGEDATATYPE StackPop(fungeStack * stack)
 	}
 }
 
-void StackPopDiscard(fungeStack * stack)
+void StackPopDiscard(fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -128,7 +128,7 @@ void StackPopDiscard(fungeStack * stack)
 	}
 }
 
-void StackPopNDiscard(fungeStack * stack, size_t n)
+void StackPopNDiscard(fungeStack * restrict stack, size_t n)
 {
 	assert(stack != NULL);
 
@@ -143,7 +143,7 @@ void StackPopNDiscard(fungeStack * stack, size_t n)
 }
 
 
-FUNGEDATATYPE StackPeek(const fungeStack * stack)
+FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -166,7 +166,7 @@ void StackPushVector(const fungeVector * restrict value, fungeStack * restrict s
 	StackPush(value->y, stack);
 }
 
-fungeVector StackPopVector(fungeStack * stack)
+fungeVector StackPopVector(fungeStack * restrict stack)
 {
 	// TODO Optimize
 	FUNGEVECTORTYPE x, y;
@@ -184,7 +184,7 @@ void StackPushString(size_t len, const char * restrict str, fungeStack * restric
 		StackPush(str[i], stack);
 }
 
-char *StackPopString(fungeStack * stack)
+char *StackPopString(fungeStack * restrict stack)
 {
 	FUNGEDATATYPE c;
 #ifndef DISABLE_GC
@@ -207,7 +207,7 @@ char *StackPopString(fungeStack * stack)
 #endif
 }
 
-char *StackPopSizedString(size_t len, fungeStack * stack)
+char *StackPopSizedString(size_t len, fungeStack * restrict stack)
 {
 	char * x = cf_malloc_noptr((len + 1) * sizeof(char));
 
@@ -222,7 +222,7 @@ char *StackPopSizedString(size_t len, fungeStack * stack)
 /***************
  * Other stuff *
  ***************/
-void StackDupTop(fungeStack * stack)
+void StackDupTop(fungeStack * restrict stack)
 {
 	// TODO: Optimize instead of doing it this way
 	FUNGEDATATYPE tmp;
@@ -233,7 +233,7 @@ void StackDupTop(fungeStack * stack)
 		StackPush(0, stack);
 }
 
-void StackSwapTop(fungeStack * stack)
+void StackSwapTop(fungeStack * restrict stack)
 {
 	// TODO: Optimize instead of doing it this way
 	FUNGEDATATYPE a, b;
@@ -301,11 +301,11 @@ void StackStackFree(fungeStackStack * me)
 }
 
 #ifdef CONCURRENT_FUNGE
-fungeStackStack * StackStackDuplicate(const fungeStackStack * old)
+fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old)
 {
 	fungeStackStack * stackStack;
 
-	assert(old);
+	assert(old != NULL);
 
 	stackStack = cf_malloc(sizeof(fungeStackStack) + old->size * sizeof(fungeStack*));
 	if (!stackStack)
@@ -323,7 +323,7 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * old)
 }
 #endif
 
-bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
+bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
@@ -372,7 +372,7 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** restri
 }
 
 
-bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** restrict me, FUNGEDATATYPE count)
+bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count)
 {
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
@@ -418,6 +418,10 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** restrict
 
 void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)
 {
+	assert(TOSS != NULL);
+	assert(SOSS != NULL);
+	assert(TOSS != SOSS);
+
 	if (count > 0) {
 		while (count--) {
 			StackPush(StackPop(SOSS), TOSS);
