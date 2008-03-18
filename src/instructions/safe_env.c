@@ -35,12 +35,12 @@
 #include <stdbool.h>
 #include "safe_env.h"
 
-#define TOTAL_KEYWORDS 29
-#define MIN_WORD_LENGTH 3
+#define TOTAL_KEYWORDS 32
+#define MIN_WORD_LENGTH 2
 #define MAX_WORD_LENGTH 17
-#define MIN_HASH_VALUE 3
+#define MIN_HASH_VALUE 2
 #define MAX_HASH_VALUE 54
-/* maximum key range = 52, duplicates = 0 */
+/* maximum key range = 53, duplicates = 0 */
 
 static inline unsigned int
 SafeEnvHash (register const char *str, register unsigned int len)
@@ -54,9 +54,9 @@ SafeEnvHash (register const char *str, register unsigned int len)
       55, 55, 55, 55, 55, 55, 55, 55, 55,  5,
       55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
       55, 55, 55, 55, 55, 15, 55,  0,  0,  5,
-      55, 25, 20,  0, 55, 55,  0, 15, 15, 15,
-       0, 55, 10,  5,  0,  5, 55, 55, 55,  0,
-      55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+      55, 25, 20,  0, 55, 55, 15, 15, 15, 15,
+       0, 55, 10, 15,  0,  0, 55, 55, 55,  0,
+       0, 55, 55, 55, 55, 55, 55, 55, 55, 55,
       55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
       55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
       55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
@@ -82,6 +82,7 @@ SafeEnvHash (register const char *str, register unsigned int len)
         hval += asso_values[(unsigned char)str[3]];
       /*FALLTHROUGH*/
       case 3:
+      case 2:
         break;
     }
   return hval + asso_values[(unsigned char)str[len - 1]];
@@ -92,22 +93,22 @@ SafeInWordSet (register const char *str, register unsigned int len)
 {
   static const unsigned char lengthtable[] =
     {
-       0,  0,  0,  3,  4,  5,  0,  7,  3,  0,  5,  6,  7,  8,
-       4, 10,  6, 12,  8,  0,  5,  6,  0,  0,  4, 10, 11,  7,
-       0, 14, 10, 11, 17,  8,  4,  0,  0,  0,  0,  9,  0,  0,
+       0,  0,  2,  3,  4,  5,  0,  7,  3,  0,  0,  6,  7,  8,
+       4, 10,  6, 12,  8,  0,  5,  6,  7,  0,  4, 10, 11,  7,
+       0, 14,  0,  0, 17,  8,  4,  5,  6,  0,  0,  9, 10, 11,
        0,  0,  4,  0,  0,  0,  0,  0,  0,  0,  0,  0,  4
     };
   static const char * const wordlist[] =
     {
-      "", "", "",
+      "", "",
+      "TZ",
       "PWD",
       "HOST",
-      "SHELL",
+      "GROUP",
       "",
       "DISPLAY",
       "PS1",
-      "",
-      "GROUP",
+      "", "",
       "OSTYPE",
       "LC_TIME",
       "LC_CTYPE",
@@ -118,22 +119,26 @@ SafeInWordSet (register const char *str, register unsigned int len)
       "LC_PAPER",
       "",
       "PAGER",
-      "LC_ALL",
-      "", "",
+      "VISUAL",
+      "COLUMNS",
+      "",
       "USER",
       "LC_NUMERIC",
       "LC_MONETARY",
       "LC_NAME",
       "",
       "LC_MEASUREMENT",
-      "LC_ADDRESS",
-      "LC_MESSAGES",
+      "", "",
       "LC_IDENTIFICATION",
       "MACHTYPE",
       "TERM",
-      "", "", "", "",
+      "SHELL",
+      "LC_ALL",
+      "", "",
       "COLORTERM",
-      "", "", "", "",
+      "LC_ADDRESS",
+      "LC_MESSAGES",
+      "", "",
       "PATH",
       "", "", "", "", "", "", "", "", "",
       "LANG"
@@ -154,7 +159,7 @@ SafeInWordSet (register const char *str, register unsigned int len)
     }
   return 0;
 }
-#line 42 "safe_env.gperf"
+#line 45 "safe_env.gperf"
 
 
 bool CheckEnvIsSafe(const char *envvar) {

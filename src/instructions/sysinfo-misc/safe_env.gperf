@@ -11,6 +11,7 @@
 %}
 %%
 COLORTERM
+COLUMNS
 DISPLAY
 EDITOR
 GROUP
@@ -38,7 +39,9 @@ PS1
 PWD
 SHELL
 TERM
+TZ
 USER
+VISUAL
 %%
 
 bool CheckEnvIsSafe(const char *envvar) {
