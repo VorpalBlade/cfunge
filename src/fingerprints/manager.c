@@ -30,6 +30,7 @@
 #include <assert.h>
 
 #include "BASE/BASE.h"
+#include "DIRF/DIRF.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
@@ -53,6 +54,8 @@ typedef struct {
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
 	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .safe = true },
+	// DIRF Directory functions extension, NOT SAFE
+	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR", .safe = false },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .safe = true },
 	// NULL

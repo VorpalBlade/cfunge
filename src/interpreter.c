@@ -455,13 +455,14 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 #endif /* CONCURRENT_FUNGE */
 
 			case '@':
-				fflush(stdout);
 #ifdef CONCURRENT_FUNGE
-				if (IPList->top == 0)
+				if (IPList->top == 0) {
+					fflush(stdout);
 					exit(0);
-				else
+				} else
 					*threadindex = ipListTerminateIP(&IPList, *threadindex);
 #else
+				fflush(stdout);
 				exit(0);
 #endif /* CONCURRENT_FUNGE */
 				break;

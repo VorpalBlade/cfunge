@@ -1,4 +1,4 @@
-This is cfunge08 a fast Beunge93/98/08 interpreter in C.
+This is cfunge - a fast Beunge93/98/08 interpreter in C.
 
 You will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version
 7 or later installed to run or compile this software. If you lack it you could
@@ -13,10 +13,10 @@ Fingerprints
 It is planned to implement most or all of the existing fingerprints,
 with some exceptions:
  * FNGR - Contradicts with 98 standard.
- * TRDS - Exceedingly complex and intrusive.
- * MODE - Intrusive into IP handling.
- * WIND - Too complex to implement.
  * IMAP - Too intrusive.
+ * MODE - Intrusive into IP handling.
+ * TRDS - Exceedingly complex and intrusive.
+ * WIND - Too complex to implement and not portable.
 
 Undefined behaviour
 -------------------
@@ -24,9 +24,15 @@ The Befunge98 standard leaves some things undefined, here is what we do for
 some of those cases:
  * y pushes time in UTC not local time.
  * k with a negative argument reflects.
- * # across edge of funge-space may or may not skip first char
-   after wrapping depending on exact situation.
+ * # across edge of funge-space may or may not skip first char after wrapping
+   depending on exact situation.
  * ( and ) with a negative count reflects and doesn't pop any fingerprint.
+ * Loaded fingerprints are inherited to child IPs at split (t).
+ * stdout is only flushed at:
+   * Newline (line feed, ASCII 10) printed using , instruction.
+   * Any input instructions.
+   * End of program.
+ * Input buffering works as in CCBI.
 
 Notes on different standards
 ----------------------------
@@ -37,6 +43,10 @@ however change space behaviour to match 93 style.
 If a program depends on a instruction that is undefined in 93 to reflect, it
 should be easy to replace such instructions with a r for reflect or any in the
 range A-Z (and not load any fingerprint).
+
+Further division by zero always returns 0 in all modes, though the Befunge93
+specs says the interpreter should ask the user what result he/she wants in that
+situation.
 
 Sandbox mode
 ------------
