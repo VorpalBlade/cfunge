@@ -54,6 +54,4 @@ extern bool SettingEnableFingerprints;
 // * In fingerprints: Non-safe fingerprints are not loaded.
 extern bool SettingSandbox;
 
-
-
 #endif

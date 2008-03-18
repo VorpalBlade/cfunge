@@ -27,6 +27,7 @@
 #include "../stack.h"
 #include "../ip.h"
 #include "../settings.h"
+#include "safe_env.h"
 
 #include <unistd.h>
 #include <time.h>
@@ -136,17 +137,21 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 				char * tmp;
 				int i = 0;
 				StackPush('\0', ip->stack);
-				// TODO: List of safe env variables.
-				if (!SettingSandbox) {
-					while (true) {
-						tmp = environ[i];
-						if (!tmp || *tmp == '\0')
-							break;
 
-						StackPushString(strlen(tmp), tmp, pushStack);
-						i++;
+				while (true) {
+					tmp = environ[i];
+					if (!tmp || *tmp == '\0')
+						break;
+					if (SettingSandbox) {
+						if (!CheckEnvIsSafe(tmp)) {
+							i++;
+							continue;
+						}
 					}
+					StackPushString(strlen(tmp), tmp, pushStack);
+					i++;
 				}
+
 				break;
 			}
 #ifndef NDEBUG

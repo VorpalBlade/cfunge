@@ -1,0 +1,52 @@
+%language=ANSI-C
+%define hash-function-name SafeEnvHash
+%define lookup-function-name SafeInWordSet
+%compare-lengths
+%compare-strncmp
+%readonly-tables
+%{
+#include <string.h>
+#include <stdbool.h>
+#include "safe_env.h"
+%}
+%%
+COLORTERM
+DISPLAY
+EDITOR
+GROUP
+HOME
+HOST
+LANG
+LC_ADDRESS
+LC_ALL
+LC_COLLATE
+LC_CTYPE
+LC_IDENTIFICATION
+LC_MEASUREMENT
+LC_MESSAGES
+LC_MONETARY
+LC_NAME
+LC_NUMERIC
+LC_PAPER
+LC_TELEPHONE
+LC_TIME
+MACHTYPE
+OSTYPE
+PAGER
+PATH
+PS1
+PWD
+SHELL
+TERM
+USER
+%%
+
+bool CheckEnvIsSafe(const char *envvar) {
+	const char * p;
+
+	p = strchr(envvar, '=');
+	if (!p)
+		return false;
+	else
+		return (SafeInWordSet(envvar, p - envvar) != NULL);
+}
