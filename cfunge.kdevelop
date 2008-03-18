@@ -8,7 +8,9 @@
     <email>anmaster@tele2.se</email>
     <version>$VERSION$</version>
     <primarylanguage>C</primarylanguage>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>kdevdoxygen</part>
+    </ignoreparts>
     <secondaryLanguages>
       <language>C++</language>
     </secondaryLanguages>

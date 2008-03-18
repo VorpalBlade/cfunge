@@ -10,6 +10,9 @@ src/fingerprints
 src/fingerprints/BASE
 src/fingerprints/BASE/BASE.c
 src/fingerprints/BASE/BASE.h
+src/fingerprints/DIRF
+src/fingerprints/DIRF/DIRF.c
+src/fingerprints/DIRF/DIRF.h
 src/fingerprints/MODU
 src/fingerprints/MODU/MODU.c
 src/fingerprints/MODU/MODU.h
