@@ -423,7 +423,9 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 			case ')':
 				{
 					FUNGEDATATYPE fpsize = StackPop(ip->stack);
-					if (fpsize < 0) {
+					// Check for sanity (because we won't have any fingerprints
+					// outside such a range. This prevents long lockups here.
+					if ((fpsize <= 0) || (fpsize > 8)) {
 						ipReverse(ip);
 					} else if (!SettingEnableFingerprints) {
 						StackPopNDiscard(ip->stack, fpsize);

@@ -1,0 +1,17 @@
+Note that these examples mostly come from unknown sources. I have not written
+most myself.
+
+Those that are known:
+ * From http://catseye.tc/projects/befunge93/eg/INDEX.html :
+   * wumpus.bf  Hunt the wumpus in Befunge93
+   * dladv.bf   Simple (or rather minimal!) adventure game in Befunge93.
+   * life.bf    Game of life in Befunge93.
+ * My own ones (all GPL3 with proxy like the main code):
+   * hello-concurrent1.b98
+     Use two threads to print hello world, uses several "mutexes" to lock.
+     For this example to work the interpreter must be compiled with concurrency.
+   * hello-concurrent2.b98
+     A lock free version of the above.
+     For this example to work the interpreter must be compiled with concurrency.
+   * roman.b98
+     This shows an example of how to use fingerprints. Also valid in unefunge98.
