@@ -35,7 +35,7 @@
 #include <stdlib.h>
 
 // Tmp variable used for pushing of stack size.
-static size_t stackSize = 0;
+static size_t TOSSSize = 0;
 
 #ifndef _GNU_SOURCE
 extern char **environ;
@@ -123,9 +123,17 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			StackPush(ip->stackstack->size, pushStack);
 			break;
 		case 18: // Number of elements on all stacks
+// I think CCBI is wrong here.
+//#define STACKORDER_CCBI
+#ifdef STACKORDER_CCBI
 			for (size_t i = 0; i < ip->stackstack->current; i++)
 				StackPush(ip->stackstack->stacks[i]->top, pushStack);
-			StackPush(stackSize, pushStack);
+			StackPush(TOSSSize, pushStack);
+#else
+			StackPush(TOSSSize, pushStack);
+			for (size_t i = ip->stackstack->current; i-- > 0;)
+				StackPush(ip->stackstack->stacks[i]->top, pushStack);
+#endif
 			break;
 		case 19: // Command line arguments
 			StackPush('\0', ip->stack);
@@ -169,13 +177,11 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
-	stackSize = ip->stack->top;
+	TOSSSize = ip->stack->top;
 	// Speed this one up for mycology
 	// TODO: Remove this once size of multiple stacks
 	//        are coded as this would break then.
-	if (request == 23) {
-		PushRequest(18, ip, ip->stack);
-	} else if (request <= 0) {
+	if (request <= 0) {
 		for (int i = HIGHESTREQUEST; i > 0; i--)
 			PushRequest(i, ip, ip->stack);
 	// Simple to get single cell in this range

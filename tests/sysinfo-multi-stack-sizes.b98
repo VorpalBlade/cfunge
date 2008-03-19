@@ -1,0 +1,9 @@
+120{1230{aaaaaa0y2a*1+k$....a,@
+; This should print:                                   ;
+; 3 4 5 6                                              ;
+; or                                                   ;
+: 3 6 5 4                                              ;
+; I'm not clear on what one is correct. Please tell me ;
+; if you find out                                      ;
+; Based on code from Matti Niemenmaa (mycology author) ;
+; Then modified to test more than two stacks           ;
