@@ -28,7 +28,7 @@
 #include <assert.h>
 
 #define FUNGESPACEINITIALSIZE 150000
-// We allocate *cells* this many at a time.
+// We allocate this many *cells* at a time.
 #define FUNGESPACEALLOCCHUNK 1024
 
 typedef struct _fungeSpace {
@@ -43,7 +43,7 @@ typedef struct _fungeSpace {
 	size_t         allocarrayCurrent;
 } fungeSpace;
 
-// Funge space storage.
+// Funge-space storage.
 static fungeSpace *fspace = NULL;
 
 /**
@@ -70,6 +70,7 @@ fungeSpaceCreate(void)
 	if (!fspace->entries)
 		return false;
 	ght_set_hash(fspace->entries, &ght_crc_hash);
+	// Unable to determine if this helps or not.
 	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
 	fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
@@ -89,6 +90,8 @@ fungeSpaceFree(void)
 	if (!fspace)
 		return;
 	ght_finalize(fspace->entries);
+	// Just the last block, but still.
+	cf_free(fspace->allocarray);
 	cf_free(fspace);
 }
 
@@ -167,10 +170,14 @@ fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 	if (value == ' ')
 		ght_remove(fspace->entries, sizeof(fungePosition), position);
 	else {
-		// TODO: Reuse cell?
-		FUNGEDATATYPE *tmp = fungeSpaceInternalAlloc(value);
-		if (ght_insert(fspace->entries, tmp, sizeof(fungePosition), position) == -1) {
-			ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
+		FUNGEDATATYPE *tmp;
+		if ((tmp = ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
+			*tmp = value;
+		} else {
+			tmp = fungeSpaceInternalAlloc(value);
+			if (ght_insert(fspace->entries, tmp, sizeof(fungePosition), position) == -1) {
+				ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
+			}
 		}
 	}
 }
