@@ -123,8 +123,8 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			StackPush(ip->stackstack->size, pushStack);
 			break;
 		case 18: // Number of elements on all stacks
-// I think CCBI is wrong here.
-//#define STACKORDER_CCBI
+// I think CCBI is wrong here, but most do it this way, and so do we, but it is easy to change.
+#define STACKORDER_CCBI
 #ifdef STACKORDER_CCBI
 			for (size_t i = 0; i < ip->stackstack->current; i++)
 				StackPush(ip->stackstack->stacks[i]->top, pushStack);
