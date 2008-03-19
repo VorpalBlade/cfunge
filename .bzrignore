@@ -1,9 +1,9 @@
-Makefile
-./cfunge
-./CMakeFiles
-./CMakeCache.txt
-./cmake_install.cmake
-./cfunge.kdevelop.pcs
-*.gcno
 *.gcda
+*.gcno
 *.gcov
+./CMakeCache.txt
+./CMakeFiles
+./cfunge
+./cfunge.kdevelop.pcs
+./cmake_install.cmake
+Makefile

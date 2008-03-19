@@ -43,6 +43,9 @@ src/input.h
 src/instructions
 src/instructions/iterate.c
 src/instructions/iterate.h
+src/instructions/safe_env.c
+src/instructions/safe_env.h
+src/instructions/sysinfo-misc
 src/instructions/sysinfo.c
 src/instructions/sysinfo.h
 src/interpreter.c
