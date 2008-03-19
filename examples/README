@@ -5,7 +5,11 @@ Those that are known:
  * From http://catseye.tc/projects/befunge93/eg/INDEX.html :
    * dladv.bf   Simple (or rather minimal!) adventure game in Befunge93.
    * life.bf    Game of life in Befunge93.
+   * pi2.bf     Generate first 100 digits of Pi.
    * prime.bf   Print all prime numbers up to 254.
+   * robot.b93  A simple game in Befunge93. Note this one does NOT work in
+                Befunge98 mode due to space in string issues.
+                Run with -s 93 option to cfunge.
    * wumpus.bf  Hunt the wumpus in Befunge93
  * My own ones (all GPL3 with proxy like the main code):
    * hello-concurrent1.b98

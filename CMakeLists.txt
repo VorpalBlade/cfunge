@@ -41,6 +41,12 @@ SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 INCLUDE(UsePkgConfig)
 INCLUDE(CheckTypeSize)
 
+CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
+
+
+
+################################################################################
+# Boehm GC
 OPTION(LEAK_MODE "If this is enabled, do not use boehm-gc. Do not enable unless you know what you are doing." OFF)
 IF(LEAK_MODE)
 	ADD_DEFINITIONS(-DDISABLE_GC)
@@ -72,8 +78,10 @@ ELSE(LEAK_MODE)
 	LINK_DIRECTORIES(${BoehmLinkDir})
 ENDIF(LEAK_MODE)
 
-CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
 
+
+################################################################################
+# Other options
 OPTION(USE_64BIT "Should 64-bit data types be used (otherwise 32-bit)." ON)
 IF(USE_64BIT)
 	ADD_DEFINITIONS(-DUSE64)
@@ -99,8 +107,21 @@ IF(USE_WERROR)
 	ENDIF (CMAKE_COMPILER_IS_GNUCC)
 ENDIF(USE_WERROR)
 
-# add definitions, compiler switches, etc.
-ADD_DEFINITIONS(-std=c99)
+
+
+################################################################################
+# Compiler defines.
+IF (CMAKE_COMPILER_IS_GNUCC)
+	ADD_DEFINITIONS(-std=c99)
+ENDIF (CMAKE_COMPILER_IS_GNUCC)
+# Feature test macros for glibc headers.
+# Shouldn't hurt other systems.
+ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
+
+
+
+################################################################################
+# Warnings
 IF (CMAKE_COMPILER_IS_GNUCC)
 	ADD_DEFINITIONS(-Wall -Wextra -pedantic)
 	ADD_DEFINITIONS(-Wpointer-arith)
@@ -129,19 +150,26 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	#ADD_DEFINITIONS(-Wunreachable-code)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
-# Feature test macros for glibc headers.
-# Shouldn't hurt other systems.
-ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
 
+
+################################################################################
+# Stuff for debug/non-debug builds
 IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	REMOVE_DEFINITIONS(-O2)
 	ADD_DEFINITIONS(-DGC_DEBUG)
 ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	ADD_DEFINITIONS(-fno-ident)
-	ADD_DEFINITIONS(-fvisibility=hidden)
+	ADD_DEFINITIONS(-DNDEBUG)
+	IF (CMAKE_COMPILER_IS_GNUCC)
+		ADD_DEFINITIONS(-fvisibility=hidden)
+	ENDIF (CMAKE_COMPILER_IS_GNUCC)
 	REMOVE_DEFINITIONS(-DGC_DEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
+
+
+################################################################################
+# Includes
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/)
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/lib/libghthash/)
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/funge-space/)
@@ -149,13 +177,28 @@ INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/instructions/)
 INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 
 
-# list all source files here
-FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR} lib/libghthash/*.c src/*.c src/funge-space/b98/*.c src/instructions/*.c src/fingerprints/*.c src/fingerprints/*/*.c)
+
+################################################################################
+# Targets
+FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
+	lib/libghthash/*.c
+	src/*.c
+	src/funge-space/b98/*.c
+	src/instructions/*.c
+	src/fingerprints/*.c
+	src/fingerprints/*/*.c
+)
+
 ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
-SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common")
+SET_TARGET_PROPERTIES(cfunge PROPERTIES
+	LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common"
+)
 
-# We need to link to some other libraries, they are below
+
+
+################################################################################
+# Linking libraries
 
 # Need -lm for some fingerprints.
 TARGET_LINK_LIBRARIES(cfunge m)
@@ -168,3 +211,11 @@ IF(USE_MUDFLAP)
 	SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-fmudflap")
 	TARGET_LINK_LIBRARIES(cfunge mudflap)
 ENDIF(USE_MUDFLAP)
+
+
+
+################################################################################
+# Installation
+INSTALL(TARGETS cfunge
+	RUNTIME DESTINATION bin
+)
