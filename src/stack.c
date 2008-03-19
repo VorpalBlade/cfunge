@@ -193,16 +193,20 @@ char *StackPopString(fungeStack * restrict stack)
 	CORD_ec_init(x);
 	while ((c = StackPop(stack)) != '\0')
 		CORD_ec_append(x, (char)c);
+	CORD_ec_append(x, '\0');
 
 	return CORD_to_char_star(CORD_ec_to_cord(x));
 #else
 	size_t index = 0;
-	char * x = cf_calloc_noptr(stack->top, sizeof(char));
+	// This may very likely be more than is needed. But this is only used in
+	// case GC is disabled, and that is unsupported anyway.
+	char * x = cf_malloc_noptr((stack->top + 1) * sizeof(char));
 
 	while ((c = StackPop(stack)) != '\0') {
 		x[index] = (char)c;
 		index++;
 	}
+	x[index]='\0';
 	return x;
 #endif
 }
