@@ -122,7 +122,9 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 		case 17: // Number of stacks on stack stack
 			StackPush(ip->stackstack->size, pushStack);
 			break;
-		case 18: // Number of elements on all stacks (TODO for multiple stacks)
+		case 18: // Number of elements on all stacks
+			for (size_t i = 0; i < ip->stackstack->current; i++)
+				StackPush(ip->stackstack->stacks[i]->top, pushStack);
 			StackPush(stackSize, pushStack);
 			break;
 		case 19: // Command line arguments

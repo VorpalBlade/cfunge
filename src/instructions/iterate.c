@@ -30,7 +30,7 @@
 #ifdef CONCURRENT_FUNGE
 void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex)
 #else
-void RunIterate(instructionPointer * ip)
+void RunIterate(instructionPointer * restrict ip)
 #endif
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
@@ -49,7 +49,8 @@ void RunIterate(instructionPointer * ip)
 			return;
 		else if ((kInstr == 'k') || (kInstr == ';')) {
 			if (SettingWarnings)
-				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n", ip->position.x, ip->position.y, (char)kInstr, kInstr);
+				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
+				        ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
 		} else {
 			// Ok we got to execute it!

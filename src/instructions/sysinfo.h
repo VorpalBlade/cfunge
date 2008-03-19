@@ -27,7 +27,6 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
-
 void RunSysInfo(instructionPointer * ip) __attribute__((nonnull));
 
 #endif
