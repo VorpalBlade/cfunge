@@ -64,7 +64,7 @@ instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
+static inline bool ipDuplicateInPlace(const instructionPointer * old, instructionPointer * new) {
 	assert(old);
 	assert(new);
 	new->position.x         = old->position.x;
@@ -89,7 +89,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 }
 #endif
 
-static inline void ipFreeResources(instructionPointer * restrict ip)
+static inline void ipFreeResources(instructionPointer * ip)
 {
 	if (!ip)
 		return;
@@ -192,6 +192,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index)
 
 	assert(me != NULL);
 	assert(*me != NULL);
+	assert(index <= (*me)->top);
 
 	// Grow
 	list = cf_realloc(*me, sizeof(ipList) + ((*me)->size + 1) * sizeof(instructionPointer));
@@ -271,7 +272,7 @@ ssize_t ipListTerminateIP(ipList** me, size_t index)
 	*me = list;
 	list->top--;
 	list->size--;
-	return index;
+	return (index > 0) ? index - 1 : 0;
 }
 
 #endif

@@ -62,8 +62,22 @@ static instructionPointer *IP = NULL;
 #  define ReturnFromExecuteInstruction(x) return
 #endif
 
+
+/**
+ * Print warning on unknown instruction if such warnings are enabled.
+ */
+static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip) __attribute__((nonnull));
+
+static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip) {
+	if (SettingWarnings)
+		fprintf(stderr,
+		        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+		        ip->position.x, ip->position.y, (char)opcode, opcode);
+}
+
+
 #ifdef CONCURRENT_FUNGE
-bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * ip, ssize_t * threadindex)
+bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
 #else
 void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 #endif
@@ -82,13 +96,16 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (!SettingEnableFingerprints) {
+			PrintUnknownInstrWarn(opcode, ip);
 			ipReverse(ip);
 		} else {
 			int_fast8_t entry = (char)opcode - 'A';
 			if ((ip->fingerOpcodes[entry]->top > 0) && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1])
 				ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
-			else
+			else {
+				PrintUnknownInstrWarn(opcode, ip);
 				ipReverse(ip);
+			}
 		}
 	// OK a core instruction.
 	// Find what one and execute it.
@@ -425,13 +442,18 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE fpsize = StackPop(ip->stack);
 					// Check for sanity (because we won't have any fingerprints
 					// outside such a range. This prevents long lockups here.
-					if ((fpsize <= 0) || (fpsize > 8)) {
+					if (fpsize < 1) {
 						ipReverse(ip);
 					} else if (!SettingEnableFingerprints) {
 						StackPopNDiscard(ip->stack, fpsize);
 						ipReverse(ip);
 					} else {
 						FUNGEDATATYPE fprint = 0;
+						if (SettingWarnings && (fpsize > 8)) {
+							fprintf(stderr,
+								"WARN: %c (x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI "): count is very large(%" FUNGEDATAPRI "), probably a bug.\n",
+								(char)opcode, ip->position.x, ip->position.y, fpsize);
+						}
 						while (fpsize--) {
 							fprint <<= 8;
 							fprint += StackPop(ip->stack);
@@ -477,10 +499,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				}
 
 			default:
-				if (SettingWarnings)
-					fprintf(stderr,
-					        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
-					        ip->position.x, ip->position.y, (char)opcode, opcode);
+				PrintUnknownInstrWarn(opcode, ip);
 				ipReverse(ip);
 		}
 	}
@@ -489,6 +508,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 static inline void ThreadForward(instructionPointer * ip)
 {
+	assert(ip != NULL);
+
 	if (ip->NeedMove)
 		ipForward(1, ip);
 	else
