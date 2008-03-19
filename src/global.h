@@ -71,9 +71,9 @@ typedef int32_t FUNGEVECTORTYPE;
 // Handprint: CFUN
 #define FUNGEHANDPRINT 0x4346554e
 // Version, for -V.
-#define APPVERSION  "0.1.0"
+#define APPVERSION  "0.2.0"
 // For y instruction.
-#define FUNGEVERSION 10
+#define FUNGEVERSION 20
 
 #define HASH_OPTIMIZE
 
