@@ -23,7 +23,7 @@
 
 bool VectorIsCardinal(const fungeVector * v)
 {
-	if (ABS(v->x) > 1 || ABS(v->y) > 1)
+	if ((ABS(v->x) > 1) || (ABS(v->y) > 1))
 		return false;
 	if ((v->x) && (v->y))
 		return false;

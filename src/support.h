@@ -29,39 +29,39 @@
 
 #ifndef DISABLE_GC
 
-#include <gc/gc.h>
+#  include <gc/gc.h>
 
-#define cf_malloc(x)           GC_MALLOC(x)
+#  define cf_malloc(x)           GC_MALLOC(x)
 // Use this for strings and other stuff containing no pointers when possible.
-#define cf_malloc_noptr(x)     GC_MALLOC_ATOMIC(x)
+#  define cf_malloc_noptr(x)     GC_MALLOC_ATOMIC(x)
 // This memory is not collectable. Avoid using this unless you have to.
-#define cf_malloc_nocollect(x) GC_MALLOC_UNCOLLECTABLE(x)
-#define cf_free(x)             GC_FREE(x)
-#define cf_realloc(x,y)        GC_REALLOC(x, y)
-#define cf_calloc(x,y)         GC_MALLOC((x)*(y))
-#define cf_calloc_noptr(x,y)   GC_MALLOC_ATOMIC((x)*(y))
+#  define cf_malloc_nocollect(x) GC_MALLOC_UNCOLLECTABLE(x)
+#  define cf_free(x)             GC_FREE(x)
+#  define cf_realloc(x,y)        GC_REALLOC(x, y)
+#  define cf_calloc(x,y)         GC_MALLOC((x)*(y))
+#  define cf_calloc_noptr(x,y)   GC_MALLOC_ATOMIC((x)*(y))
 
-#define gc_collect_full()      GC_gcollect()
-#define gc_collect_some()      GC_collect_a_little()
+#  define gc_collect_full()      GC_gcollect()
+#  define gc_collect_some()      GC_collect_a_little()
 
-#define cf_strdup(x)       GC_STRDUP(x)
+#  define cf_strdup(x)       GC_STRDUP(x)
 
 #else
 
-#define cf_malloc(x)           malloc(x)
+#  define cf_malloc(x)           malloc(x)
 // Use this for strings and other stuff containing no pointers when possible.
-#define cf_malloc_noptr(x)     malloc(x)
+#  define cf_malloc_noptr(x)     malloc(x)
 // This memory is not collectable. Avoid using this unless you have to.
-#define cf_malloc_nocollect(x) malloc(x)
-#define cf_free(x)             free(x)
-#define cf_realloc(x,y)        realloc(x, y)
-#define cf_calloc(x,y)         calloc((x), (y))
-#define cf_calloc_noptr(x,y)   calloc((x), (y))
+#  define cf_malloc_nocollect(x) malloc(x)
+#  define cf_free(x)             free(x)
+#  define cf_realloc(x,y)        realloc(x, y)
+#  define cf_calloc(x,y)         calloc((x), (y))
+#  define cf_calloc_noptr(x,y)   calloc((x), (y))
 
-#define gc_collect_full()      /* NO OP */
-#define gc_collect_some()      /* NO OP */
+#  define gc_collect_full()      /* NO OP */
+#  define gc_collect_some()      /* NO OP */
 
-#define cf_strdup(x)           strdup(x)
+#  define cf_strdup(x)           strdup(x)
 
 #endif
 
