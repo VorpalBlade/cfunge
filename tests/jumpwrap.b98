@@ -1,18 +1,20 @@
-0f2*-j 'C,@
-
-This
-tests
+0a5+-j #v'C,a,@
+        >'W,a,@
+;;;;;;;;;;;;;;;
+This tests
 negative
-wrapping
-with
-double
-wrap
-around
+wrapping with
+j.
 
-That is
-also the
-reaon
-for the
-short
-lines
-here.
+That is also
+the reaon for
+the short
+lines here.
+
+It is not
+clear to me
+if it should
+hit the # or
+the space
+before it.
+;;;;;;;;;;;;;;;
