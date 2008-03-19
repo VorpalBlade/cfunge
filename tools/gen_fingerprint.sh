@@ -34,17 +34,24 @@ die() {
 }
 
 if [[ -z $1 ]]; then
-	die "Please provide finger print name!"
+	echo "ERROR: Please provide finger print name!" >&2
+	echo "Usage: $0 FingerprintName" >&2
+	exit 1
 else
 	FPRINT="$1"
 fi
 
 if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
 	echo "Fingerprint name $FPRINT ok style."
-elif [[ $FPRINT =~ ^[^\ ]{4}$ ]]; then
+# Yes those (space, / and \) break stuff...
+# You got to create stuff on your own if you need those, and not include that
+# in any function names or filenames.
+elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
 	echo "Fingerprint name $FPRINT probably ok (but not common style)."
+	echo "Make sure each char is in the ASCII range 0-254."
+	echo "Note that alphanumeric (upper case only) fingerprint names are strongly prefered."
 else
-	die "Not valid format for fingerprint."
+	die "Not valid format for fingerprint name."
 fi
 
 if [[ ! -d src/fingerprints ]]; then
@@ -152,4 +159,4 @@ cat >> "${FPRINT}.c" << EOF
 }
 EOF
 
-echo "All done!"
+echo "All done! However make sure the copyright in the files is correct. Oh, and another thing: implement the fingerprint :)"
