@@ -1,0 +1,16 @@
+This file details current status of the Befunge98 interpreter cfunge.
+
+Before next release
+-------------------
+ * Make a man page
+ * Test
+
+Future
+------
+Things that will be supported but aren't yet:
+ * i and o instructions
+ * Several more fingerprints
+
+Ideas:
+ * Make trace interface better, possibly make it interface with some sort of
+   debugger (like the one of CCBI but better).

@@ -1,0 +1,27 @@
+ChangeLog
+=========
+This is a overview of changes users may care about. Detailed changelog can be
+done using bzr (does not work in tarballs, you need a development checkout for this):
+  bzr log -rtag:tag.. --short
+Example (list changes compared to 0.1.0)
+  bzr log -rtag:0.1.0.. --short
+
+
+0.2.0
+-----
+This release adds fingerprint support (along with several fingerprints),
+concurrency, a lot of bug fixes and implementating missing features.
+
+Added fingerprints:
+ * BASE I/O for numbers in other bases
+ * DIRF Directory functions extension (not available in sandbox mode)
+ * MODU Modulo Arithmetic Extension
+ * NULL Funge-98 Null Fingerprint
+ * ORTH Orthogonal Easement Library
+ * REFC Referenced Cells Extension
+ * ROMA Funge-98 Roman Numerals
+ * SUBR Subroutine extension
+
+0.1.0
+-----
+Initial release. Had basic support for what is required in Befunge98 standard.

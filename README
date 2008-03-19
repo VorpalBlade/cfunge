@@ -18,6 +18,20 @@ with some exceptions:
  * TRDS - Exceedingly complex and intrusive.
  * WIND - Too complex to implement and not portable.
 
+Short descriptions of implemented fingerprints:
+ BASE I/O for numbers in other bases
+ DIRF Directory functions extension (not available in sandbox mode)
+ MODU Modulo Arithmetic Extension
+ NULL Funge-98 Null Fingerprint
+ ORTH Orthogonal Easement Library
+ REFC Referenced Cells Extension
+ ROMA Funge-98 Roman Numerals
+ SUBR Subroutine extension
+For more details please see the specs for each fingerprint.
+In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the
+same thing as CCBI.
+
+
 Undefined behaviour
 -------------------
 The Befunge98 standard leaves some things undefined, here is what we do for
