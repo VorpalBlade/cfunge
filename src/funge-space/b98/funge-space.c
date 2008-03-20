@@ -168,9 +168,10 @@ static inline void
 fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
-	if (value == ' ')
+	if (value == ' ') {
 		ght_remove(fspace->entries, sizeof(fungePosition), position);
-	else {
+	} else {
+		// Reuse cell if it exists
 		FUNGEDATATYPE *tmp;
 		if ((tmp = ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
 			*tmp = value;

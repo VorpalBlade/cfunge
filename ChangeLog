@@ -5,6 +5,10 @@ done using bzr (does not work in tarballs, you need a development checkout for t
   bzr log -rtag:tag.. --short
 Example (list changes compared to 0.1.0)
   bzr log -rtag:0.1.0.. --short
+For more info:
+  bzr help log
+and
+  bzr help revisionspec
 
 
 0.2.0
