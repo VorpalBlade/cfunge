@@ -62,9 +62,19 @@ void fungeSpaceSetOff(FUNGEDATATYPE value,
 void fungeSpaceWrap(fungePosition * restrict position,
                     const fungeVector * restrict delta) __attribute__((nonnull));
 /**
- * Load a file into funge-space.
+ * Load a file into funge-space at 0,0. Optimized, use when possible.
  */
 bool fungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
+
+/**
+ * Load a file into funge space at an offset. Used for i instruction.
+ * size is an out variable.
+ */
+bool fungeSpaceLoadAtOffset(const char * restrict filename,
+                            const fungePosition * restrict offset,
+                            fungeVector * restrict size,
+                            bool binary) __attribute__((nonnull,warn_unused_result));
+
 /**
  * Get the bounding rectangle for the part of funge-space that isn't empty.
  * It won't be too small, but it may be too big.

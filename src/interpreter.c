@@ -30,6 +30,7 @@
 
 #include "instructions/iterate.h"
 #include "instructions/sysinfo.h"
+#include "instructions/io.h"
 
 #include "fingerprints/manager.h"
 
@@ -437,6 +438,10 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				}
 				break;
 
+
+			case 'i':
+				RunInput(ip);
+				break;
 
 			case '(':
 			case ')':

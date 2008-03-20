@@ -297,3 +297,80 @@ fungeSpaceLoad(const char * restrict filename)
 		cf_free(line);
 	return true;
 }
+
+#ifndef NDEBUG
+/*************
+ * Debugging *
+ *************/
+
+
+// For use with call in gdb
+void FungeSpaceDump(void) __attribute__((unused));
+
+void FungeSpaceDump(void)
+{
+	if (!fspace)
+		return;
+	fprintf(stderr, "Fungespace follows:\n");
+	for (FUNGEVECTORTYPE y = 0; y < fspace->bottomRightCorner.y; y++) {
+		for (FUNGEVECTORTYPE x = 0; x < fspace->bottomRightCorner.x; x++)
+			fprintf(stderr, "%c", (char)fungeSpaceGet(& (fungePosition) { .x = x, .y = y }));
+		fprintf(stderr, "\n");
+	}
+	fputs("\n", stderr);
+}
+
+#endif
+
+
+bool
+fungeSpaceLoadAtOffset(const char          * restrict filename,
+                       const fungePosition * restrict offset,
+                       fungeVector         * restrict size,
+                       bool binary)
+{
+	FILE * file;
+	char * line = NULL;
+	size_t linelen = 0;
+	// Row in fungespace
+	int    y = 0;
+	int    x = 0;
+	assert(filename != NULL);
+	assert(offset != NULL);
+	assert(size != NULL);
+
+	file = fopen(filename, "r");
+	if (!file)
+		return false;
+
+	size->x = 0;
+	size->y = 0;
+
+	while (cf_getline(&line, &linelen, file) != -1) {
+		for (size_t i = 0; i < (linelen + 1); i++) {
+			if (line[i] == '\0') {
+				break;
+			} else if (!binary && (line[i] == '\r') && (line[i+1] == '\n')) {
+				if (x > size->x) size->x = x;
+				x = 0;
+				y++;
+				i++;
+				continue;
+			} else if (!binary && (line[i] == '\n' || line[i] == '\r')) {
+				if (x > size->x) size->x = x;
+				x = 0;
+				y++;
+				continue;
+			}
+			if (line[i] != ' ')
+				fungeSpaceSetOff((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y }, offset);
+			x++;
+		}
+	}
+	if (x > size->x) size->x = x;
+	if (y > size->y) size->y = y;
+	fclose(file);
+	if (line != NULL)
+		cf_free(line);
+	return true;
+}

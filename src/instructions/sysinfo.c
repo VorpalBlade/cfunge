@@ -48,12 +48,17 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 {
 	switch (request) {
 		case 1: // Flags
-			//StackPush(0x20, ip->stack);
+			{
+				FUNGEDATATYPE tmp = 0x0;
+				//StackPush(0x20, ip->stack);
 #ifdef CONCURRENT_FUNGE
-			StackPush(0x01, pushStack);
-#else
-			StackPush(0x0, pushStack);
+				tmp |= 0x01;
 #endif
+				if (!SettingSandbox) {
+					tmp |= 0x02;
+				}
+				StackPush(tmp, pushStack);
+			}
 			break;
 		case 2: // Cell size
 			StackPush(sizeof(FUNGEDATATYPE), pushStack);
