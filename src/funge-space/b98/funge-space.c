@@ -250,6 +250,29 @@ fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 #endif
 }
 
+#ifndef NDEBUG
+/*************
+ * Debugging *
+ *************/
+
+
+// For use with call in gdb
+void fungeSpaceDump(void) __attribute__((unused));
+
+void fungeSpaceDump(void)
+{
+	if (!fspace)
+		return;
+	fprintf(stderr, "Fungespace follows:\n");
+	for (FUNGEVECTORTYPE y = 0; y < fspace->bottomRightCorner.y; y++) {
+		for (FUNGEVECTORTYPE x = 0; x < fspace->bottomRightCorner.x; x++)
+			fprintf(stderr, "%c", (char)fungeSpaceGet(& (fungePosition) { .x = x, .y = y }));
+		fprintf(stderr, "\n");
+	}
+	fputs("\n", stderr);
+}
+
+#endif
 
 bool
 fungeSpaceLoad(const char * restrict filename)
@@ -258,8 +281,8 @@ fungeSpaceLoad(const char * restrict filename)
 	char * line = NULL;
 	size_t linelen = 0;
 	// Row in fungespace
-	int    y = 0;
-	int    x = 0;
+	FUNGEVECTORTYPE y = 0;
+	FUNGEVECTORTYPE x = 0;
 	assert(filename != NULL);
 
 	file = fopen(filename, "r");
@@ -298,31 +321,6 @@ fungeSpaceLoad(const char * restrict filename)
 	return true;
 }
 
-#ifndef NDEBUG
-/*************
- * Debugging *
- *************/
-
-
-// For use with call in gdb
-void FungeSpaceDump(void) __attribute__((unused));
-
-void FungeSpaceDump(void)
-{
-	if (!fspace)
-		return;
-	fprintf(stderr, "Fungespace follows:\n");
-	for (FUNGEVECTORTYPE y = 0; y < fspace->bottomRightCorner.y; y++) {
-		for (FUNGEVECTORTYPE x = 0; x < fspace->bottomRightCorner.x; x++)
-			fprintf(stderr, "%c", (char)fungeSpaceGet(& (fungePosition) { .x = x, .y = y }));
-		fprintf(stderr, "\n");
-	}
-	fputs("\n", stderr);
-}
-
-#endif
-
-
 bool
 fungeSpaceLoadAtOffset(const char          * restrict filename,
                        const fungePosition * restrict offset,
@@ -332,9 +330,9 @@ fungeSpaceLoadAtOffset(const char          * restrict filename,
 	FILE * file;
 	char * line = NULL;
 	size_t linelen = 0;
-	// Row in fungespace
-	int    y = 0;
-	int    x = 0;
+
+	FUNGEVECTORTYPE y = 0;
+	FUNGEVECTORTYPE x = 0;
 	assert(filename != NULL);
 	assert(offset != NULL);
 	assert(size != NULL);
@@ -372,5 +370,39 @@ fungeSpaceLoadAtOffset(const char          * restrict filename,
 	fclose(file);
 	if (line != NULL)
 		cf_free(line);
+	return true;
+}
+
+bool
+fungeSaveToFile(const char          * restrict filename,
+                const fungePosition * restrict offset,
+                const fungeVector   * restrict size,
+                bool textfile)
+{
+	FILE * file;
+
+	FUNGEDATATYPE value;
+
+	FUNGEVECTORTYPE maxy = offset->y + size->y;
+	FUNGEVECTORTYPE maxx = offset->x + size->x;
+
+	assert(filename != NULL);
+	assert(offset != NULL);
+	assert(size != NULL);
+
+	file = fopen(filename, "w");
+	if (!file)
+		return false;
+
+	// TODO textfile mode
+	for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
+		for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
+			value = fungeSpaceGet(& (fungePosition) { .x = x, .y = y });
+			fputc(value, file);
+		}
+		fputc('\n', file);
+	}
+
+	fclose(file);
 	return true;
 }

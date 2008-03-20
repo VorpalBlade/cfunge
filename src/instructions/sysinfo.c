@@ -55,7 +55,8 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 				tmp |= 0x01;
 #endif
 				if (!SettingSandbox) {
-					tmp |= 0x02;
+					// i = 0x02, o = 0x04
+					tmp |= 0x06;
 				}
 				StackPush(tmp, pushStack);
 			}

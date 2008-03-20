@@ -75,6 +75,11 @@ bool fungeSpaceLoadAtOffset(const char * restrict filename,
                             fungeVector * restrict size,
                             bool binary) __attribute__((nonnull,warn_unused_result));
 
+bool fungeSaveToFile(const char          * restrict filename,
+                     const fungePosition * restrict offset,
+                     const fungeVector   * restrict size,
+                     bool textfile) __attribute__((nonnull,warn_unused_result));
+
 /**
  * Get the bounding rectangle for the part of funge-space that isn't empty.
  * It won't be too small, but it may be too big.

@@ -8,7 +8,8 @@ Before next release
 Future
 ------
 Things that will be supported but aren't yet:
- * i and o instructions
+ * For i: Check that binary mode works
+ * For o: Make text output mode work.
  * Several more fingerprints
 
 Ideas:

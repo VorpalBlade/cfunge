@@ -440,7 +440,10 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 
 			case 'i':
-				RunInput(ip);
+				RunFileInput(ip);
+				break;
+			case 'o':
+				RunFileOutput(ip);
 				break;
 
 			case '(':
