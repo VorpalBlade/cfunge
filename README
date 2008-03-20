@@ -68,5 +68,5 @@ Sandbox mode prevents befunge programs from doing "harmful" things, this
 includes, but is not limited to:
  * Any file or filesystem IO is forbidden.
  * The environment variables it can see are restricted.
- * Non-safe fingerprints can not be loaded (this includes network, file system
-   access and possibly more).
+ * Non-safe fingerprints can not be loaded (this includes network and file
+   system access as well as other things).

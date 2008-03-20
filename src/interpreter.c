@@ -1,4 +1,5 @@
-/*
+/* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
+ *
  * cfunge - a conformant Befunge93/98/08 interpreter in C.
  * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
  *
@@ -89,7 +90,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 		} else if (opcode != ' ') {
 			ip->StringLastWasSpace = false;
 			StackPush(opcode, ip->stack);
-		} else if (((opcode == ' ') && (!ip->StringLastWasSpace)) || (SettingCurrentStandard == stdver93)) {
+		} else if (((opcode == ' ') && (!ip->StringLastWasSpace))
+		           || (SettingCurrentStandard == stdver93)) {
 			ip->StringLastWasSpace = true;
 			StackPush(opcode, ip->stack);
 		}
@@ -160,7 +162,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 			case '?':
 				{
 					// May not be perfectly uniform.
-					// If this matter for you, contact me (with a patch).
+					// If this matters for you, contact me (with a patch).
 					long int rnd = random() % 4;
 					assert((rnd >= 0) && (rnd <= 3));
 					switch (rnd) {
