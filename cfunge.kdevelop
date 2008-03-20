@@ -6,7 +6,7 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <author>Arvid Norlander</author>
     <email>anmaster@tele2.se</email>
-    <version>$VERSION$</version>
+    <version>0.2.0+dev</version>
     <primarylanguage>C</primarylanguage>
     <ignoreparts>
       <part>kdevdoxygen</part>
@@ -69,34 +69,8 @@
     </filetypes>
     <blacklist>
       <path>Makefile</path>
-      <path>libghthash-0.6.2</path>
-      <path>libghthash-0.6.2/Makefile</path>
-      <path>libghthash-0.6.2/config.h</path>
-      <path>libghthash-0.6.2/examples</path>
-      <path>libghthash-0.6.2/examples/Makefile</path>
-      <path>libghthash-0.6.2/examples/alloc_example.c</path>
-      <path>libghthash-0.6.2/examples/dict_example.c</path>
-      <path>libghthash-0.6.2/examples/hash_test.c</path>
-      <path>libghthash-0.6.2/examples/interactive.c</path>
-      <path>libghthash-0.6.2/examples/iteration.c</path>
-      <path>libghthash-0.6.2/examples/simple.c</path>
-      <path>libghthash-0.6.2/src</path>
-      <path>libghthash-0.6.2/src/Makefile</path>
-      <path>libghthash-0.6.2/src/ght_hash_table.h</path>
-      <path>libghthash-0.6.2/src/hash_functions.c</path>
-      <path>libghthash-0.6.2/src/hash_table.c</path>
       <path>other</path>
-      <path>other/libghthash-0.6.2</path>
-      <path>other/libghthash-0.6.2/examples</path>
-      <path>other/libghthash-0.6.2/examples/alloc_example.c</path>
-      <path>other/libghthash-0.6.2/examples/dict_example.c</path>
-      <path>other/libghthash-0.6.2/examples/hash_test.c</path>
-      <path>other/libghthash-0.6.2/examples/interactive.c</path>
-      <path>other/libghthash-0.6.2/examples/iteration.c</path>
-      <path>other/libghthash-0.6.2/examples/simple.c</path>
-      <path>other/libghthash-0.6.2/src</path>
-      <path>other/libghthash-0.6.2/src/hash_functions.c</path>
-      <path>other/libghthash-0.6.2/src/hash_table.c</path>
+      <path>dist</path>
     </blacklist>
     <other>
       <prio>0</prio>
@@ -230,7 +204,7 @@
     <EMAIL>anmaster@tele2.se</EMAIL>
     <LICENSE>GPL</LICENSE>
     <LICENSEFILE>COPYING</LICENSEFILE>
-    <VERSION>0.1</VERSION>
+    <VERSION>0.2.0+dev</VERSION>
     <YEAR>2008</YEAR>
     <dest>.</dest>
   </substmap>
