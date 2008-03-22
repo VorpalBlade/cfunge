@@ -24,7 +24,7 @@
 
 #include "global.h"
 
-typedef struct {
+typedef struct s_fungeRect {
 	FUNGEVECTORTYPE x;
 	FUNGEVECTORTYPE y;
 	FUNGEVECTORTYPE w;

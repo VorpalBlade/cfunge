@@ -1,5 +1,8 @@
 This is cfunge - a fast Beunge93/98/08 interpreter in C.
 
+
+Dependencies
+------------
 You will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version
 7 or later installed to run or compile this software. If you lack it you could
 try building without garbage collector but IT IS UNSUPPORTED. If you still want
@@ -7,6 +10,50 @@ to try, enable LEAK_MODE option in cmake. If a bug only happens in this mode,
 it probably won't get fixed.
 
 Further you will need cmake (http://www.cmake.org/) to compile it.
+
+
+Configuring
+-----------
+To build using cmake, you can run these commands in the top source directory:
+  cmake .
+
+If you are on a 32-bit system you may want to use 32-bit integers (instead of
+64-bit integers) for speed. To do that you could use this commmand instead of
+the above one:
+  cmake -DUSE_64BIT=OFF .
+
+If you want to see a list of available options use ccmake. It will allow you to
+select options in a ncurses based user interface. Help is always shown at the
+bottom of the screen.
+  ccmake .
+    (press c)
+    (change options - use t to show advanced options)
+    (press c again)
+    (press g to generate make file)
+
+For more information see:
+  cmake --help
+and/or
+  ccmake --help
+
+To disable garbage collector (not supported, see above) you could run cmake with
+-DLEAK_MODE=ON. Use this only if you can't build Boehm-GC the correct way and
+don't want, or can, use the binary downloads that are statically linked to
+Boehm-GC.
+
+
+Compiling
+---------
+After having run cmake as described in the above section, just run:
+  make
+
+
+Installing
+----------
+Not needed, cfunge can be run from build dir, but if you want to (after having
+compiled cfunge):
+  make install
+
 
 Fingerprints
 ------------
@@ -48,6 +95,7 @@ some of those cases:
    * End of program.
  * Input buffering works as in CCBI.
 
+
 Notes on different standards
 ----------------------------
 The option -s 93 does not prevent the program from accessing outside the first
@@ -61,6 +109,7 @@ range A-Z (and not load any fingerprint).
 Further division by zero always returns 0 in all modes, though the Befunge93
 specs says the interpreter should ask the user what result he/she wants in that
 situation.
+
 
 Sandbox mode
 ------------

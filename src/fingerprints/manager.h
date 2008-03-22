@@ -33,7 +33,7 @@
 
 typedef void (*fingerprintOpcode)(instructionPointer * ip);
 
-typedef struct _fungeOpcodeStack {
+typedef struct s_fungeOpcodeStack {
 	// This is current size of the array entries
 	size_t             size;
 	// This is current top item in stack (may not be last item)

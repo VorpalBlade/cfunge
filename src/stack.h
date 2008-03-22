@@ -30,10 +30,10 @@
 
 
 #ifndef ipDEFINED
-struct _instructionPointer;
+struct s_instructionPointer;
 #endif
 
-typedef struct {
+typedef struct s_fungeStack {
 	size_t         size; /**< This is current size of the array entries */
 	size_t         top;  /**< This is current top item in stack (may not be last item).
 	                          Note: One-indexed, as 0 = empty stack. */
@@ -41,7 +41,7 @@ typedef struct {
 } fungeStack;
 
 
-typedef struct {
+typedef struct s_fungeStackStack {
 	size_t         size;     /**< This is number of elements in stacks. */
 	size_t         current;  /**< Top stack and current stack */
 	fungeStack   * stacks[]; /**< Array of pointers to stacks */
@@ -131,7 +131,7 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __at
  * Begin a new stack on the stack stack.
  * count is how many arguments to copy over.
  */
-bool StackStackBegin(struct _instructionPointer * restrict ip,
+bool StackStackBegin(struct s_instructionPointer * restrict ip,
                      fungeStackStack ** me,
                      FUNGEDATATYPE count,
                      const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result));
@@ -139,7 +139,7 @@ bool StackStackBegin(struct _instructionPointer * restrict ip,
  * End a stack on the stack-stack
  * count is how many items to copy over.
  */
-bool StackStackEnd(struct _instructionPointer * restrict ip,
+bool StackStackEnd(struct s_instructionPointer * restrict ip,
                    fungeStackStack ** me,
                    FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result));
 /**

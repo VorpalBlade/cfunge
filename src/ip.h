@@ -32,32 +32,35 @@
 
 typedef fungeVector ipDelta;
 
-typedef enum { ipmCODE = 0, ipmSTRING } ipMode;
+#define ipmCODE 0
+#define ipmSTRING 1
+typedef uint_fast8_t ipMode;
+
 
 #ifndef fungeOpcodeStackDefined
-struct _fungeOpcodeStack;
+struct s_fungeOpcodeStack;
 #endif
 
 // This is for size of opcode array.
 #define FINGEROPCODECOUNT 26
 
-typedef struct _instructionPointer {
-	fungePosition              position; /**< Current position. */
-	ipDelta                    delta;    /**< Current delta. */
-	ipMode                     mode;     /**< String or code mode. */
-	bool                       StringLastWasSpace; /**< Used in string mode for SGML style spaces. */
-	bool                       NeedMove; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
-	FUNGEDATATYPE              ID;
-	fungePosition              storageOffset;
-	fungeStack               * stack;                             /**< Pointer to top stack. */
-	struct _fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
-	fungeStackStack          * stackstack;
+typedef struct s_instructionPointer {
+	fungeStack                * stack;    /**< Pointer to top stack. */
+	fungePosition               position; /**< Current position. */
+	ipDelta                     delta;    /**< Current delta. */
+	fungePosition               storageOffset;
+	ipMode                      mode;     /**< String or code mode. */
+	bool                        StringLastWasSpace; /**< Used in string mode for SGML style spaces. */
+	bool                        NeedMove; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
+	FUNGEDATATYPE               ID;
+	fungeStackStack           * stackstack;
+	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
 } instructionPointer;
 #define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
 // For concurrent funge
-typedef struct {
+typedef struct s_ipList {
 	size_t              size; /**< Total size */
 	size_t              top; /**< Top running one */
 	size_t              highestID; /**< Currently highest ID, they are unique. */

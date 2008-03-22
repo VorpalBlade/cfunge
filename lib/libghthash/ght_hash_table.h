@@ -93,8 +93,8 @@ extern "C"
 	 * structure unless you plan to write your own hash functions.
 	 */
 	typedef struct s_hash_key {
-		unsigned int i_size;       /**< The size in bytes of the key p_key */
-		const void *p_key;         /**< A pointer to the key. */
+		size_t      i_size;   /**< The size in bytes of the key p_key */
+		const void *p_key;    /**< A pointer to the key. */
 	} ght_hash_key_t;
 
 	/*

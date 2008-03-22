@@ -25,12 +25,12 @@
 #include "global.h"
 #include <stdbool.h>
 
-typedef struct {
+typedef struct s_fungeVector {
 	FUNGEVECTORTYPE x;
 	FUNGEVECTORTYPE y;
-} fungePosition;
+} fungeVector;
 
-typedef fungePosition fungeVector;
+typedef fungeVector fungePosition;
 
 /**
  * Checks if vector is cardinal (as in ^>v<).
