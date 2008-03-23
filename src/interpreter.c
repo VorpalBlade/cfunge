@@ -382,7 +382,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 			case '~':
 				{
-					FUNGEDATATYPE a = 0;
+					FUNGEDATATYPE a;
 					fflush(stdout);
 					a = input_getchar();
 					StackPush(a, ip->stack);
@@ -390,7 +390,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				}
 			case '&':
 				{
-					FUNGEDATATYPE a = 0;
+					FUNGEDATATYPE a;
 					bool gotint = false;
 					fflush(stdout);
 					while (!gotint)

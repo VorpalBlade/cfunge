@@ -68,7 +68,7 @@ static const ght_uint32_t crc32_table[256] = {
  * See http://burtleburtle.net/bob/hash/doobs.html
  * for the hash functions used here.
  */
-ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key)
+ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
 {
 	ght_uint32_t i_hash = 0;
 	size_t i;
@@ -91,7 +91,7 @@ ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key)
 /* CRC32 hash based on code from comp.compression FAQ.
  * Added by Dru Lemley <spambait@lemley.net>
  */
-ght_uint32_t ght_crc_hash(ght_hash_key_t *p_key)
+ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 {
 	const unsigned char *p;
 	const unsigned char *p_end;
@@ -109,7 +109,7 @@ ght_uint32_t ght_crc_hash(ght_hash_key_t *p_key)
 
 #if 0
 /* Rotating hash function. */
-ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key)
+ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key)
 {
 	ght_uint32_t i_hash = 0;
 	size_t i;

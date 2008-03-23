@@ -136,7 +136,7 @@ extern "C"
 	 * @see @c ght_one_at_a_time_hash(), @c ght_rotating_hash(),
 	 *      @c ght_crc_hash()
 	 */
-	typedef ght_uint32_t (*ght_fn_hash_t)(ght_hash_key_t *p_key);
+	typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key);
 
 	/**
 	 * Definition of bounded bucket free callback function pointers.
@@ -533,7 +533,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_rotating_hash(), ght_crc_hash()
 	 */
-	ght_uint32_t ght_one_at_a_time_hash(ght_hash_key_t *p_key);
+	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key);
 
 #if 0
 	/**
@@ -546,7 +546,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_one_at_a_time_hash(), ght_crc_hash()
 	 */
-	ght_uint32_t ght_rotating_hash(ght_hash_key_t *p_key);
+	ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key);
 #endif
 
 	/**
@@ -559,7 +559,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_one_at_a_time_hash(), ght_rotating_hash()
 	 */
-	ght_uint32_t ght_crc_hash(ght_hash_key_t *p_key);
+	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key);
 
 #ifdef USE_PROFILING
 	/**
