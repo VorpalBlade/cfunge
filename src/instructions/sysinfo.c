@@ -50,7 +50,6 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 		case 1: // Flags
 			{
 				FUNGEDATATYPE tmp = 0x0;
-				//StackPush(0x20, ip->stack);
 #ifdef CONCURRENT_FUNGE
 				tmp |= 0x01;
 #endif
@@ -58,6 +57,8 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 					// i = 0x02, o = 0x04
 					tmp |= 0x06;
 				}
+				if (SettingCurrentStandard == stdver108)
+					tmp |= 0x20;
 				StackPush(tmp, pushStack);
 			}
 			break;

@@ -80,7 +80,7 @@ static void printHelp(void) {
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
 	puts(" -S           Enable sandbox mode (see README for details).");
-	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 08).");
+	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 108).");
 	puts(" -t level     Use given trace level. Default 0.");
 	puts(" -V           Show version information and exit.");
 	puts(" -W           Show warnings.");
@@ -133,8 +133,8 @@ int main(int argc, char *argv[])
 					SettingCurrentStandard = stdver93;
 				else if (strncmp(optarg, "98", 2) == 0)
 					SettingCurrentStandard = stdver98;
-				else if (strncmp(optarg, "08", 2) == 0)
-					SettingCurrentStandard = stdver08;
+				else if (strncmp(optarg, "108", 2) == 0)
+					SettingCurrentStandard = stdver108;
 				else {
 					fprintf(stderr, "%s is not valid for -s.\n", optarg);
 					return EXIT_FAILURE;
