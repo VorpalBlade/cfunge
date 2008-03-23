@@ -47,7 +47,7 @@ typedef struct s_ImplementedFingerprintEntry {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint */
 	const fingerprintLoader loader;   /**< Loader function pointer */
 	const char            * opcodes;  /**< Sorted string with all implemented opcodes */
-	const bool              safe;     /**< If true, this fingerprint is safe in sandbox mode. */
+	const bool              safe:1;   /**< If true, this fingerprint is safe in sandbox mode. */
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints

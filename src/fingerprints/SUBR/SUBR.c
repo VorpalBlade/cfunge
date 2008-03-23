@@ -60,7 +60,6 @@ static void FingerSUBRJump(instructionPointer * ip) {
 	pos = StackPopVector(ip->stack);
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &SUBRnewDelta);
-	ip->NeedMove = false;
 }
 
 static void FingerSUBRReturn(instructionPointer * ip) {

@@ -50,10 +50,10 @@ typedef struct s_instructionPointer {
 	ipDelta                     delta;    /**< Current delta. */
 	fungePosition               storageOffset;
 	ipMode                      mode;     /**< String or code mode. */
-	bool                        StringLastWasSpace; /**< Used in string mode for SGML style spaces. */
-	bool                        NeedMove; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
-	FUNGEDATATYPE               ID;
+	bool                        NeedMove:1; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
+	bool                        StringLastWasSpace:1; /**< Used in string mode for SGML style spaces. */
 	fungeStackStack           * stackstack;
+	FUNGEDATATYPE               ID;
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
 } instructionPointer;
 #define ipDEFINED 1

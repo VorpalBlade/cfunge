@@ -37,18 +37,18 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 	assert(me);
 	me->position.x         = 0;
 	me->position.y         = 0;
-	me->mode               = ipmCODE;
 	me->delta.x            = 1;
 	me->delta.y            = 0;
-	me->NeedMove           = true;
-	me->ID                 = 0;
-	me->StringLastWasSpace = false;
 	me->storageOffset.x    = 0;
 	me->storageOffset.y    = 0;
+	me->mode               = ipmCODE;
+	me->NeedMove           = true;
+	me->StringLastWasSpace = false;
 	me->stackstack         = StackStackCreate();
 	if (!me->stackstack)
 		return false;
 	me->stack              = me->stackstack->stacks[me->stackstack->current];
+	me->ID                 = 0;
 	if (SettingEnableFingerprints) {
 		if (!ManagerCreate(me))
 			return false;
@@ -70,13 +70,13 @@ static inline bool ipDuplicateInPlace(const instructionPointer * old, instructio
 	assert(new);
 	new->position.x         = old->position.x;
 	new->position.y         = old->position.y;
-	new->mode               = ipmCODE;
 	new->delta.x            = old->delta.x;
 	new->delta.y            = old->delta.y;
-	new->NeedMove           = old->NeedMove;
-	new->StringLastWasSpace = old->StringLastWasSpace;
 	new->storageOffset.x    = old->storageOffset.x;
 	new->storageOffset.y    = old->storageOffset.y;
+	new->mode               = ipmCODE;
+	new->NeedMove           = old->NeedMove;
+	new->StringLastWasSpace = old->StringLastWasSpace;
 	new->stackstack         = StackStackDuplicate(old->stackstack);
 	if (!new->stackstack)
 		return false;
@@ -94,9 +94,11 @@ static inline void ipFreeResources(instructionPointer * ip)
 {
 	if (!ip)
 		return;
-	StackStackFree(ip->stackstack);
-	ip->stackstack = NULL;
-	ip->stack      = NULL;
+	if (ip->stackstack) {
+		StackStackFree(ip->stackstack);
+		ip->stackstack = NULL;
+	}
+	ip->stack = NULL;
 	if (SettingEnableFingerprints) {
 		ManagerFree(ip);
 	}
