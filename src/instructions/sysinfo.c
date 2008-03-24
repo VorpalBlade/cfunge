@@ -144,8 +144,8 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 #endif
 			break;
 		case 19: // Command line arguments
-			StackPush('\0', ip->stack);
-			StackPush('\0', ip->stack);
+			StackPush('\0', pushStack);
+			StackPush('\0', pushStack);
 			for (int i = fungeargc - 1; i >= 0; i--) {
 				StackPushString(strlen(fungeargv[i]), fungeargv[i], pushStack);
 			}
@@ -154,7 +154,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			{
 				char * tmp;
 				int i = 0;
-				StackPush('\0', ip->stack);
+				StackPush('\0', pushStack);
 
 				while (true) {
 					tmp = environ[i];
@@ -197,10 +197,10 @@ void RunSysInfo(instructionPointer *ip)
 		PushRequest(request, ip, ip->stack);
 	} else {
 		fungeStack * tmp = StackCreate();
-		for (int i = 1; i <= HIGHESTREQUEST; i++)
+		for (int i = HIGHESTREQUEST; i > 0; i--)
 			PushRequest(i, ip, tmp);
 		if (tmp->top > (size_t)request)
-			StackPush(tmp->entries[request -1], ip->stack);
+			StackPush(tmp->entries[tmp->top - request], ip->stack);
 		else
 			StackPush(ip->stack->entries[ip->stack->top - (request - tmp->top)], ip->stack);
 		StackFree(tmp);
