@@ -44,9 +44,10 @@ fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 #define ALLOCCHUNKSIZE 2
 
 typedef struct s_ImplementedFingerprintEntry {
-	const FUNGEDATATYPE     fprint;   /**< Fingerprint */
-	const fingerprintLoader loader;   /**< Loader function pointer */
-	const char            * opcodes;  /**< Sorted string with all implemented opcodes */
+	const FUNGEDATATYPE     fprint;   /**< Fingerprint. */
+	const fingerprintLoader loader;   /**< Loader function pointer. */
+	const char            * opcodes;  /**< Sorted string with all implemented opcodes. */
+	const char            * url;      /**< URI, used to show links for more info about fingerprints. */
 	const bool              safe:1;   /**< If true, this fingerprint is safe in sandbox mode. */
 } ImplementedFingerprintEntry;
 
@@ -54,21 +55,21 @@ typedef struct s_ImplementedFingerprintEntry {
 // NOTE: Keep sorted (apart from ending 0 entry).
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
-	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .safe = true },
+	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// DIRF Directory functions extension, NOT SAFE
-	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR", .safe = false },
+	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
 	// MODU - Modulo Arithmetic
-	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .safe = true },
+	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
 	// NULL
-	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ", .safe = true },
+	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ", .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library
-	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ", .safe = true },
+	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ", .url = "http://catseye.tc/projects/funge98/library/ORTH.html", .safe = true },
 	// REFC - Referenced Cells Extension
-	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR", .safe = true },
+	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR", .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
 	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX", .safe = true },
+	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX", .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR", .safe = true },
+	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .safe = true }
 };
@@ -270,7 +271,11 @@ void ManagerList(void) {
 		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[5] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint, '\0'};
 
-		printf("0x%x %s%s\n", (unsigned)fprint, fprintname, ImplementedFingerprints[i].safe ? "" : " (not available in sandbox mode)");
+		printf("0x%x %s%s %s\n",
+		       (unsigned)fprint,
+		       fprintname,
+		       ImplementedFingerprints[i].safe ? "" : " (not available in sandbox mode)",
+		       ImplementedFingerprints[i].url ? ImplementedFingerprints[i].url : "");
 	} while (ImplementedFingerprints[++i].fprint != 0);
 	exit(0);
 }
