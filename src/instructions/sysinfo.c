@@ -34,6 +34,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 // Tmp variable used for pushing of stack size.
 static size_t TOSSSize = 0;
@@ -172,6 +173,13 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 
 				break;
 			}
+		case 21: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
+			// Bytes
+			StackPush(2, pushStack);
+			break;
+		case 22: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
+			StackPush(sizeof(FUNGEDATATYPE) * CHAR_BIT, pushStack);
+			break;
 #ifndef NDEBUG
 		default:
 			fprintf(stderr, "request was %" FUNGEDATAPRI "\nThis should not happen!\n", request);
@@ -180,24 +188,23 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 	}
 }
 
-#define HIGHESTREQUEST 20
+#define HIGHESTREQUEST_98 20
+#define HIGHESTREQUEST_108 22
 
 void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	TOSSSize = ip->stack->top;
-	// Speed this one up for mycology
-	// TODO: Remove this once size of multiple stacks
-	//        are coded as this would break then.
+	// Negative: push all
 	if (request <= 0) {
-		for (int i = HIGHESTREQUEST; i > 0; i--)
+		for (int i = ((SettingCurrentStandard == stdver108) ? HIGHESTREQUEST_108 : HIGHESTREQUEST_98); i > 0; i--)
 			PushRequest(i, ip, ip->stack);
 	// Simple to get single cell in this range
 	} else if (request < 10) {
 		PushRequest(request, ip, ip->stack);
 	} else {
 		fungeStack * tmp = StackCreate();
-		for (int i = HIGHESTREQUEST; i > 0; i--)
+		for (int i = ((SettingCurrentStandard == stdver108) ? HIGHESTREQUEST_108 : HIGHESTREQUEST_98); i > 0; i--)
 			PushRequest(i, ip, tmp);
 		if (tmp->top > (size_t)request)
 			StackPush(tmp->entries[tmp->top - request], ip->stack);
