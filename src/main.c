@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 					SettingCurrentStandard = stdver93;
 				else if (strncmp(optarg, "98", 2) == 0)
 					SettingCurrentStandard = stdver98;
-				else if (strncmp(optarg, "108", 2) == 0)
+				else if (strncmp(optarg, "108", 3) == 0)
 					SettingCurrentStandard = stdver108;
 				else {
 					fprintf(stderr, "%s is not valid for -s.\n", optarg);
