@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-// Tmp variable used for pushing of stack size.
+// Temp variable used for pushing of stack size.
 static size_t TOSSSize = 0;
 
 #ifndef _GNU_SOURCE

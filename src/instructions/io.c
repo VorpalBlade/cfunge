@@ -52,6 +52,9 @@ void RunFileInput(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0') {
+#ifdef DISABLE_GC
+			cf_free(filename);
+#endif
 			ipReverse(ip);
 			return;
 		}
@@ -61,11 +64,15 @@ void RunFileInput(instructionPointer * restrict ip)
 
 		if (!fungeSpaceLoadAtOffset(filename,
 		                            &(fungePosition){ .x = offset.x + ip->storageOffset.x,  .y = offset.y + ip->storageOffset.y },
-		                            &size, binary))
+		                            &size, binary)) {
 			ipReverse(ip);
-
-		StackPushVector(&size, ip->stack);
-		StackPushVector(&offset, ip->stack);
+		} else {
+			StackPushVector(&size, ip->stack);
+			StackPushVector(&offset, ip->stack);
+		}
+#ifdef DISABLE_GC
+		cf_free(filename);
+#endif
 	}
 }
 
@@ -92,6 +99,9 @@ void RunFileOutput(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0' || size.x < 1 || size.y < 1) {
+#ifdef DISABLE_GC
+			cf_free(filename);
+#endif
 			ipReverse(ip);
 			return;
 		}
@@ -100,6 +110,9 @@ void RunFileOutput(instructionPointer * restrict ip)
 		                     &(fungePosition){ .x = offset.x + ip->storageOffset.x,  .y = offset.y + ip->storageOffset.y },
 		                     &size, textfile))
 			ipReverse(ip);
+#ifdef DISABLE_GC
+		cf_free(filename);
+#endif
 	}
 
 }
