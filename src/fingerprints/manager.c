@@ -71,7 +71,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// Last should be 0
-	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .safe = true }
+	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
 
 

@@ -65,7 +65,7 @@ instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline bool ipDuplicateInPlace(const instructionPointer * old, instructionPointer * new) {
+static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
 	assert(old);
 	assert(new);
 	new->position.x         = old->position.x;

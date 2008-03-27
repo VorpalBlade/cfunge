@@ -41,6 +41,8 @@ src/global.h
 src/input.c
 src/input.h
 src/instructions
+src/instructions/io.c
+src/instructions/io.h
 src/instructions/iterate.c
 src/instructions/iterate.h
 src/instructions/safe_env.c

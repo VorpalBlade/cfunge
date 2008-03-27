@@ -29,7 +29,6 @@
 #include <stdbool.h>
 
 #include "../ip.h"
-#include "../interpreter.h"
 
 typedef void (*fingerprintOpcode)(instructionPointer * ip);
 
