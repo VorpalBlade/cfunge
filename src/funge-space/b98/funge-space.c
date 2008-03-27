@@ -213,30 +213,21 @@ fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, c
 	fungeSpaceSet(value, &tmp);
 }
 
-#if 0
-static inline void
-fungeSpaceWrapNoDelta(fungePosition * restrict position)
-{
-	if (position->x < fspace->topLeftCorner.x)
-		position->x = fspace->bottomRightCorner.x - ABS(position->x);
-	else
-		position->x = position->x % fspace->bottomRightCorner.x;
-
-	if (position->y < fspace->topLeftCorner.y)
-		position->y = fspace->bottomRightCorner.y - ABS(position->y);
-	else
-		position->y = position->y % fspace->bottomRightCorner.y;
-}
-#endif
-
 void
 fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
 {
-#if 0
-	if (VectorIsCardinal(delta))
-		fungeSpaceWrapNoDelta(position);
-	else {
-#endif
+	// Quick and dirty if cardinal.
+	if (VectorIsCardinal(delta)) {
+		if (position->x < fspace->topLeftCorner.x)
+			position->x = fspace->bottomRightCorner.x;
+		else if (position->x >= fspace->bottomRightCorner.x)
+			position->x = fspace->topLeftCorner.x;
+
+		if (position->y < fspace->topLeftCorner.y)
+			position->y = fspace->bottomRightCorner.y;
+		else if (position->y >= fspace->bottomRightCorner.y)
+			position->y = fspace->topLeftCorner.y;
+	} else {
 		if (!fungeSpaceInRange(position)) {
 			do {
 				position->x -= delta->x;
@@ -245,9 +236,7 @@ fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 				position->x += delta->x;
 				position->y += delta->y;
 		}
-#if 0
 	}
-#endif
 }
 
 #ifndef NDEBUG
