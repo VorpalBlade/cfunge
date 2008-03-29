@@ -56,8 +56,8 @@ static void FingerTOYSpairOfShoes(instructionPointer * ip)
 	// Got no idea if this is correct.
 	FUNGEDATATYPE x, y;
 
-	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
+	x = StackPop(ip->stack);
 
 	StackPush(x+y, ip->stack);
 	StackPush(x-y, ip->stack);

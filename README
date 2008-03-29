@@ -74,6 +74,7 @@ Short descriptions of implemented fingerprints:
  REFC Referenced Cells Extension
  ROMA Funge-98 Roman Numerals
  SUBR Subroutine extension
+ TOYS Funge-98 Standard Toys
 For more details please see the specs for each fingerprint.
 In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the
 same thing as CCBI.
