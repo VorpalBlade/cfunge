@@ -208,8 +208,9 @@ void RunSysInfo(instructionPointer *ip)
 			PushRequest(i, ip, tmp);
 		if (tmp->top > (size_t)request)
 			StackPush(tmp->entries[tmp->top - request], ip->stack);
-		else
-			StackPush(ip->stack->entries[ip->stack->top - (request - tmp->top)], ip->stack);
+		else {
+			StackPopNDiscard(ip->stack, request - tmp->top - 1);
+		}
 		StackFree(tmp);
 	}
 }
