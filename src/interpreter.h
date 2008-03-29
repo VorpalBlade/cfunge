@@ -38,6 +38,10 @@ extern int fungeargc;
 
 // Functions
 
+
+void IfEastWest(instructionPointer * restrict ip);
+void IfNorthSouth(instructionPointer * restrict ip);
+
 /**
  * Run instruction.
  */

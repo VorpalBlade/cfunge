@@ -32,6 +32,8 @@ typedef struct s_fungeVector {
 
 typedef fungeVector fungePosition;
 
+#define VectorCreateRef(a, b) (& (fungeVector) { .x = (a), .y = (b) })
+
 /**
  * Checks if vector is cardinal (as in ^>v<).
  */

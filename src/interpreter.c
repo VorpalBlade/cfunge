@@ -53,11 +53,6 @@ static instructionPointer *IP = NULL;
 		StackPush((FUNGEDATATYPE)y, ip->stack); \
 		break;
 
-#define GO_WEST  ipSetDelta(ip, & (fungeVector) { .x = -1, .y =  0 });
-#define GO_EAST  ipSetDelta(ip, & (fungeVector) { .x =  1, .y =  0 });
-#define GO_NORTH ipSetDelta(ip, & (fungeVector) { .x =  0, .y = -1 });
-#define GO_SOUTH ipSetDelta(ip, & (fungeVector) { .x =  0, .y =  1 });
-
 #ifdef CONCURRENT_FUNGE
 #  define ReturnFromExecuteInstruction(x) return (x)
 #else
@@ -75,6 +70,23 @@ static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointe
 		fprintf(stderr,
 		        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
 		        ip->position.x, ip->position.y, (char)opcode, opcode);
+}
+
+
+inline void IfEastWest(instructionPointer * restrict ip)
+{
+	if (StackPop(ip->stack) == 0)
+		GO_EAST(ip);
+	else
+		GO_WEST(ip);
+}
+
+inline void IfNorthSouth(instructionPointer * restrict ip)
+{
+	if (StackPop(ip->stack) == 0)
+		GO_SOUTH(ip);
+	else
+		GO_NORTH(ip);
 }
 
 
@@ -132,16 +144,16 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					ReturnFromExecuteInstruction(true);
 				}
 			case '^':
-				GO_NORTH
+				GO_NORTH(ip);
 				break;
 			case '>':
-				GO_EAST
+				GO_EAST(ip);
 				break;
 			case 'v':
-				GO_SOUTH
+				GO_SOUTH(ip);
 				break;
 			case '<':
-				GO_WEST
+				GO_WEST(ip);
 				break;
 			case 'j':
 				{
@@ -167,10 +179,10 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					long int rnd = random() % 4;
 					assert((rnd >= 0) && (rnd <= 3));
 					switch (rnd) {
-						case 0: GO_NORTH break;
-						case 1: GO_EAST break;
-						case 2: GO_SOUTH break;
-						case 3: GO_WEST break;
+						case 0: GO_NORTH(ip); break;
+						case 1: GO_EAST(ip); break;
+						case 2: GO_SOUTH(ip); break;
+						case 3: GO_WEST(ip); break;
 					}
 					break;
 				}
@@ -221,23 +233,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				break;
 
 			case '_':
-				{
-					FUNGEDATATYPE a = StackPop(ip->stack);
-					if (a == 0)
-						GO_EAST
-					else
-						GO_WEST
-					break;
-				}
+				IfEastWest(ip);
+				break;
 			case '|':
-				{
-					FUNGEDATATYPE a = StackPop(ip->stack);
-					if (a == 0)
-						GO_SOUTH
-					else
-						GO_NORTH
-					break;
-				}
+				IfNorthSouth(ip);
+				break;
 			case 'w':
 				{
 					FUNGEDATATYPE a, b;

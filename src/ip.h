@@ -103,6 +103,12 @@ void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull));
 void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull));
 void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull));
 
+// To make things simpler.
+#define GO_WEST(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
+#define GO_EAST(ip)  ipSetDelta(ip, VectorCreateRef( 1,  0))
+#define GO_NORTH(ip) ipSetDelta(ip, VectorCreateRef( 0, -1))
+#define GO_SOUTH(ip) ipSetDelta(ip, VectorCreateRef( 0,  1))
+
 #ifdef CONCURRENT_FUNGE
 /**
  * Create a new IP list with the single default IP in it.
