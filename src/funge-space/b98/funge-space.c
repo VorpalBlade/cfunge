@@ -202,15 +202,10 @@ fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 void
 fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
-	fungePosition tmp;
-
 	assert(position != NULL);
 	assert(offset != NULL);
 
-	tmp.x = position->x + offset->x;
-	tmp.y = position->y + offset->y;
-
-	fungeSpaceSet(value, &tmp);
+	fungeSpaceSet(value, VectorCreateRef(position->x + offset->x, position->y + offset->y));
 }
 
 void
@@ -253,9 +248,9 @@ void fungeSpaceDump(void)
 	if (!fspace)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
-	for (FUNGEVECTORTYPE y = 0; y < fspace->bottomRightCorner.y; y++) {
-		for (FUNGEVECTORTYPE x = 0; x < fspace->bottomRightCorner.x; x++)
-			fprintf(stderr, "%c", (char)fungeSpaceGet(& (fungePosition) { .x = x, .y = y }));
+	for (FUNGEVECTORTYPE y = 0; y <= fspace->bottomRightCorner.y; y++) {
+		for (FUNGEVECTORTYPE x = 0; x <= fspace->bottomRightCorner.x; x++)
+			fprintf(stderr, "%c", (char)fungeSpaceGet(VectorCreateRef(x, y)));
 		fprintf(stderr, "\n");
 	}
 	fputs("\n", stderr);
@@ -301,7 +296,7 @@ fungeSpaceLoad(const char * restrict filename)
 				noendingnewline = false;
 				continue;
 			}
-			fungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
+			fungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], VectorCreateRef(x, y));
 			x++;
 			noendingnewline = true;
 		}
@@ -355,7 +350,7 @@ fungeSpaceLoadAtOffset(const char          * restrict filename,
 				continue;
 			}
 			if (line[i] != ' ')
-				fungeSpaceSetOff((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y }, offset);
+				fungeSpaceSetOff((FUNGEDATATYPE)line[i], VectorCreateRef(x, y), offset);
 			x++;
 		}
 	}
@@ -391,7 +386,7 @@ fungeSaveToFile(const char          * restrict filename,
 	// TODO textfile mode
 	for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
 		for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
-			value = fungeSpaceGet(& (fungePosition) { .x = x, .y = y });
+			value = fungeSpaceGet(VectorCreateRef(x, y));
 			fputc(value, file);
 		}
 		fputc('\n', file);

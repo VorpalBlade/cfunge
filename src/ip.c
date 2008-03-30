@@ -42,8 +42,8 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 	me->storageOffset.x    = 0;
 	me->storageOffset.y    = 0;
 	me->mode               = ipmCODE;
-	me->NeedMove           = true;
-	me->StringLastWasSpace = false;
+	me->needMove           = true;
+	me->stringLastWasSpace = false;
 	me->stackstack         = StackStackCreate();
 	if (!me->stackstack)
 		return false;
@@ -75,8 +75,8 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 	new->storageOffset.x    = old->storageOffset.x;
 	new->storageOffset.y    = old->storageOffset.y;
 	new->mode               = old->mode;
-	new->NeedMove           = old->NeedMove;
-	new->StringLastWasSpace = old->StringLastWasSpace;
+	new->needMove           = old->needMove;
+	new->stringLastWasSpace = old->stringLastWasSpace;
 	new->stackstack         = StackStackDuplicate(old->stackstack);
 	if (!new->stackstack)
 		return false;

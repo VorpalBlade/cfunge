@@ -51,7 +51,7 @@ static void FingerSUBRCall(instructionPointer * ip) {
 
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &SUBRnewDelta);
-	ip->NeedMove = false;
+	ip->needMove = false;
 }
 
 static void FingerSUBRJump(instructionPointer * ip) {

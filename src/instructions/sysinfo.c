@@ -31,6 +31,7 @@
 #include "safe_env.h"
 
 #include <unistd.h>
+#include <assert.h>
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
@@ -100,14 +101,14 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 			{
 				fungeRect rect;
 				fungeSpaceGetBoundRect(&rect);
-				StackPushVector(& (fungePosition) { .x = rect.x, .y = rect.y }, pushStack);
+				StackPushVector(VectorCreateRef(rect.x, rect.y), pushStack);
 				break;
 			}
 		case 14: // Greatest point
 			{
 				fungeRect rect;
 				fungeSpaceGetBoundRect(&rect);
-				StackPushVector(& (fungePosition) { .x = rect.x + rect.w, .y = rect.y + rect.h }, pushStack);
+				StackPushVector(VectorCreateRef(rect.x + rect.w, rect.y + rect.h), pushStack);
 				break;
 			}
 		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
@@ -194,6 +195,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
+	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
 	// Negative: push all
 	if (request <= 0) {

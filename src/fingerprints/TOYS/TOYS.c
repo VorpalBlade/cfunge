@@ -82,8 +82,8 @@ static void FingerTOYSbracelet(instructionPointer * ip)
 
 	for (FUNGEDATATYPE x = 0; x < d.x; ++x)
 		for (FUNGEDATATYPE y = 0; y < d.y; ++y)
-			fungeSpaceSetOff(fungeSpaceGetOff(& (fungePosition) { .x = x, .y = y }, &o),
-			                 & (fungePosition) { .x = x, .y = y }, &t);
+			fungeSpaceSetOff(fungeSpaceGetOff(VectorCreateRef(x, y), &o),
+			                 VectorCreateRef(x, y), &t);
 }
 
 // D - toilet seat
@@ -116,7 +116,7 @@ static void FingerTOYScalipers(instructionPointer * ip)
 
 	for (FUNGEDATATYPE y = t.y; y < t.y + j; ++y)
 		for (FUNGEDATATYPE x = t.x; x < t.x + i; ++x)
-			fungeSpaceSet(StackPop(ip->stack), & (fungePosition) { .x = x, .y = y });
+			fungeSpaceSet(StackPop(ip->stack), VectorCreateRef(x, y));
 }
 
 // G - counterclockwise
@@ -133,7 +133,7 @@ static void FingerTOYScounterclockwise(instructionPointer * ip)
 
 	for (FUNGEDATATYPE y = o.y + j; y-- > o.y;)
 		for (FUNGEDATATYPE x = o.x + i; x-- > o.x;)
-			StackPush(fungeSpaceGet(& (fungePosition) { .x = x, .y = y }), ip->stack);
+			StackPush(fungeSpaceGet(VectorCreateRef(x, y)), ip->stack);
 }
 
 // H - pair of stilts
@@ -194,8 +194,8 @@ static void FingerTOYSscissors(instructionPointer * ip)
 
 	for (FUNGEDATATYPE x = d.x; x-- > 0;)
 		for (FUNGEDATATYPE y = d.y; y-- > 0;)
-			fungeSpaceSetOff(fungeSpaceGetOff(& (fungePosition) { .x = x, .y = y }, &o),
-			                 & (fungePosition) { .x = x, .y = y }, &t);
+			fungeSpaceSetOff(fungeSpaceGetOff(VectorCreateRef(x, y), &o),
+			                 VectorCreateRef(x, y), &t);
 }
 
 // L - corner
@@ -226,9 +226,9 @@ static void FingerTOYSkittycat(instructionPointer * ip)
 
 	for (FUNGEDATATYPE x = 0; x < d.x; ++x)
 		for (FUNGEDATATYPE y = 0; y < d.y; ++y) {
-			fungeSpaceSetOff(fungeSpaceGetOff(& (fungePosition) { .x = x, .y = y }, &o),
-			                 & (fungePosition) { .x = x, .y = y }, &t);
-			fungeSpaceSetOff(' ', & (fungePosition) { .x = x, .y = y }, &o);
+			fungeSpaceSetOff(fungeSpaceGetOff(VectorCreateRef(x, y), &o),
+			                 VectorCreateRef(x, y), &t);
+			fungeSpaceSetOff(' ', VectorCreateRef(x, y), &o);
 		}
 }
 
@@ -306,7 +306,7 @@ static void FingerTOYSchicane(instructionPointer * ip)
 
 	for (FUNGEDATATYPE x = o.x; x < o.x + d.x; ++x)
 		for (FUNGEDATATYPE y = o.y; y < o.y + d.y; ++y)
-			fungeSpaceSet(c, & (fungePosition) { .x = x, .y = y });
+			fungeSpaceSet(c, VectorCreateRef(x, y));
 }
 
 // T - barstool
@@ -350,9 +350,9 @@ static void FingerTOYSdixiecup(instructionPointer * ip)
 
 	for (FUNGEDATATYPE x = d.x; x-- > 0;)
 		for (FUNGEDATATYPE y = d.y; y-- > 0;) {
-			fungeSpaceSetOff(fungeSpaceGetOff(& (fungePosition) { .x = x, .y = y }, &o),
-			                 & (fungePosition) { .x = x, .y = y }, &t);
-			fungeSpaceSetOff(' ', & (fungePosition) { .x = x, .y = y }, &o);
+			fungeSpaceSetOff(fungeSpaceGetOff(VectorCreateRef(x, y), &o),
+			                 VectorCreateRef(x, y), &t);
+			fungeSpaceSetOff(' ', VectorCreateRef(x, y), &o);
 		}
 }
 

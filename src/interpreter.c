@@ -101,11 +101,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 		if (opcode == '"') {
 			ip->mode = ipmCODE;
 		} else if (opcode != ' ') {
-			ip->StringLastWasSpace = false;
+			ip->stringLastWasSpace = false;
 			StackPush(opcode, ip->stack);
-		} else if (((opcode == ' ') && (!ip->StringLastWasSpace))
+		} else if (((opcode == ' ') && (!ip->stringLastWasSpace))
 		           || (SettingCurrentStandard == stdver93)) {
-			ip->StringLastWasSpace = true;
+			ip->stringLastWasSpace = true;
 			StackPush(opcode, ip->stack);
 		}
 	// Next: Is this a fingerprint opcode?
@@ -131,7 +131,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					do {
 						ipForward(1, ip);
 					} while (fungeSpaceGet(&ip->position) == ' ');
-					ip->NeedMove = false;
+					ip->needMove = false;
 				}
 				ReturnFromExecuteInstruction(true);
 			case 'z':
@@ -222,7 +222,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 			case '"':
 				ip->mode = ipmSTRING;
-				ip->StringLastWasSpace = false;
+				ip->stringLastWasSpace = false;
 				break;
 			case ':':
 				StackDupTop(ip->stack);
@@ -496,7 +496,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				} else {
 					*threadindex = ipListTerminateIP(&IPList, *threadindex);
 					//if (IPList->top == 0)
-					IPList->ips[*threadindex].NeedMove = false;
+					IPList->ips[*threadindex].needMove = false;
 				}
 #else
 				fflush(stdout);
@@ -523,10 +523,10 @@ static inline void ThreadForward(instructionPointer * ip)
 {
 	assert(ip != NULL);
 
-	if (ip->NeedMove)
+	if (ip->needMove)
 		ipForward(1, ip);
 	else
-		ip->NeedMove = true;
+		ip->needMove = true;
 }
 
 static inline void interpreterMainLoop(void) __attribute__((noreturn));
@@ -570,10 +570,10 @@ static inline void interpreterMainLoop(void)
 #    endif /* DISABLE_TRACE */
 
 		ExecuteInstruction(opcode, IP);
-		if (IP->NeedMove)
+		if (IP->needMove)
 			ipForward(1, IP);
 		else
-			IP->NeedMove = true;
+			IP->needMove = true;
 	}
 #endif /* CONCURRENT_FUNGE */
 }

@@ -32,6 +32,7 @@ typedef struct s_fungeVector {
 
 typedef fungeVector fungePosition;
 
+// Useful to create a vector in a list of parameter for example.
 #define VectorCreateRef(a, b) (& (fungeVector) { .x = (a), .y = (b) })
 
 /**

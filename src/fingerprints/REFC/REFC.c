@@ -27,8 +27,11 @@
 #include <assert.h>
 
 #define ALLOCCHUNK 5
+// Array holding references.
 static fungePosition *references = NULL;
+// Top index used in array.
 static size_t referencesTop = 0;
+// Size of array (including allocated but not yet used elements).
 static size_t referencesSize = 0;
 
 static void FingerREFCReference(instructionPointer * ip) {
