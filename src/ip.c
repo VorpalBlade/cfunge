@@ -118,7 +118,7 @@ void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;
 	ip->position.y += ip->delta.y * steps;
-	fungeSpaceWrap(&ip->position, &ip->delta);
+	FungeSpaceWrap(&ip->position, &ip->delta);
 }
 
 void ipTurnRight(instructionPointer * restrict ip)
@@ -157,7 +157,7 @@ void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restr
 	assert(position != NULL);
 	ip->position.x = position->x;
 	ip->position.y = position->y;
-	fungeSpaceWrap(&ip->position, &ip->delta);
+	FungeSpaceWrap(&ip->position, &ip->delta);
 }
 
 

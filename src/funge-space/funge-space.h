@@ -31,59 +31,59 @@
 /**
  * Create a funge-space.
  */
-bool fungeSpaceCreate(void) __attribute__((warn_unused_result));
+bool FungeSpaceCreate(void) __attribute__((warn_unused_result));
 /**
  * Destroy a funge-space.
  */
-void fungeSpaceFree(void);
+void FungeSpaceFree(void);
 /**
  * Get a cell.
  */
-FUNGEDATATYPE fungeSpaceGet(const fungePosition * restrict position) __attribute__((nonnull,warn_unused_result));
+FUNGEDATATYPE FungeSpaceGet(const fungePosition * restrict position) __attribute__((nonnull,warn_unused_result));
 /**
  * Get a cell, with an offset.
  */
-FUNGEDATATYPE fungeSpaceGetOff(const fungePosition * restrict position,
+FUNGEDATATYPE FungeSpaceGetOff(const fungePosition * restrict position,
                                const fungePosition * restrict offset) __attribute__((nonnull,warn_unused_result));
 /**
  * Set a cell.
  */
-void fungeSpaceSet(FUNGEDATATYPE value,
+void FungeSpaceSet(FUNGEDATATYPE value,
                    const fungePosition * restrict position) __attribute__((nonnull));
 /**
  * Set a cell, with an offset.
  */
-void fungeSpaceSetOff(FUNGEDATATYPE value,
+void FungeSpaceSetOff(FUNGEDATATYPE value,
                       const fungePosition * restrict position,
                       const fungePosition * restrict offset) __attribute__((nonnull));
 /**
  * Used for IP wrapping.
  */
-void fungeSpaceWrap(fungePosition * restrict position,
+void FungeSpaceWrap(fungePosition * restrict position,
                     const fungeVector * restrict delta) __attribute__((nonnull));
 /**
  * Load a file into funge-space at 0,0. Optimized, use when possible.
  */
-bool fungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
+bool FungeSpaceLoad(const char * restrict filename) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Load a file into funge space at an offset. Used for i instruction.
  * size is an out variable.
  */
-bool fungeSpaceLoadAtOffset(const char * restrict filename,
+bool FungeSpaceLoadAtOffset(const char * restrict filename,
                             const fungePosition * restrict offset,
                             fungeVector * restrict size,
                             bool binary) __attribute__((nonnull,warn_unused_result));
 
-bool fungeSaveToFile(const char          * restrict filename,
-                     const fungePosition * restrict offset,
-                     const fungeVector   * restrict size,
-                     bool textfile) __attribute__((nonnull,warn_unused_result));
+bool FungeSpaceSaveToFile(const char          * restrict filename,
+                          const fungePosition * restrict offset,
+                          const fungeVector   * restrict size,
+                          bool textfile) __attribute__((nonnull,warn_unused_result));
 
 /**
  * Get the bounding rectangle for the part of funge-space that isn't empty.
  * It won't be too small, but it may be too big.
  */
-void fungeSpaceGetBoundRect(fungeRect * restrict rect) __attribute__((nonnull));
+void FungeSpaceGetBoundRect(fungeRect * restrict rect) __attribute__((nonnull));
 
 #endif

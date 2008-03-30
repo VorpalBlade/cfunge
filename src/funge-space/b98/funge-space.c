@@ -50,9 +50,9 @@ static fungeSpace *fspace = NULL;
 /**
  * Check if position is in range.
  */
-static inline bool fungeSpaceInRange(const fungePosition * restrict position) __attribute__((pure));
+static inline bool FungeSpaceInRange(const fungePosition * restrict position) __attribute__((pure));
 
-static inline bool fungeSpaceInRange(const fungePosition * restrict position)
+static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
 	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
 		return false;
@@ -62,7 +62,7 @@ static inline bool fungeSpaceInRange(const fungePosition * restrict position)
 }
 
 bool
-fungeSpaceCreate(void)
+FungeSpaceCreate(void)
 {
 	fspace = (fungeSpace*)cf_malloc(sizeof(fungeSpace));
 	if (!fspace)
@@ -86,7 +86,7 @@ fungeSpaceCreate(void)
 
 
 void
-fungeSpaceFree(void)
+FungeSpaceFree(void)
 {
 	if (!fspace)
 		return;
@@ -97,7 +97,7 @@ fungeSpaceFree(void)
 }
 
 void
-fungeSpaceGetBoundRect(fungeRect * restrict rect) {
+FungeSpaceGetBoundRect(fungeRect * restrict rect) {
 	rect->x = fspace->topLeftCorner.x;
 	rect->y = fspace->topLeftCorner.y;
 	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x;
@@ -106,7 +106,7 @@ fungeSpaceGetBoundRect(fungeRect * restrict rect) {
 
 
 FUNGEDATATYPE
-fungeSpaceGet(const fungePosition * restrict position)
+FungeSpaceGet(const fungePosition * restrict position)
 {
 	FUNGEDATATYPE *tmp;
 
@@ -121,7 +121,7 @@ fungeSpaceGet(const fungePosition * restrict position)
 
 
 FUNGEDATATYPE
-fungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * restrict offset)
+FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
 	FUNGEDATATYPE *result;
@@ -144,7 +144,7 @@ fungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
  * Allocates in chunks of FUNGESPACEALLOCCHUNK.
  */
 static inline FUNGEDATATYPE*
-fungeSpaceInternalAlloc(FUNGEDATATYPE value)
+FungeSpaceInternalAlloc(FUNGEDATATYPE value)
 {
 	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
@@ -165,7 +165,7 @@ fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 
 
 static inline void
-fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
+FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
 	if (value == ' ') {
@@ -176,7 +176,7 @@ fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
 			*tmp = value;
 		} else {
-			tmp = fungeSpaceInternalAlloc(value);
+			tmp = FungeSpaceInternalAlloc(value);
 			if (ght_insert(fspace->entries, tmp, sizeof(fungePosition), position) == -1) {
 				ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
 			}
@@ -185,10 +185,10 @@ fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 }
 
 void
-fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
+FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
-	fungeSpaceSetNoBoundUpdate(value, position);
+	FungeSpaceSetNoBoundUpdate(value, position);
 	if (fspace->bottomRightCorner.y < position->y)
 		fspace->bottomRightCorner.y = position->y;
 	if (fspace->bottomRightCorner.x < position->x)
@@ -200,16 +200,16 @@ fungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 }
 
 void
-fungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
+FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	assert(position != NULL);
 	assert(offset != NULL);
 
-	fungeSpaceSet(value, VectorCreateRef(position->x + offset->x, position->y + offset->y));
+	FungeSpaceSet(value, VectorCreateRef(position->x + offset->x, position->y + offset->y));
 }
 
 void
-fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
+FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
 {
 	// Quick and dirty if cardinal.
 	if (VectorIsCardinal(delta)) {
@@ -223,11 +223,11 @@ fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 		else if (position->y >= fspace->bottomRightCorner.y)
 			position->y = fspace->topLeftCorner.y;
 	} else {
-		if (!fungeSpaceInRange(position)) {
+		if (!FungeSpaceInRange(position)) {
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
-			} while (fungeSpaceInRange(position));
+			} while (FungeSpaceInRange(position));
 				position->x += delta->x;
 				position->y += delta->y;
 		}
@@ -241,16 +241,16 @@ fungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 
 
 // For use with call in gdb
-void fungeSpaceDump(void) __attribute__((unused));
+void FungeSpaceDump(void) __attribute__((unused));
 
-void fungeSpaceDump(void)
+void FungeSpaceDump(void)
 {
 	if (!fspace)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
 	for (FUNGEVECTORTYPE y = 0; y <= fspace->bottomRightCorner.y; y++) {
 		for (FUNGEVECTORTYPE x = 0; x <= fspace->bottomRightCorner.x; x++)
-			fprintf(stderr, "%c", (char)fungeSpaceGet(VectorCreateRef(x, y)));
+			fprintf(stderr, "%c", (char)FungeSpaceGet(VectorCreateRef(x, y)));
 		fprintf(stderr, "\n");
 	}
 	fputs("\n", stderr);
@@ -259,7 +259,7 @@ void fungeSpaceDump(void)
 #endif
 
 bool
-fungeSpaceLoad(const char * restrict filename)
+FungeSpaceLoad(const char * restrict filename)
 {
 	FILE * file;
 	char * line = NULL;
@@ -296,7 +296,7 @@ fungeSpaceLoad(const char * restrict filename)
 				noendingnewline = false;
 				continue;
 			}
-			fungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], VectorCreateRef(x, y));
+			FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], VectorCreateRef(x, y));
 			x++;
 			noendingnewline = true;
 		}
@@ -311,7 +311,7 @@ fungeSpaceLoad(const char * restrict filename)
 }
 
 bool
-fungeSpaceLoadAtOffset(const char          * restrict filename,
+FungeSpaceLoadAtOffset(const char          * restrict filename,
                        const fungePosition * restrict offset,
                        fungeVector         * restrict size,
                        bool binary)
@@ -350,7 +350,7 @@ fungeSpaceLoadAtOffset(const char          * restrict filename,
 				continue;
 			}
 			if (line[i] != ' ')
-				fungeSpaceSetOff((FUNGEDATATYPE)line[i], VectorCreateRef(x, y), offset);
+				FungeSpaceSetOff((FUNGEDATATYPE)line[i], VectorCreateRef(x, y), offset);
 			x++;
 		}
 	}
@@ -363,10 +363,10 @@ fungeSpaceLoadAtOffset(const char          * restrict filename,
 }
 
 bool
-fungeSaveToFile(const char          * restrict filename,
-                const fungePosition * restrict offset,
-                const fungeVector   * restrict size,
-                bool textfile)
+FungeSpaceSaveToFile(const char          * restrict filename,
+                     const fungePosition * restrict offset,
+                     const fungeVector   * restrict size,
+                     bool textfile)
 {
 	FILE * file;
 
@@ -386,7 +386,7 @@ fungeSaveToFile(const char          * restrict filename,
 	// TODO textfile mode
 	for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
 		for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
-			value = fungeSpaceGet(VectorCreateRef(x, y));
+			value = FungeSpaceGet(VectorCreateRef(x, y));
 			fputc(value, file);
 		}
 		fputc('\n', file);

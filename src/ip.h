@@ -104,10 +104,10 @@ void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta
 void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull));
 
 // To make things simpler.
-#define GO_WEST(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
-#define GO_EAST(ip)  ipSetDelta(ip, VectorCreateRef( 1,  0))
-#define GO_NORTH(ip) ipSetDelta(ip, VectorCreateRef( 0, -1))
-#define GO_SOUTH(ip) ipSetDelta(ip, VectorCreateRef( 0,  1))
+#define ipGoWest(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
+#define ipGoEast(ip)  ipSetDelta(ip, VectorCreateRef( 1,  0))
+#define ipGoNorth(ip) ipSetDelta(ip, VectorCreateRef( 0, -1))
+#define ipGoSouth(ip) ipSetDelta(ip, VectorCreateRef( 0,  1))
 
 #ifdef CONCURRENT_FUNGE
 /**

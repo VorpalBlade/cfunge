@@ -52,7 +52,7 @@ static void FingerORTHbitXor(instructionPointer * ip) {
 // ortho get
 static void FingerORTHget(instructionPointer * ip) {
 	fungeVector v = StackPopVector(ip->stack);
-	StackPush(fungeSpaceGet(VectorCreateRef(v.y, v.x)), ip->stack);
+	StackPush(FungeSpaceGet(VectorCreateRef(v.y, v.x)), ip->stack);
 }
 
 // ortho put
@@ -63,7 +63,7 @@ static void FingerORTHput(instructionPointer * ip) {
 	v = StackPopVector(ip->stack);
 	c = StackPop(ip->stack);
 
-	fungeSpaceSet(c, VectorCreateRef(v.y, v.x));
+	FungeSpaceSet(c, VectorCreateRef(v.y, v.x));
 }
 
 // output string

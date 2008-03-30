@@ -100,14 +100,14 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 		case 13: // Least point
 			{
 				fungeRect rect;
-				fungeSpaceGetBoundRect(&rect);
+				FungeSpaceGetBoundRect(&rect);
 				StackPushVector(VectorCreateRef(rect.x, rect.y), pushStack);
 				break;
 			}
 		case 14: // Greatest point
 			{
 				fungeRect rect;
-				fungeSpaceGetBoundRect(&rect);
+				FungeSpaceGetBoundRect(&rect);
 				StackPushVector(VectorCreateRef(rect.x + rect.w, rect.y + rect.h), pushStack);
 				break;
 			}

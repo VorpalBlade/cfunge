@@ -76,17 +76,17 @@ static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointe
 inline void IfEastWest(instructionPointer * restrict ip)
 {
 	if (StackPop(ip->stack) == 0)
-		GO_EAST(ip);
+		ipGoEast(ip);
 	else
-		GO_WEST(ip);
+		ipGoWest(ip);
 }
 
 inline void IfNorthSouth(instructionPointer * restrict ip)
 {
 	if (StackPop(ip->stack) == 0)
-		GO_SOUTH(ip);
+		ipGoSouth(ip);
 	else
-		GO_NORTH(ip);
+		ipGoNorth(ip);
 }
 
 
@@ -130,7 +130,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				{
 					do {
 						ipForward(1, ip);
-					} while (fungeSpaceGet(&ip->position) == ' ');
+					} while (FungeSpaceGet(&ip->position) == ' ');
 					ip->needMove = false;
 				}
 				ReturnFromExecuteInstruction(true);
@@ -140,20 +140,20 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				{
 					do {
 						ipForward(1, ip);
-					} while (fungeSpaceGet(&ip->position) != ';');
+					} while (FungeSpaceGet(&ip->position) != ';');
 					ReturnFromExecuteInstruction(true);
 				}
 			case '^':
-				GO_NORTH(ip);
+				ipGoNorth(ip);
 				break;
 			case '>':
-				GO_EAST(ip);
+				ipGoEast(ip);
 				break;
 			case 'v':
-				GO_SOUTH(ip);
+				ipGoSouth(ip);
 				break;
 			case '<':
-				GO_WEST(ip);
+				ipGoWest(ip);
 				break;
 			case 'j':
 				{
@@ -179,10 +179,10 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					long int rnd = random() % 4;
 					assert((rnd >= 0) && (rnd <= 3));
 					switch (rnd) {
-						case 0: GO_NORTH(ip); break;
-						case 1: GO_EAST(ip); break;
-						case 2: GO_SOUTH(ip); break;
-						case 3: GO_WEST(ip); break;
+						case 0: ipGoNorth(ip); break;
+						case 1: ipGoEast(ip); break;
+						case 2: ipGoSouth(ip); break;
+						case 3: ipGoWest(ip); break;
 					}
 					break;
 				}
@@ -327,7 +327,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
 					a = StackPop(ip->stack);
-					fungeSpaceSetOff(a, &pos, &ip->storageOffset);
+					FungeSpaceSetOff(a, &pos, &ip->storageOffset);
 					break;
 				}
 			case 'g':
@@ -335,7 +335,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					fungePosition pos;
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
-					a = fungeSpaceGetOff(&pos, &ip->storageOffset);
+					a = FungeSpaceGetOff(&pos, &ip->storageOffset);
 					StackPush(a, ip->stack);
 					break;
 				}
@@ -343,7 +343,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				{
 					FUNGEDATATYPE a;
 					ipForward(1, ip);
-					a = fungeSpaceGet(&ip->position);
+					a = FungeSpaceGet(&ip->position);
 					StackPush(a, ip->stack);
 					break;
 				}
@@ -352,7 +352,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a;
 					a = StackPop(ip->stack);
 					ipForward(1, ip);
-					fungeSpaceSet(a, &ip->position);
+					FungeSpaceSet(a, &ip->position);
 					break;
 				}
 
@@ -540,7 +540,7 @@ static inline void interpreterMainLoop(void)
 			bool retval;
 			FUNGEDATATYPE opcode;
 
-			opcode = fungeSpaceGet(&IPList->ips[i].position);
+			opcode = FungeSpaceGet(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
 			if (SettingTraceLevel > 3)
 				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
@@ -560,7 +560,7 @@ static inline void interpreterMainLoop(void)
 	while (true) {
 		FUNGEDATATYPE opcode;
 
-		opcode = fungeSpaceGet(&IP->position);
+		opcode = FungeSpaceGet(&IP->position);
 #    ifndef DISABLE_TRACE
 		if (SettingTraceLevel > 3)
 			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
@@ -589,7 +589,7 @@ static void DebugFreeThings(void) {
 # else
 	ipFree(IP);
 # endif
-	fungeSpaceFree();
+	FungeSpaceFree();
 }
 #endif
 
@@ -608,11 +608,11 @@ void interpreterRun(const char *filename)
 		exit(EXIT_FAILURE);
 	}
 #endif
-	if(!fungeSpaceCreate()) {
+	if(!FungeSpaceCreate()) {
 		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
 	}
-	if (!fungeSpaceLoad(filename)) {
+	if (!FungeSpaceLoad(filename)) {
 		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
 	}

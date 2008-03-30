@@ -62,7 +62,7 @@ void RunFileInput(instructionPointer * restrict ip)
 		binary = (bool)(StackPop(ip->stack) & 1);
 		offset = StackPopVector(ip->stack);
 
-		if (!fungeSpaceLoadAtOffset(filename,
+		if (!FungeSpaceLoadAtOffset(filename,
 		                            VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
 		                            &size, binary)) {
 			ipReverse(ip);
@@ -106,9 +106,9 @@ void RunFileOutput(instructionPointer * restrict ip)
 			return;
 		}
 
-		if (!fungeSaveToFile(filename,
-		                     VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
-		                     &size, textfile))
+		if (!FungeSpaceSaveToFile(filename,
+		                          VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
+		                          &size, textfile))
 			ipReverse(ip);
 #ifdef DISABLE_GC
 		cf_free(filename);
