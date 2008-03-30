@@ -70,6 +70,7 @@ static void FingerBASEoutputBase(instructionPointer * ip) {
 	if (base == 1) {
 		while (val--)
 			putchar('0');
+		putchar(' ');
 	} else if (!val) {
 		putchar('0');
 	} else {
