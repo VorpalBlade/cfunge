@@ -1,0 +1,32 @@
+v   ; This file tests concurrency, in places where there has been previous ;
+    ; problems in cfunge.                                                  ;
+
+>  #vta"DOOG :1" >:#,_ v
+    > zzz@
+v                      <
+
+>  #vtzza"DOOG :2" >:#,_ v
+    >#vtzz@
+      >@
+v                        <
+
+>  #vt  ><                       v
+    >#vta"DOOG :3">:#,_ a '>9cp@
+      > zzz@
+v                                <
+z
+>zz#vt zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzv
+    >#vtzzz@                                                                z
+      >a"DOOG :4">:#,_@                                                     z
+vzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz<
+
+  ; Just testing threading, in certain versions this cause an assertion ;
+   >zzzzzzzz@
+> #^tz#vt    v
+       >zzzz@
+v            <
+
+
+
+
+@
