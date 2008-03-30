@@ -34,14 +34,14 @@
 
 typedef struct _fungeSpace {
 	// These two form a rectangle for the program size
-	fungePosition topLeftCorner;
-	fungePosition bottomRightCorner;
+	fungePosition     topLeftCorner;
+	fungePosition     bottomRightCorner;
 	// And this is the hash table.
 	ght_hash_table_t *entries;
 	// Array we allocate for values as we need them, we do FUNGESPACEALLOCCHUNK at a time here.
 	// We will replace it when we need to. Size MUST be FUNGESPACEALLOCCHUNK
-	FUNGEDATATYPE *allocarray;
-	size_t         allocarrayCurrent;
+	FUNGEDATATYPE    *allocarray;
+	size_t            allocarrayCurrent;
 } fungeSpace;
 
 // Funge-space storage.

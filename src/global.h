@@ -32,7 +32,7 @@
 #  define  __attribute__(x)  /* NO-OP */
 #endif
 
-#include <support.h>
+#include "support.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>

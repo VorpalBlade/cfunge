@@ -45,7 +45,7 @@
 #  define gc_collect_full()      GC_gcollect()
 #  define gc_collect_some()      GC_collect_a_little()
 
-#  define cf_strdup(x)       GC_STRDUP(x)
+#  define cf_strdup(x)           GC_STRDUP(x)
 
 #else
 

@@ -38,7 +38,7 @@ extern int fungeargc;
 
 // Functions
 
-
+// Certain instructions that are also used elsewhere.
 void IfEastWest(instructionPointer * restrict ip);
 void IfNorthSouth(instructionPointer * restrict ip);
 

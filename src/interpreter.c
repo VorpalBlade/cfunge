@@ -306,12 +306,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				}
 
 			case '!':
-				{
-					FUNGEDATATYPE a;
-					a = StackPop(ip->stack);
-					StackPush(!a, ip->stack);
-					break;
-				}
+				StackPush(!StackPop(ip->stack), ip->stack);
+				break;
 			case '`':
 				{
 					FUNGEDATATYPE a, b;
@@ -340,21 +336,14 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					break;
 				}
 			case '\'':
-				{
-					FUNGEDATATYPE a;
-					ipForward(1, ip);
-					a = FungeSpaceGet(&ip->position);
-					StackPush(a, ip->stack);
-					break;
-				}
+				ipForward(1, ip);
+				StackPush(FungeSpaceGet(&ip->position), ip->stack);
+				break;
 			case 's':
-				{
-					FUNGEDATATYPE a;
-					a = StackPop(ip->stack);
-					ipForward(1, ip);
-					FungeSpaceSet(a, &ip->position);
-					break;
-				}
+				ipForward(1, ip);
+				FungeSpaceSet(StackPop(ip->stack), &ip->position);
+				break;
+
 
 			case 'n':
 				StackClear(ip->stack);
@@ -374,20 +363,13 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					break;
 				}
 			case '.':
-				{
-					FUNGEDATATYPE a = StackPop(ip->stack);
-					printf("%" FUNGEDATAPRI " ", a);
-					break;
-				}
+				printf("%" FUNGEDATAPRI " ", StackPop(ip->stack));
+				break;
 
 			case '~':
-				{
-					FUNGEDATATYPE a;
-					fflush(stdout);
-					a = input_getchar();
-					StackPush(a, ip->stack);
-					break;
-				}
+				fflush(stdout);
+				StackPush(input_getchar(), ip->stack);
+				break;
 			case '&':
 				{
 					FUNGEDATATYPE a;
@@ -481,10 +463,8 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 #ifdef CONCURRENT_FUNGE
 			case 't':
-				{
-					*threadindex = ipListDuplicateIP(&IPList, *threadindex);
-					break;
-				}
+				*threadindex = ipListDuplicateIP(&IPList, *threadindex);
+				break;
 
 #endif /* CONCURRENT_FUNGE */
 
@@ -503,13 +483,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				exit(0);
 #endif /* CONCURRENT_FUNGE */
 				break;
+
 			case 'q':
-				{
-					FUNGEDATATYPE a = StackPop(ip->stack);
-					fflush(stdout);
-					exit((int)a);
-					break;
-				}
+				fflush(stdout);
+				exit((int)StackPop(ip->stack));
+				break;
 
 			default:
 				PrintUnknownInstrWarn(opcode, ip);
