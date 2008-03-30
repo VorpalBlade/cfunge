@@ -3,13 +3,13 @@ This is cfunge - a fast Beunge93/98/108 interpreter in C.
 
 Dependencies
 ------------
-You will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version
-7 or later installed to run or compile this software. If you lack it you could
-try building without garbage collector but IT IS UNSUPPORTED. If you still want
-to try, enable LEAK_MODE option in cmake. If a bug only happens in this mode,
-it probably won't get fixed.
+You will need cmake (http://www.cmake.org/) to compile cfunge.
 
-Further you will need cmake (http://www.cmake.org/) to compile it.
+Further you will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/)
+version 7 or later installed to run or compile this software. If you lack it
+you could try building without garbage collector but IT IS UNSUPPORTED. If you
+still want to try, enable LEAK_MODE option in cmake. If a bug only happens in
+this mode, it probably won't get fixed.
 
 
 Configuring
@@ -18,7 +18,7 @@ To build using cmake, you can run these commands in the top source directory:
   cmake .
 
 If you are on a 32-bit system you may want to use 32-bit integers (instead of
-64-bit integers) for speed. To do that you could use this commmand instead of
+64-bit integers) for speed. To do that you could use this command instead of
 the above one:
   cmake -DUSE_64BIT=OFF .
 
@@ -50,8 +50,8 @@ After having run cmake as described in the above section, just run:
 
 Installing
 ----------
-Not needed, cfunge can be run from build dir, but if you want to (after having
-compiled cfunge):
+Not needed, cfunge can be run from build directory, but if you want to (after
+having compiled cfunge):
   make install
 
 
