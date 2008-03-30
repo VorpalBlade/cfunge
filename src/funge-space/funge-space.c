@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../global.h"
-#include "../funge-space.h"
-#include "../../../lib/libghthash/ght_hash_table.h"
+#include "../global.h"
+#include "funge-space.h"
+#include "../../lib/libghthash/ght_hash_table.h"
 
 #include <string.h>
 #include <stdlib.h>

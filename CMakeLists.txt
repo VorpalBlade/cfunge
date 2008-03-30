@@ -183,7 +183,7 @@ INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 	lib/libghthash/*.c
 	src/*.c
-	src/funge-space/b98/*.c
+	src/funge-space/*.c
 	src/instructions/*.c
 	src/fingerprints/*.c
 	src/fingerprints/*/*.c
