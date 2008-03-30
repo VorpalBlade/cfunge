@@ -580,9 +580,9 @@ void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, cons
 }
 
 
-static inline void *next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
+static inline void *next_keysize(ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
-	assert(p_ht && p_iterator);
+	assert(p_iterator);
 
 	if (p_iterator->p_next) {
 		/* More entries */
@@ -610,14 +610,14 @@ static inline void *next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_itera
 
 /* Get the next entry in an iteration. You have to call ght_first
    once initially before you use this function */
-void *ght_next(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key)
+void *ght_next(__attribute__((unused)) ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key)
 {
-	return next_keysize(p_ht, p_iterator, pp_key, NULL);
+	return next_keysize(p_iterator, pp_key, NULL);
 }
 
-void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
+void *ght_next_keysize(__attribute__((unused)) ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
-	return next_keysize(p_ht, p_iterator, pp_key, size);
+	return next_keysize(p_iterator, pp_key, size);
 }
 
 

@@ -36,7 +36,7 @@ static void FingerREFCReference(instructionPointer * ip) {
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (referencesSize == referencesTop) {
-		references = cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
+		references = (fungePosition*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
 		// FIXME: Broken state if realloc fails
 		if (references == NULL) {
 			ipReverse(ip);
@@ -63,7 +63,7 @@ static void FingerREFCDereference(instructionPointer * ip) {
 
 static inline bool InitReferences(void) {
 	assert(!references);
-	references = cf_malloc(ALLOCCHUNK * sizeof(fungePosition));
+	references = (fungePosition*)cf_malloc(ALLOCCHUNK * sizeof(fungePosition));
 	if (!references)
 		return false;
 	referencesSize = ALLOCCHUNK;

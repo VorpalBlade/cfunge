@@ -39,10 +39,10 @@
 
 fungeStack * StackCreate(void)
 {
-	fungeStack * tmp = cf_malloc(sizeof(fungeStack));
+	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
 		return NULL;
-	tmp->entries = cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(FUNGEDATATYPE));
+	tmp->entries = (FUNGEDATATYPE*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(FUNGEDATATYPE));
 	if (tmp->entries == NULL)
 		return NULL;
 	tmp->size = ALLOCCHUNKSIZE;
@@ -66,10 +66,10 @@ static inline fungeStack * StackDuplicate(const fungeStack * old) __attribute__(
 // Used for concurrency
 static inline fungeStack * StackDuplicate(const fungeStack * old)
 {
-	fungeStack * tmp = cf_malloc(sizeof(fungeStack));
+	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
 		return NULL;
-	tmp->entries = cf_malloc_noptr((old->top + 1) * sizeof(FUNGEDATATYPE));
+	tmp->entries = (FUNGEDATATYPE*)cf_malloc_noptr((old->top + 1) * sizeof(FUNGEDATATYPE));
 	if (tmp->entries == NULL)
 		return NULL;
 	tmp->size = old->top + 1;
@@ -91,7 +91,7 @@ void StackPush(FUNGEDATATYPE value, fungeStack * restrict stack)
 
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
-		stack->entries = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
+		stack->entries = (FUNGEDATATYPE*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
 		if (!stack->entries) {
 			perror("Emergency! Failed to allocate enough memory for new stack items");
 			abort();
@@ -201,7 +201,7 @@ char *StackPopString(fungeStack * restrict stack)
 	size_t index = 0;
 	// This may very likely be more than is needed. But this is only used in
 	// case GC is disabled, and that is unsupported anyway.
-	char * x = cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	char * x = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
 
 	while ((c = StackPop(stack)) != '\0') {
 		x[index] = (char)c;
@@ -214,7 +214,7 @@ char *StackPopString(fungeStack * restrict stack)
 
 char *StackPopSizedString(size_t len, fungeStack * restrict stack)
 {
-	char * x = cf_malloc_noptr((len + 1) * sizeof(char));
+	char * x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
 
 	for (size_t i = 0; i < len; i++) {
 		x[i] = StackPop(stack);
@@ -280,7 +280,7 @@ fungeStackStack * StackStackCreate(void)
 	fungeStackStack * stackStack;
 	fungeStack      * stack;
 
-	stackStack = cf_malloc(sizeof(fungeStackStack) + sizeof(fungeStack*));
+	stackStack = (fungeStackStack*)cf_malloc(sizeof(fungeStackStack) + sizeof(fungeStack*));
 	if (!stackStack)
 		return NULL;
 
@@ -312,7 +312,7 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old)
 
 	assert(old != NULL);
 
-	stackStack = cf_malloc(sizeof(fungeStackStack) + old->size * sizeof(fungeStack*));
+	stackStack = (fungeStackStack*)cf_malloc(sizeof(fungeStackStack) + old->size * sizeof(fungeStack*));
 	if (!stackStack)
 		return NULL;
 
@@ -345,7 +345,7 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FU
 		return false;
 
 	// Extend by one
-	stackStack = cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size + 1) * sizeof(fungeStack*));
+	stackStack = (fungeStackStack*)cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size + 1) * sizeof(fungeStack*));
 	if (!stackStack)
 		return false;
 	*me = stackStack;
@@ -409,7 +409,7 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNG
 
 	ip->stack = SOSS;
 	// Make it one smaller
-	stackStack = cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size - 1) * sizeof(fungeStack*));
+	stackStack = (fungeStackStack*)cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size - 1) * sizeof(fungeStack*));
 	if (!stackStack)
 		return false;
 	stackStack->size--;

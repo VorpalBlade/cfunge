@@ -75,7 +75,7 @@ static void FingerBASEoutputBase(instructionPointer * ip) {
 	} else {
 		size_t i = ceil(anyLog((double)base, (double)val) + 1);
 		// FIXME: Change so it works with malloc instead.
-		char * result = cf_calloc(i, sizeof(char));
+		char * result = (char*)cf_calloc(i, sizeof(char));
 		for (i = 0; val > 0; val /= base)
 			result[i++] = digits[val % base];
 		for(; i-- > 0;)

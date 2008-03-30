@@ -64,7 +64,7 @@ static inline bool fungeSpaceInRange(const fungePosition * restrict position)
 bool
 fungeSpaceCreate(void)
 {
-	fspace = cf_malloc(sizeof(fungeSpace));
+	fspace = (fungeSpace*)cf_malloc(sizeof(fungeSpace));
 	if (!fspace)
 		return false;
 	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
@@ -74,7 +74,7 @@ fungeSpaceCreate(void)
 	// Unable to determine if this helps or not.
 	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
-	fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+	fspace->allocarray = (FUNGEDATATYPE*)cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
 	fspace->allocarrayCurrent = 0;
 
 	fspace->topLeftCorner.x = 0;
@@ -112,7 +112,7 @@ fungeSpaceGet(const fungePosition * restrict position)
 
 	assert(position != NULL);
 
-	tmp = ght_get(fspace->entries, sizeof(fungePosition), position);
+	tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position);
 	if (!tmp)
 		return ' ';
 	else
@@ -132,7 +132,7 @@ fungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = ght_get(fspace->entries, sizeof(fungePosition), &tmp);
+	result = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), &tmp);
 	if (!result)
 		return ' ';
 	else
@@ -148,7 +148,7 @@ fungeSpaceInternalAlloc(FUNGEDATATYPE value)
 {
 	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
 		// Allocate new array
-		fspace->allocarray = cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
+		fspace->allocarray = (FUNGEDATATYPE*)cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
 		if (!fspace->allocarray) {
 			perror("Out of memory, couldn't allocate cell(s) for funge space");
 			abort();
@@ -173,7 +173,7 @@ fungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 	} else {
 		// Reuse cell if it exists
 		FUNGEDATATYPE *tmp;
-		if ((tmp = ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
+		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
 			*tmp = value;
 		} else {
 			tmp = fungeSpaceInternalAlloc(value);
@@ -269,7 +269,7 @@ fungeSpaceLoad(const char * restrict filename)
 	FILE * file;
 	char * line = NULL;
 	size_t linelen = 0;
-	bool noendingnewline;
+	bool noendingnewline = true;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;

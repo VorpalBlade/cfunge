@@ -34,7 +34,7 @@ static inline bool ipCreateInPlace(instructionPointer *me) __attribute__((nonnul
 
 static inline bool ipCreateInPlace(instructionPointer *me)
 {
-	assert(me);
+	assert(me != NULL);
 	me->position.x         = 0;
 	me->position.y         = 0;
 	me->delta.x            = 1;
@@ -58,7 +58,7 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 
 instructionPointer * ipCreate(void)
 {
-	instructionPointer * tmp = cf_malloc(sizeof(instructionPointer));
+	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
 	if (!ipCreateInPlace(tmp))
 		return NULL;
 	return tmp;
@@ -66,8 +66,8 @@ instructionPointer * ipCreate(void)
 
 #ifdef CONCURRENT_FUNGE
 static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
-	assert(old);
-	assert(new);
+	assert(old != NULL);
+	assert(new != NULL);
 	new->position.x         = old->position.x;
 	new->position.y         = old->position.y;
 	new->delta.x            = old->delta.x;
@@ -168,7 +168,7 @@ void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restr
 #ifdef CONCURRENT_FUNGE
 ipList* ipListCreate(void)
 {
-	ipList * tmp = cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
+	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
 	if (!tmp)
 		return NULL;
 	if (!ipCreateInPlace(&tmp->ips[0]))
@@ -198,7 +198,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	assert(index <= (*me)->top);
 
 	// Grow
-	list = cf_realloc(*me, sizeof(ipList) + ((*me)->size + 1) * sizeof(instructionPointer));
+	list = (ipList*)cf_realloc(*me, sizeof(ipList) + ((*me)->size + 1) * sizeof(instructionPointer));
 	if (!list)
 		return -1;
 	*me = list;
@@ -269,7 +269,7 @@ ssize_t ipListTerminateIP(ipList** me, size_t index)
 		}
 	}
 	// Shrink
-	list = cf_realloc(list, sizeof(ipList) + (list->size - 1) * sizeof(instructionPointer));
+	list = (ipList*)cf_realloc(list, sizeof(ipList) + (list->size - 1) * sizeof(instructionPointer));
 	if (!list)
 		return -1;
 	*me = list;

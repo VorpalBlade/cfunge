@@ -58,7 +58,7 @@ FUNGEDATATYPE input_getchar(void)
 	lastlineCurrent++;
 	if (lastlineCurrent && (*lastlineCurrent == '\0'))
 		discardTheLine();
-	return tmp;
+	return (FUNGEDATATYPE)tmp;
 }
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";

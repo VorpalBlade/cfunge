@@ -31,7 +31,7 @@
 // This function is from Gnulib, with some changes
 size_t cf_strnlen(const char *string, size_t maxlen)
 {
-	const char *end = memchr(string, '\0', maxlen);
+	const char *end = (const char*)memchr(string, '\0', maxlen);
 	return end ? (size_t)(end - string) : maxlen;
 }
 
@@ -43,13 +43,13 @@ char * cf_strndup(char const *string, size_t n)
 	// Keep gcc happy with variable decls
 	{
 		size_t len = cf_strnlen(string, n);
-		char *newstr = cf_malloc_noptr(len + 1);
+		char *newstr = (char*)cf_malloc_noptr(len + 1);
 
 		if (newstr == NULL)
 			return NULL;
 
 		newstr[len] = '\0';
-		return memcpy(newstr, string, len);
+		return (char*)memcpy(newstr, string, len);
 	}
 }
 
@@ -129,7 +129,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 
 unlock_return:
 	// Not needed since we are single threaded.
-	//funlockfile(fp);  /* doesn't set errno */
+	//funlockfile(fp);  // doesn't set errno
 
 	return result;
 }
