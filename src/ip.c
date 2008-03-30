@@ -74,7 +74,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 	new->delta.y            = old->delta.y;
 	new->storageOffset.x    = old->storageOffset.x;
 	new->storageOffset.y    = old->storageOffset.y;
-	new->mode               = ipmCODE;
+	new->mode               = old->mode;
 	new->NeedMove           = old->NeedMove;
 	new->StringLastWasSpace = old->StringLastWasSpace;
 	new->stackstack         = StackStackDuplicate(old->stackstack);
@@ -219,7 +219,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index)
 		 * t0 | t1 | t2 |
 		 * t10|    | t1 | t2
 		 */
-		for (size_t i = list->top; i > index; i--) {
+		for (size_t i = list->top + 1; i > index; i--) {
 			list->ips[i] = list->ips[i - 1];
 		}
 	}

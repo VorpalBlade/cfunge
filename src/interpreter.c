@@ -493,8 +493,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				if (IPList->top == 0) {
 					fflush(stdout);
 					exit(0);
-				} else
+				} else {
 					*threadindex = ipListTerminateIP(&IPList, *threadindex);
+					//if (IPList->top == 0)
+					IPList->ips[*threadindex].NeedMove = false;
+				}
 #else
 				fflush(stdout);
 				exit(0);

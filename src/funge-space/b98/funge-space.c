@@ -269,6 +269,7 @@ fungeSpaceLoad(const char * restrict filename)
 	FILE * file;
 	char * line = NULL;
 	size_t linelen = 0;
+	bool noendingnewline;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;
@@ -290,18 +291,22 @@ fungeSpaceLoad(const char * restrict filename)
 				x = 0;
 				y++;
 				i++;
+				noendingnewline = false;
 				continue;
 			} else if (line[i] == '\n' || line[i] == '\r') {
 				if (fspace->bottomRightCorner.x < x)
 					fspace->bottomRightCorner.x = x;
 				x = 0;
 				y++;
+				noendingnewline = false;
 				continue;
 			}
 			fungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], & (fungePosition) { .x = x, .y = y });
 			x++;
+			noendingnewline = true;
 		}
 	}
+	if (noendingnewline) y++;
 	if (fspace->bottomRightCorner.y < y)
 		fspace->bottomRightCorner.y = y;
 	fclose(file);
