@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+// Based on how CCBI does it.
+
+
 // Lets hope float is always 32 bits...
 typedef union u_floatint {
 	float f;
@@ -201,7 +204,7 @@ static void FingerFPSPtoint(instructionPointer * ip)
 {
 	floatint a;
 	a.i = StackPop(ip->stack);
-	StackPush((int)a.f, ip->stack);
+	StackPush((FUNGEDATATYPE)a.f, ip->stack);
 }
 
 static void FingerFPSPfromascii(instructionPointer * ip)
