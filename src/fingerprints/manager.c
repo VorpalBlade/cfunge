@@ -32,6 +32,7 @@
 
 #include "BASE/BASE.h"
 #include "DIRF/DIRF.h"
+#include "FPSP/FPSP.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
@@ -59,6 +60,8 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// DIRF Directory functions extension, NOT SAFE
 	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
+	// FPSP Single precision floating point
+	{ .fprint = 0x46505350, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
 	// NULL

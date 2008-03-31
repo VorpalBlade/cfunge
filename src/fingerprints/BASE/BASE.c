@@ -53,7 +53,7 @@ static void FingerBASEoutputHex(instructionPointer * ip) {
 	printf("%" FUNGEDATAhexPRI " ", (FUNGEunsignedDATATYPE)x);
 }
 
-#define anyLog(base, value) (logf(value)/logf(base))
+#define anyLog(base, value) (log(value)/log(base))
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
