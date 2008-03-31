@@ -47,7 +47,7 @@ static void FingerTOYSgable(instructionPointer * ip)
 	}
 
 	while(n--)
-		StackPush(c, ip->stack);
+		StackPush(ip->stack, c);
 }
 
 // B - pair of shoes
@@ -59,8 +59,8 @@ static void FingerTOYSpairOfShoes(instructionPointer * ip)
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 
-	StackPush(x+y, ip->stack);
-	StackPush(x-y, ip->stack);
+	StackPush(ip->stack, x+y);
+	StackPush(ip->stack, x-y);
 
 }
 
@@ -89,7 +89,7 @@ static void FingerTOYSbracelet(instructionPointer * ip)
 // D - toilet seat
 static void FingerTOYStoiletSeat(instructionPointer * ip)
 {
-	StackPush(StackPop(ip->stack) - 1, ip->stack);
+	StackPush(ip->stack, StackPop(ip->stack) - 1);
 }
 
 // E - pitchfork head
@@ -99,7 +99,7 @@ static void FingerTOYSpitchforkHead(instructionPointer * ip)
 	for(size_t i = ip->stack->top; i-- > 0;)
 		sum += ip->stack->entries[i];
 	StackClear(ip->stack);
-	StackPush(sum, ip->stack);
+	StackPush(ip->stack, sum);
 }
 
 // F - calipers
@@ -133,7 +133,7 @@ static void FingerTOYScounterclockwise(instructionPointer * ip)
 
 	for (FUNGEDATATYPE y = o.y + j; y-- > o.y;)
 		for (FUNGEDATATYPE x = o.x + i; x-- > o.x;)
-			StackPush(FungeSpaceGet(VectorCreateRef(x, y)), ip->stack);
+			StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(x, y)));
 }
 
 // H - pair of stilts
@@ -145,15 +145,15 @@ static void FingerTOYSpairOfStilts(instructionPointer * ip)
 	a = StackPop(ip->stack);
 
 	if (b < 0)
-		StackPush(a >> (-b), ip->stack);
+		StackPush(ip->stack, a >> (-b));
 	else
-		StackPush(a << b, ip->stack);
+		StackPush(ip->stack, a << b);
 }
 
 // I - doric column
 static void FingerTOYSdoricColumn(instructionPointer * ip)
 {
-	StackPush(StackPop(ip->stack) + 1, ip->stack);
+	StackPush(ip->stack, StackPop(ip->stack) + 1);
 }
 
 // J - fishhook
@@ -203,7 +203,7 @@ static void FingerTOYScorner(instructionPointer * ip)
 {
 	ipTurnLeft(ip);
 	ipForward(1, ip);
-	StackPush(FungeSpaceGet(&ip->position), ip->stack);
+	StackPush(ip->stack, FungeSpaceGet(&ip->position));
 	ipForward(-1, ip);
 	ipTurnRight(ip);
 }
@@ -235,7 +235,7 @@ static void FingerTOYSkittycat(instructionPointer * ip)
 // N - lightning bolt
 static void FingerTOYSlightningBolt(instructionPointer * ip)
 {
-	StackPush(-StackPop(ip->stack), ip->stack);
+	StackPush(ip->stack, -StackPop(ip->stack));
 }
 
 // O - boulder
@@ -264,7 +264,7 @@ static void FingerTOYSmailbox(instructionPointer * ip)
 	for(size_t i = ip->stack->top; i-- > 0;)
 		product *= ip->stack->entries[i];
 	StackClear(ip->stack);
-	StackPush(product, ip->stack);
+	StackPush(ip->stack, product);
 }
 
 // Q - necklace
@@ -282,7 +282,7 @@ static void FingerTOYScanOpener(instructionPointer * ip)
 {
 	ipTurnRight(ip);
 	ipForward(1, ip);
-	StackPush(FungeSpaceGet(&ip->position), ip->stack);
+	StackPush(ip->stack, FungeSpaceGet(&ip->position));
 	ipForward(-1, ip);
 	ipTurnLeft(ip);
 }
@@ -366,8 +366,8 @@ static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 	c = FungeSpaceGet(&vect);
 
 	if (c < v) {
-		StackPush(v, ip->stack);
-		StackPushVector(VectorCreateRef(vect.x - ip->storageOffset.x, vect.y - ip->storageOffset.y), ip->stack);
+		StackPush(ip->stack, v);
+		StackPushVector(ip->stack, VectorCreateRef(vect.x - ip->storageOffset.x, vect.y - ip->storageOffset.y));
 		ipForward(-1, ip);
 	} else if (c > v)
 		ipReverse(ip);

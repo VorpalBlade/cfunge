@@ -67,8 +67,8 @@ void RunFileInput(instructionPointer * restrict ip)
 		                            &size, binary)) {
 			ipReverse(ip);
 		} else {
-			StackPushVector(&size, ip->stack);
-			StackPushVector(&offset, ip->stack);
+			StackPushVector(ip->stack, &size);
+			StackPushVector(ip->stack, &offset);
 		}
 #ifdef DISABLE_GC
 		cf_free(filename);

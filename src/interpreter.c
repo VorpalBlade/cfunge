@@ -50,7 +50,7 @@ static instructionPointer *IP = NULL;
 
 #define PUSHVAL(x, y) \
 	case (x): \
-		StackPush((FUNGEDATATYPE)y, ip->stack); \
+		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 		break;
 
 #ifdef CONCURRENT_FUNGE
@@ -102,11 +102,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 			ip->mode = ipmCODE;
 		} else if (opcode != ' ') {
 			ip->stringLastWasSpace = false;
-			StackPush(opcode, ip->stack);
+			StackPush(ip->stack, opcode);
 		} else if (((opcode == ' ') && (!ip->stringLastWasSpace))
 		           || (SettingCurrentStandard == stdver93)) {
 			ip->stringLastWasSpace = true;
-			StackPush(opcode, ip->stack);
+			StackPush(ip->stack, opcode);
 		}
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
@@ -263,7 +263,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a, b;
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
-					StackPush(a - b, ip->stack);
+					StackPush(ip->stack, a - b);
 					break;
 				}
 			case '+':
@@ -271,7 +271,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a, b;
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
-					StackPush(a + b, ip->stack);
+					StackPush(ip->stack, a + b);
 					break;
 				}
 			case '*':
@@ -279,7 +279,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a, b;
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
-					StackPush(a * b, ip->stack);
+					StackPush(ip->stack, a * b);
 					break;
 				}
 			case '/':
@@ -288,9 +288,9 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
 					if (b == 0)
-						StackPush(0, ip->stack);
+						StackPush(ip->stack, 0);
 					else
-						StackPush(a / b, ip->stack);
+						StackPush(ip->stack, a / b);
 					break;
 				}
 			case '%':
@@ -299,21 +299,21 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
 					if (b == 0)
-						StackPush(0, ip->stack);
+						StackPush(ip->stack, 0);
 					else
-						StackPush(a % b, ip->stack);
+						StackPush(ip->stack, a % b);
 					break;
 				}
 
 			case '!':
-				StackPush(!StackPop(ip->stack), ip->stack);
+				StackPush(ip->stack, !StackPop(ip->stack));
 				break;
 			case '`':
 				{
 					FUNGEDATATYPE a, b;
 					b = StackPop(ip->stack);
 					a = StackPop(ip->stack);
-					StackPush(a > b, ip->stack);
+					StackPush(ip->stack, a > b);
 					break;
 				}
 
@@ -332,12 +332,12 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE a;
 					pos = StackPopVector(ip->stack);
 					a = FungeSpaceGetOff(&pos, &ip->storageOffset);
-					StackPush(a, ip->stack);
+					StackPush(ip->stack, a);
 					break;
 				}
 			case '\'':
 				ipForward(1, ip);
-				StackPush(FungeSpaceGet(&ip->position), ip->stack);
+				StackPush(ip->stack, FungeSpaceGet(&ip->position));
 				break;
 			case 's':
 				ipForward(1, ip);
@@ -368,7 +368,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 			case '~':
 				fflush(stdout);
-				StackPush(input_getchar(), ip->stack);
+				StackPush(ip->stack, input_getchar());
 				break;
 			case '&':
 				{
@@ -377,7 +377,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					fflush(stdout);
 					while (!gotint)
 						gotint = input_getint(&a, 10);
-					StackPush(a, ip->stack);
+					StackPush(ip->stack, a);
 					break;
 				}
 

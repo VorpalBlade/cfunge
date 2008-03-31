@@ -40,9 +40,9 @@ static void FingerMODUSignedResult(instructionPointer * ip) {
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {
-		StackPush(x - floordiv(x, y) * y, ip->stack);
+		StackPush(ip->stack, x - floordiv(x, y) * y);
 	} else {
-		StackPush(0, ip->stack);
+		StackPush(ip->stack, 0);
 	}
 }
 
@@ -51,9 +51,9 @@ static void FingerMODUUnsignedResult(instructionPointer * ip) {
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {
-		StackPush(ABS(x % y), ip->stack);
+		StackPush(ip->stack, ABS(x % y));
 	} else {
-		StackPush(0, ip->stack);
+		StackPush(ip->stack, 0);
 	}
 }
 
@@ -65,9 +65,9 @@ static void FingerMODURemainder(instructionPointer * ip) {
 
 	if (y) {
 		// Well that's easy, this *is* C.
-		StackPush(x % y, ip->stack);
+		StackPush(ip->stack, x % y);
 	} else {
-		StackPush(0, ip->stack);
+		StackPush(ip->stack, 0);
 	}
 }
 

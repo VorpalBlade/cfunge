@@ -99,7 +99,7 @@ static void FingerBASEinputBase(instructionPointer * ip) {
 	fflush(stdout);
 
 	while (!input_getint(&a, base));
-	StackPush(a, ip->stack);
+	StackPush(ip->stack, a);
 }
 
 

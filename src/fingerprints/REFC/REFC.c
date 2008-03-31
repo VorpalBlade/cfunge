@@ -50,7 +50,7 @@ static void FingerREFCReference(instructionPointer * ip) {
 	// TODO: Return same value for the same cell each time!
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
-	StackPush(referencesTop, ip->stack);
+	StackPush(ip->stack, referencesTop);
 	referencesTop++;
 }
 
@@ -61,7 +61,7 @@ static void FingerREFCDereference(instructionPointer * ip) {
 		ipReverse(ip);
 		return;
 	}
-	StackPushVector(&references[ref], ip->stack);
+	StackPushVector(ip->stack, &references[ref]);
 }
 
 static inline bool InitReferences(void) {

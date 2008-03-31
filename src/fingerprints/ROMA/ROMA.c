@@ -25,7 +25,7 @@
 
 #define ROMAPUSH(x, y) \
 	static void FingerROMAPush ## x (instructionPointer * ip) { \
-		StackPush((FUNGEDATATYPE)y, ip->stack); \
+		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 	}
 
 ROMAPUSH(I, 1)

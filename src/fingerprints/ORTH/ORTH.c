@@ -32,27 +32,27 @@ static void FingerORTHbitAnd(instructionPointer * ip) {
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
-	StackPush(x & y, ip->stack);
+	StackPush(ip->stack, x & y);
 }
 
 static void FingerORTHbitOr(instructionPointer * ip) {
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
-	StackPush(x | y, ip->stack);
+	StackPush(ip->stack, x | y);
 }
 
 static void FingerORTHbitXor(instructionPointer * ip) {
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
-	StackPush(x ^ y, ip->stack);
+	StackPush(ip->stack, x ^ y);
 }
 
 // ortho get
 static void FingerORTHget(instructionPointer * ip) {
 	fungeVector v = StackPopVector(ip->stack);
-	StackPush(FungeSpaceGet(VectorCreateRef(v.y, v.x)), ip->stack);
+	StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(v.y, v.x)));
 }
 
 // ortho put

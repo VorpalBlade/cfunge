@@ -85,7 +85,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
  * Basic push/pop/peeks *
  ************************/
 
-void StackPush(FUNGEDATATYPE value, fungeStack * restrict stack)
+void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 {
 	assert(stack != NULL);
 
@@ -160,11 +160,11 @@ FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
  * Push and pop for data types. *
  ********************************/
 
-void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack)
+void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value)
 {
 	// TODO: Optimize
-	StackPush(value->x, stack);
-	StackPush(value->y, stack);
+	StackPush(stack, value->x);
+	StackPush(stack, value->y);
 }
 
 fungeVector StackPopVector(fungeStack * restrict stack)
@@ -176,13 +176,13 @@ fungeVector StackPopVector(fungeStack * restrict stack)
 	return (fungeVector) { .x = x, .y = y };
 }
 
-void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack)
+void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len)
 {
 	assert(str != NULL);
 	assert(stack != NULL);
 
 	for (ssize_t i = len; i >= 0; i--)
-		StackPush(str[i], stack);
+		StackPush(stack, str[i]);
 }
 
 char *StackPopString(fungeStack * restrict stack)
@@ -212,7 +212,7 @@ char *StackPopString(fungeStack * restrict stack)
 #endif
 }
 
-char *StackPopSizedString(size_t len, fungeStack * restrict stack)
+char *StackPopSizedString(fungeStack * restrict stack, size_t len)
 {
 	char * x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
 
@@ -233,9 +233,9 @@ void StackDupTop(fungeStack * restrict stack)
 	FUNGEDATATYPE tmp;
 
 	tmp = StackPeek(stack);
-	StackPush(tmp, stack);
+	StackPush(stack, tmp);
 	if (stack->top == 1)
-		StackPush(0, stack);
+		StackPush(stack, 0);
 }
 
 void StackSwapTop(fungeStack * restrict stack)
@@ -244,8 +244,8 @@ void StackSwapTop(fungeStack * restrict stack)
 	FUNGEDATATYPE a, b;
 	a = StackPop(stack);
 	b = StackPop(stack);
-	StackPush(a, stack);
-	StackPush(b, stack);
+	StackPush(stack, a);
+	StackPush(stack, b);
 }
 
 
@@ -362,12 +362,12 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FU
 		while (i--)
 			entriesCopy[i] = StackPop(SOSS);
 		for (i = 0; i < count; i++)
-			StackPush(entriesCopy[i], TOSS);
+			StackPush(TOSS, entriesCopy[i]);
 	} else if (count < 0) {
 		while (count++)
-			StackPush(0, SOSS);
+			StackPush(SOSS, 0);
 	}
-	StackPushVector(&ip->storageOffset, SOSS);
+	StackPushVector(SOSS, &ip->storageOffset);
 	ip->storageOffset.x = storageOffset->x;
 	ip->storageOffset.y = storageOffset->y;
 	ip->stack = TOSS;
@@ -399,7 +399,7 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNG
 		while (i--)
 			entriesCopy[i] = StackPop(TOSS);
 		for (i = 0; i < count; i++)
-			StackPush(entriesCopy[i], SOSS);
+			StackPush(SOSS, entriesCopy[i]);
 	} else if (count < 0) {
 		while (count++)
 			StackPopDiscard(SOSS);
@@ -429,11 +429,11 @@ void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeSt
 
 	if (count > 0) {
 		while (count--) {
-			StackPush(StackPop(SOSS), TOSS);
+			StackPush(TOSS, StackPop(SOSS));
 		}
 	} else if (count < 0) {
 		while (count++) {
-			StackPush(StackPop(TOSS), SOSS);
+			StackPush(SOSS, StackPop(TOSS));
 		}
 	}
 }

@@ -249,8 +249,8 @@ bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	} else {
 		bool gotLoaded = ImplementedFingerprints[index].loader(ip);
 		if (gotLoaded) {
-			StackPush(fingerprint, ip->stack);
-			StackPush(1, ip->stack);
+			StackPush(ip->stack, fingerprint);
+			StackPush(ip->stack, 1);
 			return true;
 		} else {
 			return false;

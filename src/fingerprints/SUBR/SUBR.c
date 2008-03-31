@@ -41,12 +41,12 @@ static void FingerSUBRCall(instructionPointer * ip) {
 	tmpstack = StackCreate();
 
 	for (FUNGEDATATYPE i = 0; i < n; ++i)
-		StackPush(StackPop(ip->stack), tmpstack);
+		StackPush(tmpstack, StackPop(ip->stack));
 
-	StackPushVector(&ip->position, ip->stack);
-	StackPushVector(&ip->delta, ip->stack);
+	StackPushVector(ip->stack, &ip->position);
+	StackPushVector(ip->stack, &ip->delta);
 	while (n--)
-		StackPush(StackPop(tmpstack), ip->stack);
+		StackPush(ip->stack, StackPop(tmpstack));
 	StackFree(tmpstack);
 
 	ipSetPosition(ip, &pos);
@@ -73,7 +73,7 @@ static void FingerSUBRReturn(instructionPointer * ip) {
 	tmpstack = StackCreate();
 
 	for (FUNGEDATATYPE i = 0; i < n; ++i)
-		StackPush(StackPop(ip->stack), tmpstack);
+		StackPush(tmpstack, StackPop(ip->stack));
 
 	vec = StackPopVector(ip->stack);
 	pos = StackPopVector(ip->stack);
@@ -81,7 +81,7 @@ static void FingerSUBRReturn(instructionPointer * ip) {
 	ipSetDelta(ip, &vec);
 
 	while (n--)
-		StackPush(StackPop(tmpstack), ip->stack);
+		StackPush(ip->stack, StackPop(tmpstack));
 
 	StackFree(tmpstack);
 }

@@ -59,7 +59,7 @@ void StackFree(fungeStack * stack);
 /**
  * Push a item on the stack
  */
-void StackPush(FUNGEDATATYPE value, fungeStack * restrict stack) __attribute__((nonnull));
+void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value) __attribute__((nonnull));
 /**
  * Pop item from stack.
  */
@@ -80,7 +80,7 @@ FUNGEDATATYPE StackPeek(const fungeStack * restrict stack) __attribute__((nonnul
 /**
  * Push a vector.
  */
-void StackPushVector(const fungeVector * restrict value, fungeStack * restrict stack) __attribute__((nonnull));
+void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value) __attribute__((nonnull));
 /**
  * Pop a vector.
  */
@@ -88,7 +88,7 @@ fungeVector StackPopVector(fungeStack * restrict stack) __attribute__((nonnull, 
 /**
  * Push a null-terminated string to a 0"gnirts".
  */
-void StackPushString(size_t len, const char * restrict str, fungeStack * restrict stack) __attribute__((nonnull));
+void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len) __attribute__((nonnull));
 /**
  * Pop a 0"gnirts" and return a null-terminated string
  */
@@ -96,7 +96,7 @@ char * StackPopString(fungeStack * restrict stack) __attribute__((nonnull, warn_
 /**
  * Pop a fixed number of chars. Return as null-terminated string.
  */
-char * StackPopSizedString(size_t len, fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result));
+char * StackPopSizedString(fungeStack * restrict stack, size_t len) __attribute__((nonnull, warn_unused_result));
 #define StackClear(stack) { stack->top = 0; }
 /**
  * Duplicate top element of the stack.

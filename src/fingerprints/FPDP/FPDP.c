@@ -41,8 +41,8 @@ static inline void popDbl(instructionPointer * ip) {
 	u.i.high = StackPop(ip->stack);
 }
 static inline void pushDbl(instructionPointer * ip) {
-	StackPush(u.i.high, ip->stack);
-	StackPush(u.i.low, ip->stack);
+	StackPush(ip->stack, u.i.high);
+	StackPush(ip->stack, u.i.low);
 }
 
 // Basic arithmetics
@@ -89,7 +89,6 @@ static void FingerFPDPsqrt(instructionPointer * ip)
 	u.d = sqrt(u.d);
 	pushDbl(ip);
 }
-
 
 
 // Trigonometry
@@ -200,7 +199,7 @@ static void FingerFPDPfromint(instructionPointer * ip)
 static void FingerFPDPtoint(instructionPointer * ip)
 {
 	popDbl(ip);
-	StackPush((FUNGEDATATYPE)u.d, ip->stack);
+	StackPush(ip->stack, (FUNGEDATATYPE)u.d);
 }
 
 static void FingerFPDPfromascii(instructionPointer * ip)
