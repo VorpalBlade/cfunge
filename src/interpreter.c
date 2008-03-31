@@ -497,6 +497,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 	ReturnFromExecuteInstruction(false);
 }
 
+#ifdef CONCURRENT_FUNGE
 static inline void ThreadForward(instructionPointer * ip)
 {
 	assert(ip != NULL);
@@ -506,6 +507,7 @@ static inline void ThreadForward(instructionPointer * ip)
 	else
 		ip->needMove = true;
 }
+#endif
 
 static inline void interpreterMainLoop(void) __attribute__((noreturn));
 
