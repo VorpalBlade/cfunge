@@ -488,7 +488,12 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 			case 'q':
 				fflush(stdout);
+// We do the wrong thing here when fuzz testing to reduce false positives.
+#ifdef FUZZ_TESTING
+				exit(0);
+#else
 				exit((int)StackPop(ip->stack));
+#endif
 				break;
 
 			default:

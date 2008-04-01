@@ -113,6 +113,9 @@ int main(int argc, char *argv[])
 	GC_all_interior_pointers = 1;
 	GC_INIT();
 #endif
+#ifdef FUZZ_TESTING
+	alarm(5);
+#endif
 
 	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
 		switch (opt) {

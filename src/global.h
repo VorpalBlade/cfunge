@@ -76,4 +76,7 @@ typedef int32_t FUNGEVECTORTYPE;
 // For y instruction.
 #define FUNGEVERSION 20
 
+// Define if you use fuzz testing script.
+//#define FUZZ_TESTING
+
 #endif

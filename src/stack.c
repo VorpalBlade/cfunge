@@ -337,6 +337,10 @@ static void OOMstackStack(const instructionPointer * restrict ip) {
 			"WARN: Out of memory in stack-stack routine at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ". Reflecting.\n",
 			ip->position.x, ip->position.y);
 	}
+	// Lets hope.
+#ifndef DISABLE_GC
+	gc_collect_full();
+#endif
 }
 
 bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
