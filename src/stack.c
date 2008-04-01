@@ -23,6 +23,7 @@
 #include "stack.h"
 #include "vector.h"
 #include "ip.h"
+#include "settings.h"
 #include <assert.h>
 #include <string.h>
 #ifndef DISABLE_GC
@@ -31,7 +32,7 @@
 #endif
 
 // How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 16
+#define ALLOCCHUNKSIZE 32
 
 /******************************
  * Constructor and destructor *
@@ -329,26 +330,51 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old)
 }
 #endif
 
+
+static void OOMstackStack(const instructionPointer * restrict ip) {
+	if (SettingWarnings) {
+		fprintf(stderr,
+			"WARN: Out of memory in stack-stack routine at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ". Reflecting.\n",
+			ip->position.x, ip->position.y);
+	}
+}
+
 bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
+	FUNGEDATATYPE * entriesCopy = NULL;
 
 	assert(ip != NULL);
 	assert(me != NULL);
 	assert(storageOffset != NULL);
 
+	if (count > 0) {
+		entriesCopy = cf_malloc(sizeof(FUNGEDATATYPE) * (count + 1));
+		// Reflect on out of memory, do it here before we mess up stuff.
+		if (!entriesCopy) {
+			OOMstackStack(ip);
+			return false;
+		}
+	}
+
 	// Set up variables
 	stackStack = *me;
 
 	TOSS = StackCreate();
-	if (!TOSS)
+	if (!TOSS) {
+		if (entriesCopy)
+			cf_free(entriesCopy);
 		return false;
+	}
 
 	// Extend by one
 	stackStack = (fungeStackStack*)cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size + 1) * sizeof(fungeStack*));
-	if (!stackStack)
+	if (!stackStack) {
+		if (entriesCopy)
+			cf_free(entriesCopy);
 		return false;
+	}
 	*me = stackStack;
 	SOSS = stackStack->stacks[stackStack->current];
 
@@ -357,8 +383,6 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FU
 	stackStack->stacks[stackStack->current] = TOSS;
 
 	if (count > 0) {
-		// Dynamic array (C99) to copy elements into, because order must be preserved.
-		FUNGEDATATYPE entriesCopy[count + 1];
 		FUNGEDATATYPE i = count;
 		while (i--)
 			entriesCopy[i] = StackPop(SOSS);
@@ -373,7 +397,8 @@ bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FU
 	ip->storageOffset.y = storageOffset->y;
 	ip->stack = TOSS;
 	ip->stackstack = stackStack;
-
+	if (entriesCopy)
+		cf_free(entriesCopy);
 	return true;
 }
 
@@ -383,9 +408,19 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNG
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
 	fungePosition    storageOffset;
+	FUNGEDATATYPE * entriesCopy = NULL;
 
 	assert(ip != NULL);
 	assert(me != NULL);
+
+	if (count > 0) {
+		entriesCopy = cf_malloc(sizeof(FUNGEDATATYPE) * (count + 1));
+		// Reflect on out of memory, do it here before we mess up stuff.
+		if (!entriesCopy) {
+			OOMstackStack(ip);
+			return false;
+		}
+	}
 
 	// Set up variables
 	stackStack = *me;
@@ -395,7 +430,6 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNG
 	// TODO: Transfer data back here
 	if (count > 0) {
 		// Dynamic array (C99) to copy elements into, because order must be preserved.
-		FUNGEDATATYPE entriesCopy[count + 1];
 		FUNGEDATATYPE i = count;
 		while (i--)
 			entriesCopy[i] = StackPop(TOSS);
@@ -411,13 +445,18 @@ bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNG
 	ip->stack = SOSS;
 	// Make it one smaller
 	stackStack = (fungeStackStack*)cf_realloc(*me, sizeof(fungeStackStack) + ((*me)->size - 1) * sizeof(fungeStack*));
-	if (!stackStack)
+	if (!stackStack) {
+		if (entriesCopy)
+			cf_free(entriesCopy);
 		return false;
+	}
 	stackStack->size--;
 	stackStack->current--;
 	*me = stackStack;
 	ip->stackstack = stackStack;
 	StackFree(TOSS);
+	if (entriesCopy)
+		cf_free(entriesCopy);
 	return true;
 }
 
