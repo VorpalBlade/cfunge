@@ -99,7 +99,7 @@ static void FingerORTHchangeY(instructionPointer * ip) {
 // ramp if zero
 static void FingerORTHrampIfZero(instructionPointer * ip) {
 	if (!StackPop(ip->stack))
-		ipForward(1, ip);
+		ipForward(ip, 1);
 }
 
 bool FingerORTHload(instructionPointer * ip) {

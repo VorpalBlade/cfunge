@@ -42,23 +42,14 @@
 #include <sys/time.h>
 #include <assert.h>
 
+/**
+ * Either the IP or the IP list.
+ */
 #ifdef CONCURRENT_FUNGE
 static ipList *IPList = NULL;
 #else
 static instructionPointer *IP = NULL;
 #endif
-
-#define PUSHVAL(x, y) \
-	case (x): \
-		StackPush(ip->stack, (FUNGEDATATYPE)y); \
-		break;
-
-#ifdef CONCURRENT_FUNGE
-#  define ReturnFromExecuteInstruction(x) return (x)
-#else
-#  define ReturnFromExecuteInstruction(x) return
-#endif
-
 
 /**
  * Print warning on unknown instruction if such warnings are enabled.
@@ -72,7 +63,7 @@ static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointe
 		        ip->position.x, ip->position.y, (char)opcode, opcode);
 }
 
-
+// These two are called from elsewhere. Avoid code duplication.
 inline void IfEastWest(instructionPointer * restrict ip)
 {
 	if (StackPop(ip->stack) == 0)
@@ -89,6 +80,17 @@ inline void IfNorthSouth(instructionPointer * restrict ip)
 		ipGoNorth(ip);
 }
 
+#ifdef CONCURRENT_FUNGE
+#  define ReturnFromExecuteInstruction(x) return (x)
+#else
+#  define ReturnFromExecuteInstruction(x) return
+#endif
+
+
+#define PUSHVAL(x, y) \
+	case (x): \
+		StackPush(ip->stack, (FUNGEDATATYPE)y); \
+		break;
 
 #ifdef CONCURRENT_FUNGE
 bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
@@ -129,7 +131,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 			case ' ':
 				{
 					do {
-						ipForward(1, ip);
+						ipForward(ip, 1);
 					} while (FungeSpaceGet(&ip->position) == ' ');
 					ip->needMove = false;
 				}
@@ -139,7 +141,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 			case ';':
 				{
 					do {
-						ipForward(1, ip);
+						ipForward(ip, 1);
 					} while (FungeSpaceGet(&ip->position) != ';');
 					ReturnFromExecuteInstruction(true);
 				}
@@ -166,7 +168,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 						tmp.y = ip->delta.y;
 						ip->delta.y *= jumps;
 						ip->delta.x *= jumps;
-						ipForward(1, ip);
+						ipForward(ip, 1);
 						ip->delta.x = tmp.x;
 						ip->delta.y = tmp.y;
 					}
@@ -229,7 +231,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 				break;
 
 			case '#':
-				ipForward(1, ip);
+				ipForward(ip, 1);
 				break;
 
 			case '_':
@@ -336,11 +338,11 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					break;
 				}
 			case '\'':
-				ipForward(1, ip);
+				ipForward(ip, 1);
 				StackPush(ip->stack, FungeSpaceGet(&ip->position));
 				break;
 			case 's':
-				ipForward(1, ip);
+				ipForward(ip, 1);
 				FungeSpaceSet(StackPop(ip->stack), &ip->position);
 				break;
 
@@ -390,10 +392,10 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 					FUNGEDATATYPE count;
 					fungePosition pos;
 					count = StackPop(ip->stack);
-					ipForward(1, ip);
+					ipForward(ip, 1);
 					pos.x = ip->position.x;
 					pos.y = ip->position.y;
-					ipForward(-1, ip);
+					ipForward(ip, -1);
 					if (!StackStackBegin(ip, &ip->stackstack, count, &pos))
 						ipReverse(ip);
 					break;
@@ -503,7 +505,7 @@ static inline void ThreadForward(instructionPointer * ip)
 	assert(ip != NULL);
 
 	if (ip->needMove)
-		ipForward(1, ip);
+		ipForward(ip, 1);
 	else
 		ip->needMove = true;
 }
@@ -551,7 +553,7 @@ static inline void interpreterMainLoop(void)
 
 		ExecuteInstruction(opcode, IP);
 		if (IP->needMove)
-			ipForward(1, IP);
+			ipForward(IP, 1);
 		else
 			IP->needMove = true;
 	}
@@ -575,6 +577,14 @@ static void DebugFreeThings(void) {
 
 void interpreterRun(const char *filename)
 {
+	if(!FungeSpaceCreate()) {
+		perror("Couldn't create funge space!?");
+		exit(EXIT_FAILURE);
+	}
+	if (!FungeSpaceLoad(filename)) {
+		fprintf(stderr, "Failed to process file \"%s\": %s\n", filename, strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 #ifdef CONCURRENT_FUNGE
 	IPList = ipListCreate();
 	if (IPList == NULL) {
@@ -588,14 +598,6 @@ void interpreterRun(const char *filename)
 		exit(EXIT_FAILURE);
 	}
 #endif
-	if(!FungeSpaceCreate()) {
-		perror("Couldn't create funge space!?");
-		exit(EXIT_FAILURE);
-	}
-	if (!FungeSpaceLoad(filename)) {
-		fprintf(stderr, "Failed to process file %s: %s\n", filename, strerror(errno));
-		exit(EXIT_FAILURE);
-	}
 	{
 		struct timeval tv;
 		if (gettimeofday(&tv, NULL)) {

@@ -78,8 +78,6 @@ ELSE(LEAK_MODE)
 	LINK_DIRECTORIES(${BoehmLinkDir})
 ENDIF(LEAK_MODE)
 
-
-
 ################################################################################
 # Other options
 OPTION(USE_64BIT "Should 64-bit data types be used (otherwise 32-bit)." ON)
@@ -96,9 +94,11 @@ ENDIF(CONCURRENT_FUNGE)
 
 OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with GC)." OFF)
 IF(USE_MUDFLAP)
+	if (NOT LEAK_MODE)
+		MESSAGE(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
+	ENDIF (NOT LEAK_MODE)
 	ADD_DEFINITIONS(-fmudflap)
 ENDIF(USE_MUDFLAP)
-
 
 OPTION(USE_WERROR "Should we build with -Werror" OFF)
 IF(USE_WERROR)
@@ -107,6 +107,14 @@ IF(USE_WERROR)
 	ENDIF (CMAKE_COMPILER_IS_GNUCC)
 ENDIF(USE_WERROR)
 
+OPTION(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though)." OFF)
+IF (HARDENED)
+	IF (CMAKE_COMPILER_IS_GNUCC)
+		# Slows down though.
+		ADD_DEFINITIONS(-fstack-protector)
+		ADD_DEFINITIONS(-DFORTIFY_SOURCE=2)
+	ENDIF (CMAKE_COMPILER_IS_GNUCC)
+ENDIF (HARDENED)
 
 
 ################################################################################
@@ -123,11 +131,18 @@ ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EX
 ################################################################################
 # Warnings
 IF (CMAKE_COMPILER_IS_GNUCC)
-	ADD_DEFINITIONS(-Wall -Wextra -pedantic)
+	ADD_DEFINITIONS(-Wall)
+	ADD_DEFINITIONS(-Wextra)
+	ADD_DEFINITIONS(-pedantic)
 	ADD_DEFINITIONS(-Wpointer-arith)
-	ADD_DEFINITIONS(-Wimplicit -Wnested-externs)
-	ADD_DEFINITIONS(-Wcast-align -Wcast-qual -Wbad-function-cast)
-	ADD_DEFINITIONS(-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations)
+	ADD_DEFINITIONS(-Wimplicit)
+	ADD_DEFINITIONS(-Wnested-externs)
+	ADD_DEFINITIONS(-Wcast-align)
+	ADD_DEFINITIONS(-Wcast-qual)
+	ADD_DEFINITIONS(-Wbad-function-cast)
+	ADD_DEFINITIONS(-Wstrict-prototypes)
+	ADD_DEFINITIONS(-Wmissing-prototypes)
+	ADD_DEFINITIONS(-Wmissing-declarations)
 	ADD_DEFINITIONS(-Wparentheses)
 	ADD_DEFINITIONS(-Wshadow)
 	ADD_DEFINITIONS(-Wundef)
@@ -137,13 +152,19 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	ADD_DEFINITIONS(-Wstrict-aliasing=2)
 	ADD_DEFINITIONS(-Wformat=2)
 	ADD_DEFINITIONS(-Wdisabled-optimization)
-	ADD_DEFINITIONS(-Wunsafe-loop-optimizations)
 	ADD_DEFINITIONS(-Winline)
-	ADD_DEFINITIONS(-Wmissing-noreturn -Wmissing-format-attribute)
+	ADD_DEFINITIONS(-Wmissing-noreturn)
+	ADD_DEFINITIONS(-Wmissing-format-attribute)
 	ADD_DEFINITIONS(-Wdeclaration-after-statement)
-	ADD_DEFINITIONS(-Wmissing-include-dirs)
-	ADD_DEFINITIONS(-Wunused-function -Wunused-label -Wunused-value -Wunused-variable)
+	ADD_DEFINITIONS(-Wunused-function)
+	ADD_DEFINITIONS(-Wunused-label)
+	ADD_DEFINITIONS(-Wunused-value)
+	ADD_DEFINITIONS(-Wunused-variable)
 	ADD_DEFINITIONS(-Wwrite-strings)
+	# Comment these out if your GCC is old
+	ADD_DEFINITIONS(-Wunsafe-loop-optimizations)
+	ADD_DEFINITIONS(-Wmissing-include-dirs)
+
 	# Maintainer flags. Gives lots of false positives.
 	#ADD_DEFINITIONS(-Wunreachable-code -fno-inline -fno-inline-functions-called-once -fno-inline-functions -fkeep-inline-functions -Wno-inline)
 	# Even more false positives
@@ -157,6 +178,7 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	REMOVE_DEFINITIONS(-O2)
 	ADD_DEFINITIONS(-DGC_DEBUG)
+	ADD_DEFINITIONS(-DDEBUG)
 ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	ADD_DEFINITIONS(-fno-ident)
 	ADD_DEFINITIONS(-DNDEBUG)
@@ -164,6 +186,7 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 		ADD_DEFINITIONS(-fvisibility=hidden)
 	ENDIF (CMAKE_COMPILER_IS_GNUCC)
 	REMOVE_DEFINITIONS(-DGC_DEBUG)
+	REMOVE_DEFINITIONS(-DDEBUG)
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
 

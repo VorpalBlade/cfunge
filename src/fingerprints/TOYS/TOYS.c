@@ -202,9 +202,9 @@ static void FingerTOYSscissors(instructionPointer * ip)
 static void FingerTOYScorner(instructionPointer * ip)
 {
 	ipTurnLeft(ip);
-	ipForward(1, ip);
+	ipForward(ip, 1);
 	StackPush(ip->stack, FungeSpaceGet(&ip->position));
-	ipForward(-1, ip);
+	ipForward(ip, -1);
 	ipTurnRight(ip);
 }
 
@@ -272,18 +272,18 @@ static void FingerTOYSnecklace(instructionPointer * ip)
 {
 	FUNGEDATATYPE v = StackPop(ip->stack);
 
-	ipForward(-1, ip);
+	ipForward(ip, -1);
 	FungeSpaceSet(v, &ip->position);
-	ipForward(1, ip);
+	ipForward(ip, 1);
 }
 
 // R - can opener
 static void FingerTOYScanOpener(instructionPointer * ip)
 {
 	ipTurnRight(ip);
-	ipForward(1, ip);
+	ipForward(ip, 1);
 	StackPush(ip->stack, FungeSpaceGet(&ip->position));
-	ipForward(-1, ip);
+	ipForward(ip, -1);
 	ipTurnLeft(ip);
 }
 
@@ -368,7 +368,7 @@ static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 	if (c < v) {
 		StackPush(ip->stack, v);
 		StackPushVector(ip->stack, VectorCreateRef(vect.x - ip->storageOffset.x, vect.y - ip->storageOffset.y));
-		ipForward(-1, ip);
+		ipForward(ip, -1);
 	} else if (c > v)
 		ipReverse(ip);
 }

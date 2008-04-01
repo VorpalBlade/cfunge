@@ -87,7 +87,7 @@ void ipFree(instructionPointer * restrict ip);
  * However if you will wrap, you probably want to set a temp delta instead and
  * take one step for now.
  */
-void ipForward(int_fast64_t steps, instructionPointer * restrict ip) __attribute__((nonnull));
+void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute__((nonnull));
 
 /**
  * Mirror IP direction.

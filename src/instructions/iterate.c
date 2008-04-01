@@ -36,15 +36,15 @@ void RunIterate(instructionPointer * restrict ip)
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0) {
-		ipForward(1, ip);
+		ipForward(ip, 1);
 	} else if (iters < 0) {
 		ipReverse(ip);
 	} else {
 		FUNGEDATATYPE kInstr;
 		// Fetch instruction
-		ipForward(1, ip);
+		ipForward(ip, 1);
 		kInstr = FungeSpaceGet(&ip->position);
-		ipForward(-1, ip);
+		ipForward(ip, -1);
 
 		if (kInstr == ' ' || kInstr == 'z')
 			return;
@@ -72,7 +72,7 @@ void RunIterate(instructionPointer * restrict ip)
 			    && olddelta.y == ip->delta.y
 			    && oldpos.x == ip->position.x
 			    && oldpos.y == ip->position.y)
-				ipForward(1, ip);
+				ipForward(ip, 1);
 		}
 	}
 }

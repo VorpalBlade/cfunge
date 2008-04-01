@@ -113,7 +113,7 @@ void ipFree(instructionPointer * restrict ip)
 	cf_free(ip);
 }
 
-void ipForward(int_fast64_t steps, instructionPointer * restrict ip)
+void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
 {
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;
@@ -232,7 +232,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	// Here we mirror new IP and do ID changes.
 	index++;
 	ipReverse(&list->ips[index]);
-	ipForward(1, &list->ips[index]);
+	ipForward(&list->ips[index], 1);
 	list->ips[index].ID = ++list->highestID;
 	list->top++;
 	return index - 1;
