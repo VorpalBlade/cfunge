@@ -29,7 +29,7 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-void RunIterate(instructionPointer * restrict ip, ssize_t * restrict threadindex)
+void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
 #else
 void RunIterate(instructionPointer * restrict ip)
 #endif
@@ -61,12 +61,29 @@ void RunIterate(instructionPointer * restrict ip)
 			// If it doesn't we should jump to *after* the instruction k executed.
 			ipDelta olddelta = ip->delta;
 			fungePosition oldpos = ip->position;
-
-			while (iters--)
+			// This horrible kludge is needed because ipListDuplicateIP calls realloc
+			// so IP pointer may end up invalid. A horrible hack yes.
 #ifdef CONCURRENT_FUNGE
-				ExecuteInstruction(kInstr, ip, threadindex);
+			ssize_t oldindex = *threadindex;
+#endif
+			while (iters--) {
+#    ifndef DISABLE_TRACE
+				if (SettingTraceLevel > 5)
+					fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
+					        iters, (char)kInstr, kInstr);
+#    endif /* DISABLE_TRACE */
+#ifdef CONCURRENT_FUNGE
+				if (kInstr == 't')
+					*threadindex = ipListDuplicateIP(IPList, *threadindex);
+				else
+					ExecuteInstruction(kInstr, ip, threadindex);
 #else
 				ExecuteInstruction(kInstr, ip);
+#endif
+			}
+#ifdef CONCURRENT_FUNGE
+			if (kInstr == 't')
+				ip = &((*IPList)->ips[oldindex]);
 #endif
 			if (olddelta.x == ip->delta.x
 			    && olddelta.y == ip->delta.y

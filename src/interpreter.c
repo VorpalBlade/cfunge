@@ -254,7 +254,7 @@ void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 
 			case 'k':
 #ifdef CONCURRENT_FUNGE
-				RunIterate(ip, threadindex);
+				RunIterate(ip, &IPList, threadindex);
 #else
 				RunIterate(ip);
 #endif
