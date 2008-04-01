@@ -88,6 +88,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 {
 	assert(stack != NULL);
+	assert(stack->top <= stack->size);
 
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
@@ -136,7 +137,7 @@ void StackPopNDiscard(fungeStack * restrict stack, size_t n)
 	if (stack->top == 0) {
 		return;
 	} else {
-		if ((stack->top - n) > 0)
+		if (stack->top > n)
 			stack->top -= n;
 		else
 			stack->top = 0;
