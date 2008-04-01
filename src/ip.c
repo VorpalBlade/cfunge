@@ -30,9 +30,9 @@
 
 #include <assert.h>
 
-static inline bool ipCreateInPlace(instructionPointer *me) __attribute__((nonnull,warn_unused_result));
+static inline bool ipCreateInPlace(instructionPointer *me) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 
-static inline bool ipCreateInPlace(instructionPointer *me)
+FUNGE_FAST static inline bool ipCreateInPlace(instructionPointer *me)
 {
 	assert(me != NULL);
 	me->position.x         = 0;
@@ -56,7 +56,7 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 	return true;
 }
 
-instructionPointer * ipCreate(void)
+FUNGE_FAST instructionPointer * ipCreate(void)
 {
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
 	if (!ipCreateInPlace(tmp))
@@ -65,7 +65,7 @@ instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
+FUNGE_FAST static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
 	assert(old != NULL);
 	assert(new != NULL);
 	new->position.x         = old->position.x;
@@ -90,7 +90,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 }
 #endif
 
-static inline void ipFreeResources(instructionPointer * ip)
+FUNGE_FAST static inline void ipFreeResources(instructionPointer * ip)
 {
 	if (!ip)
 		return;
@@ -105,7 +105,7 @@ static inline void ipFreeResources(instructionPointer * ip)
 }
 
 
-void ipFree(instructionPointer * restrict ip)
+FUNGE_FAST void ipFree(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
@@ -113,7 +113,7 @@ void ipFree(instructionPointer * restrict ip)
 	cf_free(ip);
 }
 
-void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
+FUNGE_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
 {
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;
@@ -121,7 +121,7 @@ void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
 	FungeSpaceWrap(&ip->position, &ip->delta);
 }
 
-void ipTurnRight(instructionPointer * restrict ip)
+FUNGE_FAST void ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -132,7 +132,7 @@ void ipTurnRight(instructionPointer * restrict ip)
 	ip->delta.y = tmpX;
 }
 
-void ipTurnLeft(instructionPointer * restrict ip)
+FUNGE_FAST void ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -143,7 +143,7 @@ void ipTurnLeft(instructionPointer * restrict ip)
 	ip->delta.y = -tmpX;
 }
 
-void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
+FUNGE_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
 	assert(delta != NULL);
@@ -151,7 +151,7 @@ void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta
 	ip->delta.y = delta->y;
 }
 
-void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
+FUNGE_FAST void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
 {
 	assert(ip != NULL);
 	assert(position != NULL);
@@ -166,7 +166,7 @@ void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restr
  ***********/
 
 #ifdef CONCURRENT_FUNGE
-ipList* ipListCreate(void)
+FUNGE_FAST ipList* ipListCreate(void)
 {
 	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
 	if (!tmp)
@@ -179,7 +179,7 @@ ipList* ipListCreate(void)
 	return tmp;
 }
 
-void ipListFree(ipList* me)
+FUNGE_FAST void ipListFree(ipList* me)
 {
 	if (!me)
 		return;
@@ -189,7 +189,7 @@ void ipListFree(ipList* me)
 	cf_free(me);
 }
 
-ssize_t ipListDuplicateIP(ipList** me, size_t index)
+FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 {
 	ipList *list;
 
@@ -238,7 +238,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	return index - 1;
 }
 
-ssize_t ipListTerminateIP(ipList** me, size_t index)
+FUNGE_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
 {
 	ipList *list;
 

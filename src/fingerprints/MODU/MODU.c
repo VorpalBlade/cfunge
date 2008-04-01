@@ -24,8 +24,7 @@
 
 // This was more or less taken from CCBI
 
-static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y) __attribute__((const));
-
+__attribute__((const,FUNGE_IN_FAST))
 static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 {
 	x /= y;

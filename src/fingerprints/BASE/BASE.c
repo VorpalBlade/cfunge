@@ -27,7 +27,7 @@
 #include <math.h>
 
 // FIXME: replace with non-recursive.
-static void binary(FUNGEDATATYPE number) {
+FUNGE_FAST static void binary(FUNGEDATATYPE number) {
 	if(number > 0) {
 		binary(number >> 1);
 		putchar(number & 1 ? '1' : '0');

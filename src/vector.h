@@ -38,6 +38,6 @@ typedef fungeVector fungePosition;
 /**
  * Checks if vector is cardinal (as in ^>v<).
  */
-bool VectorIsCardinal(const fungeVector * v) __attribute__((pure));
+bool VectorIsCardinal(const fungeVector * v) __attribute__((pure,FUNGE_IN_FAST));
 
 #endif

@@ -34,14 +34,14 @@ static char*  lastline = NULL;
 static size_t linelength = 0;
 static char*  lastlineCurrent = NULL;
 
-static inline void getTheLine(void)
+FUNGE_FAST static inline void getTheLine(void)
 {
 	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
 		cf_getline(&lastline, &linelength, stdin);
 		lastlineCurrent = lastline;
 	}
 }
-static inline void discardTheLine(void)
+FUNGE_FAST static inline void discardTheLine(void)
 {
 	if (lastline != NULL)
 		cf_free(lastline);
@@ -50,7 +50,7 @@ static inline void discardTheLine(void)
 }
 
 
-FUNGEDATATYPE input_getchar(void)
+FUNGE_FAST FUNGEDATATYPE input_getchar(void)
 {
 	char tmp;
 	getTheLine();
@@ -65,7 +65,7 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 // Note, no need to optimize really, this is user input
 // bound anyway.
-bool input_getint(FUNGEDATATYPE * value, int base)
+FUNGE_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 {
 	bool found = false;
 	char* endptr = NULL;

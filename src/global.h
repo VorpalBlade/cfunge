@@ -32,6 +32,22 @@
 #  define  __attribute__(x)  /* NO-OP */
 #endif
 
+
+#ifdef __GNUC__
+#  ifdef __i386__
+     // For use in lists with other attributes
+#    define  FUNGE_IN_FAST regparm(3)
+     // For stand alone
+#    define  FUNGE_FAST __attribute__((regparm(3)))
+#  else
+#    define  FUNGE_IN_FAST /* NO-OP */
+#    define  FUNGE_FAST /* NO-OP */
+#  endif
+#else
+// Only define this one, as /**/ doesn't nest.
+#  define  FUNGE_FAST /* NO-OP */
+#endif
+
 #include "support.h"
 #include <stdlib.h>
 #include <stdint.h>

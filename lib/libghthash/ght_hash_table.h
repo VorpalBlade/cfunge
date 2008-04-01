@@ -136,7 +136,7 @@ extern "C"
 	 * @see @c ght_one_at_a_time_hash(), @c ght_rotating_hash(),
 	 *      @c ght_crc_hash()
 	 */
-	typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key);
+	typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key) FUNGE_FAST;
 
 	/**
 	 * Definition of bounded bucket free callback function pointers.
@@ -187,7 +187,7 @@ extern "C"
 	 *
 	 * @return a pointer to the hash table or NULL upon error.
 	 */
-	ght_hash_table_t *ght_create(size_t i_size);
+	ght_hash_table_t *ght_create(size_t i_size) FUNGE_FAST;
 
 	/**
 	 * Set the hash function to use for a hash table.
@@ -199,7 +199,7 @@ extern "C"
 	 * @param p_ht the hash table set the hash function for.
 	 * @param fn_hash the hash function.
 	 */
-	void ght_set_hash(ght_hash_table_t *p_ht, ght_fn_hash_t fn_hash);
+	void ght_set_hash(ght_hash_table_t *p_ht, ght_fn_hash_t fn_hash) FUNGE_FAST;
 
 	/**
 	 * Set the heuristics to use for the hash table. The possible values are:
@@ -216,7 +216,7 @@ extern "C"
 	 * @param p_ht the hash table set the heuristics for.
 	 * @param i_heuristics the heuristics to use.
 	 */
-	void ght_set_heuristics(ght_hash_table_t *p_ht, int i_heuristics);
+	void ght_set_heuristics(ght_hash_table_t *p_ht, int i_heuristics) FUNGE_FAST;
 
 	/**
 	 * Enable or disable automatic rehashing.
@@ -232,7 +232,7 @@ extern "C"
 	 * @param b_rehash TRUE if rehashing should be used or FALSE if it
 	 *        should not be used.
 	 */
-	void ght_set_rehash(ght_hash_table_t *p_ht, bool b_rehash);
+	void ght_set_rehash(ght_hash_table_t *p_ht, bool b_rehash) FUNGE_FAST;
 
 	/**
 	 * Enable or disable bounded buckets.
@@ -318,7 +318,7 @@ extern "C"
 	 */
 	int ght_insert(ght_hash_table_t * restrict p_ht,
 	               void * restrict p_entry_data,
-	               unsigned int i_key_size, const void * restrict p_key_data);
+	               unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Replace an entry in the hash table. This function will return an
@@ -335,7 +335,7 @@ extern "C"
 	 */
 	void *ght_replace(ght_hash_table_t * restrict p_ht,
 	                  void * restrict p_entry_data,
-	                  unsigned int i_key_size, const void * restrict p_key_data);
+	                  unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 
 	/**
@@ -349,7 +349,7 @@ extern "C"
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
 	void *ght_get(ght_hash_table_t * restrict p_ht,
-	              unsigned int i_key_size, const void * restrict p_key_data);
+	              unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -362,7 +362,7 @@ extern "C"
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
 	void *ght_remove(ght_hash_table_t * restrict p_ht,
-	                 unsigned int i_key_size, const void * restrict p_key_data);
+	                 unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Return the first entry in the hash table. This function should be
@@ -493,7 +493,7 @@ extern "C"
 	 *
 	 * @see ght_create()
 	 */
-	void ght_rehash(ght_hash_table_t *p_ht, size_t i_size);
+	void ght_rehash(ght_hash_table_t *p_ht, size_t i_size) FUNGE_FAST;
 
 	/**
 	 * Free the hash table. ght_finalize() should typically be called
@@ -517,7 +517,7 @@ extern "C"
 	 *
 	 * @param p_ht the table to remove.
 	 */
-	void ght_finalize(ght_hash_table_t *p_ht);
+	void ght_finalize(ght_hash_table_t *p_ht) FUNGE_FAST;
 
 	/* exported hash functions */
 
@@ -533,7 +533,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_rotating_hash(), ght_crc_hash()
 	 */
-	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key);
+	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
 
 #if 0
 	/**
@@ -546,7 +546,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_one_at_a_time_hash(), ght_crc_hash()
 	 */
-	ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key);
+	ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
 #endif
 
 	/**
@@ -559,7 +559,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_one_at_a_time_hash(), ght_rotating_hash()
 	 */
-	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key);
+	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
 
 #ifdef USE_PROFILING
 	/**

@@ -58,27 +58,38 @@ typedef struct s_ImplementedFingerprintEntry {
 // NOTE: Keep sorted (apart from ending 0 entry).
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
-	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
-	// DIRF Directory functions extension, NOT SAFE
-	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
-	// FPDP Double precision floating point
-	{ .fprint = 0x46504450, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
-	// FPSP Single precision floating point
-	{ .fprint = 0x46505350, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// DIRF - Directory functions extension, NOT SAFE
+	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
+	// FPDP - Double precision floating point
+	{ .fprint = 0x46504450, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// FPSP - Single precision floating point
+	{ .fprint = 0x46505350, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// MODU - Modulo Arithmetic
-	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU", .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
+	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU",
+	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
 	// NULL
-	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ", .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
+	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ",
+	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library
-	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ", .url = "http://catseye.tc/projects/funge98/library/ORTH.html", .safe = true },
+	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ",
+	  .url = "http://catseye.tc/projects/funge98/library/ORTH.html", .safe = true },
 	// REFC - Referenced Cells Extension
-	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR", .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
+	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR",
+	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
 	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX", .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
+	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX",
+	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR", .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// TOYS - Funge-98 Standard Toys
-	{ .fprint = 0x544f5953, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ", .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
+	{ .fprint = 0x544f5953, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ",
+	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
@@ -91,22 +102,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 /**
  * Create an opcode stack.
  */
-static inline fungeOpcodeStack* CreateOpcodeStack(void) __attribute__((malloc,warn_unused_result));
-/**
- * Free an opcode stack.
- */
-static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) __attribute__((nonnull));
-/**
- * Pop a function pointer from an opcode stack, discarding it.
- */
-static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) __attribute__((nonnull));
-#ifdef CONCURRENT_FUNGE
-/**
- * Duplicate an opcode stack, used for split (t).
- */
-static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) __attribute__((malloc,nonnull,warn_unused_result));
-#endif
-
+__attribute__((malloc,warn_unused_result,FUNGE_IN_FAST))
 static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
@@ -120,6 +116,10 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void) {
 	return tmp;
 }
 
+/**
+ * Free an opcode stack.
+ */
+FUNGE_FAST
 static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) {
 	if (!me)
 		return;
@@ -129,7 +129,11 @@ static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) {
 }
 
 #ifdef CONCURRENT_FUNGE
-static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) {
+/**
+ * Duplicate an opcode stack, used for split (t).
+ */
+__attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
+FUNGE_FAST static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) {
 	fungeOpcodeStack * tmp;
 
 	if (!old)
@@ -150,7 +154,7 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * re
 #endif
 
 
-bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) {
+FUNGE_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
@@ -168,8 +172,9 @@ bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOp
 }
 
 /**
- * Pop an entry from an opcode stack.
+ * Pop a function pointer from an opcode stack, discarding it.
  */
+__attribute__((nonnull,FUNGE_IN_FAST))
 static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) {
 	assert(stack != NULL);
 
@@ -184,7 +189,7 @@ static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) {
  * Opcode Manager functions *
  ****************************/
 
-bool ManagerCreate(instructionPointer * restrict ip) {
+FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip) {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
 		if (!ip->fingerOpcodes[i])
@@ -193,7 +198,7 @@ bool ManagerCreate(instructionPointer * restrict ip) {
 	return true;
 }
 
-void ManagerFree(instructionPointer * restrict ip) {
+FUNGE_FAST void ManagerFree(instructionPointer * restrict ip) {
 	if (!ip)
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -202,7 +207,7 @@ void ManagerFree(instructionPointer * restrict ip) {
 }
 
 #ifdef CONCURRENT_FUNGE
-bool ManagerDuplicate(const instructionPointer * restrict oldip,
+FUNGE_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
                       instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -222,7 +227,7 @@ bool ManagerDuplicate(const instructionPointer * restrict oldip,
  * Return value is index into ImplementedFingerprints array.
  * -1 means not found.
  */
-static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
+FUNGE_FAST static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
 {
 	int i = 0;
 	bool found = false;
@@ -242,7 +247,7 @@ static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
 	return i;
 }
 
-bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
+FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1) {
 		return false;
@@ -258,7 +263,7 @@ bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	}
 }
 
-bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
+FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1)
 		return false;

@@ -53,36 +53,36 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
  * Add func to the correct opcode in ip.
  */
-bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) __attribute__((nonnull,warn_unused_result));
+bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 
 /**
  * Initialize stacks for IP
  */
-bool ManagerCreate(instructionPointer * restrict ip) __attribute__((nonnull,warn_unused_result));
+bool ManagerCreate(instructionPointer * restrict ip) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 
 /**
  * Free stacks for IP
  */
-void ManagerFree(instructionPointer * restrict ip) __attribute__((nonnull));
+void ManagerFree(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
 
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate a loaded fingerprints.
  */
-bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip) __attribute__((nonnull,warn_unused_result));
+bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 #endif
 
 /**
  * Try to load fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
+bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 
 /**
  * Try to unload fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result));
+bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
 
 /**
  * Print out list of supported fingerprints

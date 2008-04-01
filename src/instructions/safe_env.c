@@ -162,7 +162,7 @@ SafeInWordSet (register const char *str, register unsigned int len)
 #line 45 "safe_env.gperf"
 
 
-bool CheckEnvIsSafe(const char *envvar) {
+FUNGE_FAST bool CheckEnvIsSafe(const char *envvar) {
 	const char * p;
 
 	p = strchr(envvar, '=');

@@ -36,11 +36,11 @@ static doubleint u;
 static double d;
 
 
-static inline void popDbl(instructionPointer * ip) {
+FUNGE_FAST static inline void popDbl(instructionPointer * ip) {
 	u.i.low = StackPop(ip->stack);
 	u.i.high = StackPop(ip->stack);
 }
-static inline void pushDbl(instructionPointer * ip) {
+FUNGE_FAST static inline void pushDbl(instructionPointer * ip) {
 	StackPush(ip->stack, u.i.high);
 	StackPush(ip->stack, u.i.low);
 }

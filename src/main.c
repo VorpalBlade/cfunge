@@ -33,12 +33,9 @@
 char **fungeargv = NULL;
 int fungeargc = 0;
 
-// These are NOT worth inlineing
-static void printHelp(void) __attribute__((noreturn,noinline));
-static void printVersion(void) __attribute__((noreturn,noinline));
-static void printFeatures(void) __attribute__((noreturn,noinline));
+// These are NOT worth inlineing, even though only called once.
 
-
+__attribute__((noreturn,noinline,FUNGE_IN_FAST))
 static void printFeatures(void) {
 	puts("Features compiled into this binary:");
 #ifdef CONCURRENT_FUNGE
@@ -73,6 +70,7 @@ static void printFeatures(void) {
 	ManagerList();
 }
 
+__attribute__((noreturn,noinline,FUNGE_IN_FAST))
 static void printHelp(void) {
 	puts("Usage: cfunge [OPTIONS] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
@@ -91,6 +89,7 @@ static void printHelp(void) {
 	exit(EXIT_SUCCESS);
 }
 
+__attribute__((noreturn,noinline,FUNGE_IN_FAST))
 static void printVersion(void) {
 	printf("cfunge %s\n", APPVERSION);
 	puts("Copyright (C) 2008 Arvid Norlander.");

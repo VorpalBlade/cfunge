@@ -50,9 +50,8 @@ static fungeSpace *fspace = NULL;
 /**
  * Check if position is in range.
  */
-static inline bool FungeSpaceInRange(const fungePosition * restrict position) __attribute__((pure));
-
-static inline bool FungeSpaceInRange(const fungePosition * restrict position)
+__attribute__((pure,FUNGE_IN_FAST))
+FUNGE_FAST static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
 	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
 		return false;
@@ -61,7 +60,7 @@ static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 	return true;
 }
 
-bool
+FUNGE_FAST bool
 FungeSpaceCreate(void)
 {
 	fspace = (fungeSpace*)cf_malloc(sizeof(fungeSpace));
@@ -85,7 +84,7 @@ FungeSpaceCreate(void)
 }
 
 
-void
+FUNGE_FAST void
 FungeSpaceFree(void)
 {
 	if (!fspace)
@@ -96,7 +95,7 @@ FungeSpaceFree(void)
 	cf_free(fspace);
 }
 
-void
+FUNGE_FAST void
 FungeSpaceGetBoundRect(fungeRect * restrict rect) {
 	rect->x = fspace->topLeftCorner.x;
 	rect->y = fspace->topLeftCorner.y;
@@ -105,7 +104,7 @@ FungeSpaceGetBoundRect(fungeRect * restrict rect) {
 }
 
 
-FUNGEDATATYPE
+FUNGE_FAST FUNGEDATATYPE
 FungeSpaceGet(const fungePosition * restrict position)
 {
 	FUNGEDATATYPE *tmp;
@@ -120,7 +119,7 @@ FungeSpaceGet(const fungePosition * restrict position)
 }
 
 
-FUNGEDATATYPE
+FUNGE_FAST FUNGEDATATYPE
 FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	fungePosition tmp;
@@ -143,7 +142,7 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
  * Allocate space for a cell.
  * Allocates in chunks of FUNGESPACEALLOCCHUNK.
  */
-static inline FUNGEDATATYPE*
+FUNGE_FAST static inline FUNGEDATATYPE*
 FungeSpaceInternalAlloc(FUNGEDATATYPE value)
 {
 	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
@@ -164,7 +163,7 @@ FungeSpaceInternalAlloc(FUNGEDATATYPE value)
 }
 
 
-static inline void
+FUNGE_FAST static inline void
 FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
@@ -184,7 +183,7 @@ FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 	}
 }
 
-void
+FUNGE_FAST void
 FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
@@ -199,7 +198,7 @@ FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 		fspace->topLeftCorner.x = position->x;
 }
 
-void
+FUNGE_FAST void
 FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
 {
 	assert(position != NULL);
@@ -208,7 +207,7 @@ FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, c
 	FungeSpaceSet(value, VectorCreateRef(position->x + offset->x, position->y + offset->y));
 }
 
-void
+FUNGE_FAST void
 FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
 {
 	// Quick and dirty if cardinal.
@@ -258,7 +257,7 @@ void FungeSpaceDump(void)
 
 #endif
 
-bool
+FUNGE_FAST bool
 FungeSpaceLoad(const char * restrict filename)
 {
 	FILE * file;
@@ -310,7 +309,7 @@ FungeSpaceLoad(const char * restrict filename)
 	return true;
 }
 
-bool
+FUNGE_FAST bool
 FungeSpaceLoadAtOffset(const char          * restrict filename,
                        const fungePosition * restrict offset,
                        fungeVector         * restrict size,
@@ -362,7 +361,7 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	return true;
 }
 
-bool
+FUNGE_FAST bool
 FungeSpaceSaveToFile(const char          * restrict filename,
                      const fungePosition * restrict offset,
                      const fungeVector   * restrict size,
