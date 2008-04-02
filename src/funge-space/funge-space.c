@@ -179,9 +179,8 @@ FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
 			*tmp = value;
 		} else {
-			tmp = FungeSpaceInternalAlloc(value);
-			if (ght_insert(fspace->entries, tmp, sizeof(fungePosition), position) == -1) {
-				ght_replace(fspace->entries, tmp, sizeof(fungePosition), position);
+			if (ght_insert(fspace->entries, value, sizeof(fungePosition), position) == -1) {
+				ght_replace(fspace->entries, value, sizeof(fungePosition), position);
 			}
 		}
 	}

@@ -47,7 +47,7 @@ static inline void              free_entry_chain(ght_hash_entry_t *p_entry) FUNG
 static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_key_t *p_key, unsigned char i_heuristics) FUNGE_FAST;
 
 static inline void              hk_fill(ght_hash_key_t *p_hk, size_t i_size, const void *p_key) FUNGE_FAST;
-static inline ght_hash_entry_t *he_create(void *p_data, size_t i_key_size, const void *p_key_data) FUNGE_FAST;
+static inline ght_hash_entry_t *he_create(FUNGEDATATYPE p_data, size_t i_key_size, const void *p_key_data) FUNGE_FAST;
 static inline void              he_finalize(ght_hash_entry_t *p_he) FUNGE_FAST;
 
 /* --- private methods --- */
@@ -188,7 +188,7 @@ FUNGE_FAST static inline void hk_fill(ght_hash_key_t *p_hk, size_t i_size, const
 }
 
 /* Create an hash entry */
-FUNGE_FAST static inline ght_hash_entry_t *he_create(void *p_data,
+FUNGE_FAST static inline ght_hash_entry_t *he_create(FUNGEDATATYPE p_data,
         size_t i_key_size, const void *p_key_data)
 {
 	ght_hash_entry_t *p_he;
@@ -297,9 +297,6 @@ FUNGE_FAST ght_hash_table_t *ght_create(size_t i_size)
 	p_ht->i_heuristics = GHT_HEURISTICS_NONE;
 	p_ht->i_automatic_rehash = FALSE;
 
-	p_ht->bucket_limit = 0;
-	p_ht->fn_bucket_free = NULL;
-
 	/* Create an empty bucket list. */
 	if (!(p_ht->pp_entries = (ght_hash_entry_t**)cf_malloc(p_ht->i_size * sizeof(ght_hash_entry_t*)))) {
 		perror("malloc");
@@ -341,16 +338,6 @@ FUNGE_FAST void ght_set_rehash(ght_hash_table_t *p_ht, bool b_rehash)
 	p_ht->i_automatic_rehash = b_rehash;
 }
 
-void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_bucket_free_callback_t fn)
-{
-	p_ht->bucket_limit = limit;
-	p_ht->fn_bucket_free = fn;
-
-	if (limit > 0 && fn == NULL) {
-		fprintf(stderr, "ght_set_bounded_buckets: The bucket callback function is NULL but the limit is %ud\n", limit);
-	}
-}
-
 #ifndef GHT_USE_MACROS
 /* Get the number of items in the hash table */
 size_t ght_size(ght_hash_table_t *p_ht)
@@ -367,7 +354,7 @@ size_t ght_table_size(ght_hash_table_t *p_ht)
 
 /* Insert an entry into the hash table */
 FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
-                          void * restrict p_entry_data,
+                          FUNGEDATATYPE p_entry_data,
                           size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_entry;
@@ -402,32 +389,11 @@ FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
 	}
 	p_ht->pp_entries[l_key] = p_entry;
 
-	/* If this is a limited bucket hash table, potentially remove the last item */
-	if (p_ht->bucket_limit != 0 &&
-	    p_ht->p_nr[l_key] >= p_ht->bucket_limit) {
-		ght_hash_entry_t *p;
+	p_ht->p_nr[l_key]++;
 
-		/* Loop through entries until the last
-		 *
-		 * FIXME: Better with a pointer to the last entry
-		 */
-		for (p = p_ht->pp_entries[l_key];
-		     p->p_next != NULL;
-		     p = p->p_next);
+	assert(p_ht->pp_entries[l_key] ? p_ht->pp_entries[l_key]->p_prev == NULL : 1);
 
-		assert(p && p->p_next == NULL);
-
-		remove_from_chain(p_ht, l_key, p); /* To allow it to be reinserted in fn_bucket_free */
-		p_ht->fn_bucket_free(p->p_data, p->key.p_key);
-
-		he_finalize(p);
-	} else {
-		p_ht->p_nr[l_key]++;
-
-		assert(p_ht->pp_entries[l_key] ? p_ht->pp_entries[l_key]->p_prev == NULL : 1);
-
-		p_ht->i_items++;
-	}
+	p_ht->i_items++;
 
 	if (p_ht->p_oldest == NULL) {
 		p_ht->p_oldest = p_entry;
@@ -444,8 +410,8 @@ FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
 }
 
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-FUNGE_FAST void *ght_get(ght_hash_table_t * restrict p_ht,
-                         size_t i_key_size, const void * restrict p_key_data)
+FUNGE_FAST FUNGEDATATYPE *ght_get(ght_hash_table_t * restrict p_ht,
+                                  size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -464,18 +430,18 @@ FUNGE_FAST void *ght_get(ght_hash_table_t * restrict p_ht,
 	p_e = search_in_bucket(p_ht, l_key, &key, p_ht->i_heuristics);
 	/* UNLOCK: p_ht->pp_entries[l_key] */
 
-	return (p_e ? p_e->p_data : NULL);
+	return (p_e ? &p_e->p_data : NULL);
 }
 
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-FUNGE_FAST void *ght_replace(ght_hash_table_t * restrict p_ht,
-                             void * restrict p_entry_data,
-                             size_t i_key_size, const void * restrict p_key_data)
+FUNGE_FAST FUNGEDATATYPE ght_replace(ght_hash_table_t * restrict p_ht,
+                                     FUNGEDATATYPE p_entry_data,
+                                     size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
 	ght_uint32_t l_key;
-	void *p_old;
+	FUNGEDATATYPE p_old;
 
 	assert(p_ht != NULL);
 
@@ -491,7 +457,7 @@ FUNGE_FAST void *ght_replace(ght_hash_table_t * restrict p_ht,
 	/* UNLOCK: p_ht->pp_entries[l_key] */
 
 	if (!p_e)
-		return NULL;
+		return -1;
 
 	p_old = p_e->p_data;
 	p_e->p_data = p_entry_data;
@@ -501,13 +467,13 @@ FUNGE_FAST void *ght_replace(ght_hash_table_t * restrict p_ht,
 
 /* Remove an entry from the hash table. The removed entry, or NULL, is
    returned (and NOT free'd). */
-FUNGE_FAST void *ght_remove(ght_hash_table_t * restrict p_ht,
-                            size_t i_key_size, const void * restrict p_key_data)
+FUNGE_FAST FUNGEDATATYPE ght_remove(ght_hash_table_t * restrict p_ht,
+                                    size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_out;
 	ght_hash_key_t key;
 	ght_uint32_t l_key;
-	void *p_ret = NULL;
+	FUNGEDATATYPE p_ret = 0;
 
 	assert(p_ht != NULL);
 
