@@ -32,7 +32,7 @@
 #  include <fcntl.h>
 #endif
 
-#define FUNGESPACEINITIALSIZE 2<<15
+#define FUNGESPACEINITIALSIZE 150000
 
 typedef struct _fungeSpace {
 	// These two form a rectangle for the program size

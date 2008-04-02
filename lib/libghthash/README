@@ -1,4 +1,11 @@
-This directory contains part of libghthash-0.6.2 from http://www.ipd.bth.se/ska/sim_home/libghthash.html
-Only the parts cfunge use are included. See website for more information on the library.
+This directory contains part of libghthash-0.6.2 from
+http://www.ipd.bth.se/ska/sim_home/libghthash.html
+Only the parts cfunge use are included. See website for more information on the
+library.
 
-It has been changed to use boehm-gc, use C99 stuff when possible, and a few other things.
+It has been changed to:
+ * Use Boehm-GC.
+ * Use C99 stuff when possible.
+ * Not be generic, but use the exact data types we handle.
+ * Hard code stuff in to avoid function pointers.
+ * Possibly some other stuff.
