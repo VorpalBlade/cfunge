@@ -33,8 +33,6 @@
 #endif
 
 #define FUNGESPACEINITIALSIZE 150000
-// We allocate this many *cells* at a time.
-#define FUNGESPACEALLOCCHUNK 1024
 
 typedef struct _fungeSpace {
 	// These two form a rectangle for the program size
@@ -42,10 +40,6 @@ typedef struct _fungeSpace {
 	fungePosition     bottomRightCorner;
 	// And this is the hash table.
 	ght_hash_table_t *entries;
-	// Array we allocate for values as we need them, we do FUNGESPACEALLOCCHUNK at a time here.
-	// We will replace it when we need to. Size MUST be FUNGESPACEALLOCCHUNK
-	FUNGEDATATYPE    *allocarray;
-	size_t            allocarrayCurrent;
 } fungeSpace;
 
 // Funge-space storage.
@@ -73,12 +67,9 @@ FungeSpaceCreate(void)
 	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace->entries)
 		return false;
-	ght_set_hash(fspace->entries, &ght_crc_hash);
 	// Unable to determine if this helps or not.
 	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
-	fspace->allocarray = (FUNGEDATATYPE*)cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
-	fspace->allocarrayCurrent = 0;
 
 	fspace->topLeftCorner.x = 0;
 	fspace->topLeftCorner.y = 0;
@@ -94,8 +85,6 @@ FungeSpaceFree(void)
 	if (!fspace)
 		return;
 	ght_finalize(fspace->entries);
-	// Just the last block, but still.
-	cf_free(fspace->allocarray);
 	cf_free(fspace);
 }
 
@@ -141,31 +130,6 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 	else
 		return *result;
 }
-
-/**
- * Allocate space for a cell.
- * Allocates in chunks of FUNGESPACEALLOCCHUNK.
- */
-FUNGE_FAST static inline FUNGEDATATYPE*
-FungeSpaceInternalAlloc(FUNGEDATATYPE value)
-{
-	if (fspace->allocarrayCurrent >= (FUNGESPACEALLOCCHUNK - 1)) {
-		// Allocate new array
-		fspace->allocarray = (FUNGEDATATYPE*)cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
-		if (!fspace->allocarray) {
-			perror("Out of memory, couldn't allocate cell(s) for funge space");
-			abort();
-		}
-		fspace->allocarrayCurrent = 0;
-	} else {
-		// Allocate from array
-		fspace->allocarrayCurrent++;
-	}
-	fspace->allocarray[fspace->allocarrayCurrent] = value;
-
-	return &fspace->allocarray[fspace->allocarrayCurrent];
-}
-
 
 FUNGE_FAST static inline void
 FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)

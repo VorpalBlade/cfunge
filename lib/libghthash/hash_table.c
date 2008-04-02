@@ -251,7 +251,7 @@ static inline ght_uint32_t get_hash_value(ght_hash_table_t *p_ht, ght_hash_key_t
 	int i;
 
 	if (p_key->i_size > sizeof(uint64_t))
-		return p_ht->fn_hash(p_key);
+		return GHT_HASH_NAME(p_key);
 
 	/* Lookup in the hash value cache */
 	for (i = 0; i < GHT_N_CACHED_HASH_KEYS; i++) {
@@ -261,12 +261,12 @@ static inline ght_uint32_t get_hash_value(ght_hash_table_t *p_ht, ght_hash_key_t
 	}
 	p_ht->cur_cache_evict = (p_ht->cur_cache_evict + 1) % GHT_N_CACHED_HASH_KEYS;
 	p_ht->cached_keys[ p_ht->cur_cache_evict ].key = *p_key;
-	p_ht->cached_keys[ p_ht->cur_cache_evict ].hash_val = p_ht->fn_hash(p_key);
+	p_ht->cached_keys[ p_ht->cur_cache_evict ].hash_val = GHT_HASH_NAME(p_key);
 
 	return p_ht->cached_keys[ p_ht->cur_cache_evict ].hash_val;
 }
 #else
-# define get_hash_value(p_ht, p_key) ( (p_ht)->fn_hash(p_key) )
+# define get_hash_value(p_ht, p_key) ( GHT_HASH_NAME(p_key) )
 #endif
 
 
@@ -290,8 +290,6 @@ FUNGE_FAST ght_hash_table_t *ght_create(size_t i_size)
 
 	p_ht->i_size_mask = (1 << (i - 1)) - 1; /* Mask to & with */
 	p_ht->i_items = 0;
-
-	p_ht->fn_hash = ght_one_at_a_time_hash;
 
 	/* Set flags */
 	p_ht->i_heuristics = GHT_HEURISTICS_NONE;
@@ -318,12 +316,6 @@ FUNGE_FAST ght_hash_table_t *ght_create(size_t i_size)
 	p_ht->p_newest = NULL;
 
 	return p_ht;
-}
-
-/* Set the hash function to use */
-FUNGE_FAST void ght_set_hash(ght_hash_table_t *p_ht, ght_fn_hash_t fn_hash)
-{
-	p_ht->fn_hash = fn_hash;
 }
 
 /* Set the heuristics to use. */
@@ -635,7 +627,6 @@ FUNGE_FAST void ght_rehash(ght_hash_table_t *p_ht, size_t i_size)
 	assert(p_tmp != NULL);
 
 	/* Set the flags for the new hash table */
-	ght_set_hash(p_tmp, p_ht->fn_hash);
 	ght_set_heuristics(p_tmp, GHT_HEURISTICS_NONE);
 	ght_set_rehash(p_tmp, FALSE);
 

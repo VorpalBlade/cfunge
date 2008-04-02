@@ -84,6 +84,11 @@ extern "C"
 
 // Use macros for some stuff.
 #define GHT_USE_MACROS
+// What checksum to use, one of:
+// ght_one_at_a_time_hash
+// ght_crc_hash
+#define GHT_HASH_NAME ght_crc_hash
+
 
 	/** unsigned 32 bit integer. */
 	typedef uint32_t ght_uint32_t;
@@ -144,7 +149,6 @@ extern "C"
 	typedef struct {
 		size_t i_items;                    /**< The current number of items in the table */
 		size_t i_size;                     /**< The number of buckets */
-		ght_fn_hash_t fn_hash;             /**< The hash function used */
 		int_fast8_t i_heuristics;          /**< The type of heuristics used */
 		bool i_automatic_rehash:1;         /**< TRUE if automatic rehashing is used */
 
