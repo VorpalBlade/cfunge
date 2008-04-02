@@ -1,5 +1,17 @@
 This is cfunge - a fast Beunge93/98/108 interpreter in C.
 
+cfunge offers some features that many other standard conforming interpreters
+don't. For example:
+ * Sandbox mode, prevents programs from harming system (more details below).
+ * Advance tracing support, debugging protocol support system under development.
+ * Passes mycology (of course other conforming interpreters does this, but most
+   interpreters are, sadly, not conforming).
+ * Tested using valgrind and similar tools.
+ * Tested with fuzz testing to ensure cfunge does not segfault on random stuff.
+ * Coded for maximum performance AND correctness.
+ * Support for selecting either 64-bit or 32-bit integers as datatype in
+   funge-space at compile time.
+
 
 Dependencies
 ------------
@@ -116,8 +128,8 @@ situation.
 
 Sandbox mode
 ------------
-Sandbox mode prevents befunge programs from doing "harmful" things, this
-includes, but is not limited to:
+Sandbox mode prevents Funge programs from doing "harmful" things, this includes,
+but is not limited to:
  * Any file or filesystem IO is forbidden.
  * The environment variables it can see are restricted.
  * Non-safe fingerprints can not be loaded (this includes network and file
