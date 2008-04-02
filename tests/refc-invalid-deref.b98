@@ -1,0 +1,24 @@
+"CERF"4(v                        ; This program tests invalid D ;
+v       <
+>1. #v 0D  "DAB" >:#,_  @        ; Derefence 0 ;
+     >a"DOOG">:#,_v
+v                 <
+
+
+>2. #v 01-D  "DAB" >:#,_  @      ; Derefence negative ;
+     >a"DOOG">:#,_v
+v                 <
+
+
+>3. #v 45+D  "DAB" >:#,_  @      ; Derefence postive ;
+     >a"DOOG">:#,_v
+v                 <
+
+
+>4. #v nD  "DAB" >:#,_  @        ; Derefence on empty stack ;
+     >a"DOOG">:#,_v
+v                 <
+
+a                                ; That's all ;
+,
+@
