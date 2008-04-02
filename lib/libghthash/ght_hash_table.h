@@ -155,8 +155,8 @@ extern "C"
 		size_t i_size;                     /**< The number of buckets */
 		ght_fn_hash_t fn_hash;             /**< The hash function used */
 		ght_fn_bucket_free_callback_t fn_bucket_free; /**< The function called when a bucket overflows */
-		int i_heuristics;                  /**< The type of heuristics used */
-		bool i_automatic_rehash;           /**< TRUE if automatic rehashing is used */
+		int_fast8_t i_heuristics;          /**< The type of heuristics used */
+		bool i_automatic_rehash:1;         /**< TRUE if automatic rehashing is used */
 
 		/* private: */
 		ght_hash_entry_t **pp_entries;
@@ -405,7 +405,7 @@ extern "C"
 	 *
 	 * @see ght_next()
 	 */
-	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key);
+	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key) FUNGE_FAST;
 
 	/**
 	 * See ght_first() detailed description. This function augments
@@ -429,7 +429,7 @@ extern "C"
 	 * @see ght_next()
 	 */
 
-	void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size);
+	void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size) FUNGE_FAST;
 
 	/**
 	 * Return the next entry in the hash table. This function should be
@@ -450,7 +450,7 @@ extern "C"
 	 *
 	 * @see ght_first()
 	 */
-	void *ght_next(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key);
+	void *ght_next(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key) FUNGE_FAST;
 
 	/**
 	 * This functions works just like ght_next() but also returns the
@@ -475,7 +475,7 @@ extern "C"
 	 * @see ght_first_keysize()
 	 */
 
-	void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size);
+	void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size) FUNGE_FAST;
 
 	/**
 	 * Rehash the hash table.

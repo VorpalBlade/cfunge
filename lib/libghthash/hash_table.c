@@ -542,6 +542,7 @@ FUNGE_FAST void *ght_remove(ght_hash_table_t * restrict p_ht,
 	return p_ret;
 }
 
+FUNGE_FAST
 static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	assert(p_ht && p_iterator);
@@ -569,17 +570,19 @@ static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iter
 
 
 /* Get the first entry in an iteration */
+FUNGE_FAST
 void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key)
 {
 	return first_keysize(p_ht, p_iterator, pp_key, NULL);
 }
 
+FUNGE_FAST
 void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	return first_keysize(p_ht, p_iterator, pp_key, size);
 }
 
-
+FUNGE_FAST
 static inline void *next_keysize(ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	assert(p_iterator != NULL);
@@ -610,11 +613,13 @@ static inline void *next_keysize(ght_iterator_t *p_iterator, const void **pp_key
 
 /* Get the next entry in an iteration. You have to call ght_first
    once initially before you use this function */
+FUNGE_FAST
 void *ght_next(__attribute__((unused)) ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key)
 {
 	return next_keysize(p_iterator, pp_key, NULL);
 }
 
+FUNGE_FAST
 void *ght_next_keysize(__attribute__((unused)) ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
 	return next_keysize(p_iterator, pp_key, size);

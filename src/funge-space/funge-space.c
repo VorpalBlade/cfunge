@@ -149,7 +149,7 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 FUNGE_FAST static inline FUNGEDATATYPE*
 FungeSpaceInternalAlloc(FUNGEDATATYPE value)
 {
-	if (fspace->allocarrayCurrent > (FUNGESPACEALLOCCHUNK - 2)) {
+	if (fspace->allocarrayCurrent >= (FUNGESPACEALLOCCHUNK - 1)) {
 		// Allocate new array
 		fspace->allocarray = (FUNGEDATATYPE*)cf_malloc_noptr(FUNGESPACEALLOCCHUNK * sizeof(FUNGEDATATYPE));
 		if (!fspace->allocarray) {
@@ -261,6 +261,29 @@ void FungeSpaceDump(void)
 
 #endif
 
+
+__attribute__((nonnull,always_inline,warn_unused_result,FUNGE_IN_FAST))
+static inline FILE * FungeSpaceOpenFile(const char * restrict filename) {
+	FILE * file;
+
+	assert(filename != NULL);
+
+	file = fopen(filename, "r");
+	if (!file) {
+		return NULL;
+	} else {
+#ifdef _POSIX_ADVISORY_INFO
+		// Microoptimizing! Remove this if it bothers you.
+		{
+			int fd = fileno(file);
+			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+			posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+		}
+#endif
+		return file;
+	}
+}
+
 FUNGE_FAST bool
 FungeSpaceLoad(const char * restrict filename)
 {
@@ -273,18 +296,9 @@ FungeSpaceLoad(const char * restrict filename)
 	FUNGEVECTORTYPE x = 0;
 	assert(filename != NULL);
 
-	file = fopen(filename, "r");
+	file = FungeSpaceOpenFile(filename);
 	if (!file)
 		return false;
-
-#ifdef _POSIX_ADVISORY_INFO
-	// Microoptimizing! Remove this if it bothers you.
-	{
-		int fd = fileno(file);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-	}
-#endif
 
 	while (cf_getline(&line, &linelen, file) != -1) {
 		for (size_t i = 0; i < (linelen + 1); i++) {
@@ -338,18 +352,9 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	assert(offset != NULL);
 	assert(size != NULL);
 
-	file = fopen(filename, "r");
+	file = FungeSpaceOpenFile(filename);
 	if (!file)
 		return false;
-
-#ifdef _POSIX_ADVISORY_INFO
-	// Microoptimizing! Remove this if it bothers you.
-	{
-		int fd = fileno(file);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-	}
-#endif
 
 	size->x = 0;
 	size->y = 0;
