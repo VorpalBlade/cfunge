@@ -522,7 +522,7 @@ static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iter
 		if (size != NULL)
 			*size = p_iterator->p_entry->key.i_size;
 
-		return p_iterator->p_entry->p_data;
+		return &p_iterator->p_entry->p_data;
 	}
 
 	p_iterator->p_next = NULL;
@@ -562,7 +562,7 @@ static inline void *next_keysize(ght_iterator_t *p_iterator, const void **pp_key
 		if (size != NULL)
 			*size = p_iterator->p_entry->key.i_size;
 
-		return p_iterator->p_entry->p_data; /* We know that this is non-NULL */
+		return &p_iterator->p_entry->p_data; /* We know that this is non-NULL */
 	}
 
 	/* Last entry */
