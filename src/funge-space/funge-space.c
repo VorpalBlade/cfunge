@@ -32,7 +32,7 @@
 #  include <fcntl.h>
 #endif
 
-#define FUNGESPACEINITIALSIZE 150000
+#define FUNGESPACEINITIALSIZE 2<<15
 
 typedef struct _fungeSpace {
 	// These two form a rectangle for the program size
@@ -67,8 +67,6 @@ FungeSpaceCreate(void)
 	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace->entries)
 		return false;
-	// Unable to determine if this helps or not.
-	//ght_set_heuristics(fspace->entries, GHT_HEURISTICS_TRANSPOSE);
 	ght_set_rehash(fspace->entries, true);
 
 	fspace->topLeftCorner.x = 0;
@@ -104,7 +102,7 @@ FungeSpaceGet(const fungePosition * restrict position)
 
 	assert(position != NULL);
 
-	tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position);
+	tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, position);
 	if (!tmp)
 		return (FUNGEDATATYPE)' ';
 	else
@@ -124,7 +122,7 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), &tmp);
+	result = (FUNGEDATATYPE*)ght_get(fspace->entries, &tmp);
 	if (!result)
 		return (FUNGEDATATYPE)' ';
 	else
@@ -136,15 +134,15 @@ FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 {
 	assert(position != NULL);
 	if (value == ' ') {
-		ght_remove(fspace->entries, sizeof(fungePosition), position);
+		ght_remove(fspace->entries, position);
 	} else {
 		// Reuse cell if it exists
 		FUNGEDATATYPE *tmp;
-		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position)) != NULL) {
+		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, position)) != NULL) {
 			*tmp = value;
 		} else {
-			if (ght_insert(fspace->entries, value, sizeof(fungePosition), position) == -1) {
-				ght_replace(fspace->entries, value, sizeof(fungePosition), position);
+			if (ght_insert(fspace->entries, value, position) == -1) {
+				ght_replace(fspace->entries, value, position);
 			}
 		}
 	}

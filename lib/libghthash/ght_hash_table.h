@@ -60,6 +60,7 @@
 #define GHT_HASH_TABLE_H
 
 #include "../../src/global.h"
+#include "../../src/funge-space/funge-space.h"
 #include <stdlib.h>                    /* size_t */
 #include <stdint.h>
 #include <stdbool.h>
@@ -88,6 +89,8 @@ extern "C"
 // ght_one_at_a_time_hash
 // ght_crc_hash
 #define GHT_HASH_NAME ght_crc_hash
+// Define to one of the GHT_HEURISTICS_* above
+#define GHT_HEURISTICS GHT_HEURISTICS_NONE
 
 
 	/** unsigned 32 bit integer. */
@@ -98,8 +101,7 @@ extern "C"
 	 * structure unless you plan to write your own hash functions.
 	 */
 	typedef struct s_hash_key {
-		size_t      i_size;   /**< The size in bytes of the key p_key */
-		const void *p_key;    /**< A pointer to the key. */
+		fungeSpaceHashKey p_key;    /**< The key. */
 	} ght_hash_key_t;
 
 	/*
@@ -141,21 +143,21 @@ extern "C"
 	 * @see @c ght_one_at_a_time_hash(), @c ght_rotating_hash(),
 	 *      @c ght_crc_hash()
 	 */
-	typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key) FUNGE_FAST;
+	// Not used as a typedef any longer.
+	//typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key) FUNGE_FAST;
 
 	/**
 	 * The hash table structure.
 	 */
-	typedef struct {
+	typedef struct s_ght_hash_table {
 		size_t i_items;                    /**< The current number of items in the table */
 		size_t i_size;                     /**< The number of buckets */
-		int_fast8_t i_heuristics;          /**< The type of heuristics used */
 		bool i_automatic_rehash:1;         /**< TRUE if automatic rehashing is used */
 
 		/* private: */
+		int i_size_mask;                   /* The number of bits used in the size */
 		ght_hash_entry_t **pp_entries;
 		int *p_nr;                         /* The number of entries in each bucket */
-		int i_size_mask;                   /* The number of bits used in the size */
 
 		ght_hash_entry_t *p_oldest;        /* The entry inserted the earliest. */
 		ght_hash_entry_t *p_newest;        /* The entry inserted the latest. */
@@ -181,35 +183,6 @@ extern "C"
 	 * @return a pointer to the hash table or NULL upon error.
 	 */
 	ght_hash_table_t *ght_create(size_t i_size) FUNGE_FAST;
-
-	/**
-	 * Set the hash function to use for a hash table.
-	 *
-	 * @warning Always call this function before any entries are inserted
-	 *          into the table. Otherwise, it will not be possible to find entries
-	 *          that were inserted before this function was called.
-	 *
-	 * @param p_ht the hash table set the hash function for.
-	 * @param fn_hash the hash function.
-	 */
-	void ght_set_hash(ght_hash_table_t *p_ht, ght_fn_hash_t fn_hash) FUNGE_FAST;
-
-	/**
-	 * Set the heuristics to use for the hash table. The possible values are:
-	 *
-	 * - <TT>GHT_HEURISTICS_NONE</TT>: Don't use any heuristics.
-	 * - <TT>0</TT>: Same as above.
-	 * - <TT>GHT_HEURISTICS_TRANSPOSE</TT>: Use transposing heuristics. An
-	 *   accessed element will move one step up in the bucket-list with this
-	 *   method.
-	 * - <TT>GHT_HEURISTICS_MOVE_TO_FRONT</TT>: Use move-to-front
-	 *   heuristics. An accessed element will be moved the front of the
-	 *   bucket list with this method.
-	 *
-	 * @param p_ht the hash table set the heuristics for.
-	 * @param i_heuristics the heuristics to use.
-	 */
-	void ght_set_heuristics(ght_hash_table_t *p_ht, int i_heuristics) FUNGE_FAST;
 
 	/**
 	 * Enable or disable automatic rehashing.
@@ -289,7 +262,7 @@ extern "C"
 	 */
 	int ght_insert(ght_hash_table_t * restrict p_ht,
 	               FUNGEDATATYPE p_entry_data,
-	               size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	               const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Replace an entry in the hash table. This function will return an
@@ -306,7 +279,7 @@ extern "C"
 	 */
 	FUNGEDATATYPE ght_replace(ght_hash_table_t * restrict p_ht,
 	                          FUNGEDATATYPE p_entry_data,
-	                          size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	                          const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
 
 
 	/**
@@ -320,7 +293,7 @@ extern "C"
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
 	FUNGEDATATYPE *ght_get(ght_hash_table_t * restrict p_ht,
-	                       size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	                       const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -333,7 +306,7 @@ extern "C"
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
 	FUNGEDATATYPE ght_remove(ght_hash_table_t * restrict p_ht,
-	                         size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	                         const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Return the first entry in the hash table. This function should be
@@ -376,31 +349,7 @@ extern "C"
 	 *
 	 * @see ght_next()
 	 */
-	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key) FUNGE_FAST;
-
-	/**
-	 * See ght_first() detailed description. This function augments
-	 * ght_first() by providing a facility to get the size of the keys
-	 * also. This interface is beneficial for hashtables which use
-	 * variable length keys.
-	 *
-	 * @param p_ht the hash table to iterate through.
-	 *
-	 * @param p_iterator the iterator to use. The value of the structure
-	 * is filled in by this function and may be stack allocated.
-	 *
-	 * @param pp_key a pointer to the pointer of the key (NULL if none).
-	 *
-	 * @param size a pointer to the size of the key pointer to by pp_key.
-	 *
-	 * @return a pointer to the first entry in the table or NULL if there
-	 * are no entries.
-	 *
-	 *
-	 * @see ght_next()
-	 */
-
-	void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size) FUNGE_FAST;
+	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_FAST;
 
 	/**
 	 * Return the next entry in the hash table. This function should be
@@ -409,8 +358,6 @@ extern "C"
 	 * @warning calling this without first having called ght_first will
 	 * give undefined results (probably a crash), since p_iterator isn't
 	 * filled correctly.
-	 *
-	 * @param p_ht the hash table to iterate through.
 	 *
 	 * @param p_iterator the iterator to use.
 	 *
@@ -421,32 +368,7 @@ extern "C"
 	 *
 	 * @see ght_first()
 	 */
-	void *ght_next(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key) FUNGE_FAST;
-
-	/**
-	 * This functions works just like ght_next() but also returns the
-	 * keysize. This is beneficial for users of the hash table which use
-	 * variable length keys.
-	 *
-	 * @warning calling this without first having called ght_first will
-	 * give undefined results (probably a crash), since p_iterator isn't
-	 * filled correctly.
-	 *
-	 * @param p_ht the hash table to iterate through.
-	 *
-	 * @param p_iterator the iterator to use.
-	 *
-	 * @param pp_key a pointer to the pointer of the key (NULL if none).
-	 *
-	 * @param size a pointer to the size of the key pointer to by pp_key.
-	 *
-	 * @return a pointer to the next entry in the table or NULL if there
-	 * are no more entries in the table.
-	 *
-	 * @see ght_first_keysize()
-	 */
-
-	void *ght_next_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const void **pp_key, size_t *size) FUNGE_FAST;
+	void *ght_next(ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_FAST;
 
 	/**
 	 * Rehash the hash table.
@@ -505,20 +427,6 @@ extern "C"
 	 * @see ght_rotating_hash(), ght_crc_hash()
 	 */
 	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
-
-#if 0
-	/**
-	 * Rotating hash. Not so good hash function. This was found in a
-	 * DrDobbs article, see http://burtleburtle.net/bob/hash/doobs.html
-	 *
-	 * @warning Don't call this function directly, it is only meant to be
-	 * used as a callback for the hash table.
-	 *
-	 * @see ght_fn_hash_t
-	 * @see ght_one_at_a_time_hash(), ght_crc_hash()
-	 */
-	ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
-#endif
 
 	/**
 	 * CRC32 hash. CRC32 hash is a good hash function. This came from Dru
