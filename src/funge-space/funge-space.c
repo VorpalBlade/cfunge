@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <unistd.h>
+#ifdef _POSIX_ADVISORY_INFO
+#  include <fcntl.h>
+#endif
 
 #define FUNGESPACEINITIALSIZE 150000
 // We allocate this many *cells* at a time.
@@ -273,6 +277,15 @@ FungeSpaceLoad(const char * restrict filename)
 	if (!file)
 		return false;
 
+#ifdef _POSIX_ADVISORY_INFO
+	// Microoptimizing! Remove this if it bothers you.
+	{
+		int fd = fileno(file);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+	}
+#endif
+
 	while (cf_getline(&line, &linelen, file) != -1) {
 		for (size_t i = 0; i < (linelen + 1); i++) {
 			if (line[i] == '\0') {
@@ -329,6 +342,15 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	if (!file)
 		return false;
 
+#ifdef _POSIX_ADVISORY_INFO
+	// Microoptimizing! Remove this if it bothers you.
+	{
+		int fd = fileno(file);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+	}
+#endif
+
 	size->x = 0;
 	size->y = 0;
 
@@ -381,6 +403,10 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 	file = fopen(filename, "w");
 	if (!file)
 		return false;
+	// Microoptimizing! Remove this if it bothers you.
+#ifdef _POSIX_ADVISORY_INFO
+	posix_fallocate(fileno(file), 0, size->y * size->x);
+#endif
 
 	// TODO textfile mode
 	for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
