@@ -28,7 +28,7 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
-void RunFileInput(instructionPointer * restrict ip) __attribute__((nonnull));
-void RunFileOutput(instructionPointer * restrict ip) __attribute__((nonnull));
+void RunFileInput(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
+void RunFileOutput(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
 
 #endif

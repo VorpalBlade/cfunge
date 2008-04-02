@@ -29,9 +29,9 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
+FUNGE_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
 #else
-void RunIterate(instructionPointer * restrict ip)
+FUNGE_FAST void RunIterate(instructionPointer * restrict ip)
 #endif
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);

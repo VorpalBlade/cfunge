@@ -63,8 +63,8 @@ FUNGE_FAST void StackFree(fungeStack * stack)
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST static inline fungeStack * StackDuplicate(const fungeStack * old) __attribute__((malloc,nonnull,warn_unused_result));
 // Used for concurrency
+__attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
 FUNGE_FAST static inline fungeStack * StackDuplicate(const fungeStack * old)
 {
 	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));

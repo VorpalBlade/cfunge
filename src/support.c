@@ -61,7 +61,8 @@ FUNGE_FAST char * cf_strndup(char const *string, size_t n)
 #endif
 
 // This function is from Gnulib
-FUNGE_FAST static inline ssize_t
+ __attribute__((warn_unused_result,FUNGE_IN_FAST))
+static inline ssize_t
 cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 {
 	ssize_t result;

@@ -46,7 +46,7 @@ extern char **environ;
 
 // Push a single request value
 // pushStack is stack to push on.
-static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
+FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
 {
 	switch (request) {
 		case 1: // Flags
@@ -192,7 +192,7 @@ static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip,
 #define HIGHESTREQUEST_98 20
 #define HIGHESTREQUEST_108 22
 
-void RunSysInfo(instructionPointer *ip)
+FUNGE_FAST void RunSysInfo(instructionPointer *ip)
 {
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	assert(ip != NULL);

@@ -318,7 +318,7 @@ extern "C"
 	 */
 	int ght_insert(ght_hash_table_t * restrict p_ht,
 	               void * restrict p_entry_data,
-	               unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	               size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Replace an entry in the hash table. This function will return an
@@ -335,7 +335,7 @@ extern "C"
 	 */
 	void *ght_replace(ght_hash_table_t * restrict p_ht,
 	                  void * restrict p_entry_data,
-	                  unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	                  size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 
 	/**
@@ -349,7 +349,7 @@ extern "C"
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
 	void *ght_get(ght_hash_table_t * restrict p_ht,
-	              unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	              size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -362,7 +362,7 @@ extern "C"
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
 	void *ght_remove(ght_hash_table_t * restrict p_ht,
-	                 unsigned int i_key_size, const void * restrict p_key_data) FUNGE_FAST;
+	                 size_t i_key_size, const void * restrict p_key_data) FUNGE_FAST;
 
 	/**
 	 * Return the first entry in the hash table. This function should be

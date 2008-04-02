@@ -46,8 +46,8 @@ static inline void              move_to_front(ght_hash_table_t *p_ht, ght_uint32
 static inline void              free_entry_chain(ght_hash_entry_t *p_entry) FUNGE_FAST;
 static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_key_t *p_key, unsigned char i_heuristics) FUNGE_FAST;
 
-static inline void              hk_fill(ght_hash_key_t *p_hk, int i_size, const void *p_key) FUNGE_FAST;
-static inline ght_hash_entry_t *he_create(void *p_data, unsigned int i_key_size, const void *p_key_data) FUNGE_FAST;
+static inline void              hk_fill(ght_hash_key_t *p_hk, size_t i_size, const void *p_key) FUNGE_FAST;
+static inline ght_hash_entry_t *he_create(void *p_data, size_t i_key_size, const void *p_key_data) FUNGE_FAST;
 static inline void              he_finalize(ght_hash_entry_t *p_he) FUNGE_FAST;
 
 /* --- private methods --- */
@@ -179,9 +179,9 @@ FUNGE_FAST static inline void free_entry_chain(ght_hash_entry_t *p_entry)
 
 
 /* Fill in the data to a existing hash key */
-FUNGE_FAST static inline void hk_fill(ght_hash_key_t *p_hk, int i_size, const void *p_key)
+FUNGE_FAST static inline void hk_fill(ght_hash_key_t *p_hk, size_t i_size, const void *p_key)
 {
-	assert(p_hk);
+	assert(p_hk != NULL);
 
 	p_hk->i_size = i_size;
 	p_hk->p_key = p_key;
@@ -189,7 +189,7 @@ FUNGE_FAST static inline void hk_fill(ght_hash_key_t *p_hk, int i_size, const vo
 
 /* Create an hash entry */
 FUNGE_FAST static inline ght_hash_entry_t *he_create(void *p_data,
-        unsigned int i_key_size, const void *p_key_data)
+        size_t i_key_size, const void *p_key_data)
 {
 	ght_hash_entry_t *p_he;
 
@@ -229,7 +229,7 @@ FUNGE_FAST static inline ght_hash_entry_t *he_create(void *p_data,
 /* Finalize (free) a hash entry */
 FUNGE_FAST static inline void he_finalize(ght_hash_entry_t *p_he)
 {
-	assert(p_he);
+	assert(p_he != NULL);
 
 #if !defined(NDEBUG)
 	p_he->p_next = NULL;
@@ -275,7 +275,7 @@ static inline ght_uint32_t get_hash_value(ght_hash_table_t *p_ht, ght_hash_key_t
 FUNGE_FAST ght_hash_table_t *ght_create(size_t i_size)
 {
 	ght_hash_table_t *p_ht;
-	int i = 1;
+	size_t i = 1;
 
 	if (!(p_ht = (ght_hash_table_t*)cf_malloc(sizeof(ght_hash_table_t)))) {
 		perror("malloc");
@@ -347,7 +347,7 @@ void ght_set_bounded_buckets(ght_hash_table_t *p_ht, unsigned int limit, ght_fn_
 	p_ht->fn_bucket_free = fn;
 
 	if (limit > 0 && fn == NULL) {
-		fprintf(stderr, "ght_set_bounded_buckets: The bucket callback function is NULL but the limit is %d\n", limit);
+		fprintf(stderr, "ght_set_bounded_buckets: The bucket callback function is NULL but the limit is %ud\n", limit);
 	}
 }
 
@@ -367,14 +367,14 @@ size_t ght_table_size(ght_hash_table_t *p_ht)
 
 /* Insert an entry into the hash table */
 FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
-               void * restrict p_entry_data,
-               unsigned int i_key_size, const void * restrict p_key_data)
+                          void * restrict p_entry_data,
+                          size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_entry;
 	ght_uint32_t l_key;
 	ght_hash_key_t key;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	hk_fill(&key, i_key_size, p_key_data);
 	l_key = get_hash_value(p_ht, &key) & p_ht->i_size_mask;
@@ -445,13 +445,13 @@ FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
 
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_FAST void *ght_get(ght_hash_table_t * restrict p_ht,
-              unsigned int i_key_size, const void * restrict p_key_data)
+                         size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
 	ght_uint32_t l_key;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	hk_fill(&key, i_key_size, p_key_data);
 
@@ -469,15 +469,15 @@ FUNGE_FAST void *ght_get(ght_hash_table_t * restrict p_ht,
 
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_FAST void *ght_replace(ght_hash_table_t * restrict p_ht,
-                  void * restrict p_entry_data,
-                  unsigned int i_key_size, const void * restrict p_key_data)
+                             void * restrict p_entry_data,
+                             size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
 	ght_uint32_t l_key;
 	void *p_old;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	hk_fill(&key, i_key_size, p_key_data);
 
@@ -502,14 +502,14 @@ FUNGE_FAST void *ght_replace(ght_hash_table_t * restrict p_ht,
 /* Remove an entry from the hash table. The removed entry, or NULL, is
    returned (and NOT free'd). */
 FUNGE_FAST void *ght_remove(ght_hash_table_t * restrict p_ht,
-                 unsigned int i_key_size, const void * restrict p_key_data)
+                            size_t i_key_size, const void * restrict p_key_data)
 {
 	ght_hash_entry_t *p_out;
 	ght_hash_key_t key;
 	ght_uint32_t l_key;
 	void *p_ret = NULL;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	hk_fill(&key, i_key_size, p_key_data);
 	l_key = get_hash_value(p_ht, &key) & p_ht->i_size_mask;
@@ -582,7 +582,7 @@ void *ght_first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, cons
 
 static inline void *next_keysize(ght_iterator_t *p_iterator, const void **pp_key, size_t *size)
 {
-	assert(p_iterator);
+	assert(p_iterator != NULL);
 
 	if (p_iterator->p_next) {
 		/* More entries */
@@ -627,7 +627,7 @@ FUNGE_FAST void ght_finalize(ght_hash_table_t *p_ht)
 {
 	size_t i;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	if (p_ht->pp_entries) {
 		/* For each bucket, free all entries */
@@ -657,11 +657,11 @@ FUNGE_FAST void ght_rehash(ght_hash_table_t *p_ht, size_t i_size)
 	void *p;
 	size_t i;
 
-	assert(p_ht);
+	assert(p_ht != NULL);
 
 	/* Recreate the hash table with the new size */
 	p_tmp = ght_create(i_size);
-	assert(p_tmp);
+	assert(p_tmp != NULL);
 
 	/* Set the flags for the new hash table */
 	ght_set_hash(p_tmp, p_ht->fn_hash);
@@ -670,7 +670,7 @@ FUNGE_FAST void ght_rehash(ght_hash_table_t *p_ht, size_t i_size)
 
 	/* Walk through all elements in the table and insert them into the temporary one. */
 	for (p = ght_first(p_ht, &iterator, &p_key); p; p = ght_next(p_ht, &iterator, &p_key)) {
-		assert(iterator.p_entry);
+		assert(iterator.p_entry != NULL);
 
 		/* Insert the entry into the new table */
 		if (ght_insert(p_tmp,

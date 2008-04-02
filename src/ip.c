@@ -30,9 +30,8 @@
 
 #include <assert.h>
 
-static inline bool ipCreateInPlace(instructionPointer *me) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
-
-FUNGE_FAST static inline bool ipCreateInPlace(instructionPointer *me)
+__attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST))
+static inline bool ipCreateInPlace(instructionPointer *me)
 {
 	assert(me != NULL);
 	me->position.x         = 0;
@@ -65,7 +64,8 @@ FUNGE_FAST instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
+__attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST))
+static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
 	assert(old != NULL);
 	assert(new != NULL);
 	new->position.x         = old->position.x;
@@ -227,7 +227,10 @@ FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	 * t0 | t1  | t2 |
 	 * t0 | t0a | t1 | t2
 	 */
-	ipDuplicateInPlace(&list->ips[index], &list->ips[index + 1]);
+	if (!ipDuplicateInPlace(&list->ips[index], &list->ips[index + 1])) {
+		// We are in trouble
+		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continueing anyway.\n", stderr);
+	}
 
 	// Here we mirror new IP and do ID changes.
 	index++;

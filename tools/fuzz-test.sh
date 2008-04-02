@@ -28,6 +28,9 @@
 #    in global.h
 # 2) Enable LEAK_MODE in cmake, or valgrind will fail.
 #
+# Note that this script has only been tried on Gentoo Linux 2.6.24 x86_64!
+# I got no idea if it works elsewhere.
+#
 
 
 die() {
@@ -68,7 +71,7 @@ checkerror() {
 # This does not test fingerprints for the simple reason that it is very unlikely any will load.
 while true; do
 	echo "Generating program"
-	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|?:%$#!'\' | tr -d 'mhlio' | head -n 100 > fuzz.tmp
+	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\r\\/ ;",.+*[]{}^<>@`_|?:%$#!'\' | tr -d 'mhlio' | head -n 100 > fuzz.tmp
 	echo "Running free standing"
 	(./cfunge -S fuzz.tmp); checkerror "$?"
 	echo "Running under valgrind"

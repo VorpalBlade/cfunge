@@ -73,7 +73,7 @@ FUNGE_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
 	ght_uint32_t i_hash = 0;
 	size_t i;
 
-	assert(p_key);
+	assert(p_key != NULL);
 
 	for (i = 0; i < p_key->i_size; ++i) {
 		i_hash += ((const unsigned char*)p_key->p_key)[i];
@@ -97,7 +97,7 @@ FUNGE_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 	const unsigned char *p_end;
 	ght_uint32_t  crc;
 
-	assert(p_key);
+	assert(p_key != NULL);
 
 	crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
 	p = (const unsigned char *)p_key->p_key;
@@ -114,7 +114,7 @@ FUNGE_FAST ght_uint32_t ght_rotating_hash(const ght_hash_key_t *p_key)
 	ght_uint32_t i_hash = 0;
 	size_t i;
 
-	assert(p_key);
+	assert(p_key != NULL);
 
 	for (i = 0; i < p_key->i_size; ++i) {
 		i_hash = (i_hash << 4) ^(i_hash >> 28) ^((const unsigned char*)p_key->p_key)[i];

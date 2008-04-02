@@ -51,7 +51,7 @@ static fungeSpace *fspace = NULL;
  * Check if position is in range.
  */
 __attribute__((pure,FUNGE_IN_FAST))
-FUNGE_FAST static inline bool FungeSpaceInRange(const fungePosition * restrict position)
+static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
 	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
 		return false;
@@ -113,7 +113,7 @@ FungeSpaceGet(const fungePosition * restrict position)
 
 	tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), position);
 	if (!tmp)
-		return ' ';
+		return (FUNGEDATATYPE)' ';
 	else
 		return *tmp;
 }
@@ -133,7 +133,7 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 
 	result = (FUNGEDATATYPE*)ght_get(fspace->entries, sizeof(fungePosition), &tmp);
 	if (!result)
-		return ' ';
+		return (FUNGEDATATYPE)' ';
 	else
 		return *result;
 }

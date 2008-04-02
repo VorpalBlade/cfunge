@@ -44,7 +44,7 @@
 #    define  FUNGE_FAST /* NO-OP */
 #  endif
 #else
-// Only define this one, as /**/ doesn't nest.
+   // Only define this one, as /**/ doesn't nest.
 #  define  FUNGE_FAST /* NO-OP */
 #endif
 
