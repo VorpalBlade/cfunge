@@ -56,6 +56,8 @@ typedef struct s_ImplementedFingerprintEntry {
 
 // Implemented fingerprints
 // NOTE: Keep sorted (apart from ending 0 entry).
+// Also note that this table is processed by scripts, so keep the .loader and
+// .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
 	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO",

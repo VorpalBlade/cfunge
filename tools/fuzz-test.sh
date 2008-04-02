@@ -22,7 +22,7 @@
 #                                                                         #
 ###########################################################################
 #
-# This script is used for fuzz testing, to use it:
+# This script is used for simple fuzz testing, to use it:
 # 1) uncomment the line:
 #      #define FUZZ_TESTING
 #    in global.h
@@ -65,16 +65,38 @@ checkerror() {
 		die "Exit code was $1, probably issues there!"
 		return
 	fi
-
 }
 
-# This does not test fingerprints for the simple reason that it is very unlikely any will load.
+# List of additional fingerprint instructions to test.
+FPRINTINSTRS=""
+FPRINT=""
+
+# First parameter is fingerprint name
+createfingerprint() {
+	echo -n "\"${1:3:1}${1:2:1}${1:1:1}${1:0:1}\"4( "
+}
+
+if [[ $1 ]]; then
+	echo "Will test fingerprint ${1}."
+	FPRINT=$1
+	FPRINTINSTRS=$(grep Finger${1}load src/fingerprints/manager.c | grep -Eo '"[A-Z]+"' | tr -d '"')
+fi
+
+# This does not test fingerprints randomly for the simple reason that it is very unlikely any will load.
 while true; do
-	echo "Generating program"
-	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\r\\/ ;",.+*[]{}^<>@`_|?:%$#!'\' | tr -d 'mhlio' | head -n 100 > fuzz.tmp
-	echo "Running free standing"
+	# Clean file
+	> fuzz.tmp
+	# Should we load a fingerprint?
+	if [[ $FPRINT ]]; then
+		createfingerprint "$FPRINT" >> fuzz.tmp
+	fi
+	echo " * Generating random program"
+	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|?:%$#!'\'"${FPRINTINSTRS}" | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
+
+	echo " * Running free standing"
 	(./cfunge -S fuzz.tmp); checkerror "$?"
-	echo "Running under valgrind"
+
+	echo " * Running under valgrind"
 	(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
 	grep -Fq "ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 5 from 1)" valgnd.output || die "Valgrind issues!"
 done

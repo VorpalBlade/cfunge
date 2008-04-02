@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	GC_INIT();
 #endif
 #ifdef FUZZ_TESTING
-	alarm(5);
+	alarm(3);
 #endif
 
 	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
