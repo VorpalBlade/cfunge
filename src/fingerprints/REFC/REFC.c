@@ -39,25 +39,28 @@ static void FingerREFCReference(instructionPointer * ip) {
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (referencesSize == referencesTop) {
-		references = (fungePosition*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
-		// FIXME: Broken state if realloc fails
-		if (references == NULL) {
+		fungePosition * newrefs = (fungePosition*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
+		if (newrefs == NULL) {
 			ipReverse(ip);
 			return;
+		} else {
+			references = newrefs;
+			referencesSize += ALLOCCHUNK;
 		}
-		referencesSize += ALLOCCHUNK;
 	}
 	// TODO: Return same value for the same cell each time!
+	// Yes cell 0 will never be used, but that is a hack to prevent having
+	// errors on someone doing 0D befire they do any R.
+	referencesTop++;
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
 	StackPush(ip->stack, referencesTop);
-	referencesTop++;
 }
 
 static void FingerREFCDereference(instructionPointer * ip) {
 	FUNGEDATATYPE ref;
 	ref = StackPop(ip->stack);
-	if ((ref < 0) || ((size_t)ref > referencesTop)) {
+	if ((ref <= 0) || ((size_t)ref > referencesTop)) {
 		ipReverse(ip);
 		return;
 	}
