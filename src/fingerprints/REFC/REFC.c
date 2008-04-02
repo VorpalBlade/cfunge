@@ -38,7 +38,7 @@ static void FingerREFCReference(instructionPointer * ip) {
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
-	if (referencesSize == referencesTop) {
+	if (referencesSize == referencesTop + 1) {
 		fungePosition * newrefs = (fungePosition*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
 		if (newrefs == NULL) {
 			ipReverse(ip);

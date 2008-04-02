@@ -55,6 +55,9 @@ checkerror() {
 	elif [[ $1 -eq 0 ]]; then
 		echo "Exit code was $1, ok"
 		return
+	# abort(), or maybe just "*** glibc detected ***" ones
+	elif [[ $1 -eq 134 ]]; then
+		die "Exit code was 134, probably abort!"
 	# SIGSEGV or q
 	elif [[ $1 -eq 139 ]]; then
 		die "Exit code was 139, probably segfault!"
