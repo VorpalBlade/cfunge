@@ -216,7 +216,7 @@ static void FingerFPDPfromascii(instructionPointer * ip)
 static void FingerFPDPprint(instructionPointer * ip)
 {
 	popDbl(ip);
-	printf("%F ", u.d);
+	printf("%f ", u.d);
 }
 
 bool FingerFPDPload(instructionPointer * ip) {

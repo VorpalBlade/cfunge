@@ -3,6 +3,7 @@
 *.gcov
 *.log
 *.tmp
+./.gdbinit
 ./CMakeCache.txt
 ./CMakeFiles
 ./cfunge

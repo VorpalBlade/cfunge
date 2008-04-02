@@ -1,0 +1,6 @@
+This directory contains some useful files for when working with cfunge:
+
+ * example.gdbinit
+   Copy this to the top source directory and call it just .gdbinit, then it
+   will add some new commands to allow breaking at specific position in
+   funge-space and such. See file for details on what commands.

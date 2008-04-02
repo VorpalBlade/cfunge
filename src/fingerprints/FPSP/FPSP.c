@@ -222,7 +222,7 @@ static void FingerFPSPprint(instructionPointer * ip)
 {
 	floatint a;
 	a.i = StackPop(ip->stack);
-	printf("%F ", a.f);
+	printf("%f ", a.f);
 }
 
 bool FingerFPSPload(instructionPointer * ip) {
