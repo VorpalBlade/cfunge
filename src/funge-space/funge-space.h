@@ -28,6 +28,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// DO NOT CHANGE unless you are 100 sure of what you are doing!
+// Yes I mean you!
+typedef fungePosition fungeSpaceHashKey;
+
 /**
  * Create a funge-space.
  */
