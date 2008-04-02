@@ -27,7 +27,10 @@
 #      #define FUZZ_TESTING
 #    in global.h
 # 2) Enable LEAK_MODE in cmake, or valgrind will fail.
-#
+# 4) make
+# 5) Run script from top source directory
+#    To test a specific fingerprint, run script with that fingerprint as
+#    the parameter. Otherwise no fingerprints are tested.
 # Note that this script has only been tried on Gentoo Linux 2.6.24 x86_64!
 # I got no idea if it works elsewhere.
 #
@@ -41,31 +44,31 @@ die() {
 checkerror() {
 	# Most likely Ctrl-C, or q instruction
 	if [[ $1 -eq 130 ]]; then
-		echo "Exit code was $1, ctrl c or q"
-		return;
+		echo " * Exit code was $1, ctrl c or q"
+		return
 	# ulimit or q
 	elif [[ $1 -eq 137 ]]; then
-		echo "Exit code was $1, ulimit or q"
-		return;
+		echo " * Exit code was $1, ulimit or q"
+		return
 	# SIGALARM or q
 	elif [[ $1 -eq 142 ]]; then
-		echo "Exit code was $1, alarm"
-		return;
+		echo " * Exit code was $1, alarm"
+		return
 	# Ok, definitly
 	elif [[ $1 -eq 0 ]]; then
-		echo "Exit code was $1, ok"
+		echo " * Exit code was $1, ok"
 		return
 	# abort(), or maybe just "*** glibc detected ***" ones
 	elif [[ $1 -eq 134 ]]; then
-		die "Exit code was 134, probably abort!"
+		die  " * Exit code was 134, probably abort!"
 	# SIGSEGV or q
 	elif [[ $1 -eq 139 ]]; then
-		die "Exit code was 139, probably segfault!"
+		die  " * Exit code was 139, probably segfault!"
 	# Unknown, but in not likely bad range.
 	elif [[ $1 -lt 127 ]]; then
-		echo "Exit code was $1, probably ok"
+		echo " * Exit code was $1, probably ok"
 	else
-		die "Exit code was $1, probably issues there!"
+		die  " * Exit code was $1, probably issues there!"
 		return
 	fi
 }
@@ -85,7 +88,8 @@ if [[ $1 ]]; then
 	FPRINTINSTRS=$(grep Finger${1}load src/fingerprints/manager.c | grep -Eo '"[A-Z]+"' | tr -d '"')
 fi
 
-# This does not test fingerprints randomly for the simple reason that it is very unlikely any will load.
+# This does not test fingerprints loaded randomly for the simple reason that it is very unlikely any will load.
+# Therefore it does instead provide a way to select a fingerprint to test as first parameter.
 while true; do
 	# Clean file
 	> fuzz.tmp
