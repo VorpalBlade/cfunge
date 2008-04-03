@@ -54,9 +54,10 @@ static instructionPointer *IP = NULL;
 /**
  * Print warning on unknown instruction if such warnings are enabled.
  */
-static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
 
-FUNGE_FAST static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip) {
+ __attribute__((nonnull, FUNGE_IN_FAST))
+static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+{
 	if (SettingWarnings)
 		fprintf(stderr,
 		        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
@@ -110,16 +111,18 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 			ip->stringLastWasSpace = true;
 			StackPush(ip->stack, opcode);
 		}
-	// Next: Is this a fingerprint opcode?
+		// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (!SettingEnableFingerprints) {
 			PrintUnknownInstrWarn(opcode, ip);
 			ipReverse(ip);
 		} else {
 			int_fast8_t entry = (char)opcode - 'A';
-			if ((ip->fingerOpcodes[entry]->top > 0) && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1])
+			if ((ip->fingerOpcodes[entry]->top > 0)
+				&& ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
+				// Call the fingerprint.
 				ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
-			else {
+			} else {
 				PrintUnknownInstrWarn(opcode, ip);
 				ipReverse(ip);
 			}
@@ -128,23 +131,21 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 	// Find what one and execute it.
 	} else {
 		switch (opcode) {
-			case ' ':
-				{
-					do {
-						ipForward(ip, 1);
-					} while (FungeSpaceGet(&ip->position) == ' ');
-					ip->needMove = false;
-				}
+			case ' ': {
+				do {
+					ipForward(ip, 1);
+				} while (FungeSpaceGet(&ip->position) == ' ');
+				ip->needMove = false;
 				ReturnFromExecuteInstruction(true);
+			}
 			case 'z':
 				break;
-			case ';':
-				{
-					do {
-						ipForward(ip, 1);
-					} while (FungeSpaceGet(&ip->position) != ';');
-					ReturnFromExecuteInstruction(true);
-				}
+			case ';': {
+				do {
+					ipForward(ip, 1);
+				} while (FungeSpaceGet(&ip->position) != ';');
+				ReturnFromExecuteInstruction(true);
+			}
 			case '^':
 				ipGoNorth(ip);
 				break;
@@ -157,37 +158,35 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 			case '<':
 				ipGoWest(ip);
 				break;
-			case 'j':
-				{
-					// Currently need to do it like this or wrapping
-					// won't work for j.
-					FUNGEDATATYPE jumps = StackPop(ip->stack);
-					if (jumps != 0) {
-						fungeVector tmp;
-						tmp.x = ip->delta.x;
-						tmp.y = ip->delta.y;
-						ip->delta.y *= jumps;
-						ip->delta.x *= jumps;
-						ipForward(ip, 1);
-						ip->delta.x = tmp.x;
-						ip->delta.y = tmp.y;
-					}
-					break;
+			case 'j': {
+				// Currently need to do it like this or wrapping
+				// won't work for j.
+				FUNGEDATATYPE jumps = StackPop(ip->stack);
+				if (jumps != 0) {
+					fungeVector tmp;
+					tmp.x = ip->delta.x;
+					tmp.y = ip->delta.y;
+					ip->delta.y *= jumps;
+					ip->delta.x *= jumps;
+					ipForward(ip, 1);
+					ip->delta.x = tmp.x;
+					ip->delta.y = tmp.y;
 				}
-			case '?':
-				{
-					// May not be perfectly uniform.
-					// If this matters for you, contact me (with a patch).
-					long int rnd = random() % 4;
-					assert((rnd >= 0) && (rnd <= 3));
-					switch (rnd) {
-						case 0: ipGoNorth(ip); break;
-						case 1: ipGoEast(ip); break;
-						case 2: ipGoSouth(ip); break;
-						case 3: ipGoWest(ip); break;
-					}
-					break;
+				break;
+			}
+			case '?': {
+				// May not be perfectly uniform.
+				// If this matters for you, contact me (with a patch).
+				long int rnd = random() % 4;
+				assert((rnd >= 0) && (rnd <= 3));
+				switch (rnd) {
+					case 0: ipGoNorth(ip); break;
+					case 1: ipGoEast(ip); break;
+					case 2: ipGoSouth(ip); break;
+					case 3: ipGoWest(ip); break;
 				}
+				break;
+			}
 			case 'r':
 				ipReverse(ip);
 				break;
@@ -197,13 +196,12 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 			case ']':
 				ipTurnRight(ip);
 				break;
-			case 'x':
-				{
-					fungePosition pos;
-					pos = StackPopVector(ip->stack);
-					ipSetDelta(ip, & pos);
-					break;
-				}
+			case 'x': {
+				fungePosition pos;
+				pos = StackPopVector(ip->stack);
+				ipSetDelta(ip, & pos);
+				break;
+			}
 
 			PUSHVAL('0', 0)
 			PUSHVAL('1', 1)
@@ -240,18 +238,16 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 			case '|':
 				IfNorthSouth(ip);
 				break;
-			case 'w':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					if (a < b)
-						ipTurnLeft(ip);
-					else if (a > b)
-						ipTurnRight(ip);
-					break;
-				}
-
+			case 'w': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				if (a < b)
+					ipTurnLeft(ip);
+				else if (a > b)
+					ipTurnRight(ip);
+				break;
+			}
 			case 'k':
 #ifdef CONCURRENT_FUNGE
 				RunIterate(ip, &IPList, threadindex);
@@ -260,83 +256,75 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 #endif
 				break;
 
-			case '-':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					StackPush(ip->stack, a - b);
-					break;
-				}
-			case '+':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					StackPush(ip->stack, a + b);
-					break;
-				}
-			case '*':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					StackPush(ip->stack, a * b);
-					break;
-				}
-			case '/':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					if (b == 0)
-						StackPush(ip->stack, 0);
-					else
-						StackPush(ip->stack, a / b);
-					break;
-				}
-			case '%':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					if (b == 0)
-						StackPush(ip->stack, 0);
-					else
-						StackPush(ip->stack, a % b);
-					break;
-				}
+			case '-': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				StackPush(ip->stack, a - b);
+				break;
+			}
+			case '+': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				StackPush(ip->stack, a + b);
+				break;
+			}
+			case '*': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				StackPush(ip->stack, a * b);
+				break;
+			}
+			case '/': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				if (b == 0)
+					StackPush(ip->stack, 0);
+				else
+					StackPush(ip->stack, a / b);
+				break;
+			}
+			case '%': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				if (b == 0)
+					StackPush(ip->stack, 0);
+				else
+					StackPush(ip->stack, a % b);
+				break;
+			}
 
 			case '!':
 				StackPush(ip->stack, !StackPop(ip->stack));
 				break;
-			case '`':
-				{
-					FUNGEDATATYPE a, b;
-					b = StackPop(ip->stack);
-					a = StackPop(ip->stack);
-					StackPush(ip->stack, a > b);
-					break;
-				}
+			case '`': {
+				FUNGEDATATYPE a, b;
+				b = StackPop(ip->stack);
+				a = StackPop(ip->stack);
+				StackPush(ip->stack, a > b);
+				break;
+			}
 
-			case 'p':
-				{
-					fungePosition pos;
-					FUNGEDATATYPE a;
-					pos = StackPopVector(ip->stack);
-					a = StackPop(ip->stack);
-					FungeSpaceSetOff(a, &pos, &ip->storageOffset);
-					break;
-				}
-			case 'g':
-				{
-					fungePosition pos;
-					FUNGEDATATYPE a;
-					pos = StackPopVector(ip->stack);
-					a = FungeSpaceGetOff(&pos, &ip->storageOffset);
-					StackPush(ip->stack, a);
-					break;
-				}
+			case 'p': {
+				fungePosition pos;
+				FUNGEDATATYPE a;
+				pos = StackPopVector(ip->stack);
+				a = StackPop(ip->stack);
+				FungeSpaceSetOff(a, &pos, &ip->storageOffset);
+				break;
+			}
+			case 'g': {
+				fungePosition pos;
+				FUNGEDATATYPE a;
+				pos = StackPopVector(ip->stack);
+				a = FungeSpaceGetOff(&pos, &ip->storageOffset);
+				StackPush(ip->stack, a);
+				break;
+			}
 			case '\'':
 				ipForward(ip, 1);
 				StackPush(ip->stack, FungeSpaceGet(&ip->position));
@@ -357,13 +345,12 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				StackSwapTop(ip->stack);
 				break;
 
-			case ',':
-				{
-					FUNGEDATATYPE a = StackPop(ip->stack);
-					putchar((char)a);
-					if (a == '\n') fflush(stdout);
-					break;
-				}
+			case ',': {
+				FUNGEDATATYPE a = StackPop(ip->stack);
+				putchar((char)a);
+				if (a == '\n') fflush(stdout);
+				break;
+			}
 			case '.':
 				printf("%" FUNGEDATAPRI " ", StackPop(ip->stack));
 				break;
@@ -372,34 +359,32 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				fflush(stdout);
 				StackPush(ip->stack, input_getchar());
 				break;
-			case '&':
-				{
-					FUNGEDATATYPE a;
-					bool gotint = false;
-					fflush(stdout);
-					while (!gotint)
-						gotint = input_getint(&a, 10);
-					StackPush(ip->stack, a);
-					break;
-				}
+			case '&': {
+				FUNGEDATATYPE a;
+				bool gotint = false;
+				fflush(stdout);
+				while (!gotint)
+					gotint = input_getint(&a, 10);
+				StackPush(ip->stack, a);
+				break;
+			}
 
 			case 'y':
 				RunSysInfo(ip);
 				break;
 
-			case '{':
-				{
-					FUNGEDATATYPE count;
-					fungePosition pos;
-					count = StackPop(ip->stack);
-					ipForward(ip, 1);
-					pos.x = ip->position.x;
-					pos.y = ip->position.y;
-					ipForward(ip, -1);
-					if (!StackStackBegin(ip, &ip->stackstack, count, &pos))
-						ipReverse(ip);
-					break;
-				}
+			case '{': {
+				FUNGEDATATYPE count;
+				fungePosition pos;
+				count = StackPop(ip->stack);
+				ipForward(ip, 1);
+				pos.x = ip->position.x;
+				pos.y = ip->position.y;
+				ipForward(ip, -1);
+				if (!StackStackBegin(ip, &ip->stackstack, count, &pos))
+					ipReverse(ip);
+				break;
+			}
 			case '}':
 				if (ip->stackstack->size == 1) {
 					ipReverse(ip);
@@ -431,37 +416,36 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				break;
 
 			case '(':
-			case ')':
-				{
-					FUNGEDATATYPE fpsize = StackPop(ip->stack);
-					// Check for sanity (because we won't have any fingerprints
-					// outside such a range. This prevents long lockups here.
-					if (fpsize < 1) {
-						ipReverse(ip);
-					} else if (!SettingEnableFingerprints) {
-						StackPopNDiscard(ip->stack, fpsize);
-						ipReverse(ip);
-					} else {
-						FUNGEDATATYPE fprint = 0;
-						if (SettingWarnings && (fpsize > 8)) {
-							fprintf(stderr,
-								"WARN: %c (x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI "): count is very large(%" FUNGEDATAPRI "), probably a bug.\n",
-								(char)opcode, ip->position.x, ip->position.y, fpsize);
-						}
-						while (fpsize--) {
-							fprint <<= 8;
-							fprint += StackPop(ip->stack);
-						}
-						if (opcode == '(') {
-							if (!ManagerLoad(ip, fprint))
-								ipReverse(ip);
-						} else {
-							if (!ManagerUnload(ip, fprint))
-								ipReverse(ip);
-						}
+			case ')': {
+				FUNGEDATATYPE fpsize = StackPop(ip->stack);
+				// Check for sanity (because we won't have any fingerprints
+				// outside such a range. This prevents long lockups here.
+				if (fpsize < 1) {
+					ipReverse(ip);
+				} else if (!SettingEnableFingerprints) {
+					StackPopNDiscard(ip->stack, fpsize);
+					ipReverse(ip);
+				} else {
+					FUNGEDATATYPE fprint = 0;
+					if (SettingWarnings && (fpsize > 8)) {
+						fprintf(stderr,
+						        "WARN: %c (x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI "): count is very large(%" FUNGEDATAPRI "), probably a bug.\n",
+						        (char)opcode, ip->position.x, ip->position.y, fpsize);
 					}
-					break;
+					while (fpsize--) {
+						fprint <<= 8;
+						fprint += StackPop(ip->stack);
+					}
+					if (opcode == '(') {
+						if (!ManagerLoad(ip, fprint))
+							ipReverse(ip);
+					} else {
+						if (!ManagerUnload(ip, fprint))
+							ipReverse(ip);
+					}
 				}
+				break;
+			}
 
 #ifdef CONCURRENT_FUNGE
 			case 't':
@@ -506,7 +490,7 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 
 
 #ifdef CONCURRENT_FUNGE
-__attribute__((nonnull,FUNGE_IN_FAST))
+__attribute__((nonnull, FUNGE_IN_FAST))
 static inline void ThreadForward(instructionPointer * ip)
 {
 	assert(ip != NULL);
@@ -519,13 +503,13 @@ static inline void ThreadForward(instructionPointer * ip)
 #endif
 
 
-__attribute__((noreturn,FUNGE_IN_FAST))
+__attribute__((noreturn, FUNGE_IN_FAST))
 static inline void interpreterMainLoop(void)
 {
 #ifdef CONCURRENT_FUNGE
 	while (true) {
 		ssize_t i = IPList->top;
-		while(i >= 0) {
+		while (i >= 0) {
 			bool retval;
 			FUNGEDATATYPE opcode;
 
@@ -572,7 +556,8 @@ static inline void interpreterMainLoop(void)
 // Used with debugging for freeing stuff at end of program
 // not needed, but useful to check that free functions works,
 // and for detecting real memory leaks.
-static void DebugFreeThings(void) {
+static void DebugFreeThings(void)
+{
 # ifdef CONCURRENT_FUNGE
 	ipListFree(IPList);
 # else
@@ -584,7 +569,7 @@ static void DebugFreeThings(void) {
 
 FUNGE_FAST void interpreterRun(const char *filename)
 {
-	if(!FungeSpaceCreate()) {
+	if (!FungeSpaceCreate()) {
 		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
 	}

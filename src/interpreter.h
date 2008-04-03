@@ -39,8 +39,8 @@ extern int fungeargc;
 // Functions
 
 // Certain instructions that are also used elsewhere.
-void IfEastWest(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
-void IfNorthSouth(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
+void IfEastWest(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+void IfNorthSouth(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 
 /**
  * Run instruction.
@@ -50,15 +50,15 @@ void IfNorthSouth(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE
 // again right away (in main loop)!
 bool ExecuteInstruction(FUNGEDATATYPE opcode,
                         instructionPointer * restrict ip,
-                        ssize_t * threadindex) __attribute__((nonnull,FUNGE_IN_FAST));
+                        ssize_t * threadindex) __attribute__((nonnull, FUNGE_IN_FAST));
 #else
 void ExecuteInstruction(FUNGEDATATYPE opcode,
-                        instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
+                        instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 #endif
 
 /**
  * Should only be called from main.c
  */
-void interpreterRun(const char *filename) __attribute__((noreturn,FUNGE_IN_FAST));
+void interpreterRun(const char *filename) __attribute__((noreturn, FUNGE_IN_FAST));
 
 #endif

@@ -35,16 +35,16 @@
 
 #ifdef __GNUC__
 #  ifdef __i386__
-     // For use in lists with other attributes
+// For use in lists with other attributes
 #    define  FUNGE_IN_FAST regparm(3)
-     // For stand alone
+// For stand alone
 #    define  FUNGE_FAST __attribute__((regparm(3)))
 #  else
 #    define  FUNGE_IN_FAST /* NO-OP */
 #    define  FUNGE_FAST /* NO-OP */
 #  endif
 #else
-   // Only define this one, as /**/ doesn't nest.
+// Only define this one, as /**/ doesn't nest.
 #  define  FUNGE_FAST /* NO-OP */
 #endif
 
