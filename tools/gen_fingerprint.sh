@@ -42,11 +42,15 @@ else
 fi
 
 if [[ -z $2 ]]; then
-	echo "ERROR: Please provide as second parameter a list of implemented opcodes!" >&2
+	echo "ERROR: Please provide as second parameter a *sorted* list of implemented opcodes!" >&2
 	echo "Usage: $0 FingerprintName opcodes" >&2
 	exit 1
 else
-	OPCODES="$2"
+	if [[ $2 =~ ^[A-Z]+$ ]]; then
+		OPCODES="$2"
+	else
+		die "The opcodes are not valid. The must be in the range A-Z"
+	fi
 fi
 
 addtoh() {
@@ -153,20 +157,23 @@ addtoc "#include \"${FPRINT}.h\""
 cat >> "${FPRINT}.c" << EOF
 #include "../../stack.h"
 
-// Template function
-EOF
-addtoc "static void Finger${FPRINT}function(instructionPointer * ip)"
-
-cat >> "${FPRINT}.c" << EOF
-{
-}
+// Template functions, rename them.
 
 EOF
-
-addtoc "bool Finger${FPRINT}load(instructionPointer * ip) {"
 
 for (( i = 0; i < ${#OPCODES}; i++ )); do
-	addtoc "	if (!OpcodeStackAdd(ip, '${OPCODES:$i:1}', &...))"
+	addtoc "// ${OPCODES:$i:1} - "
+	addtoc "static void Finger${FPRINT}function(instructionPointer * ip) {"
+	addtoc '}'
+	addtoc ''
+done
+
+
+
+addtoc "bool Finger${FPRINT}load(instructionPointer * ip) {"
+addtoc "	// Insert the functions in question after the &"
+for (( i = 0; i < ${#OPCODES}; i++ )); do
+	addtoc "	if (!OpcodeStackAdd(ip, '${OPCODES:$i:1}', &))"
 	addtoc "		return false;"
 done
 
@@ -175,4 +182,5 @@ cat >> "${FPRINT}.c" << EOF
 }
 EOF
 
+echo "If the opcode list isn't sorted you may want to delete the result and rerun with it sorted."
 echo "All done! However make sure the copyright in the files is correct. Oh, and another thing: implement the fingerprint :)"
