@@ -35,8 +35,9 @@ int fungeargc = 0;
 
 // These are NOT worth inlineing, even though only called once.
 
-__attribute__((noreturn,noinline,FUNGE_IN_FAST))
-static void printFeatures(void) {
+__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+static void printFeatures(void)
+{
 	puts("Features compiled into this binary:");
 #ifdef CONCURRENT_FUNGE
 	puts(" + Concurrency using t instruction is enabled.");
@@ -70,8 +71,9 @@ static void printFeatures(void) {
 	ManagerList();
 }
 
-__attribute__((noreturn,noinline,FUNGE_IN_FAST))
-static void printHelp(void) {
+__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+static void printHelp(void)
+{
 	puts("Usage: cfunge [OPTIONS] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
 	puts(" -F           Disable all fingerprints.");
@@ -89,8 +91,9 @@ static void printHelp(void) {
 	exit(EXIT_SUCCESS);
 }
 
-__attribute__((noreturn,noinline,FUNGE_IN_FAST))
-static void printVersion(void) {
+__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+static void printVersion(void)
+{
 	printf("cfunge %s\n", APPVERSION);
 	puts("Copyright (C) 2008 Arvid Norlander.");
 	puts("This is free software.  You may redistribute copies of it under the terms of");

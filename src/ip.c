@@ -30,7 +30,7 @@
 
 #include <assert.h>
 
-__attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST))
+__attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST))
 static inline bool ipCreateInPlace(instructionPointer *me)
 {
 	assert(me != NULL);
@@ -64,8 +64,9 @@ FUNGE_FAST instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-__attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST))
-static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new) {
+__attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST))
+static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new)
+{
 	assert(old != NULL);
 	assert(new != NULL);
 	new->position.x         = old->position.x;
@@ -203,16 +204,16 @@ FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 		return -1;
 	*me = list;
 	list->size++;
-/*
-	Splitting examples.
-
-	Thread index 3 splits (to 3a)
-	0  | 1  | 2  | 3  | 4   | 5  | 6
-	---------------------------------
-	t0 | t1 | t3 | t3 | t4  | t5 |
-	t0 | t1 | t2 | t3 | t3a | t4 | t5
-
-*/
+	/*
+	 *  Splitting examples.
+	 *
+	 *  Thread index 3 splits (to 3a)
+	 *  0  | 1  | 2  | 3  | 4   | 5  | 6
+	 *  ---------------------------------
+	 *  t0 | t1 | t3 | t3 | t4  | t5 |
+	 *  t0 | t1 | t2 | t3 | t3a | t4 | t5
+	 *
+	 */
 	// Do we need to move any upwards?
 	if (index != list->top) {
 		/* Move upwards:
@@ -250,16 +251,16 @@ FUNGE_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
 
 	list = *me;
 
-/*
-	Terminate examples.
-
-	Thread index 3 dies
-	0  | 1  | 2  | 3  | 4  | 5
-	---------------------------
-	t0 | t1 | t2 | t3 | t4 | t5
-	t0 | t1 | t3 | t4 | t5 |
-
-*/
+	/*
+	 *  Terminate examples.
+	 *
+	 *  Thread index 3 dies
+	 *  0  | 1  | 2  | 3  | 4  | 5
+	 *  ---------------------------
+	 *  t0 | t1 | t2 | t3 | t4 | t5
+	 *  t0 | t1 | t3 | t4 | t5 |
+	 *
+	 */
 	ipFreeResources(&list->ips[index]);
 	// Do we need to move downwards?
 	if (index != list->top) {

@@ -64,7 +64,7 @@ FUNGE_FAST void StackFree(fungeStack * stack)
 
 #ifdef CONCURRENT_FUNGE
 // Used for concurrency
-__attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
+__attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST))
 FUNGE_FAST static inline fungeStack * StackDuplicate(const fungeStack * old)
 {
 	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
@@ -209,7 +209,7 @@ FUNGE_FAST char *StackPopString(fungeStack * restrict stack)
 		x[index] = (char)c;
 		index++;
 	}
-	x[index]='\0';
+	x[index] = '\0';
 	return x;
 #endif
 }
@@ -331,11 +331,12 @@ FUNGE_FAST fungeStackStack * StackStackDuplicate(const fungeStackStack * restric
 #endif
 
 
-FUNGE_FAST static void OOMstackStack(const instructionPointer * restrict ip) {
+FUNGE_FAST static void OOMstackStack(const instructionPointer * restrict ip)
+{
 	if (SettingWarnings) {
 		fprintf(stderr,
-			"WARN: Out of memory in stack-stack routine at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ". Reflecting.\n",
-			ip->position.x, ip->position.y);
+		        "WARN: Out of memory in stack-stack routine at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ". Reflecting.\n",
+		        ip->position.x, ip->position.y);
 	}
 	// Lets hope.
 #ifndef DISABLE_GC

@@ -75,7 +75,7 @@ typedef struct s_ipList {
 /**
  * Create a new instruction pointer.
  */
-instructionPointer * ipCreate(void) __attribute__((malloc,warn_unused_result,FUNGE_IN_FAST));
+instructionPointer * ipCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
 /**
  * Free an instruction pointer.
  */
@@ -87,7 +87,7 @@ void ipFree(instructionPointer * restrict ip) FUNGE_FAST;
  * However if you will wrap, you probably want to set a temp delta instead and
  * take one step for now.
  */
-void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute__((nonnull,FUNGE_IN_FAST));
+void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute__((nonnull, FUNGE_IN_FAST));
 
 /**
  * Mirror IP direction.
@@ -98,10 +98,10 @@ void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute
 		(ip)->delta.y *= -1; \
 	}
 
-void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
-void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
-void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull,FUNGE_IN_FAST));
-void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull,FUNGE_IN_FAST));
+void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull, FUNGE_IN_FAST));
+void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull, FUNGE_IN_FAST));
 
 // To make things simpler.
 #define ipGoWest(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
@@ -113,7 +113,7 @@ void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restr
 /**
  * Create a new IP list with the single default IP in it.
  */
-ipList* ipListCreate(void) __attribute__((malloc,warn_unused_result,FUNGE_IN_FAST));
+ipList* ipListCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
 /**
  * Free IP list.
  */
@@ -123,12 +123,12 @@ void ipListFree(ipList* me) FUNGE_FAST;
  * Returns index of next to execute as that may have changed after this call.
  * A value of -1 = failed to create IP.
  */
-ssize_t ipListDuplicateIP(ipList** me, size_t index) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
+ssize_t ipListDuplicateIP(ipList** me, size_t index) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 /**
  * Terminate an ip.
  * Returns index of next to execute as that may have changed after this call.
  */
-ssize_t ipListTerminateIP(ipList** me, size_t index) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
+ssize_t ipListTerminateIP(ipList** me, size_t index) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 #endif
 
 

@@ -114,7 +114,7 @@ void StackSwapTop(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_
 /**
  * Create a new stack-stack
  */
-fungeStackStack * StackStackCreate(void) __attribute__((malloc,warn_unused_result, FUNGE_IN_FAST));
+fungeStackStack * StackStackCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
 /**
  * Free a stack-stack and any stacks it contain.
  */
@@ -124,7 +124,7 @@ void StackStackFree(fungeStackStack * me) FUNGE_FAST;
 /**
  * Deep copy a stack-stack, used for concurrency
  */
-fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __attribute__((malloc,nonnull,warn_unused_result, FUNGE_IN_FAST));
+fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST));
 #endif
 
 /**

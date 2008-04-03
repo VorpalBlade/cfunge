@@ -77,6 +77,6 @@ char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_resul
 size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
 
 // This is glibc specific, so here is a version from gnulib.
-ssize_t cf_getline (char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
+ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 
 #endif
