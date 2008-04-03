@@ -38,7 +38,8 @@ ROMAPUSH(M, 1000)
 
 
 
-bool FingerROMAload(instructionPointer * ip) {
+bool FingerROMAload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'C', &FingerROMAPushC))
 		return false;
 	if (!OpcodeStackAdd(ip, 'D', &FingerROMAPushD))

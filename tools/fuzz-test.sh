@@ -30,9 +30,12 @@
 # 4) make
 # 5) Run script from top source directory
 #    To test a specific fingerprint, run script with that fingerprint as
-#    the parameter. Otherwise no fingerprints are tested.
+#    the parameter. Otherwise no fingerprints are tested (just core).
 # Note that this script has only been tried on Gentoo Linux 2.6.24 x86_64!
 # I got no idea if it works elsewhere.
+#
+# Note that input/output is not tested, -S is used. I think you could test
+# I/O in a chroot though.
 #
 
 

@@ -13,6 +13,9 @@ src/fingerprints/BASE/BASE.h
 src/fingerprints/DIRF
 src/fingerprints/DIRF/DIRF.c
 src/fingerprints/DIRF/DIRF.h
+src/fingerprints/FIXP
+src/fingerprints/FIXP/FIXP.c
+src/fingerprints/FIXP/FIXP.h
 src/fingerprints/FPDP
 src/fingerprints/FPDP/FPDP.c
 src/fingerprints/FPDP/FPDP.h

@@ -28,21 +28,24 @@
 #include <stdio.h>
 
 
-static void FingerORTHbitAnd(instructionPointer * ip) {
+static void FingerORTHbitAnd(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	StackPush(ip->stack, x & y);
 }
 
-static void FingerORTHbitOr(instructionPointer * ip) {
+static void FingerORTHbitOr(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	StackPush(ip->stack, x | y);
 }
 
-static void FingerORTHbitXor(instructionPointer * ip) {
+static void FingerORTHbitXor(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
@@ -50,13 +53,15 @@ static void FingerORTHbitXor(instructionPointer * ip) {
 }
 
 // ortho get
-static void FingerORTHget(instructionPointer * ip) {
+static void FingerORTHget(instructionPointer * ip)
+{
 	fungeVector v = StackPopVector(ip->stack);
 	StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(v.y, v.x)));
 }
 
 // ortho put
-static void FingerORTHput(instructionPointer * ip) {
+static void FingerORTHput(instructionPointer * ip)
+{
 	fungeVector v;
 	FUNGEDATATYPE c;
 
@@ -67,7 +72,8 @@ static void FingerORTHput(instructionPointer * ip) {
 }
 
 // output string
-static void FingerORTHoutputString(instructionPointer * ip) {
+static void FingerORTHoutputString(instructionPointer * ip)
+{
 	// puts add newline, we therefore do fputs on stdout
 	char * str = StackPopString(ip->stack);
 	fputs(str, stdout);
@@ -77,32 +83,38 @@ static void FingerORTHoutputString(instructionPointer * ip) {
 }
 
 // change dx
-static void FingerORTHchangeDx(instructionPointer * ip) {
+static void FingerORTHchangeDx(instructionPointer * ip)
+{
 	ip->delta.x = StackPop(ip->stack);
 }
 
 // change dy
-static void FingerORTHchangeDy(instructionPointer * ip) {
+static void FingerORTHchangeDy(instructionPointer * ip)
+{
 	ip->delta.y = StackPop(ip->stack);
 }
 
 // change x
-static void FingerORTHchangeX(instructionPointer * ip) {
+static void FingerORTHchangeX(instructionPointer * ip)
+{
 	ipSetPosition(ip, VectorCreateRef(StackPop(ip->stack), ip->position.y));
 }
 
 // change y
-static void FingerORTHchangeY(instructionPointer * ip) {
+static void FingerORTHchangeY(instructionPointer * ip)
+{
 	ipSetPosition(ip, VectorCreateRef(ip->position.x, StackPop(ip->stack)));
 }
 
 // ramp if zero
-static void FingerORTHrampIfZero(instructionPointer * ip) {
+static void FingerORTHrampIfZero(instructionPointer * ip)
+{
 	if (!StackPop(ip->stack))
 		ipForward(ip, 1);
 }
 
-bool FingerORTHload(instructionPointer * ip) {
+bool FingerORTHload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerORTHbitAnd))
 		return false;
 	if (!OpcodeStackAdd(ip, 'O', &FingerORTHbitOr))

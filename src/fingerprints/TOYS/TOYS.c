@@ -46,7 +46,7 @@ static void FingerTOYSgable(instructionPointer * ip)
 		return;
 	}
 
-	while(n--)
+	while (n--)
 		StackPush(ip->stack, c);
 }
 
@@ -59,8 +59,8 @@ static void FingerTOYSpairOfShoes(instructionPointer * ip)
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 
-	StackPush(ip->stack, x+y);
-	StackPush(ip->stack, x-y);
+	StackPush(ip->stack, x + y);
+	StackPush(ip->stack, x - y);
 
 }
 
@@ -96,7 +96,7 @@ static void FingerTOYStoiletSeat(instructionPointer * ip)
 static void FingerTOYSpitchforkHead(instructionPointer * ip)
 {
 	FUNGEDATATYPE sum = 0;
-	for(size_t i = ip->stack->top; i-- > 0;)
+	for (size_t i = ip->stack->top; i-- > 0;)
 		sum += ip->stack->entries[i];
 	StackClear(ip->stack);
 	StackPush(ip->stack, sum);
@@ -168,11 +168,11 @@ static void FingerTOYSfishhook(instructionPointer * ip)
 		return;
 	else if (n < 0) {
 		for (FUNGEDATATYPE y = bounds.y; y <= (bounds.y + bounds.h); ++y)
-			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y+n));
+			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y + n));
 
 	} else if (n > 0) {
 		for (FUNGEDATATYPE y = (bounds.y + bounds.h); y >= bounds.y; --y)
-			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y+n));
+			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y + n));
 	}
 }
 
@@ -250,10 +250,10 @@ static void FingerTOYSboulder(instructionPointer * ip)
 		return;
 	else if (n < 0) {
 		for (FUNGEDATATYPE x = bounds.x; x <= (bounds.x + bounds.w); ++x)
-			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x+n, ip->position.y));
+			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x + n, ip->position.y));
 	} else if (n > 0) {
 		for (FUNGEDATATYPE x = (bounds.x + bounds.w); x >= bounds.x; --x)
-			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x+n, ip->position.y));
+			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x + n, ip->position.y));
 	}
 }
 
@@ -261,7 +261,7 @@ static void FingerTOYSboulder(instructionPointer * ip)
 static void FingerTOYSmailbox(instructionPointer * ip)
 {
 	FUNGEDATATYPE product = 1;
-	for(size_t i = ip->stack->top; i-- > 0;)
+	for (size_t i = ip->stack->top; i-- > 0;)
 		product *= ip->stack->entries[i];
 	StackClear(ip->stack);
 	StackPush(ip->stack, product);
@@ -394,7 +394,8 @@ static void FingerTOYSbarnDoor(instructionPointer * ip)
 
 
 
-bool FingerTOYSload(instructionPointer * ip) {
+bool FingerTOYSload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerTOYSgable))
 		return false;
 	if (!OpcodeStackAdd(ip, 'B', &FingerTOYSpairOfShoes))

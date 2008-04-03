@@ -30,7 +30,8 @@
 
 static const ipDelta SUBRnewDelta = { .x = 1, .y = 0 };
 
-static void FingerSUBRCall(instructionPointer * ip) {
+static void FingerSUBRCall(instructionPointer * ip)
+{
 	FUNGEDATATYPE n;
 	fungePosition pos;
 	fungeStack *tmpstack;
@@ -54,7 +55,8 @@ static void FingerSUBRCall(instructionPointer * ip) {
 	ip->needMove = false;
 }
 
-static void FingerSUBRJump(instructionPointer * ip) {
+static void FingerSUBRJump(instructionPointer * ip)
+{
 	fungePosition pos;
 
 	pos = StackPopVector(ip->stack);
@@ -62,7 +64,8 @@ static void FingerSUBRJump(instructionPointer * ip) {
 	ipSetDelta(ip, &SUBRnewDelta);
 }
 
-static void FingerSUBRReturn(instructionPointer * ip) {
+static void FingerSUBRReturn(instructionPointer * ip)
+{
 	FUNGEDATATYPE n;
 	fungePosition pos;
 	fungeVector vec;
@@ -87,7 +90,8 @@ static void FingerSUBRReturn(instructionPointer * ip) {
 }
 
 
-bool FingerSUBRload(instructionPointer * ip) {
+bool FingerSUBRload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'C', &FingerSUBRCall))
 		return false;
 	if (!OpcodeStackAdd(ip, 'J', &FingerSUBRJump))

@@ -127,17 +127,17 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 	{
 		ght_uint32_t k = *(const ght_uint32_t *)data;
 
-		k *= m; 
-		k ^= k >> r; 
-		k *= m; 
-		
-		h *= m; 
+		k *= m;
+		k ^= k >> r;
+		k *= m;
+
+		h *= m;
 		h ^= k;
 
 		data += 4;
 		len -= 4;
 	}
-	
+
 	// Not needed the way we use it.
 #if 0
 	// Handle the last few bytes of the input array
@@ -159,7 +159,7 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 	h ^= h >> 15;
 
 	return h;
-} 
+}
 
 
 /* CRC32 hash based on code from comp.compression FAQ.
@@ -184,6 +184,3 @@ FUNGE_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
 #endif
 
 }
-
-
-

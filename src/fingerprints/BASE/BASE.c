@@ -27,27 +27,31 @@
 #include <math.h>
 
 // FIXME: replace with non-recursive.
-FUNGE_FAST static void binary(FUNGEDATATYPE number) {
-	if(number > 0) {
+FUNGE_FAST static void binary(FUNGEDATATYPE number)
+{
+	if (number > 0) {
 		binary(number >> 1);
 		putchar(number & 1 ? '1' : '0');
 	}
 }
 
-static void FingerBASEoutputBinary(instructionPointer * ip) {
+static void FingerBASEoutputBinary(instructionPointer * ip)
+{
 	FUNGEDATATYPE x;
 	x = StackPop(ip->stack);
 	binary(x);
 	putchar(' ');
 }
 
-static void FingerBASEoutputOctal(instructionPointer * ip) {
+static void FingerBASEoutputOctal(instructionPointer * ip)
+{
 	FUNGEDATATYPE x;
 	x = StackPop(ip->stack);
 	printf("%" FUNGEDATAoctPRI " ", (FUNGEunsignedDATATYPE)x);
 }
 
-static void FingerBASEoutputHex(instructionPointer * ip) {
+static void FingerBASEoutputHex(instructionPointer * ip)
+{
 	FUNGEDATATYPE x;
 	x = StackPop(ip->stack);
 	printf("%" FUNGEDATAhexPRI " ", (FUNGEunsignedDATATYPE)x);
@@ -57,7 +61,8 @@ static void FingerBASEoutputHex(instructionPointer * ip) {
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-static void FingerBASEoutputBase(instructionPointer * ip) {
+static void FingerBASEoutputBase(instructionPointer * ip)
+{
 	FUNGEDATATYPE base, val;
 
 	base = StackPop(ip->stack);
@@ -79,14 +84,15 @@ static void FingerBASEoutputBase(instructionPointer * ip) {
 		char * result = (char*)cf_calloc(i, sizeof(char));
 		for (i = 0; val > 0; val /= base)
 			result[i++] = digits[val % base];
-		for(; i-- > 0;)
+		for (; i-- > 0;)
 			putchar(result[i]);
 		putchar(' ');
 		cf_free(result);
 	}
 }
 
-static void FingerBASEinputBase(instructionPointer * ip) {
+static void FingerBASEinputBase(instructionPointer * ip)
+{
 	FUNGEDATATYPE base;
 	FUNGEDATATYPE a = 0;
 
@@ -103,7 +109,8 @@ static void FingerBASEinputBase(instructionPointer * ip) {
 }
 
 
-bool FingerBASEload(instructionPointer * ip) {
+bool FingerBASEload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'B', &FingerBASEoutputBinary))
 		return false;
 	if (!OpcodeStackAdd(ip, 'H', &FingerBASEoutputHex))

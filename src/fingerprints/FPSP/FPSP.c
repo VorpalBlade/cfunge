@@ -225,7 +225,8 @@ static void FingerFPSPprint(instructionPointer * ip)
 	printf("%f ", a.f);
 }
 
-bool FingerFPSPload(instructionPointer * ip) {
+bool FingerFPSPload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerFPSPadd))
 		return false;
 	if (!OpcodeStackAdd(ip, 'B', &FingerFPSPsin))

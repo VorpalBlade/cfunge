@@ -36,11 +36,13 @@ static doubleint u;
 static double d;
 
 
-FUNGE_FAST static inline void popDbl(instructionPointer * ip) {
+FUNGE_FAST static inline void popDbl(instructionPointer * ip)
+{
 	u.i.low = StackPop(ip->stack);
 	u.i.high = StackPop(ip->stack);
 }
-FUNGE_FAST static inline void pushDbl(instructionPointer * ip) {
+FUNGE_FAST static inline void pushDbl(instructionPointer * ip)
+{
 	StackPush(ip->stack, u.i.high);
 	StackPush(ip->stack, u.i.low);
 }
@@ -219,7 +221,8 @@ static void FingerFPDPprint(instructionPointer * ip)
 	printf("%f ", u.d);
 }
 
-bool FingerFPDPload(instructionPointer * ip) {
+bool FingerFPDPload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerFPDPadd))
 		return false;
 	if (!OpcodeStackAdd(ip, 'B', &FingerFPDPsin))

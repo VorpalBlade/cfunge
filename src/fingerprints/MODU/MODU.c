@@ -24,7 +24,7 @@
 
 // This was more or less taken from CCBI
 
-__attribute__((const,FUNGE_IN_FAST))
+__attribute__((const, FUNGE_IN_FAST))
 static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 {
 	x /= y;
@@ -34,7 +34,8 @@ static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 		return x;
 }
 
-static void FingerMODUSignedResult(instructionPointer * ip) {
+static void FingerMODUSignedResult(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
@@ -45,7 +46,8 @@ static void FingerMODUSignedResult(instructionPointer * ip) {
 	}
 }
 
-static void FingerMODUUnsignedResult(instructionPointer * ip) {
+static void FingerMODUUnsignedResult(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
@@ -57,7 +59,8 @@ static void FingerMODUUnsignedResult(instructionPointer * ip) {
 }
 
 // C style reminder.
-static void FingerMODURemainder(instructionPointer * ip) {
+static void FingerMODURemainder(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
@@ -71,7 +74,8 @@ static void FingerMODURemainder(instructionPointer * ip) {
 }
 
 
-bool FingerMODUload(instructionPointer * ip) {
+bool FingerMODUload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'M', &FingerMODUSignedResult))
 		return false;
 	if (!OpcodeStackAdd(ip, 'U', &FingerMODUUnsignedResult))

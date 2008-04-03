@@ -34,7 +34,8 @@ static size_t referencesTop = 0;
 // Size of array (including allocated but not yet used elements).
 static size_t referencesSize = 0;
 
-static void FingerREFCReference(instructionPointer * ip) {
+static void FingerREFCReference(instructionPointer * ip)
+{
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
@@ -57,7 +58,8 @@ static void FingerREFCReference(instructionPointer * ip) {
 	StackPush(ip->stack, referencesTop);
 }
 
-static void FingerREFCDereference(instructionPointer * ip) {
+static void FingerREFCDereference(instructionPointer * ip)
+{
 	FUNGEDATATYPE ref;
 	ref = StackPop(ip->stack);
 	if ((ref <= 0) || ((size_t)ref > referencesTop)) {
@@ -67,7 +69,8 @@ static void FingerREFCDereference(instructionPointer * ip) {
 	StackPushVector(ip->stack, &references[ref]);
 }
 
-FUNGE_FAST static inline bool InitReferences(void) {
+FUNGE_FAST static inline bool InitReferences(void)
+{
 	assert(!references);
 	references = (fungePosition*)cf_malloc(ALLOCCHUNK * sizeof(fungePosition));
 	if (!references)
@@ -77,7 +80,8 @@ FUNGE_FAST static inline bool InitReferences(void) {
 }
 
 
-bool FingerREFCload(instructionPointer * ip) {
+bool FingerREFCload(instructionPointer * ip)
+{
 	if (!references)
 		if (!InitReferences())
 			return false;

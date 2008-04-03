@@ -60,7 +60,7 @@ static void FingerFIXPrand(instructionPointer * ip)
 {
 	FUNGEDATATYPE n;
 	n = StackPop(ip->stack);
-	
+
 	// No one said this had to be uniform, did they?
 	if (n == 0)
 		StackPush(ip->stack, 0);
@@ -161,7 +161,8 @@ static void FingerFIXPxor(instructionPointer * ip)
 	StackPush(ip->stack, StackPop(ip->stack) ^ StackPop(ip->stack));
 }
 
-bool FingerFIXPload(instructionPointer * ip) {
+bool FingerFIXPload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerFIXPand))
 		return false;
 	if (!OpcodeStackAdd(ip, 'B', &FingerFIXPacos))

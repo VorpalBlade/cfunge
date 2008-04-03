@@ -21,11 +21,13 @@
 
 #include "NULL.h"
 
-static void FingerNULLreverse(instructionPointer * ip) {
+static void FingerNULLreverse(instructionPointer * ip)
+{
 	ipReverse(ip);
 }
 
-bool FingerNULLload(instructionPointer * ip) {
+bool FingerNULLload(instructionPointer * ip)
+{
 	for (char c = 'A'; c < 'Z'; c++)
 		// TODO: Leave in consistent state here?
 		if (!OpcodeStackAdd(ip, c, &FingerNULLreverse))
