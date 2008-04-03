@@ -440,6 +440,10 @@ extern "C"
 	 */
 	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
 
+	// Fast hash, sometimes better than CRC, sometimes worse.
+	ght_uint32_t murmur_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
+
+
 #ifdef USE_PROFILING
 	/**
 	 * Print some statistics about the table. Only available if the

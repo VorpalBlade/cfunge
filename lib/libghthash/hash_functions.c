@@ -106,3 +106,84 @@ FUNGE_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ *(p++)];
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
+
+static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
+{
+	// 'm' and 'r' are mixing constants generated offline.
+	// They're not really 'magic', they just happen to work well.
+
+	const ght_uint32_t m = 0x5bd1e995;
+	const int32_t r = 24;
+
+	// Initialize the hash to a 'random' value
+	size_t len = sizeof(fungeSpaceHashKey);
+	ght_uint32_t h = 0x7fd652ad ^ len;
+
+	// Mix 4 bytes at a time into the hash
+
+	const unsigned char * data = (const unsigned char *)key;
+
+	while(len >= 4)
+	{
+		ght_uint32_t k = *(const ght_uint32_t *)data;
+
+		k *= m; 
+		k ^= k >> r; 
+		k *= m; 
+		
+		h *= m; 
+		h ^= k;
+
+		data += 4;
+		len -= 4;
+	}
+	
+	// Not needed the way we use it.
+#if 0
+	// Handle the last few bytes of the input array
+
+	switch(len)
+	{
+	case 3: h ^= data[2] << 16;
+	case 2: h ^= data[1] << 8;
+	case 1: h ^= data[0];
+	        h *= m;
+	};
+#endif
+
+	// Do a few final mixes of the hash to ensure the last few
+	// bytes are well-incorporated.
+
+	h ^= h >> 13;
+	h *= m;
+	h ^= h >> 15;
+
+	return h;
+} 
+
+
+/* CRC32 hash based on code from comp.compression FAQ.
+ * Added by Dru Lemley <spambait@lemley.net>
+ */
+FUNGE_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
+{
+#ifdef USE32
+	const ght_uint32_t m = 0xc6a4a793;
+
+	ght_uint32_t h = 0x7fd652ad ^ (8 * m), k;
+
+	k = p_key->p_key.x; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;
+	k = p_key->p_key.y; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;
+
+	h *= m; h ^= h >> 10;
+	h *= m; h ^= h >> 17;
+
+	return h;
+#else
+	return MurmurHash2(p_key);
+#endif
+
+}
+
+
+

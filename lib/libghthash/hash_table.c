@@ -137,6 +137,13 @@ FUNGE_FAST static inline void remove_from_chain(ght_hash_table_t *p_ht, ght_uint
 	}
 }
 
+FUNGE_FAST
+static inline bool CompareKeys(const ght_hash_key_t * restrict a, const ght_hash_key_t * restrict b) {
+	if ((a->p_key.x == b->p_key.x) && (a->p_key.y == b->p_key.y))
+		return true;
+	return false;
+}
+
 /* Search for an element in a bucket */
 FUNGE_FAST static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uint32_t l_bucket,
         ght_hash_key_t *p_key, const unsigned char i_heuristics)
@@ -146,7 +153,7 @@ FUNGE_FAST static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_
 	for (p_e = p_ht->pp_entries[l_bucket];
 	     p_e;
 	     p_e = p_e->p_next) {
-		if ((p_e->key.p_key.x == p_key->p_key.x) && (p_e->key.p_key.y == p_key->p_key.y)) {
+		if (CompareKeys(&p_e->key, p_key)) {
 			/* Matching entry found - Apply heuristics, if any */
 			switch (i_heuristics) {
 				case GHT_HEURISTICS_MOVE_TO_FRONT:
