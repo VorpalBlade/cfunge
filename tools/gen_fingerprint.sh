@@ -35,11 +35,27 @@ die() {
 
 if [[ -z $1 ]]; then
 	echo "ERROR: Please provide finger print name!" >&2
-	echo "Usage: $0 FingerprintName" >&2
+	echo "Usage: $0 FingerprintName opcodes" >&2
 	exit 1
 else
 	FPRINT="$1"
 fi
+
+if [[ -z $2 ]]; then
+	echo "ERROR: Please provide as second parameter a list of implemented opcodes!" >&2
+	echo "Usage: $0 FingerprintName opcodes" >&2
+	exit 1
+else
+	OPCODES="$2"
+fi
+
+addtoh() {
+	echo "$1" >> "${FPRINT}.h"
+}
+addtoc() {
+	echo "$1" >> "${FPRINT}.c"
+}
+
 
 if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
 	echo "Fingerprint name $FPRINT ok style."
@@ -90,8 +106,8 @@ cat > "${FPRINT}.h" << EOF
 EOF
 
 
-echo "#ifndef _HAD_SRC_FINGERPRINTS_${FPRINT}_H" >> "${FPRINT}.h"
-echo "#define _HAD_SRC_FINGERPRINTS_${FPRINT}_H" >> "${FPRINT}.h"
+addtoh "#ifndef _HAD_SRC_FINGERPRINTS_${FPRINT}_H"
+addtoh "#define _HAD_SRC_FINGERPRINTS_${FPRINT}_H"
 
 cat >> "${FPRINT}.h" << EOF
 
@@ -100,10 +116,10 @@ cat >> "${FPRINT}.h" << EOF
 
 EOF
 
-echo "bool Finger${FPRINT}load(instructionPointer * ip);" >> "${FPRINT}.h"
+addtoh "bool Finger${FPRINT}load(instructionPointer * ip);"
 
-echo >> "${FPRINT}.h"
-echo "#endif" >> "${FPRINT}.h"
+addtoh ""
+addtoh "#endif"
 
 ##############
 # Now for .c #
@@ -133,13 +149,13 @@ cat > "${FPRINT}.c" << EOF
  */
 
 EOF
-echo "#include \"${FPRINT}.h\"" >> "${FPRINT}.c"
+addtoc "#include \"${FPRINT}.h\""
 cat >> "${FPRINT}.c" << EOF
 #include "../../stack.h"
 
 // Template function
 EOF
-echo "static void Finger${FPRINT}function(instructionPointer * ip)" >> "${FPRINT}.c"
+addtoc "static void Finger${FPRINT}function(instructionPointer * ip)"
 
 cat >> "${FPRINT}.c" << EOF
 {
@@ -147,16 +163,14 @@ cat >> "${FPRINT}.c" << EOF
 
 EOF
 
-echo "bool Finger${FPRINT}load(instructionPointer * ip) {" >> "${FPRINT}.c"
+addtoc "bool Finger${FPRINT}load(instructionPointer * ip) {"
 
-echo "	if (!OpcodeStackAdd(ip, 'A', &Finger${FPRINT}function))"  >> "${FPRINT}.c"
+for (( i = 0; i < ${#OPCODES}; i++ )); do
+	addtoc "	if (!OpcodeStackAdd(ip, '${OPCODES:$i:1}', &...))"
+	addtoc "		return false;"
+done
 
 cat >> "${FPRINT}.c" << EOF
-		return false;
-	if (!OpcodeStackAdd(ip, 'B', &...))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &...))
-		return false;
 	return true;
 }
 EOF
