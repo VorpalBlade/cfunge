@@ -2,6 +2,7 @@
 *.gcno
 *.gcov
 *.log
+*.orig
 *.tmp
 ./.gdbinit
 ./CMakeCache.txt

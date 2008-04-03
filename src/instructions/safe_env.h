@@ -24,6 +24,6 @@
 #include "../global.h"
 #include <stdbool.h>
 
-bool CheckEnvIsSafe(const char *envvar) __attribute__((nonnull,warn_unused_result,FUNGE_IN_FAST));
+bool CheckEnvIsSafe(const char *envvar) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 
 #endif

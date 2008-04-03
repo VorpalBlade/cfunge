@@ -28,6 +28,6 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
-void RunSysInfo(instructionPointer * ip) __attribute__((nonnull,FUNGE_IN_FAST));
+void RunSysInfo(instructionPointer * ip) __attribute__((nonnull, FUNGE_IN_FAST));
 
 #endif

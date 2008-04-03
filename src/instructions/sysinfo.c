@@ -49,21 +49,20 @@ extern char **environ;
 FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
 {
 	switch (request) {
-		case 1: // Flags
-			{
-				FUNGEDATATYPE tmp = 0x0;
+		case 1: { // Flags
+			FUNGEDATATYPE tmp = 0x0;
 #ifdef CONCURRENT_FUNGE
-				tmp |= 0x01;
+			tmp |= 0x01;
 #endif
-				if (!SettingSandbox) {
-					// i = 0x02, o = 0x04
-					tmp |= 0x06;
-				}
-				if (SettingCurrentStandard == stdver108)
-					tmp |= 0x20;
-				StackPush(pushStack, tmp);
+			if (!SettingSandbox) {
+				// i = 0x02, o = 0x04
+				tmp |= 0x06;
 			}
-			break;
+			if (SettingCurrentStandard == stdver108)
+				tmp |= 0x20;
+			StackPush(pushStack, tmp);
+		}
+		break;
 		case 2: // Cell size
 			StackPush(pushStack, sizeof(FUNGEDATATYPE));
 			break;
@@ -97,38 +96,34 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 		case 12: // Storage offset of current IP position
 			StackPushVector(pushStack, &ip->storageOffset);
 			break;
-		case 13: // Least point
-			{
-				fungeRect rect;
-				FungeSpaceGetBoundRect(&rect);
-				StackPushVector(pushStack, VectorCreateRef(rect.x, rect.y));
-				break;
-			}
-		case 14: // Greatest point
-			{
-				fungeRect rect;
-				FungeSpaceGetBoundRect(&rect);
-				StackPushVector(pushStack, VectorCreateRef(rect.x + rect.w, rect.y + rect.h));
-				break;
-			}
-		case 15: // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
-			{
-				time_t now;
-				struct tm *curTime;
-				now = time(NULL);
-				curTime = gmtime(&now);
-				StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
-				break;
-			}
-		case 16: // Time (hour * 256 * 256) + (minute * 256) + (second)
-			{
-				time_t now;
-				struct tm *curTime;
-				now = time(NULL);
-				curTime = gmtime(&now);
-				StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
-				break;
-			}
+		case 13: { // Least point
+			fungeRect rect;
+			FungeSpaceGetBoundRect(&rect);
+			StackPushVector(pushStack, VectorCreateRef(rect.x, rect.y));
+			break;
+		}
+		case 14: { // Greatest point
+			fungeRect rect;
+			FungeSpaceGetBoundRect(&rect);
+			StackPushVector(pushStack, VectorCreateRef(rect.x + rect.w, rect.y + rect.h));
+			break;
+		}
+		case 15: { // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
+			time_t now;
+			struct tm *curTime;
+			now = time(NULL);
+			curTime = gmtime(&now);
+			StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
+			break;
+		}
+		case 16: { // Time (hour * 256 * 256) + (minute * 256) + (second)
+			time_t now;
+			struct tm *curTime;
+			now = time(NULL);
+			curTime = gmtime(&now);
+			StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
+			break;
+		}
 		case 17: // Number of stacks on stack stack
 			StackPush(pushStack, ip->stackstack->size);
 			break;
@@ -152,28 +147,27 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 				StackPushString(pushStack, fungeargv[i], strlen(fungeargv[i]));
 			}
 			break;
-		case 20: // Environment variables
-			{
-				char * tmp;
-				int i = 0;
-				StackPush(pushStack, '\0');
+		case 20: { // Environment variables
+			char * tmp;
+			int i = 0;
+			StackPush(pushStack, '\0');
 
-				while (true) {
-					tmp = environ[i];
-					if (!tmp || *tmp == '\0')
-						break;
-					if (SettingSandbox) {
-						if (!CheckEnvIsSafe(tmp)) {
-							i++;
-							continue;
-						}
+			while (true) {
+				tmp = environ[i];
+				if (!tmp || *tmp == '\0')
+					break;
+				if (SettingSandbox) {
+					if (!CheckEnvIsSafe(tmp)) {
+						i++;
+						continue;
 					}
-					StackPushString(pushStack, tmp, strlen(tmp));
-					i++;
 				}
-
-				break;
+				StackPushString(pushStack, tmp, strlen(tmp));
+				i++;
 			}
+
+			break;
+		}
 		case 21: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
 			// Bytes
 			StackPush(pushStack, 2);

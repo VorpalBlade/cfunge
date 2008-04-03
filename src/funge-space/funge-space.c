@@ -48,7 +48,7 @@ static fungeSpace *fspace = NULL;
 /**
  * Check if position is in range.
  */
-__attribute__((pure,FUNGE_IN_FAST))
+__attribute__((pure, FUNGE_IN_FAST))
 static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
 	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
@@ -87,7 +87,8 @@ FungeSpaceFree(void)
 }
 
 FUNGE_FAST void
-FungeSpaceGetBoundRect(fungeRect * restrict rect) {
+FungeSpaceGetBoundRect(fungeRect * restrict rect)
+{
 	rect->x = fspace->topLeftCorner.x;
 	rect->y = fspace->topLeftCorner.y;
 	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x;
@@ -192,8 +193,8 @@ FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 				position->x -= delta->x;
 				position->y -= delta->y;
 			} while (FungeSpaceInRange(position));
-				position->x += delta->x;
-				position->y += delta->y;
+			position->x += delta->x;
+			position->y += delta->y;
 		}
 	}
 }
@@ -223,8 +224,9 @@ void FungeSpaceDump(void)
 #endif
 
 
-__attribute__((nonnull,always_inline,warn_unused_result,FUNGE_IN_FAST))
-static inline FILE * FungeSpaceOpenFile(const char * restrict filename) {
+__attribute__((nonnull, always_inline, warn_unused_result, FUNGE_IN_FAST))
+static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
+{
 	FILE * file;
 
 	assert(filename != NULL);

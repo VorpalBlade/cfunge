@@ -30,9 +30,9 @@
 
 
 #ifdef CONCURRENT_FUNGE
-void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex) __attribute__((nonnull,FUNGE_IN_FAST));
+void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex) __attribute__((nonnull, FUNGE_IN_FAST));
 #else
-void RunIterate(instructionPointer * restrict ip) __attribute__((nonnull,FUNGE_IN_FAST));
+void RunIterate(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 #endif
 
 #endif
