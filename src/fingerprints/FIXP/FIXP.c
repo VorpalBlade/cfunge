@@ -58,8 +58,14 @@ static void FingerFIXPcos(instructionPointer * ip)
 // D - rand
 static void FingerFIXPrand(instructionPointer * ip)
 {
+	FUNGEDATATYPE n;
+	n = StackPop(ip->stack);
+	
 	// No one said this had to be uniform, did they?
-	StackPush(ip->stack, (FUNGEDATATYPE)random() % StackPop(ip->stack));
+	if (n == 0)
+		StackPush(ip->stack, 0);
+	else
+		StackPush(ip->stack, random() % n);
 }
 
 // I - sin
