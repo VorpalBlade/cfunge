@@ -25,6 +25,13 @@
 #include <stdlib.h>
 #include <math.h>
 
+// Yeah, some systems are *really* crap.
+// This includes Mingw on windows when I tried.
+#ifndef M_PI
+#  define M_PI 3.14159265358979323846
+#endif
+
+
 #define FUNGE_PI_180 (M_PI / 180.0)
 #define FUNGE_180_PI (180.0 / M_PI)
 

@@ -79,4 +79,10 @@ size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
 // This is glibc specific, so here is a version from gnulib.
 ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 
+// Yep, crap.
+#ifdef __WIN32__
+#  define random rand
+#  define srandom srand
+#endif
+
 #endif

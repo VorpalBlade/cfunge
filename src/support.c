@@ -105,7 +105,9 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 				needed = needed_max;
 			if (cur_len + 1 >= needed) {
 				result = -1;
+#ifndef __WIN32__
 				errno = EOVERFLOW;
+#endif
 				goto unlock_return;
 			}
 

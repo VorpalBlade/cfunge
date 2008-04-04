@@ -40,8 +40,16 @@
 // Temp variable used for pushing of stack size.
 static size_t TOSSSize = 0;
 
-#ifndef _GNU_SOURCE
+#ifdef __WIN32__
+// Now, win32 is crap and insane, so we just fake it, much simpler
+static const char * environ[] = {
+	"SYSTEM=windows crap",
+	"SUPPORTS=not environ at least, get a sane system if you want this to work."
+};
+#else
+#  ifndef _GNU_SOURCE
 extern char **environ;
+#  endif
 #endif
 
 // Push a single request value
@@ -148,7 +156,7 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 			}
 			break;
 		case 20: { // Environment variables
-			char * tmp;
+			const char * tmp;
 			int i = 0;
 			StackPush(pushStack, '\0');
 
