@@ -57,7 +57,7 @@ checkerror() {
 	elif [[ $1 -eq 142 ]]; then
 		echo " * Exit code was $1, alarm"
 		return
-	# Ok, definitly
+	# Ok, definitely
 	elif [[ $1 -eq 0 ]]; then
 		echo " * Exit code was $1, ok"
 		return
