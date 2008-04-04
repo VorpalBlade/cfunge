@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <unistd.h>
-#ifdef _POSIX_ADVISORY_INFO
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
 #  include <fcntl.h>
 #endif
 
@@ -235,7 +235,7 @@ static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 	if (!file) {
 		return NULL;
 	} else {
-#ifdef _POSIX_ADVISORY_INFO
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
 		// Microoptimizing! Remove this if it bothers you.
 		{
 			int fd = fileno(file);
@@ -372,7 +372,7 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 	if (!file)
 		return false;
 	// Microoptimizing! Remove this if it bothers you.
-#ifdef _POSIX_ADVISORY_INFO
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
 	posix_fallocate(fileno(file), 0, size->y * size->x);
 #endif
 

@@ -180,7 +180,7 @@ FUNGE_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
 
 	return h;
 #else
-	return MurmurHash2(p_key);
+	return MurmurHash2(p_key->p_key);
 #endif
 
 }
