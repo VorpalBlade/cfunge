@@ -15,13 +15,24 @@ don't. For example:
 
 Dependencies
 ------------
-You will need cmake (http://www.cmake.org/) to compile cfunge.
+REQUIRED:
+ * cmake (http://www.cmake.org/) to compile cfunge.
 
-Further you will need Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/)
-version 7 or later installed to run or compile this software. If you lack it
-you could try building without garbage collector but IT IS UNSUPPORTED. If you
-still want to try, enable LEAK_MODE option in cmake. If a bug only happens in
-this mode, it probably won't get fixed.
+ * A C99 compiler, or one that supports a large subset of C99, like GCC.
+   GCC 4.1.2 is known to work, GCC 3.4.6 will work with some minor changes
+   to CMakeLists.txt (see comments in that file for details).
+
+ * A POSIX system. Linux 2.6.24 is known to work, so is FreeBSD 7.0. Windows may
+   or may not work, but I won't fix any bugs that can't be reproduced on a POSIX
+   system. Patches are welcome if they don't mess up source too much (anything
+   using Win32/64 API counts as messing up).
+
+RECOMMENDED:
+  Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later
+  is HIGHLY recommended. If you lack it you could try building without garbage
+  collector but it is unsupported. If you still want to try, enable LEAK_MODE
+  option in cmake. If a bug only happens in this mode, it probably won't get
+  fixed as fast. Patches are welcome though.
 
 
 Configuring

@@ -105,6 +105,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 				needed = needed_max;
 			if (cur_len + 1 >= needed) {
 				result = -1;
+// Yep, windows is mad.
 #ifndef __WIN32__
 				errno = EOVERFLOW;
 #endif
