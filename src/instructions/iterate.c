@@ -53,6 +53,9 @@ FUNGE_FAST void RunIterate(instructionPointer * restrict ip)
 				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
 				        ip->position.x, ip->position.y, (char)kInstr, kInstr);
 			ipReverse(ip);
+		} else if (kInstr == '@') {
+			// Iterating over @ is insane, to avoid issues when doing concurrent execution lets just kill current IP.
+			ExecuteInstruction(kInstr, ip, threadindex);
 		} else {
 			// Ok we got to execute it!
 			// The weird stuff below, is, as described by CCBI:
