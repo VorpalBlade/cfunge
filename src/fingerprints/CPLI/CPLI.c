@@ -43,8 +43,13 @@ static void FingerCPLIdiv(instructionPointer * ip) {
 	ai = StackPop(ip->stack);
 	ar = StackPop(ip->stack);
 	denom = bi*bi + br*br;
-	StackPush(ip->stack, (ai*bi + ar*br) / denom);
-	StackPush(ip->stack, (ai*br - ar*bi) / denom);
+	if (denom != 0) {
+		StackPush(ip->stack, (ai*bi + ar*br) / denom);
+		StackPush(ip->stack, (ai*br - ar*bi) / denom);
+	} else {
+		StackPush(ip->stack, 0);
+		StackPush(ip->stack, 0);
+	}
 }
 
 // M - mul
