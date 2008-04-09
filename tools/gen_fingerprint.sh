@@ -163,15 +163,17 @@ EOF
 
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	addtoc "// ${OPCODES:$i:1} - "
-	addtoc "static void Finger${FPRINT}function(instructionPointer * ip) {"
+	addtoc "static void Finger${FPRINT}function(instructionPointer * ip)"
+	addtoc '{'
 	addtoc '}'
 	addtoc ''
 done
 
 
 
-addtoc "bool Finger${FPRINT}load(instructionPointer * ip) {"
-addtoc "	// Insert the functions in question after the &"
+addtoc "bool Finger${FPRINT}load(instructionPointer * ip)"
+addtoc '{'
+addtoc '	// Insert the functions in question after the &'
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	addtoc "	if (!OpcodeStackAdd(ip, '${OPCODES:$i:1}', &))"
 	addtoc "		return false;"
@@ -182,5 +184,16 @@ cat >> "${FPRINT}.c" << EOF
 }
 EOF
 
+FPRINTHEX='0x'
+for (( i = 0; i < ${#FPRINT}; i++ )); do
+	printf -v hex '%x' "'${FPRINT:$i:1}"
+	FPRINTHEX+="$hex"
+done
+echo
+echo "For manager.c you want something like this:"
+echo "// ${FPRINT} - short description"
+echo "{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
+echo "  .url = \"fill-in\", .safe = false },"
+echo
 echo "If the opcode list isn't sorted you may want to delete the result and rerun with it sorted."
 echo "All done! However make sure the copyright in the files is correct. Oh, and another thing: implement the fingerprint :)"
