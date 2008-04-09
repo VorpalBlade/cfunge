@@ -60,16 +60,18 @@ addtoc() {
 	echo "$1" >> "${FPRINT}.c"
 }
 
+echo "NOTE: If the opcode list isn't sorted you will want to delete the result and rerun with it sorted."
 
+echo " * Sanity checking parameters..."
 if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
-	echo "Fingerprint name $FPRINT ok style."
+	echo "   Fingerprint name $FPRINT ok style."
 # Yes those (space, / and \) break stuff...
 # You got to create stuff on your own if you need those, and not include that
 # in any function names or filenames.
 elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
-	echo "Fingerprint name $FPRINT probably ok (but not common style)."
-	echo "Make sure each char is in the ASCII range 0-254."
-	echo "Note that alphanumeric (upper case only) fingerprint names are strongly prefered."
+	echo "   Fingerprint name $FPRINT probably ok (but not common style)."
+	echo "   Make sure each char is in the ASCII range 0-254."
+	echo "   Note that alphanumeric (upper case only) fingerprint names are strongly prefered."
 else
 	die "Not valid format for fingerprint name."
 fi
@@ -82,9 +84,11 @@ if [[ -e src/fingerprints/$FPRINT ]]; then
 	die "A fingerprint with that name already exists"
 fi
 
+echo " * Creating directory..."
 mkdir "src/fingerprints/$FPRINT" || die "mkdir failed"
 cd "src/fingerprints/$FPRINT"
 
+echo " * Creating header file..."
 cat > "${FPRINT}.h" << EOF
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
@@ -129,7 +133,7 @@ addtoh "#endif"
 # Now for .c #
 ##############
 
-
+echo " * Creating source file..."
 cat > "${FPRINT}.c" << EOF
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
@@ -184,6 +188,8 @@ cat >> "${FPRINT}.c" << EOF
 }
 EOF
 
+echo "   File creation done"
+echo " * Generating data for manager.c..."
 FPRINTHEX='0x'
 for (( i = 0; i < ${#FPRINT}; i++ )); do
 	printf -v hex '%x' "'${FPRINT:$i:1}"
@@ -195,5 +201,4 @@ echo "// ${FPRINT} - short description"
 echo "{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
 echo "  .url = \"fill-in\", .safe = false },"
 echo
-echo "If the opcode list isn't sorted you may want to delete the result and rerun with it sorted."
 echo "All done! However make sure the copyright in the files is correct. Oh, and another thing: implement the fingerprint :)"
