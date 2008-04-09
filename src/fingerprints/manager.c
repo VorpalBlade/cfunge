@@ -31,6 +31,7 @@
 #include <assert.h>
 
 #include "BASE/BASE.h"
+#include "CPLI/CPLI.h"
 #include "DIRF/DIRF.h"
 #include "FIXP/FIXP.h"
 #include "FPDP/FPDP.h"
@@ -62,6 +63,9 @@ typedef struct s_ImplementedFingerprintEntry {
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
 	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// CPLI - Complex Integer extension
+	{ .fprint = 0x43504c49, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// DIRF - Directory functions extension, NOT SAFE
 	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR",

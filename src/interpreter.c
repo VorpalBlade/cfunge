@@ -55,7 +55,7 @@ static instructionPointer *IP = NULL;
  * Print warning on unknown instruction if such warnings are enabled.
  */
 
- __attribute__((nonnull, FUNGE_IN_FAST))
+__attribute__((nonnull, FUNGE_IN_FAST))
 static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
 	if (SettingWarnings)

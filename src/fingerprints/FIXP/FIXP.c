@@ -35,8 +35,6 @@
 #define FUNGE_PI_180 (M_PI / 180.0)
 #define FUNGE_180_PI (180.0 / M_PI)
 
-// Template functions, rename them.
-
 // A - and
 static void FingerFIXPand(instructionPointer * ip)
 {
