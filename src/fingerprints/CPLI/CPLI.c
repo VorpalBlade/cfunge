@@ -25,7 +25,8 @@
 #include <math.h>
 
 // A - add
-static void FingerCPLIadd(instructionPointer * ip) {
+static void FingerCPLIadd(instructionPointer * ip)
+{
 	FUNGEDATATYPE ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
@@ -36,13 +37,14 @@ static void FingerCPLIadd(instructionPointer * ip) {
 }
 
 // D - div
-static void FingerCPLIdiv(instructionPointer * ip) {
+static void FingerCPLIdiv(instructionPointer * ip)
+{
 	FUNGEDATATYPE ar, ai, br, bi, denom;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
 	ai = StackPop(ip->stack);
 	ar = StackPop(ip->stack);
-	denom = bi*bi + br*br;
+	denom = bi * bi + br * br;
 	if (denom != 0) {
 		StackPush(ip->stack, (ai*bi + ar*br) / denom);
 		StackPush(ip->stack, (ai*br - ar*bi) / denom);
@@ -53,7 +55,8 @@ static void FingerCPLIdiv(instructionPointer * ip) {
 }
 
 // M - mul
-static void FingerCPLImul(instructionPointer * ip) {
+static void FingerCPLImul(instructionPointer * ip)
+{
 	FUNGEDATATYPE ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
@@ -64,7 +67,8 @@ static void FingerCPLImul(instructionPointer * ip) {
 }
 
 // O - out
-static void FingerCPLIout(instructionPointer * ip) {
+static void FingerCPLIout(instructionPointer * ip)
+{
 	FUNGEDATATYPE r, i;
 	i = StackPop(ip->stack);
 	r = StackPop(ip->stack);
@@ -75,7 +79,8 @@ static void FingerCPLIout(instructionPointer * ip) {
 }
 
 // S - sub
-static void FingerCPLIsub(instructionPointer * ip) {
+static void FingerCPLIsub(instructionPointer * ip)
+{
 	FUNGEDATATYPE ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
@@ -86,17 +91,18 @@ static void FingerCPLIsub(instructionPointer * ip) {
 }
 
 // V - abs
-static void FingerCPLIabs(instructionPointer * ip) {
+static void FingerCPLIabs(instructionPointer * ip)
+{
 	FUNGEDATATYPE r, i;
 	double tmp;
 	i = StackPop(ip->stack);
 	r = StackPop(ip->stack);
-	tmp = sqrt((double)(r*r + i*i));
+	tmp = sqrt((double)(r * r + i * i));
 	StackPush(ip->stack, (FUNGEDATATYPE)tmp);
 }
 
-bool FingerCPLIload(instructionPointer * ip) {
-	// Insert the functions in question after the &
+bool FingerCPLIload(instructionPointer * ip)
+{
 	if (!OpcodeStackAdd(ip, 'A', &FingerCPLIadd))
 		return false;
 	if (!OpcodeStackAdd(ip, 'D', &FingerCPLIdiv))

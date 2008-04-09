@@ -52,6 +52,7 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 		if (!ManagerCreate(me))
 			return false;
 	}
+	me->fingerHRTItimestamp = NULL;
 	return true;
 }
 
@@ -87,6 +88,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 		if (!ManagerDuplicate(old, new))
 			return false;
 	}
+	new->fingerHRTItimestamp = NULL;
 	return true;
 }
 #endif
@@ -102,6 +104,10 @@ FUNGE_FAST static inline void ipFreeResources(instructionPointer * ip)
 	ip->stack = NULL;
 	if (SettingEnableFingerprints) {
 		ManagerFree(ip);
+	}
+	if (ip->fingerHRTItimestamp) {
+		cf_free(ip->fingerHRTItimestamp);
+		ip->fingerHRTItimestamp = NULL;
 	}
 }
 

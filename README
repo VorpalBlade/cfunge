@@ -16,7 +16,7 @@ don't. For example:
 Dependencies
 ------------
 REQUIRED:
- * cmake (http://www.cmake.org/) to compile cfunge.
+ * cmake (http://www.cmake.org/) to generate Makefile for cfunge.
 
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    GCC 4.1.2 is known to work, GCC 3.4.6 will work with some minor changes
@@ -90,6 +90,7 @@ with some exceptions:
 
 Short descriptions of implemented fingerprints:
  BASE I/O for numbers in other bases
+ CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
  FPDP Double precision floating point
  FPSP Single precision floating point

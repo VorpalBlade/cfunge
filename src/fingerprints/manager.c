@@ -36,6 +36,7 @@
 #include "FIXP/FIXP.h"
 #include "FPDP/FPDP.h"
 #include "FPSP/FPSP.h"
+#include "HRTI/HRTI.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
@@ -79,6 +80,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// FPSP - Single precision floating point
 	{ .fprint = 0x46505350, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// HRTI - High-Resolution Timer Interface
+	{ .fprint = 0x48525449, .loader = &FingerHRTIload, .opcodes = "EGMTS",
+	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },

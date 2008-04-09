@@ -84,7 +84,11 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 			StackPush(pushStack, 0);
 			break;
 		case 6: // Path separator
+#ifdef __WIN32__
+			StackPush(pushStack, '\\');
+#else
 			StackPush(pushStack, '/');
+#endif
 			break;
 		case 7: // Scalars / vector
 			StackPush(pushStack, 2);
