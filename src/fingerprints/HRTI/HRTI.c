@@ -37,10 +37,27 @@ static inline FUNGEDATATYPE GetDifference(const struct timeval * before,
 	       + (FUNGEDATATYPE)after->tv_usec - (FUNGEDATATYPE)before->tv_usec;
 }
 
+// This function checks that the IP got a non-null HRTI data pointer.
+__attribute__((FUNGE_IN_FAST, nonnull, warn_unused_result))
+static inline bool CheckIPgotHRTI(instructionPointer * ip)
+{
+	if (!ip->fingerHRTItimestamp) {
+		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(struct timeval));
+		if (!ip->fingerHRTItimestamp)
+			return false;
+		ip->fingerHRTItimestamp->tv_sec = 0;
+		ip->fingerHRTItimestamp->tv_usec = 0;
+	}
+	return true;
+}
+
 // E - Erase Mark
 static void FingerHRTIeraseMark(instructionPointer * ip)
 {
-	assert(ip->fingerHRTItimestamp != NULL);
+	if (!CheckIPgotHRTI(ip)) {
+		ipReverse(ip);
+		return;
+	}
 
 	ip->fingerHRTItimestamp->tv_sec = 0;
 	ip->fingerHRTItimestamp->tv_usec = 0;
@@ -55,16 +72,18 @@ static void FingerHRTIgranularity(instructionPointer * ip)
 // M - Mark
 static void FingerHRTImark(instructionPointer * ip)
 {
-	assert(ip->fingerHRTItimestamp != NULL);
+	if (!CheckIPgotHRTI(ip)) {
+		ipReverse(ip);
+		return;
+	}
+
 	gettimeofday(ip->fingerHRTItimestamp, NULL);
 }
 
 // T - Timer
 static void FingerHRTItimer(instructionPointer * ip)
 {
-	assert(ip->fingerHRTItimestamp != NULL);
-
-	if (ip->fingerHRTItimestamp->tv_sec == 0) {
+	if (!ip->fingerHRTItimestamp || (ip->fingerHRTItimestamp->tv_sec == 0)) {
 		ipReverse(ip);
 	} else {
 		struct timeval curTime;
@@ -97,14 +116,7 @@ FUNGE_FAST static inline bool SetupHRTI(instructionPointer * ip)
 		} while (resolution == 0);
 	}
 	// Per IP, set up the data
-	if (!ip->fingerHRTItimestamp) {
-		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(struct timeval));
-		if (!ip->fingerHRTItimestamp)
-			return false;
-		ip->fingerHRTItimestamp->tv_sec = 0;
-		ip->fingerHRTItimestamp->tv_usec = 0;
-	}
-	return true;
+	return CheckIPgotHRTI(ip);
 }
 
 bool FingerHRTIload(instructionPointer * ip)

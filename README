@@ -94,6 +94,7 @@ Short descriptions of implemented fingerprints:
  DIRF Directory functions extension (not available in sandbox mode)
  FPDP Double precision floating point
  FPSP Single precision floating point
+ HRTI High-Resolution Timer Interface
  MODU Modulo Arithmetic Extension
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
