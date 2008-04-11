@@ -573,6 +573,9 @@ FUNGE_FAST void interpreterRun(const char *filename)
 		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
 	}
+#ifndef NDEBUG
+	atexit(&DebugFreeThings);
+#endif
 	if (!FungeSpaceLoad(filename)) {
 		fprintf(stderr, "Failed to process file \"%s\": %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
@@ -599,8 +602,5 @@ FUNGE_FAST void interpreterRun(const char *filename)
 		// Set up randomness
 		srandom(tv.tv_usec);
 	}
-#ifndef NDEBUG
-	atexit(&DebugFreeThings);
-#endif
 	interpreterMainLoop();
 }

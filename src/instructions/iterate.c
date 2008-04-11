@@ -55,7 +55,11 @@ FUNGE_FAST void RunIterate(instructionPointer * restrict ip)
 			ipReverse(ip);
 		} else if (kInstr == '@') {
 			// Iterating over @ is insane, to avoid issues when doing concurrent execution lets just kill current IP.
+#ifdef CONCURRENT_FUNGE
 			ExecuteInstruction(kInstr, ip, threadindex);
+#else
+			ExecuteInstruction(kInstr, ip);
+#endif
 		} else {
 			// Ok we got to execute it!
 			// The weird stuff below, is, as described by CCBI:

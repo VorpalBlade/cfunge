@@ -1,4 +1,4 @@
-This is cfunge - a fast Beunge93/98/108 interpreter in C.
+This is cfunge - a fast Befunge93/98/108 interpreter in C.
 
 cfunge offers some features that many other standard conforming interpreters
 don't. For example:

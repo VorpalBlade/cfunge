@@ -72,7 +72,7 @@ static void FingerREFCDereference(instructionPointer * ip)
 FUNGE_FAST static inline bool InitReferences(void)
 {
 	assert(!references);
-	references = (fungePosition*)cf_malloc(ALLOCCHUNK * sizeof(fungePosition));
+	references = (fungePosition*)cf_malloc_noptr(ALLOCCHUNK * sizeof(fungePosition));
 	if (!references)
 		return false;
 	referencesSize = ALLOCCHUNK;

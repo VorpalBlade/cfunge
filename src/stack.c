@@ -146,7 +146,7 @@ FUNGE_FAST void StackPopNDiscard(fungeStack * restrict stack, size_t n)
 }
 
 
-FUNGE_FAST FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
+FUNGE_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -182,9 +182,10 @@ FUNGE_FAST void StackPushString(fungeStack * restrict stack, const char * restri
 {
 	assert(str != NULL);
 	assert(stack != NULL);
-
-	for (ssize_t i = len; i >= 0; i--)
-		StackPush(stack, str[i]);
+	// Increment it once or it won't work
+	len++;
+	while (len-- > 0)
+		StackPush(stack, str[len]);
 }
 
 FUNGE_FAST char *StackPopString(fungeStack * restrict stack)
@@ -355,7 +356,7 @@ FUNGE_FAST bool StackStackBegin(instructionPointer * restrict ip, fungeStackStac
 	assert(storageOffset != NULL);
 
 	if (count > 0) {
-		entriesCopy = cf_malloc(sizeof(FUNGEDATATYPE) * (count + 1));
+		entriesCopy = cf_malloc_noptr(sizeof(FUNGEDATATYPE) * (count + 1));
 		// Reflect on out of memory, do it here before we mess up stuff.
 		if (!entriesCopy) {
 			OOMstackStack(ip);
@@ -419,7 +420,7 @@ FUNGE_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack 
 	assert(me != NULL);
 
 	if (count > 0) {
-		entriesCopy = cf_malloc(sizeof(FUNGEDATATYPE) * (count + 1));
+		entriesCopy = cf_malloc_noptr(sizeof(FUNGEDATATYPE) * (count + 1));
 		// Reflect on out of memory, do it here before we mess up stuff.
 		if (!entriesCopy) {
 			OOMstackStack(ip);
