@@ -8,6 +8,6 @@
 E	eraseMark	Erase Mark
 G	granularity	Granularity
 M	mark	Mark
-T	timer	Timer
 S	second	Second
+T	timer	Timer
 %end

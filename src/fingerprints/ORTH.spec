@@ -6,9 +6,9 @@
 %begin-instrs
 #I	name	desc
 A	bitAnd	bitwise and
-O	bitOr	bitwise or
 E	bitXor	bitwise xor
 G	get	Get cell (ortho style)
+O	bitOr	bitwise or
 P	put	Put cell (ortho style)
 S	outputString	Output string
 V	changeDx	Change delta x

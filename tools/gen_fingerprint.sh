@@ -65,18 +65,6 @@ else
 	FPRINT="$1"
 fi
 
-# if [[ -z $2 ]]; then
-# 	echo "ERROR: Please provide as second parameter a *sorted* list of implemented opcodes!" >&2
-# 	echo "Usage: $0 FingerprintName opcodes" >&2
-# 	exit 1
-# else
-# 	if [[ $2 =~ ^[A-Z]+$ ]]; then
-# 		OPCODES="$2"
-# 	else
-# 		die "The opcodes are not valid. The must be in the range A-Z"
-# 	fi
-# fi
-
 progress "Sanity checking parameters"
 if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
 	status "Fingerprint name $FPRINT ok style."
@@ -211,9 +199,6 @@ addtoc() {
 	echo "$1" >> "${FPRINT}.c"
 }
 
-echo "NOTE: If the opcode list isn't sorted you will want to delete the result and rerun with it sorted."
-
-
 
 
 progress "Creating directory"
@@ -329,9 +314,7 @@ for (( i = 0; i < ${#FPRINT}; i++ )); do
 	FPRINTHEX+="$hex"
 done
 echo
-echo "For manager.c you want something like this:"
-echo "// ${FPRINT} - ${DESCRIPTION}"
-echo "{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
-echo "  .url = \"${URL}\", .safe = ${SAFE} },"
+echo "To make cfunge aware of the new fingerprint run tools/gen_fprint_list.sh"
+echo "You may need to run cmake or similar to make the build system aware as well."
 echo
 echo "All done! However make sure the copyright in the files is correct. Oh, and another thing: implement the fingerprint :)"
