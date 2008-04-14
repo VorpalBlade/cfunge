@@ -1,0 +1,43 @@
+cfunge use a special file format to generate fingerprints from.
+The format is quite simple. An example follows:
+
+%fingerprint-spec 1.0
+%fprint:TEST
+%url:http://example.com
+%desc:This is a test of the fingerprint spec file system.
+%safe:true
+%begin-instrs
+# a comment
+#I	name	desc
+A	foobar	Description
+B	quux	Other Description
+%end
+
+The first line should always be "%fingerprint-spec 1.0" (or in future versions,
+possibly higher numbers).
+
+Note:
+* The format is case sensitive.
+* Any lines after the first starting with a # is considered a comment.
+
+After that fprint, url, desc and safe can follow in any order.
+ * fprint is the fingerprint name
+ * url is the url for more info on the fingerprint (docs and such)
+ * desc is a short one line description. Less than 60 chars is definitly
+   recommended.
+ * safe can be either true or false, true indicates it is safe in sandbox mode
+   and false that it isn't.
+
+After that, to indicate that the instruction list begins, use %begin-instrs
+The instruction list must be sorted and contain no duplicates.
+
+Each line in this section consists of:
+<instruction> a tab <name for function> a tab <short description>
+
+ * The instruction must be in the range A-Z.
+ * The name should be a valid name to use in a C function name (it is currently
+   not sanity checked).
+ * The description is a short string describing the fuction.
+
+Finally there should be a line %end after the instruction list.
+Any further lines are ignored (currently, but that may change).
