@@ -89,5 +89,9 @@ bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) 
  */
 void ManagerList(void) __attribute__((noreturn));
 
+// For use in fingerprint loading routines ONLY
+#define ManagerAddOpcode(fprint, opcode, name) \
+	if (!OpcodeStackAdd(ip, (opcode), &Finger ## fprint ## name)) \
+		return false;
 
 #endif

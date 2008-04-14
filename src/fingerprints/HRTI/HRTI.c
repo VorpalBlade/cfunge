@@ -123,15 +123,11 @@ bool FingerHRTIload(instructionPointer * ip)
 {
 	if (!SetupHRTI(ip))
 		return false;
-	if (!OpcodeStackAdd(ip, 'E', &FingerHRTIeraseMark))
-		return false;
-	if (!OpcodeStackAdd(ip, 'G', &FingerHRTIgranularity))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerHRTImark))
-		return false;
-	if (!OpcodeStackAdd(ip, 'T', &FingerHRTItimer))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerHRTIsecond))
-		return false;
+	ManagerAddOpcode(HRTI, 'E', eraseMark)
+	ManagerAddOpcode(HRTI, 'G', granularity)
+	ManagerAddOpcode(HRTI, 'M', mark)
+	ManagerAddOpcode(HRTI, 'T', timer)
+	ManagerAddOpcode(HRTI, 'S', second)
+
 	return true;
 }
