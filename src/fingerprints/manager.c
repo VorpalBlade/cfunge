@@ -86,7 +86,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
-	// NULL
+	// NULL - Null
 	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library

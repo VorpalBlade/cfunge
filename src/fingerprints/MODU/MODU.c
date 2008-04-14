@@ -34,7 +34,7 @@ static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 		return x;
 }
 
-static void FingerMODUSignedResult(instructionPointer * ip)
+static void FingerMODUsignedResult(instructionPointer * ip)
 {
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
@@ -46,7 +46,7 @@ static void FingerMODUSignedResult(instructionPointer * ip)
 	}
 }
 
-static void FingerMODUUnsignedResult(instructionPointer * ip)
+static void FingerMODUunsignedResult(instructionPointer * ip)
 {
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
@@ -59,7 +59,7 @@ static void FingerMODUUnsignedResult(instructionPointer * ip)
 }
 
 // C style reminder.
-static void FingerMODURemainder(instructionPointer * ip)
+static void FingerMODUremainder(instructionPointer * ip)
 {
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
@@ -76,11 +76,11 @@ static void FingerMODURemainder(instructionPointer * ip)
 
 bool FingerMODUload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'M', &FingerMODUSignedResult))
+	if (!OpcodeStackAdd(ip, 'M', &FingerMODUsignedResult))
 		return false;
-	if (!OpcodeStackAdd(ip, 'U', &FingerMODUUnsignedResult))
+	if (!OpcodeStackAdd(ip, 'R', &FingerMODUremainder))
 		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerMODURemainder))
+	if (!OpcodeStackAdd(ip, 'U', &FingerMODUunsignedResult))
 		return false;
 	return true;
 }
