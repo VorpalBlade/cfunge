@@ -41,62 +41,88 @@ FUNGE_FAST void RunIterate(instructionPointer * restrict ip)
 		ipReverse(ip);
 	} else {
 		FUNGEDATATYPE kInstr;
+		// The weird stuff below, is, as described by CCBI:
+		//   Instruction executes *at* k
+		//   If the instruction k executes, changes delta or position, we are finished.
+		//   If it doesn't we should jump to *after* the instruction k executed.
+		// Delta is stored below, we only need pos at this point as we don't
+		// know if we will execute anything yet, pointless storing it at this
+		// point then.
+		// It is also used in case of spaces
+		fungePosition oldpos = ip->position;
+		// And this is for knowing where to move past
+		fungePosition posinstr;
 		// Fetch instruction
 		ipForward(ip, 1);
 		kInstr = FungeSpaceGet(&ip->position);
-		ipForward(ip, -1);
 
-		if (kInstr == ' ' || kInstr == 'z')
-			return;
-		else if ((kInstr == 'k') || (kInstr == ';')) {
-			if (SettingWarnings)
+		// We should reach past any spaces and execute first instruction we find
+		// This is undef in 98 but defined in 108.
+		if (kInstr == ' ') {
+			do {
+				ipForward(ip, 1);
+			} while ((kInstr = FungeSpaceGet(&ip->position)) == ' ');
+		}
+		// First store pos where we got to restore to to "move past" instruction.
+		posinstr = ip->position;
+		// Then go back and execute it at k...
+		ip->position = oldpos;
+
+		switch (kInstr) {
+			case 'z':
+				return;
+			case 'k':
+			case ';':
+				if (SettingWarnings)
 				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
 				        ip->position.x, ip->position.y, (char)kInstr, kInstr);
-			ipReverse(ip);
-		} else if (kInstr == '@') {
-			// Iterating over @ is insane, to avoid issues when doing concurrent execution lets just kill current IP.
+				ipReverse(ip);
+				break;
+			case '@':
+				// Iterating over @ is insane, to avoid issues when doing concurrent execution lets just kill current IP.
 #ifdef CONCURRENT_FUNGE
-			ExecuteInstruction(kInstr, ip, threadindex);
-#else
-			ExecuteInstruction(kInstr, ip);
-#endif
-		} else {
-			// Ok we got to execute it!
-			// The weird stuff below, is, as described by CCBI:
-			// Instruction executes *at* k
-			// If the instruction k executes, changes delta or position, we are finished.
-			// If it doesn't we should jump to *after* the instruction k executed.
-			ipDelta olddelta = ip->delta;
-			fungePosition oldpos = ip->position;
-			// This horrible kludge is needed because ipListDuplicateIP calls realloc
-			// so IP pointer may end up invalid. A horrible hack yes.
-#ifdef CONCURRENT_FUNGE
-			ssize_t oldindex = *threadindex;
-#endif
-			while (iters--) {
-#    ifndef DISABLE_TRACE
-				if (SettingTraceLevel > 5)
-					fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
-					        iters, (char)kInstr, kInstr);
-#    endif /* DISABLE_TRACE */
-#ifdef CONCURRENT_FUNGE
-				if (kInstr == 't')
-					*threadindex = ipListDuplicateIP(IPList, *threadindex);
-				else
-					ExecuteInstruction(kInstr, ip, threadindex);
+				ExecuteInstruction(kInstr, ip, threadindex);
 #else
 				ExecuteInstruction(kInstr, ip);
 #endif
-			}
+				break;
+			default: {
+				// Ok we got to execute it!
+				// Storing second part of the current IP state (why: see above)
+				ipDelta olddelta = ip->delta;
+
+				// This horrible kludge is needed because ipListDuplicateIP calls realloc
+				// so IP pointer may end up invalid. A horrible hack yes.
 #ifdef CONCURRENT_FUNGE
-			if (kInstr == 't')
-				ip = &((*IPList)->ips[oldindex]);
+				ssize_t oldindex = *threadindex;
 #endif
-			if (olddelta.x == ip->delta.x
-			    && olddelta.y == ip->delta.y
-			    && oldpos.x == ip->position.x
-			    && oldpos.y == ip->position.y)
-				ipForward(ip, 1);
+				while (iters--) {
+#    ifndef DISABLE_TRACE
+					if (SettingTraceLevel > 5)
+						fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
+						        iters, (char)kInstr, kInstr);
+#    endif /* DISABLE_TRACE */
+#ifdef CONCURRENT_FUNGE
+					if (kInstr == 't')
+						*threadindex = ipListDuplicateIP(IPList, *threadindex);
+					else
+						ExecuteInstruction(kInstr, ip, threadindex);
+#else
+					ExecuteInstruction(kInstr, ip);
+#endif
+				}
+#ifdef CONCURRENT_FUNGE
+				if (kInstr == 't')
+					ip = &((*IPList)->ips[oldindex]);
+#endif
+				// If delta and ip did not change, move forward (why: see above)
+				if (olddelta.x == ip->delta.x
+					&& olddelta.y == ip->delta.y
+					&& oldpos.x == ip->position.x
+					&& oldpos.y == ip->position.y)
+					ip->position = posinstr;
+				break;
+			}
 		}
 	}
 }
