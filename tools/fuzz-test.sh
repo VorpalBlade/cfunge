@@ -37,6 +37,9 @@
 # Note that input/output is not tested, -S is used. I think you could test
 # I/O in a chroot though.
 #
+# Another note: this script doesn't do much sanity checking on command line
+# parameters
+#
 
 
 die() {
@@ -76,6 +79,13 @@ checkerror() {
 	fi
 }
 
+if [[ ! -d src/fingerprints ]]; then
+	die "Run from top source directory please."
+fi
+if [[ ! -f ./cfunge ]]; then
+	die "There must be a copy of the binary in the top source directory."
+fi
+
 # List of additional fingerprint instructions to test.
 FPRINTINSTRS=""
 FPRINT=""
@@ -88,7 +98,7 @@ createfingerprint() {
 if [[ $1 ]]; then
 	echo "Will test fingerprint ${1}."
 	FPRINT=$1
-	FPRINTINSTRS=$(grep Finger${1}load src/fingerprints/manager.c | grep -Eo '"[A-Z]+"' | tr -d '"')
+	FPRINTINSTRS=$(grep Finger${1}load src/fingerprints/fingerprints.h | grep -Eo '"[A-Z]+"' | tr -d '"')
 fi
 
 # This does not test fingerprints loaded randomly for the simple reason that it is very unlikely any will load.

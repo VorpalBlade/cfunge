@@ -30,9 +30,9 @@
 #include <limits.h>
 #include <assert.h>
 
+#define ALLOCCHUNKSIZE 2
 fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
-#define ALLOCCHUNKSIZE 2
 #define MANAGER_INTERNAL
 #include "fingerprints.h"
 
