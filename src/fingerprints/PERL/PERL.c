@@ -92,7 +92,7 @@ static char * RunPerl(const char * perlcode)
 
 	// +1 for \0
 	argsize = strlen("print 'A';eval()") + strlen(perlcode) + 1;
-	argument = cf_calloc(argsize, sizeof(char));
+	argument = cf_malloc(argsize * sizeof(char));
 	if (!argument)
 		_Exit(1);
 
@@ -126,6 +126,7 @@ static char * RunPerl(const char * perlcode)
 		default: {
 			// Parent, sucess
 			if (waitpid(pid, &status, 0) != -1) {
+				cf_free(argument);
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
 					ssize_t n;
@@ -198,10 +199,14 @@ static void FingerPERLeval(instructionPointer * ip)
 	result = RunPerl(perlcode);
 	if (result == NULL) {
 		ipReverse(ip);
-		return;
+	} else {
+		StackPush(ip->stack, '\0');
+		StackPushString(ip->stack, result, strlen(result));
 	}
-	StackPush(ip->stack, '\0');
-	StackPushString(ip->stack, result, strlen(result));
+#ifdef DISABLE_GC
+	cf_free(perlcode);
+#endif
+	cf_free(result);
 }
 
 // I - As E but cast to integer.
@@ -212,9 +217,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 	result = RunPerl(perlcode);
 	if (result == NULL) {
 		ipReverse(ip);
-		return;
-	}
-	{
+	} else {
 		long int i = strtol(result, NULL, 10);
 		if ((i == LONG_MIN) || (i == LONG_MAX)) {
 			if (errno == ERANGE)
@@ -223,6 +226,10 @@ static void FingerPERLintEval(instructionPointer * ip)
 			StackPush(ip->stack, (FUNGEDATATYPE)i);
 		}
 	}
+#ifdef DISABLE_GC
+	cf_free(perlcode);
+#endif
+	cf_free(result);
 }
 
 bool FingerPERLload(instructionPointer * ip)
