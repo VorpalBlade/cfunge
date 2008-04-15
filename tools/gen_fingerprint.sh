@@ -306,12 +306,6 @@ cat >> "${FPRINT}.c" << EOF
 EOF
 
 status "File creation done"
-progress "Generating data for manager.c"
-FPRINTHEX='0x'
-for (( i = 0; i < ${#FPRINT}; i++ )); do
-	printf -v hex '%x' "'${FPRINT:$i:1}"
-	FPRINTHEX+="$hex"
-done
 echo
 echo "To make cfunge aware of the new fingerprint run tools/gen_fprint_list.sh"
 echo "You may need to run cmake or similar to make the build system aware as well."
