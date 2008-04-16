@@ -169,14 +169,21 @@ static char * RunPerl(const char * restrict perlcode)
 					p = returnedData;
 
 					// Read the result
-					do {
+					while (true) {
 						n = read(fds[0], p, STRINGALLOCCHUNK);
 						readErrno = errno;
-						if (n == -1)
-							if (SettingWarnings)
-								perror("RunPerl, read failed");
-						if (n > 0) {
-							if ((n + 1) >= (ssize_t)bufsize) {
+						if (n == -1) {
+							CLEANUP_PIPE
+							if (readErrno == EAGAIN) {
+								return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
+							} else {
+								if (SettingWarnings)
+									perror("RunPerl, read failed");
+								cf_free(returnedData);
+								return NULL;
+							}
+						} else if (n > 0) {
+							if ((n + 1) >= STRINGALLOCCHUNK) {
 								char * reallocRes;
 								bufsize += STRINGALLOCCHUNK;
 								reallocRes = cf_realloc(returnedData, bufsize * sizeof(char));
@@ -191,42 +198,26 @@ static char * RunPerl(const char * restrict perlcode)
 									memset(p, '\0', STRINGALLOCCHUNK);
 								}
 							} else {
-								break;
+								CLEANUP_PIPE
+								return FindData(returnedData, bufsize - STRINGALLOCCHUNK + n);
 							}
 						}
-					} while (n > 0);
-
-					// Close the pipe.
-					CLEANUP_PIPE
-
-					// Parse return code.
-					if (n == -1) {
-						if (readErrno == EAGAIN) { // OK one
-							return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
-						} else {
-							cf_free(returnedData);
-							return NULL;
-						}
 					}
-					if (n > 0) {
-						return FindData(returnedData, bufsize - STRINGALLOCCHUNK + n);
-					} else {
-						return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
-					}
-				} else {
+
+				} else /* WIFEXITED */ {
 					// Error
 					CLEANUP_PIPE
 					return NULL;
 				}
-			} else {
+			} else /* waitpid */ {
 				// Error
 				CLEANUP_ARGUMENTS
 				CLEANUP_PIPE
 				return NULL;
 			}
 			break;
-		}
-	}
+		} // default
+	} // switch
 }
 
 // E - Evaluate 0gnits
