@@ -92,11 +92,9 @@ static void FingerSUBRreturn(instructionPointer * ip)
 
 bool FingerSUBRload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'C', &FingerSUBRcall))
-		return false;
-	if (!OpcodeStackAdd(ip, 'J', &FingerSUBRjump))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerSUBRreturn))
-		return false;
+	ManagerAddOpcode(SUBR,  'C', call)
+	ManagerAddOpcode(SUBR,  'J', jump)
+	// No not a keyword in this case
+	ManagerAddOpcode(SUBR,  'R', return)
 	return true;
 }

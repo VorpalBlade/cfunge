@@ -103,17 +103,11 @@ static void FingerCPLIabs(instructionPointer * ip)
 
 bool FingerCPLIload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'A', &FingerCPLIadd))
-		return false;
-	if (!OpcodeStackAdd(ip, 'D', &FingerCPLIdiv))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerCPLImul))
-		return false;
-	if (!OpcodeStackAdd(ip, 'O', &FingerCPLIout))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerCPLIsub))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerCPLIabs))
-		return false;
+	ManagerAddOpcode(CPLI,  'A', add)
+	ManagerAddOpcode(CPLI,  'D', div)
+	ManagerAddOpcode(CPLI,  'M', mul)
+	ManagerAddOpcode(CPLI,  'O', out)
+	ManagerAddOpcode(CPLI,  'S', sub)
+	ManagerAddOpcode(CPLI,  'V', abs)
 	return true;
 }

@@ -111,15 +111,10 @@ static void FingerBASEinputBase(instructionPointer * ip)
 
 bool FingerBASEload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'B', &FingerBASEoutputBinary))
-		return false;
-	if (!OpcodeStackAdd(ip, 'H', &FingerBASEoutputHex))
-		return false;
-	if (!OpcodeStackAdd(ip, 'I', &FingerBASEinputBase))
-		return false;
-	if (!OpcodeStackAdd(ip, 'N', &FingerBASEoutputBase))
-		return false;
-	if (!OpcodeStackAdd(ip, 'O', &FingerBASEoutputOctal))
-		return false;
+	ManagerAddOpcode(BASE,  'B', outputBinary)
+	ManagerAddOpcode(BASE,  'H', outputHex)
+	ManagerAddOpcode(BASE,  'I', inputBase)
+	ManagerAddOpcode(BASE,  'N', outputBase)
+	ManagerAddOpcode(BASE,  'O', outputOctal)
 	return true;
 }

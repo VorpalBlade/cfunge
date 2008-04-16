@@ -45,7 +45,8 @@ fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
  * Create an opcode stack.
  */
 __attribute__((malloc,warn_unused_result,FUNGE_IN_FAST))
-static inline fungeOpcodeStack* CreateOpcodeStack(void) {
+static inline fungeOpcodeStack* CreateOpcodeStack(void)
+{
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
 		return NULL;
@@ -62,7 +63,8 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void) {
  * Free an opcode stack.
  */
 FUNGE_FAST
-static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) {
+static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
+{
 	if (!me)
 		return;
 	if (me->entries)
@@ -75,7 +77,8 @@ static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me) {
  * Duplicate an opcode stack, used for split (t).
  */
 __attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
-FUNGE_FAST static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old) {
+FUNGE_FAST static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old)
+{
 	fungeOpcodeStack * tmp;
 
 	if (!old)
@@ -96,7 +99,8 @@ FUNGE_FAST static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcod
 #endif
 
 
-FUNGE_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) {
+FUNGE_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
+{
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Do we need to realloc?
 	if (stack->top == stack->size) {
@@ -117,7 +121,8 @@ FUNGE_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fi
  * Pop a function pointer from an opcode stack, discarding it.
  */
 __attribute__((nonnull,FUNGE_IN_FAST))
-static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) {
+static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack)
+{
 	assert(stack != NULL);
 
 	if (stack->top == 0) {
@@ -131,7 +136,8 @@ static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack) {
  * Opcode Manager functions *
  ****************************/
 
-FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip) {
+FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip)
+{
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
 		if (!ip->fingerOpcodes[i])
@@ -140,7 +146,8 @@ FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip) {
 	return true;
 }
 
-FUNGE_FAST void ManagerFree(instructionPointer * restrict ip) {
+FUNGE_FAST void ManagerFree(instructionPointer * restrict ip)
+{
 	if (!ip)
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -150,7 +157,7 @@ FUNGE_FAST void ManagerFree(instructionPointer * restrict ip) {
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
-                      instructionPointer * restrict newip)
+                                 instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		newip->fingerOpcodes[i] = DuplicateOpcodeStack(oldip->fingerOpcodes[i]);
@@ -189,7 +196,8 @@ FUNGE_FAST static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
 	return i;
 }
 
-FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
+FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+{
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1) {
 		return false;
@@ -205,7 +213,8 @@ FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fing
 	}
 }
 
-FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) {
+FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+{
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1)
 		return false;
@@ -218,7 +227,8 @@ FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fi
 #  error CHAR_BIT != 8, please make sure the function below the location of this error works on your system.
 #endif
 
-void ManagerList(void) {
+void ManagerList(void)
+{
 	int i = 0;
 	puts("Supported fingerprints in this binary:");
 	do {

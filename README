@@ -92,12 +92,14 @@ Short descriptions of implemented fingerprints:
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
+ FIXP Some useful math functions
  FPDP Double precision floating point
  FPSP Single precision floating point
  HRTI High-Resolution Timer Interface
  MODU Modulo Arithmetic Extension
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
+ PERL Generic Interface to the Perl Language (not available in sandbox mode)
  REFC Referenced Cells Extension
  ROMA Funge-98 Roman Numerals
  SUBR Subroutine extension

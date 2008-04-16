@@ -115,28 +115,16 @@ static void FingerORTHrampIfZero(instructionPointer * ip)
 
 bool FingerORTHload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'A', &FingerORTHbitAnd))
-		return false;
-	if (!OpcodeStackAdd(ip, 'O', &FingerORTHbitOr))
-		return false;
-	if (!OpcodeStackAdd(ip, 'E', &FingerORTHbitXor))
-		return false;
-	if (!OpcodeStackAdd(ip, 'G', &FingerORTHget))
-		return false;
-	if (!OpcodeStackAdd(ip, 'P', &FingerORTHput))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerORTHoutputString))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerORTHchangeDx))
-		return false;
-	if (!OpcodeStackAdd(ip, 'W', &FingerORTHchangeDy))
-		return false;
-	if (!OpcodeStackAdd(ip, 'X', &FingerORTHchangeX))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Y', &FingerORTHchangeY))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Z', &FingerORTHrampIfZero))
-		return false;
-
+	ManagerAddOpcode(ORTH,  'A', bitAnd)
+	ManagerAddOpcode(ORTH,  'O', bitOr)
+	ManagerAddOpcode(ORTH,  'E', bitXor)
+	ManagerAddOpcode(ORTH,  'G', get)
+	ManagerAddOpcode(ORTH,  'P', put)
+	ManagerAddOpcode(ORTH,  'S', outputString)
+	ManagerAddOpcode(ORTH,  'V', changeDx)
+	ManagerAddOpcode(ORTH,  'W', changeDy)
+	ManagerAddOpcode(ORTH,  'X', changeX)
+	ManagerAddOpcode(ORTH,  'Y', changeY)
+	ManagerAddOpcode(ORTH,  'Z', rampIfZero)
 	return true;
 }

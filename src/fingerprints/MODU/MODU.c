@@ -64,7 +64,6 @@ static void FingerMODUremainder(instructionPointer * ip)
 	FUNGEDATATYPE x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
-
 	if (y) {
 		// Well that's easy, this *is* C.
 		StackPush(ip->stack, x % y);
@@ -76,11 +75,8 @@ static void FingerMODUremainder(instructionPointer * ip)
 
 bool FingerMODUload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'M', &FingerMODUsignedResult))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerMODUremainder))
-		return false;
-	if (!OpcodeStackAdd(ip, 'U', &FingerMODUunsignedResult))
-		return false;
+	ManagerAddOpcode(MODU,  'M', signedResult)
+	ManagerAddOpcode(MODU,  'R', remainder)
+	ManagerAddOpcode(MODU,  'U', unsignedResult)
 	return true;
 }

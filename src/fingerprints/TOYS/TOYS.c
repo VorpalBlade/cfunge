@@ -396,57 +396,31 @@ static void FingerTOYSbarnDoor(instructionPointer * ip)
 
 bool FingerTOYSload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'A', &FingerTOYSgable))
-		return false;
-	if (!OpcodeStackAdd(ip, 'B', &FingerTOYSpairOfShoes))
-		return false;
-	if (!OpcodeStackAdd(ip, 'C', &FingerTOYSbracelet))
-		return false;
-	if (!OpcodeStackAdd(ip, 'D', &FingerTOYStoiletSeat))
-		return false;
-	if (!OpcodeStackAdd(ip, 'E', &FingerTOYSpitchforkHead))
-		return false;
-	if (!OpcodeStackAdd(ip, 'F', &FingerTOYScalipers))
-		return false;
-	if (!OpcodeStackAdd(ip, 'G', &FingerTOYScounterclockwise))
-		return false;
-	if (!OpcodeStackAdd(ip, 'H', &FingerTOYSpairOfStilts))
-		return false;
-	if (!OpcodeStackAdd(ip, 'I', &FingerTOYSdoricColumn))
-		return false;
-	if (!OpcodeStackAdd(ip, 'J', &FingerTOYSfishhook))
-		return false;
-	if (!OpcodeStackAdd(ip, 'K', &FingerTOYSscissors))
-		return false;
-	if (!OpcodeStackAdd(ip, 'L', &FingerTOYScorner))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerTOYSkittycat))
-		return false;
-	if (!OpcodeStackAdd(ip, 'N', &FingerTOYSlightningBolt))
-		return false;
-	if (!OpcodeStackAdd(ip, 'O', &FingerTOYSboulder))
-		return false;
-	if (!OpcodeStackAdd(ip, 'P', &FingerTOYSmailbox))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Q', &FingerTOYSnecklace))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerTOYScanOpener))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerTOYSchicane))
-		return false;
-	if (!OpcodeStackAdd(ip, 'T', &FingerTOYSbarstool))
-		return false;
-	if (!OpcodeStackAdd(ip, 'U', &FingerTOYStumbler))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerTOYSdixiecup))
-		return false;
-	if (!OpcodeStackAdd(ip, 'W', &FingerTOYStelevisionAntenna))
-		return false;
-	if (!OpcodeStackAdd(ip, 'X', &FingerTOYSburiedTreasure))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Y', &FingerTOYSslingshot))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Z', &FingerTOYSbarnDoor))
-		return false;
+	ManagerAddOpcode(TOYS, 'A', gable)
+	ManagerAddOpcode(TOYS, 'B', pairOfShoes)
+	ManagerAddOpcode(TOYS, 'C', bracelet)
+	ManagerAddOpcode(TOYS, 'D', toiletSeat)
+	ManagerAddOpcode(TOYS, 'E', pitchforkHead)
+	ManagerAddOpcode(TOYS, 'F', calipers)
+	ManagerAddOpcode(TOYS, 'G', counterclockwise)
+	ManagerAddOpcode(TOYS, 'H', pairOfStilts)
+	ManagerAddOpcode(TOYS, 'I', doricColumn)
+	ManagerAddOpcode(TOYS, 'J', fishhook)
+	ManagerAddOpcode(TOYS, 'K', scissors)
+	ManagerAddOpcode(TOYS, 'L', corner)
+	ManagerAddOpcode(TOYS, 'M', kittycat)
+	ManagerAddOpcode(TOYS, 'N', lightningBolt)
+	ManagerAddOpcode(TOYS, 'O', boulder)
+	ManagerAddOpcode(TOYS, 'P', mailbox)
+	ManagerAddOpcode(TOYS, 'Q', necklace)
+	ManagerAddOpcode(TOYS, 'R', canOpener)
+	ManagerAddOpcode(TOYS, 'S', chicane)
+	ManagerAddOpcode(TOYS, 'T', barstool)
+	ManagerAddOpcode(TOYS, 'U', tumbler)
+	ManagerAddOpcode(TOYS, 'V', dixiecup)
+	ManagerAddOpcode(TOYS, 'W', televisionAntenna)
+	ManagerAddOpcode(TOYS, 'X', buriedTreasure)
+	ManagerAddOpcode(TOYS, 'Y', slingshot)
+	ManagerAddOpcode(TOYS, 'Z', barnDoor)
 	return true;
 }

@@ -227,47 +227,26 @@ static void FingerFPSPprint(instructionPointer * ip)
 
 bool FingerFPSPload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'A', &FingerFPSPadd))
-		return false;
-	if (!OpcodeStackAdd(ip, 'B', &FingerFPSPsin))
-		return false;
-	if (!OpcodeStackAdd(ip, 'C', &FingerFPSPcos))
-		return false;
-	if (!OpcodeStackAdd(ip, 'D', &FingerFPSPdiv))
-		return false;
-	if (!OpcodeStackAdd(ip, 'E', &FingerFPSPasin))
-		return false;
-	if (!OpcodeStackAdd(ip, 'F', &FingerFPSPfromint))
-		return false;
-	if (!OpcodeStackAdd(ip, 'G', &FingerFPSPatan))
-		return false;
-	if (!OpcodeStackAdd(ip, 'H', &FingerFPSPacos))
-		return false;
-	if (!OpcodeStackAdd(ip, 'I', &FingerFPSPtoint))
-		return false;
-	if (!OpcodeStackAdd(ip, 'K', &FingerFPSPln))
-		return false;
-	if (!OpcodeStackAdd(ip, 'L', &FingerFPSPlog10))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerFPSPmul))
-		return false;
-	if (!OpcodeStackAdd(ip, 'N', &FingerFPSPneg))
-		return false;
-	if (!OpcodeStackAdd(ip, 'P', &FingerFPSPprint))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Q', &FingerFPSPsqrt))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerFPSPfromascii))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerFPSPsub))
-		return false;
-	if (!OpcodeStackAdd(ip, 'T', &FingerFPSPtan))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerFPSPabs))
-		return false;
-	if (!OpcodeStackAdd(ip, 'X', &FingerFPSPexp))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Y', &FingerFPSPpow))
-		return false;
+	ManagerAddOpcode(FPSP,  'A', add)
+	ManagerAddOpcode(FPSP,  'B', sin)
+	ManagerAddOpcode(FPSP,  'C', cos)
+	ManagerAddOpcode(FPSP,  'D', div)
+	ManagerAddOpcode(FPSP,  'E', asin)
+	ManagerAddOpcode(FPSP,  'F', fromint)
+	ManagerAddOpcode(FPSP,  'G', atan)
+	ManagerAddOpcode(FPSP,  'H', acos)
+	ManagerAddOpcode(FPSP,  'I', toint)
+	ManagerAddOpcode(FPSP,  'K', ln)
+	ManagerAddOpcode(FPSP,  'L', log10)
+	ManagerAddOpcode(FPSP,  'M', mul)
+	ManagerAddOpcode(FPSP,  'N', neg)
+	ManagerAddOpcode(FPSP,  'P', print)
+	ManagerAddOpcode(FPSP,  'Q', sqrt)
+	ManagerAddOpcode(FPSP,  'R', fromascii)
+	ManagerAddOpcode(FPSP,  'S', sub)
+	ManagerAddOpcode(FPSP,  'T', tan)
+	ManagerAddOpcode(FPSP,  'V', abs)
+	ManagerAddOpcode(FPSP,  'X', exp)
+	ManagerAddOpcode(FPSP,  'Y', pow)
 	return true;
 }

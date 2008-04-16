@@ -24,7 +24,8 @@
 
 
 #define ROMAPUSH(x, y) \
-	static void FingerROMApush ## x (instructionPointer * ip) { \
+	static void FingerROMApush ## x (instructionPointer * ip) \
+	{ \
 		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 	}
 
@@ -40,19 +41,12 @@ ROMAPUSH(M, 1000)
 
 bool FingerROMAload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'C', &FingerROMApushC))
-		return false;
-	if (!OpcodeStackAdd(ip, 'D', &FingerROMApushD))
-		return false;
-	if (!OpcodeStackAdd(ip, 'I', &FingerROMApushI))
-		return false;
-	if (!OpcodeStackAdd(ip, 'L', &FingerROMApushL))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerROMApushM))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerROMApushV))
-		return false;
-	if (!OpcodeStackAdd(ip, 'X', &FingerROMApushX))
-		return false;
+	ManagerAddOpcode(ROMA,  'C', pushC)
+	ManagerAddOpcode(ROMA,  'D', pushD)
+	ManagerAddOpcode(ROMA,  'I', pushI)
+	ManagerAddOpcode(ROMA,  'L', pushL)
+	ManagerAddOpcode(ROMA,  'M', pushM)
+	ManagerAddOpcode(ROMA,  'V', pushV)
+	ManagerAddOpcode(ROMA,  'X', pushX)
 	return true;
 }

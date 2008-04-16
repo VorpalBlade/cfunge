@@ -75,11 +75,8 @@ static void FingerDIRFrmdir(instructionPointer * ip)
 
 bool FingerDIRFload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'C', &FingerDIRFchdir))
-		return false;
-	if (!OpcodeStackAdd(ip, 'M', &FingerDIRFmkdir))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerDIRFrmdir))
-		return false;
+	ManagerAddOpcode(DIRF, 'C', chdir)
+	ManagerAddOpcode(DIRF, 'M', mkdir)
+	ManagerAddOpcode(DIRF, 'R', rmdir)
 	return true;
 }

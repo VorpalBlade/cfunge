@@ -10,6 +10,9 @@ src/fingerprints
 src/fingerprints/BASE
 src/fingerprints/BASE/BASE.c
 src/fingerprints/BASE/BASE.h
+src/fingerprints/CPLI
+src/fingerprints/CPLI/CPLI.c
+src/fingerprints/CPLI/CPLI.h
 src/fingerprints/DIRF
 src/fingerprints/DIRF/DIRF.c
 src/fingerprints/DIRF/DIRF.h
@@ -22,6 +25,9 @@ src/fingerprints/FPDP/FPDP.h
 src/fingerprints/FPSP
 src/fingerprints/FPSP/FPSP.c
 src/fingerprints/FPSP/FPSP.h
+src/fingerprints/HRTI
+src/fingerprints/HRTI/HRTI.c
+src/fingerprints/HRTI/HRTI.h
 src/fingerprints/MODU
 src/fingerprints/MODU/MODU.c
 src/fingerprints/MODU/MODU.h
@@ -31,6 +37,9 @@ src/fingerprints/NULL/NULL.h
 src/fingerprints/ORTH
 src/fingerprints/ORTH/ORTH.c
 src/fingerprints/ORTH/ORTH.h
+src/fingerprints/PERL
+src/fingerprints/PERL/PERL.c
+src/fingerprints/PERL/PERL.h
 src/fingerprints/REFC
 src/fingerprints/REFC/REFC.c
 src/fingerprints/REFC/REFC.h
@@ -43,6 +52,7 @@ src/fingerprints/SUBR/SUBR.h
 src/fingerprints/TOYS
 src/fingerprints/TOYS/TOYS.c
 src/fingerprints/TOYS/TOYS.h
+src/fingerprints/fingerprints.h
 src/fingerprints/manager.c
 src/fingerprints/manager.h
 src/funge-space

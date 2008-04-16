@@ -85,10 +85,7 @@ bool FingerREFCload(instructionPointer * ip)
 	if (!references)
 		if (!InitReferences())
 			return false;
-
-	if (!OpcodeStackAdd(ip, 'D', &FingerREFCdereference))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerREFCreference))
-		return false;
+	ManagerAddOpcode(REFC,  'D', dereference)
+	ManagerAddOpcode(REFC,  'R', reference)
 	return true;
 }
