@@ -39,7 +39,7 @@
 #include <string.h>
 #include <limits.h>
 
-
+// Used when reading back the result
 #define STRINGALLOCCHUNK 1024
 
 // There are two ways to interpret the docs.
@@ -57,9 +57,6 @@ FUNGE_FAST
 static inline char * FindData(char * output, size_t length) {
 	const char * p;
 
-	// Just in case
-	output[length] = '\0';
-
 #ifdef PERL_AS_CCBI_DOES_IT
 	p = strrchr(output, 'A');
 #else
@@ -69,7 +66,8 @@ static inline char * FindData(char * output, size_t length) {
 		return output;
 	} else {
 		char * restrict newstr;
-		newstr = cf_strndup(++p, length);
+		int maxlen = length - (p - output);
+		newstr = cf_strndup(++p, maxlen);
 		cf_free(output);
 		return newstr;
 	}
@@ -165,33 +163,38 @@ static char * RunPerl(const char * restrict perlcode)
 					char * p;
 					int readErrno;
 
-					returnedData = cf_malloc_noptr(bufsize * sizeof(char));
+					returnedData = cf_calloc_noptr(bufsize, sizeof(char));
 					if (!returnedData)
 						return NULL;
 					p = returnedData;
 
 					// Read the result
 					do {
-						n = read(fds[0], p, bufsize - 1);
+						n = read(fds[0], p, STRINGALLOCCHUNK);
 						readErrno = errno;
 						if (n == -1)
 							if (SettingWarnings)
 								perror("RunPerl, read failed");
-						if ((n > 0) && (n >= (ssize_t)bufsize)) {
-							char * reallocRes;
-							bufsize += STRINGALLOCCHUNK;
-							reallocRes = cf_realloc(returnedData, bufsize * sizeof(char));
-							if (!reallocRes) {
-								if (SettingWarnings)
-									perror("RunPerl, realloc for returnedData failed");
-								CLEANUP_PIPE
-								return FindData(returnedData,  bufsize - STRINGALLOCCHUNK);
+						if (n > 0) {
+							if ((n + 1) >= (ssize_t)bufsize) {
+								char * reallocRes;
+								bufsize += STRINGALLOCCHUNK;
+								reallocRes = cf_realloc(returnedData, bufsize * sizeof(char));
+								if (!reallocRes) {
+									if (SettingWarnings)
+										perror("RunPerl, realloc for returnedData failed");
+									CLEANUP_PIPE
+									return FindData(returnedData,  bufsize - STRINGALLOCCHUNK);
+								} else {
+									returnedData = reallocRes;
+									p = returnedData + (bufsize - 2 * STRINGALLOCCHUNK) + n;
+									memset(p, '\0', STRINGALLOCCHUNK);
+								}
 							} else {
-								returnedData = reallocRes;
-								p = returnedData + (bufsize - STRINGALLOCCHUNK) + n;
+								break;
 							}
 						}
-					} while ((n > 0) && (n >= (ssize_t)bufsize));
+					} while (n > 0);
 
 					// Close the pipe.
 					CLEANUP_PIPE
