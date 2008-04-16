@@ -42,9 +42,6 @@
 // Used when reading back the result
 #define STRINGALLOCCHUNK 1024
 
-// There are two ways to interpret the docs.
-#define PERL_AS_CCBI_DOES_IT
-
 // S - Is Perl loaded? Or will it be shelled?
 static void FingerPERLshelled(instructionPointer * ip)
 {
@@ -57,11 +54,7 @@ FUNGE_FAST
 static inline char * FindData(char * output, size_t length) {
 	const char * p;
 
-#ifdef PERL_AS_CCBI_DOES_IT
 	p = strrchr(output, 'A');
-#else
-	p = strchr(output, 'A');
-#endif
 	if (p == NULL) {
 		return output;
 	} else {
@@ -85,11 +78,7 @@ static inline char * BuildArgument(const char * restrict perlcode) {
 	if (!argument) {
 		return NULL;
 	}
-#ifdef PERL_AS_CCBI_DOES_IT
 	snprintf(argument, argsize, "print 'A',eval(%s)", perlcode);
-#else
-	snprintf(argument, argsize, "print 'A';eval(%s)", perlcode);
-#endif
 	return argument;
 }
 
@@ -112,6 +101,7 @@ static char * RunPerl(const char * restrict perlcode)
 
 	if (pipe(fds) == -1)
 		return NULL;
+	// Non-blocking to prevent locking up in read()
 	if (fcntl(fds[0], F_SETFL, O_NONBLOCK) == -1) {
 		if (SettingWarnings)
 			perror("RunPerl, fcntl failed");
