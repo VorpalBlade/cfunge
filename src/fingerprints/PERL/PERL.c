@@ -66,7 +66,7 @@ static inline char * FindData(char * output, size_t length) {
 		return output;
 	} else {
 		char * restrict newstr;
-		int maxlen = length - (p - output);
+		size_t maxlen = length - (p - output);
 		newstr = cf_strndup(++p, maxlen);
 		cf_free(output);
 		return newstr;
@@ -74,18 +74,32 @@ static inline char * FindData(char * output, size_t length) {
 
 }
 
-#define CLEANUP_ARGUMENTS \
-	{ \
-		free_nogc(arguments[0]); \
-		free_nogc(arguments[1]); \
-		free_nogc(arguments[2]); \
+// Builds the argument with the perl code.
+FUNGE_FAST
+static inline char * BuildArgument(const char * restrict perlcode) {
+	size_t argsize;
+	char * restrict argument;
+	// +1 for \0
+	argsize = strlen("print 'A',eval()") + strlen(perlcode) + 1;
+	argument = malloc_nogc(argsize * sizeof(char));
+	if (!argument) {
+		return NULL;
 	}
+#ifdef PERL_AS_CCBI_DOES_IT
+	snprintf(argument, argsize, "print 'A',eval(%s)", perlcode);
+#else
+	snprintf(argument, argsize, "print 'A';eval(%s)", perlcode);
+#endif
+	return argument;
+}
+
 #define CLEANUP_PIPE \
 	{ \
 		close(fds[0]); \
 		close(fds[1]); \
 	}
 
+// Yes... This is a mess...
 FUNGE_FAST
 static char * RunPerl(const char * restrict perlcode)
 {
@@ -93,14 +107,9 @@ static char * RunPerl(const char * restrict perlcode)
 	int fds[2]; // For pipe to child.
 	int status;
 
-	size_t argsize;
-	// Strdup to avoid the read only string warning.
-	char * arguments[] = { strdup_nogc("perl"), strdup_nogc("-e"), NULL, NULL };
-
 	if (perlcode == NULL)
 		return NULL;
 
-	// We fork here as system() got quoting issues.
 	if (pipe(fds) == -1)
 		return NULL;
 	if (fcntl(fds[0], F_SETFL, O_NONBLOCK) == -1) {
@@ -110,32 +119,27 @@ static char * RunPerl(const char * restrict perlcode)
 		return NULL;
 	}
 
-	// +1 for \0
-	argsize = strlen("print 'A',eval()") + strlen(perlcode) + 1;
-	arguments[2] = malloc_nogc(argsize * sizeof(char));
-	if (!arguments[2]) {
-		CLEANUP_PIPE
-		_Exit(1);
-	}
-#ifdef PERL_AS_CCBI_DOES_IT
-	snprintf(arguments[2], argsize, "print 'A',eval(%s)", perlcode);
-#else
-	snprintf(arguments[2], argsize, "print 'A';eval(%s)", perlcode);
-#endif
-
 	pid = fork();
 	switch (pid) {
 		case -1: // Parent, error
 			if (SettingWarnings)
 				perror("RunPerl, could not fork");
 			// Clean up
-			CLEANUP_ARGUMENTS
 			CLEANUP_PIPE
 			return NULL;
 			break;
 
 		case 0: {
 			// Child
+
+			// Build argument list.
+			// Strdup to avoid the read only string warning.
+			// No need to free in child.
+			char * arguments[] = { strdup_nogc("perl"), strdup_nogc("-e"), NULL, NULL };
+			arguments[2] = BuildArgument(perlcode);
+			if (!arguments[2]) {
+				_Exit(2);
+			}
 
 			// Do the FD stuff.
 			dup2(fds[1], 1);
@@ -154,7 +158,6 @@ static char * RunPerl(const char * restrict perlcode)
 		default: {
 			// Parent, sucess
 			if (waitpid(pid, &status, 0) != -1) {
-				CLEANUP_ARGUMENTS
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
 					ssize_t n;
@@ -169,6 +172,7 @@ static char * RunPerl(const char * restrict perlcode)
 					p = returnedData;
 
 					// Read the result
+					// Yes this is very messy. Needs cleaning up.
 					while (true) {
 						n = read(fds[0], p, STRINGALLOCCHUNK);
 						readErrno = errno;
@@ -211,7 +215,6 @@ static char * RunPerl(const char * restrict perlcode)
 				}
 			} else /* waitpid */ {
 				// Error
-				CLEANUP_ARGUMENTS
 				CLEANUP_PIPE
 				return NULL;
 			}
