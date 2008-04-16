@@ -1,10 +1,12 @@
 "LREP"4(v
 v       <
+                            > a"detcelfeR" >:#,_@
+> 0 '" " ih" '" ;" tnirp"; #^ E >:#,_ v
+v                                     <
 
-> 0 '" " ih" '" " tnirp" E >:#,_ v
-v                                <
-
-> 0 "5+1 tnirp" I. a, @
+> 0 "5+1" ;" tnirp"; I. a, @
 
 
-This program should print hi 6
+This program should possibly print hi 6 or hi6
+It is not clear how to interpret the docs for this
+fingerprint. Therefore this test may be wrong.

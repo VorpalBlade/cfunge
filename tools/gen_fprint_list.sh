@@ -24,6 +24,18 @@
 
 # Generate the fingerprint list
 
+# Check bash version. We need at least 3.1
+# Lets not use anything like =~ here because
+# that may not work on old bash versions.
+if [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -lt 31 ]]; then
+	echo "Sorry your bash version is too old!"
+	echo "You need at least version 3.1 of bash."
+	echo "Please install a newer version:"
+	echo " * Either use your distro's packages."
+	echo " * Or see http://www.gnu.org/software/bash/"
+	exit 2
+fi
+
 set -e
 
 # This must be run from top source directory.

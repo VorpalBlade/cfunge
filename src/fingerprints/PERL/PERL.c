@@ -42,39 +42,62 @@
 
 #define STRINGALLOCCHUNK 1024
 
+// There are two ways to interpret the docs.
+#define PERL_AS_CCBI_DOES_IT
+
 // S - Is Perl loaded? Or will it be shelled?
 static void FingerPERLshelled(instructionPointer * ip)
 {
 	StackPush(ip->stack, 1); // Not Perl, at least last I checked this was C.
 }
 
+// The A stuff is because otherwise we get an error (from read) in case of no
+// other output.
 FUNGE_FAST
-static char * FindData(char * output, size_t length) {
+static inline char * FindData(char * output, size_t length) {
 	const char * p;
 
+	// Just in case
 	output[length] = '\0';
+
+#ifdef PERL_AS_CCBI_DOES_IT
+	p = strrchr(output, 'A');
+#else
 	p = strchr(output, 'A');
+#endif
 	if (p == NULL) {
 		return output;
 	} else {
 		char * restrict newstr;
-		newstr = strdup(++p);
+		newstr = cf_strndup(++p, length);
 		cf_free(output);
 		return newstr;
 	}
 
 }
 
+#define CLEANUP_ARGUMENTS \
+	{ \
+		free_nogc(arguments[0]); \
+		free_nogc(arguments[1]); \
+		free_nogc(arguments[2]); \
+	}
+#define CLEANUP_PIPE \
+	{ \
+		close(fds[0]); \
+		close(fds[1]); \
+	}
+
 FUNGE_FAST
-static char * RunPerl(const char * perlcode)
+static char * RunPerl(const char * restrict perlcode)
 {
-	volatile pid_t pid;
-	int fds[2];
+	pid_t pid;
+	int fds[2]; // For pipe to child.
 	int status;
 
 	size_t argsize;
-	int snprintfretval;
-	char * argument = NULL;
+	// Strdup to avoid the read only string warning.
+	char * arguments[] = { strdup_nogc("perl"), strdup_nogc("-e"), NULL, NULL };
 
 	if (perlcode == NULL)
 		return NULL;
@@ -85,26 +108,33 @@ static char * RunPerl(const char * perlcode)
 	if (fcntl(fds[0], F_SETFL, O_NONBLOCK) == -1) {
 		if (SettingWarnings)
 			perror("RunPerl, fcntl failed");
+		CLEANUP_PIPE
 		return NULL;
 	}
 
-
-
 	// +1 for \0
-	argsize = strlen("print 'A';eval()") + strlen(perlcode) + 1;
-	argument = cf_malloc(argsize * sizeof(char));
-	if (!argument)
+	argsize = strlen("print 'A',eval()") + strlen(perlcode) + 1;
+	arguments[2] = malloc_nogc(argsize * sizeof(char));
+	if (!arguments[2]) {
+		CLEANUP_PIPE
 		_Exit(1);
-
-	snprintfretval = snprintf(argument, argsize, "print 'A';eval(%s)", perlcode);
-	assert(snprintfretval < (long)argsize);
+	}
+#ifdef PERL_AS_CCBI_DOES_IT
+	snprintf(arguments[2], argsize, "print 'A',eval(%s)", perlcode);
+#else
+	snprintf(arguments[2], argsize, "print 'A';eval(%s)", perlcode);
+#endif
 
 	pid = fork();
 	switch (pid) {
 		case -1: // Parent, error
 			if (SettingWarnings)
 				perror("RunPerl, could not fork");
+			// Clean up
+			CLEANUP_ARGUMENTS
+			CLEANUP_PIPE
 			return NULL;
+			break;
 
 		case 0: {
 			// Child
@@ -114,10 +144,10 @@ static char * RunPerl(const char * perlcode)
 			dup2(fds[1], 2);
 
 			// Execute
-			if (execlp("perl", "perl", "-e", argument) == -1) {
+			if (execvp("perl", arguments) == -1) {
 				// If we got here...
 				// Message is followed by ": error"
-				perror("RunPerl, execvp failed! This is bad... Cause");
+				perror("Failed to run perl");
 			}
 			_Exit(2);
 			break;
@@ -126,7 +156,7 @@ static char * RunPerl(const char * perlcode)
 		default: {
 			// Parent, sucess
 			if (waitpid(pid, &status, 0) != -1) {
-				cf_free(argument);
+				CLEANUP_ARGUMENTS
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
 					ssize_t n;
@@ -135,11 +165,12 @@ static char * RunPerl(const char * perlcode)
 					char * p;
 					int readErrno;
 
-					returnedData = cf_malloc(bufsize * sizeof(char));
+					returnedData = cf_malloc_noptr(bufsize * sizeof(char));
 					if (!returnedData)
 						return NULL;
 					p = returnedData;
 
+					// Read the result
 					do {
 						n = read(fds[0], p, bufsize - 1);
 						readErrno = errno;
@@ -153,6 +184,7 @@ static char * RunPerl(const char * perlcode)
 							if (!reallocRes) {
 								if (SettingWarnings)
 									perror("RunPerl, realloc for returnedData failed");
+								CLEANUP_PIPE
 								return FindData(returnedData,  bufsize - STRINGALLOCCHUNK);
 							} else {
 								returnedData = reallocRes;
@@ -161,13 +193,13 @@ static char * RunPerl(const char * perlcode)
 						}
 					} while ((n > 0) && (n >= (ssize_t)bufsize));
 
+					// Close the pipe.
+					CLEANUP_PIPE
+
+					// Parse return code.
 					if (n == -1) {
 						if (readErrno == EAGAIN) { // OK one
-							if (n > 0) {
-								return FindData(returnedData, bufsize - STRINGALLOCCHUNK + n);
-							} else {
-								return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
-							}
+							return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
 						} else {
 							cf_free(returnedData);
 							return NULL;
@@ -180,10 +212,13 @@ static char * RunPerl(const char * perlcode)
 					}
 				} else {
 					// Error
+					CLEANUP_PIPE
 					return NULL;
 				}
 			} else {
 				// Error
+				CLEANUP_ARGUMENTS
+				CLEANUP_PIPE
 				return NULL;
 			}
 			break;
@@ -221,7 +256,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 		long int i = strtol(result, NULL, 10);
 		if ((i == LONG_MIN) || (i == LONG_MAX)) {
 			if (errno == ERANGE)
-				StackPush(ip->stack, 0);
+				StackPush(ip->stack, -1);
 		} else {
 			StackPush(ip->stack, (FUNGEDATATYPE)i);
 		}

@@ -72,6 +72,7 @@
 #define calloc_nogc(x,y)       calloc((x), (y))
 #define realloc_nogc(x,y)      realloc((x), (y))
 #define free_nogc(x)           free(x);
+#define strdup_nogc(x)         strdup((x))
 
 char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result, FUNGE_IN_FAST));
 size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
