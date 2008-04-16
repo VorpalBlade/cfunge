@@ -19,6 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Thanks to Heikki Kallasjoki for help with the perl side of this.
+// I would not have managed it without his help.
+
 #include "PERL.h"
 #include "../../stack.h"
 #include "../../settings.h"
@@ -48,64 +51,25 @@ static void FingerPERLshelled(instructionPointer * ip)
 	StackPush(ip->stack, 1); // Not Perl, at least last I checked this was C.
 }
 
-// The A stuff is because otherwise we get an error (from read) in case of no
-// other output.
-FUNGE_FAST
-static inline char * FindData(char * output, size_t length) {
-	const char * p;
-
-	p = strrchr(output, 'A');
-	if (p == NULL) {
-		return output;
-	} else {
-		char * restrict newstr;
-		size_t maxlen = length - (p - output);
-		newstr = cf_strndup(++p, maxlen);
-		cf_free(output);
-		return newstr;
-	}
-
-}
-
-// Builds the argument with the perl code.
-FUNGE_FAST
-static inline char * BuildArgument(const char * restrict perlcode) {
-	size_t argsize;
-	char * restrict argument;
-	// +1 for \0
-	argsize = strlen("print 'A',eval()") + strlen(perlcode) + 1;
-	argument = malloc_nogc(argsize * sizeof(char));
-	if (!argument) {
-		return NULL;
-	}
-	snprintf(argument, argsize, "print 'A',eval(%s)", perlcode);
-	return argument;
-}
-
-#define CLEANUP_PIPE \
-	{ \
-		close(fds[0]); \
-		close(fds[1]); \
-	}
-
 // Yes... This is a mess...
 FUNGE_FAST
 static char * RunPerl(const char * restrict perlcode)
 {
 	pid_t pid;
-	int fds[2]; // For pipe to child.
-	int status;
+	int outfds[2]; // For pipe of stderr.
 
 	if (perlcode == NULL)
 		return NULL;
 
-	if (pipe(fds) == -1)
+	if (pipe(outfds) == -1)
 		return NULL;
-	// Non-blocking to prevent locking up in read()
-	if (fcntl(fds[0], F_SETFL, O_NONBLOCK) == -1) {
+
+	// Non-blocking to prevent locking up in read() in parent
+	if (fcntl(outfds[0], F_SETFL, O_NONBLOCK) == -1) {
 		if (SettingWarnings)
-			perror("RunPerl, fcntl failed");
-		CLEANUP_PIPE
+			perror("RunPerl, fcntl on outfds failed");
+		close(outfds[0]);
+		close(outfds[1]);
 		return NULL;
 	}
 
@@ -115,7 +79,8 @@ static char * RunPerl(const char * restrict perlcode)
 			if (SettingWarnings)
 				perror("RunPerl, could not fork");
 			// Clean up
-			CLEANUP_PIPE
+			close(outfds[0]);
+			close(outfds[1]);
 			return NULL;
 			break;
 
@@ -125,15 +90,20 @@ static char * RunPerl(const char * restrict perlcode)
 			// Build argument list.
 			// Strdup to avoid the read only string warning.
 			// No need to free in child.
-			char * arguments[] = { strdup_nogc("perl"), strdup_nogc("-e"), NULL, NULL };
-			arguments[2] = BuildArgument(perlcode);
-			if (!arguments[2]) {
-				_Exit(2);
-			}
+			// TODO: Check that the allocations worked.
+			char * arguments[] = {
+				strdup_nogc("perl"),
+				strdup_nogc("-e"),
+				strdup_nogc("open(CFUNGE_REALERR, \">&STDERR\"); open(STDERR, \">&STDOUT\"); print CFUNGE_REALERR eval($ARGV[0])"),
+				strdup_nogc(perlcode),
+				NULL
+			};
 
 			// Do the FD stuff.
-			dup2(fds[1], 1);
-			dup2(fds[1], 2);
+			// Close unused end
+			close(outfds[0]);
+			// Dup the FD
+			dup2(outfds[1], 2);
 
 			// Execute
 			if (execvp("perl", arguments) == -1) {
@@ -147,6 +117,10 @@ static char * RunPerl(const char * restrict perlcode)
 
 		default: {
 			// Parent, sucess
+			int status;
+			// Close unused end
+			close(outfds[1]);
+			// Wait...
 			if (waitpid(pid, &status, 0) != -1) {
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
@@ -164,12 +138,12 @@ static char * RunPerl(const char * restrict perlcode)
 					// Read the result
 					// Yes this is very messy. Needs cleaning up.
 					while (true) {
-						n = read(fds[0], p, STRINGALLOCCHUNK);
+						n = read(outfds[0], p, STRINGALLOCCHUNK);
 						readErrno = errno;
 						if (n == -1) {
-							CLEANUP_PIPE
+							close(outfds[0]);
 							if (readErrno == EAGAIN) {
-								return FindData(returnedData, bufsize - STRINGALLOCCHUNK);
+								return returnedData;
 							} else {
 								if (SettingWarnings)
 									perror("RunPerl, read failed");
@@ -184,28 +158,28 @@ static char * RunPerl(const char * restrict perlcode)
 								if (!reallocRes) {
 									if (SettingWarnings)
 										perror("RunPerl, realloc for returnedData failed");
-									CLEANUP_PIPE
-									return FindData(returnedData,  bufsize - STRINGALLOCCHUNK);
+									close(outfds[0]);
+									return returnedData;
 								} else {
 									returnedData = reallocRes;
 									p = returnedData + (bufsize - 2 * STRINGALLOCCHUNK) + n;
 									memset(p, '\0', STRINGALLOCCHUNK);
 								}
 							} else {
-								CLEANUP_PIPE
-								return FindData(returnedData, bufsize - STRINGALLOCCHUNK + n);
+								close(outfds[0]);
+								return returnedData;
 							}
 						}
 					}
 
 				} else /* WIFEXITED */ {
 					// Error
-					CLEANUP_PIPE
+					close(outfds[0]);
 					return NULL;
 				}
 			} else /* waitpid */ {
 				// Error
-				CLEANUP_PIPE
+				close(outfds[0]);
 				return NULL;
 			}
 			break;

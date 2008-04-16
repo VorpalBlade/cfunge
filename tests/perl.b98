@@ -4,7 +4,14 @@ v       <
 > 0 '" "ih" '" #^ E >:#,_ v
 v                         <
 
-> 0 "5+1" I. a, @
+> 0 "5+1" I. a, >:#,_ v
+                      >                     v
 
+v "$x=" "' "Hello world!\n" "' "; print $x"0<
+   > a"detcelfeR" >:#,_@
+> #^ E >:#,_ a, @
 
-This program should print hi6
+This program should print:
+hi6
+Hello world!
+1
