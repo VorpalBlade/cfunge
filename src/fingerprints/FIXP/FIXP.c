@@ -168,37 +168,21 @@ static void FingerFIXPxor(instructionPointer * ip)
 
 bool FingerFIXPload(instructionPointer * ip)
 {
-	if (!OpcodeStackAdd(ip, 'A', &FingerFIXPand))
-		return false;
-	if (!OpcodeStackAdd(ip, 'B', &FingerFIXPacos))
-		return false;
-	if (!OpcodeStackAdd(ip, 'C', &FingerFIXPcos))
-		return false;
-	if (!OpcodeStackAdd(ip, 'D', &FingerFIXPrand))
-		return false;
-	if (!OpcodeStackAdd(ip, 'I', &FingerFIXPsin))
-		return false;
-	if (!OpcodeStackAdd(ip, 'J', &FingerFIXPasin))
-		return false;
-	if (!OpcodeStackAdd(ip, 'N', &FingerFIXPneg))
-		return false;
-	if (!OpcodeStackAdd(ip, 'O', &FingerFIXPor))
-		return false;
-	if (!OpcodeStackAdd(ip, 'P', &FingerFIXPmulpi))
-		return false;
-	if (!OpcodeStackAdd(ip, 'Q', &FingerFIXPsqrt))
-		return false;
-	if (!OpcodeStackAdd(ip, 'R', &FingerFIXPpow))
-		return false;
-	if (!OpcodeStackAdd(ip, 'S', &FingerFIXPsignbit))
-		return false;
-	if (!OpcodeStackAdd(ip, 'T', &FingerFIXPtan))
-		return false;
-	if (!OpcodeStackAdd(ip, 'U', &FingerFIXPatan))
-		return false;
-	if (!OpcodeStackAdd(ip, 'V', &FingerFIXPabs))
-		return false;
-	if (!OpcodeStackAdd(ip, 'X', &FingerFIXPxor))
-		return false;
+	ManagerAddOpcode(FIXP, 'A', and)
+	ManagerAddOpcode(FIXP, 'B', acos)
+	ManagerAddOpcode(FIXP, 'C', cos)
+	ManagerAddOpcode(FIXP, 'D', rand)
+	ManagerAddOpcode(FIXP, 'I', sin)
+	ManagerAddOpcode(FIXP, 'J', asin)
+	ManagerAddOpcode(FIXP, 'N', neg)
+	ManagerAddOpcode(FIXP, 'O', or)
+	ManagerAddOpcode(FIXP, 'P', mulpi)
+	ManagerAddOpcode(FIXP, 'Q', sqrt)
+	ManagerAddOpcode(FIXP, 'R', pow)
+	ManagerAddOpcode(FIXP, 'S', signbit)
+	ManagerAddOpcode(FIXP, 'T', tan)
+	ManagerAddOpcode(FIXP, 'U', atan)
+	ManagerAddOpcode(FIXP, 'V', abs)
+	ManagerAddOpcode(FIXP, 'X', xor)
 	return true;
 }

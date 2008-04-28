@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #ifndef DISABLE_GC
 
@@ -84,6 +85,18 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 #ifdef __WIN32__
 #  define random rand
 #  define srandom srand
+#endif
+
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
+#  define cf_getc_unlocked(x)    getc_unlocked((x))
+#  define cf_putc_unlocked(x, y) putc_unlocked((x), (y))
+#  define cf_flockfile(x)        flockfile((x))
+#  define cf_funlockfile(x)      funlockfile((x))
+#else
+#  define cf_getc_unlocked(x)    getc((x))
+#  define cf_putc_unlocked(x, y) putc((x), (y))
+#  define cf_flockfile(x)        /* NO-OP */
+#  define cf_funlockfile(x)      /* NO-OP */
 #endif
 
 #endif

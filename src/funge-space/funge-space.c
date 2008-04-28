@@ -235,13 +235,11 @@ static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 	if (!file) {
 		return NULL;
 	} else {
-#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
 		// Microoptimizing! Remove this if it bothers you.
-		{
-			int fd = fileno(file);
-			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-			posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-		}
+		int fd = fileno(file);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
 #endif
 		return file;
 	}
@@ -359,8 +357,6 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 {
 	FILE * file;
 
-	FUNGEDATATYPE value;
-
 	FUNGEVECTORTYPE maxy = offset->y + size->y;
 	FUNGEVECTORTYPE maxx = offset->x + size->x;
 
@@ -371,20 +367,78 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 	file = fopen(filename, "w");
 	if (!file)
 		return false;
-	// Microoptimizing! Remove this if it bothers you.
-#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
-	posix_fallocate(fileno(file), 0, size->y * size->x);
-#endif
 
-	// TODO textfile mode
-	for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
-		for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
-			value = FungeSpaceGet(VectorCreateRef(x, y));
-			fputc(value, file);
+	if (!textfile) {
+		FUNGEDATATYPE value;
+		// Microoptimizing! Remove this if it bothers you.
+		// However it also makes it possible to error out early.
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
+		if (posix_fallocate(fileno(file), 0, size->y * size->x) != 0) {
+			fclose(file);
+			return false;
 		}
-		fputc('\n', file);
-	}
+#endif
+		cf_flockfile(file);
+		for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
+			for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
+				value = FungeSpaceGet(VectorCreateRef(x, y));
+				cf_putc_unlocked(value, file);
+			}
+			cf_putc_unlocked('\n', file);
+		}
+		cf_funlockfile(file);
+	// Text mode...
+	} else {
+		size_t index = 0;
+		// Extra size->y for adding a lot of \n...
+		FUNGEDATATYPE * towrite = cf_malloc((size->x * size->y + size->y) * sizeof(FUNGEDATATYPE));
+		if (!towrite) {
+			fclose(file);
+			return false;
+		}
+		// Construct each line.
+		for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
+			ssize_t lastspace = size->x;
+			FUNGEDATATYPE * string = cf_malloc(size->x * sizeof(FUNGEDATATYPE));
+			if (!string) {
+				fclose(file);
+				return false;
+			}
+			for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
+				string[x-offset->x] = FungeSpaceGet(VectorCreateRef(x, y));
+			}
 
+			do {
+				lastspace--;
+			} while ((lastspace >= 0) && (string[lastspace] == ' '));
+
+			if (lastspace > 0) {
+				for (ssize_t i = 0; i <= lastspace; i++) {
+					towrite[index] = string[i];
+					index++;
+				}
+			}
+			cf_free(string);
+			towrite[index]=(FUNGEDATATYPE)'\n';
+			index++;
+		}
+		// Remove trailing newlines.
+		{
+			ssize_t lastnewline = index;
+			do {
+				lastnewline--;
+			} while ((lastnewline >= 0) && (towrite[lastnewline] == '\n'));
+
+			cf_flockfile(file);
+			if (lastnewline > 0) {
+				for (ssize_t i = 0; i <= lastnewline; i++) {
+					cf_putc_unlocked(towrite[i], file);
+				}
+			}
+			cf_funlockfile(file);
+		}
+		cf_free(towrite);
+	}
 	fclose(file);
 	return true;
 }
