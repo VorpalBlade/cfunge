@@ -42,7 +42,7 @@
 #define MAX_HASH_VALUE 54
 /* maximum key range = 53, duplicates = 0 */
 
-static inline unsigned int
+FUNGE_FAST static inline unsigned int
 SafeEnvHash (register const char *str, register unsigned int len)
 {
   static const unsigned char asso_values[] =
@@ -88,7 +88,7 @@ SafeEnvHash (register const char *str, register unsigned int len)
   return hval + asso_values[(unsigned char)str[len - 1]];
 }
 
-static inline const char *
+FUNGE_FAST static inline const char *
 SafeInWordSet (register const char *str, register unsigned int len)
 {
   static const unsigned char lengthtable[] =

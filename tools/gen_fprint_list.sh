@@ -93,7 +93,7 @@ printfprintinfo() {
 	elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
 		status "Fingerprint name $FPRINT probably ok (but not common style)."
 		status "Make sure each char is in the ASCII range 0-254."
-		status "Note that alphanumeric (upper case only) fingerprint names are strongly prefered."
+		status "Note that alphanumeric (upper case only) fingerprint names are strongly preferred."
 	else
 		die "Not valid format for fingerprint name."
 	fi
@@ -220,7 +220,7 @@ printfprintinfo() {
 
 cd "src/fingerprints/" || die "change directory failed"
 
-progress "Finding fingerrprint list"
+progress "Finding fingerprint list"
 SPECS=( *.spec )
 
 FPRINTS=()

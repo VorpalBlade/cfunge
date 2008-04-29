@@ -236,7 +236,7 @@ static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 		return NULL;
 	} else {
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
-		// Microoptimizing! Remove this if it bothers you.
+		// Microoptimising! Remove this if it bothers you.
 		int fd = fileno(file);
 		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
@@ -370,7 +370,7 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 
 	if (!textfile) {
 		FUNGEDATATYPE value;
-		// Microoptimizing! Remove this if it bothers you.
+		// Microoptimising! Remove this if it bothers you.
 		// However it also makes it possible to error out early.
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
 		if (posix_fallocate(fileno(file), 0, size->y * size->x) != 0) {

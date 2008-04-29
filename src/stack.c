@@ -164,14 +164,14 @@ FUNGE_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
 
 FUNGE_FAST void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value)
 {
-	// TODO: Optimize
+	// TODO: Optimise
 	StackPush(stack, value->x);
 	StackPush(stack, value->y);
 }
 
 FUNGE_FAST fungeVector StackPopVector(fungeStack * restrict stack)
 {
-	// TODO Optimize
+	// TODO Optimise
 	FUNGEVECTORTYPE x, y;
 	y = StackPop(stack);
 	x = StackPop(stack);
@@ -232,7 +232,7 @@ FUNGE_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
  ***************/
 FUNGE_FAST void StackDupTop(fungeStack * restrict stack)
 {
-	// TODO: Optimize instead of doing it this way
+	// TODO: Optimise instead of doing it this way
 	FUNGEDATATYPE tmp;
 
 	tmp = StackPeek(stack);
@@ -243,7 +243,7 @@ FUNGE_FAST void StackDupTop(fungeStack * restrict stack)
 
 FUNGE_FAST void StackSwapTop(fungeStack * restrict stack)
 {
-	// TODO: Optimize instead of doing it this way
+	// TODO: Optimise instead of doing it this way
 	FUNGEDATATYPE a, b;
 	a = StackPop(stack);
 	b = StackPop(stack);
@@ -433,9 +433,7 @@ FUNGE_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack 
 	TOSS = stackStack->stacks[stackStack->current];
 	SOSS = stackStack->stacks[stackStack->current - 1];
 	storageOffset = StackPopVector(SOSS);
-	// TODO: Transfer data back here
 	if (count > 0) {
-		// Dynamic array (C99) to copy elements into, because order must be preserved.
 		FUNGEDATATYPE i = count;
 		while (i--)
 			entriesCopy[i] = StackPop(TOSS);

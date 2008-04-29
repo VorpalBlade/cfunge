@@ -39,7 +39,13 @@ extern int fungeargc;
 // Functions
 
 // Certain instructions that are also used elsewhere.
+/**
+ * Run a _ instruction.
+ */
 void IfEastWest(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+/**
+ * Run a | instruction.
+ */
 void IfNorthSouth(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 
 /**

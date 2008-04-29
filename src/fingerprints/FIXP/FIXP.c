@@ -31,7 +31,7 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
-
+// For converting between degrees and radians.
 #define FUNGE_PI_180 (M_PI / 180.0)
 #define FUNGE_180_PI (180.0 / M_PI)
 

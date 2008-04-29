@@ -115,7 +115,7 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 	const ght_uint32_t m = 0x5bd1e995;
 	const int32_t r = 24;
 
-	// Initialize the hash to a 'random' value
+	// Initialise the hash to a 'random' value
 	size_t len = sizeof(fungeSpaceHashKey);
 	ght_uint32_t h = 0x7fd652ad ^ len;
 

@@ -68,14 +68,14 @@
 #endif
 
 // Use these only if you have to, for example if some external library
-// did the malloc
+// did the malloc.
 #define malloc_nogc(x)         malloc((x))
 #define calloc_nogc(x,y)       calloc((x), (y))
 #define realloc_nogc(x,y)      realloc((x), (y))
 #define free_nogc(x)           free(x);
 #define strdup_nogc(x)         strdup((x))
 
-char * cf_strndup(char const *string, size_t n) __attribute__((warn_unused_result, FUNGE_IN_FAST));
+char * cf_strndup(const char *string, size_t n) __attribute__((warn_unused_result, FUNGE_IN_FAST));
 size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
 
 // This is glibc specific, so here is a version from gnulib.
@@ -87,14 +87,17 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 #  define srandom srand
 #endif
 
+// Useful in case of a lot of IO operations.
 #if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
 #  define cf_getc_unlocked(x)    getc_unlocked((x))
 #  define cf_putc_unlocked(x, y) putc_unlocked((x), (y))
+#  define cf_putchar_unlocked(x) putchar_unlocked((x))
 #  define cf_flockfile(x)        flockfile((x))
 #  define cf_funlockfile(x)      funlockfile((x))
 #else
 #  define cf_getc_unlocked(x)    getc((x))
 #  define cf_putc_unlocked(x, y) putc((x), (y))
+#  define cf_putchar_unlocked(x) putchar((x))
 #  define cf_flockfile(x)        /* NO-OP */
 #  define cf_funlockfile(x)      /* NO-OP */
 #endif

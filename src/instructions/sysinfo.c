@@ -41,7 +41,7 @@
 static size_t TOSSSize = 0;
 
 #ifdef __WIN32__
-// Now, win32 is crap and insane, so we just fake it, much simpler
+// Now, win32 is crap and insane, so we just fake it, much simpler.
 static const char * environ[] = {
 	"SYSTEM=windows crap",
 	"SUPPORTS=not environ at least, get a sane system if you want this to work."
@@ -52,7 +52,7 @@ extern char **environ;
 #  endif
 #endif
 
-// Push a single request value
+// Push a single request value.
 // pushStack is stack to push on.
 FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
 {

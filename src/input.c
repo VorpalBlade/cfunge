@@ -63,7 +63,7 @@ FUNGE_FAST FUNGEDATATYPE input_getchar(void)
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-// Note, no need to optimize really, this is user input
+// Note, no need to optimise really, this is user input
 // bound anyway.
 FUNGE_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 {

@@ -42,8 +42,8 @@ static void FingerFPSPadd(instructionPointer * ip)
 	floatint a, b;
 	a.i = StackPop(ip->stack);
 	b.i = StackPop(ip->stack);
-	a.f += b.f;
-	StackPush(ip->stack, a.i);
+	b.f += a.f;
+	StackPush(ip->stack, b.i);
 }
 
 static void FingerFPSPsub(instructionPointer * ip)

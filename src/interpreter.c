@@ -111,7 +111,7 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 			ip->stringLastWasSpace = true;
 			StackPush(ip->stack, opcode);
 		}
-		// Next: Is this a fingerprint opcode?
+	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (!SettingEnableFingerprints) {
 			PrintUnknownInstrWarn(opcode, ip);
@@ -553,8 +553,8 @@ static inline void interpreterMainLoop(void)
 
 
 #ifndef NDEBUG
-// Used with debugging for freeing stuff at end of program
-// not needed, but useful to check that free functions works,
+// Used with debugging for freeing stuff at end of the program.
+// Not needed, but useful to check that free functions works,
 // and for detecting real memory leaks.
 static void DebugFreeThings(void)
 {

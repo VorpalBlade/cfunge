@@ -57,7 +57,7 @@ fungeStack * StackCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_
 void StackFree(fungeStack * stack) FUNGE_FAST;
 
 /**
- * Push a item on the stack
+ * Push a item on the stack.
  */
 void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value) __attribute__((nonnull, FUNGE_IN_FAST));
 /**
@@ -90,7 +90,7 @@ fungeVector StackPopVector(fungeStack * restrict stack) __attribute__((nonnull, 
  */
 void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len) __attribute__((nonnull, FUNGE_IN_FAST));
 /**
- * Pop a 0"gnirts" and return a null-terminated string
+ * Pop a 0"gnirts" and return a null-terminated string.
  */
 char * StackPopString(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 /**
@@ -112,7 +112,7 @@ void StackSwapTop(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_
 //
 
 /**
- * Create a new stack-stack
+ * Create a new stack-stack.
  */
 fungeStackStack * StackStackCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
 /**
@@ -122,7 +122,7 @@ void StackStackFree(fungeStackStack * me) FUNGE_FAST;
 
 #ifdef CONCURRENT_FUNGE
 /**
- * Deep copy a stack-stack, used for concurrency
+ * Deep copy a stack-stack, used for concurrency.
  */
 fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST));
 #endif
@@ -136,7 +136,7 @@ bool StackStackBegin(struct s_instructionPointer * restrict ip,
                      FUNGEDATATYPE count,
                      const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 /**
- * End a stack on the stack-stack
+ * End a stack on the stack-stack.
  * count is how many items to copy over.
  */
 bool StackStackEnd(struct s_instructionPointer * restrict ip,

@@ -33,7 +33,7 @@
  *
  * A simple example to get started can be found in the
  * <TT>example/simple.c</TT> file found in the distribution.
- * <TT>hash_test.c</TT> provides a more comlpete example.
+ * <TT>hash_test.c</TT> provides a more complete example.
  *
  * Some basic properties of the hash table are:
  *
@@ -379,7 +379,7 @@ extern "C"
 	 * parameter when ght_create() is called, the hash table is
 	 * automatically rehashed when the number of stored elements exceeds
 	 * two times the number of buckets in the table (making calls to this
-	 * function unessessary).
+	 * function unnecessary).
 	 *
 	 * @param p_ht the hash table to rehash.
 	 * @param i_size the new size of the table.

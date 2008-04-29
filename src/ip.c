@@ -236,7 +236,7 @@ FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	 */
 	if (!ipDuplicateInPlace(&list->ips[index], &list->ips[index + 1])) {
 		// We are in trouble
-		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continueing anyway.\n", stderr);
+		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.\n", stderr);
 	}
 
 	// Here we mirror new IP and do ID changes.

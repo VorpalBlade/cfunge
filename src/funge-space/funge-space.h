@@ -66,19 +66,22 @@ void FungeSpaceSetOff(FUNGEDATATYPE value,
 void FungeSpaceWrap(fungePosition * restrict position,
                     const fungeVector * restrict delta) __attribute__((nonnull, FUNGE_IN_FAST));
 /**
- * Load a file into funge-space at 0,0. Optimized, use when possible.
+ * Load a file into funge-space at 0,0. Optimised, use when possible.
  */
 bool FungeSpaceLoad(const char * restrict filename) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
 
 /**
- * Load a file into funge space at an offset. Used for i instruction.
+ * Load a file into funge space at an offset. Used for the i instruction.
  * size is an out variable.
  */
 bool FungeSpaceLoadAtOffset(const char * restrict filename,
                             const fungePosition * restrict offset,
                             fungeVector * restrict size,
                             bool binary) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
-
+/**
+ * Write out a file from an area of funge space at an offset. Used for the o
+ * instruction.
+ */
 bool FungeSpaceSaveToFile(const char          * restrict filename,
                           const fungePosition * restrict offset,
                           const fungeVector   * restrict size,

@@ -1,4 +1,4 @@
-This file details current status of the Befunge98/108 interpreter cfunge.
+This file details current status of the Befunge93/98/108 interpreter cfunge.
 
 Before next release
 -------------------
@@ -9,7 +9,6 @@ Future
 ------
 Things that will be supported but aren't yet:
  * For i: Check that binary mode works
- * For o: Make text output mode work.
  * Several more fingerprints
 
 Ideas:

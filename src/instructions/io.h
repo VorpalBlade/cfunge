@@ -28,6 +28,7 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
+// These are the i and o instructions.
 void RunFileInput(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 void RunFileOutput(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
 

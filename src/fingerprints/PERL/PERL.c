@@ -115,7 +115,7 @@ static char * RunPerl(const char * restrict perlcode)
 		}
 
 		default: {
-			// Parent, sucess
+			// Parent, success
 			int status;
 			// Close unused end
 			close(outfds[1]);
@@ -186,7 +186,7 @@ static char * RunPerl(const char * restrict perlcode)
 	} // switch
 }
 
-// E - Evaluate 0gnits
+// E - Evaluate 0gnirts
 static void FingerPERLeval(instructionPointer * ip)
 {
 	char * restrict result;

@@ -51,7 +51,7 @@ static void FingerREFCreference(instructionPointer * ip)
 	}
 	// TODO: Return same value for the same cell each time!
 	// Yes cell 0 will never be used, but that is a hack to prevent having
-	// errors on someone doing 0D befire they do any R.
+	// errors on someone doing 0D before they do any R.
 	referencesTop++;
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;

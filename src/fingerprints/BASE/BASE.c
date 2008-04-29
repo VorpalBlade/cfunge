@@ -31,7 +31,7 @@ FUNGE_FAST static void binary(FUNGEDATATYPE number)
 {
 	if (number > 0) {
 		binary(number >> 1);
-		putchar(number & 1 ? '1' : '0');
+		cf_putchar_unlocked(number & 1 ? '1' : '0');
 	}
 }
 
@@ -39,7 +39,9 @@ static void FingerBASEoutputBinary(instructionPointer * ip)
 {
 	FUNGEDATATYPE x;
 	x = StackPop(ip->stack);
+	cf_flockfile(stdout);
 	binary(x);
+	cf_funlockfile(stdout);
 	putchar(' ');
 }
 
@@ -72,23 +74,25 @@ static void FingerBASEoutputBase(instructionPointer * ip)
 		return;
 	}
 
+	cf_flockfile(stdout);
 	if (base == 1) {
 		while (val--)
-			putchar('0');
-		putchar(' ');
+			cf_putchar_unlocked('0');
+		cf_putchar_unlocked(' ');
 	} else if (!val) {
-		putchar('0');
+		cf_putchar_unlocked('0');
 	} else {
+		// We need at most this size of the string.
 		size_t i = ceil(anyLog((double)base, (double)val) + 1);
-		// FIXME: Change so it works with malloc instead.
-		char * result = (char*)cf_calloc(i, sizeof(char));
+		char * restrict result = (char*)cf_malloc_noptr(i * sizeof(char));
 		for (i = 0; val > 0; val /= base)
 			result[i++] = digits[val % base];
 		for (; i-- > 0;)
-			putchar(result[i]);
-		putchar(' ');
+			cf_putchar_unlocked(result[i]);
+		cf_putchar_unlocked(' ');
 		cf_free(result);
 	}
+	cf_funlockfile(stdout);
 }
 
 static void FingerBASEinputBase(instructionPointer * ip)

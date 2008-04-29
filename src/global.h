@@ -82,7 +82,7 @@ typedef int32_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRId32
 #  define ABS(x) abs(x)
 #else
-#  error Err, you actually got to select either 32-bit or 64-bit data type. If you used the normal build system this error should not happen.
+#  error "Err, you actually got to select either 32-bit or 64-bit data type. If you used the normal build system this error should not happen."
 #endif
 
 // Handprint: CFUN

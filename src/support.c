@@ -36,7 +36,7 @@ FUNGE_FAST size_t cf_strnlen(const char *string, size_t maxlen)
 }
 
 // This function is from Gnulib, with some changes
-FUNGE_FAST char * cf_strndup(char const *string, size_t n)
+FUNGE_FAST char * cf_strndup(const char *string, size_t n)
 {
 	if (!string || !*string)
 		return NULL;
