@@ -74,7 +74,7 @@ static void FingerCPLIout(instructionPointer * ip)
 	r = StackPop(ip->stack);
 	printf("%" FUNGEDATAPRI, r);
 	if (i > 0)
-		putchar('+');
+		cf_putchar_maybe_locked('+');
 	printf("%" FUNGEDATAPRI "i ", i);
 }
 

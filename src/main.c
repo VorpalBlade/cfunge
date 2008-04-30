@@ -66,7 +66,7 @@ static void printFeatures(void)
 	puts(" * Err, this shouldn't happen, it seems cell size is not known...");
 #endif
 
-	putchar('\n');
+	cf_putchar_maybe_locked('\n');
 	// This call does not return.
 	ManagerList();
 }

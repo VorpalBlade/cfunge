@@ -31,6 +31,7 @@
 #include "instructions/iterate.h"
 #include "instructions/sysinfo.h"
 #include "instructions/io.h"
+#include "instructions/execute.h"
 
 #include "fingerprints/manager.h"
 
@@ -347,12 +348,18 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 
 			case ',': {
 				FUNGEDATATYPE a = StackPop(ip->stack);
-				putchar((char)a);
-				if (a == '\n') fflush(stdout);
+				// Reverse on failed output/input
+				if (cf_putchar_maybe_locked(a) != (char)a)
+					ipReverse(ip);
+				if (a == '\n')
+					if (fflush(stdout) != 0)
+						ipReverse(ip);
 				break;
 			}
 			case '.':
-				printf("%" FUNGEDATAPRI " ", StackPop(ip->stack));
+				// Reverse on failed output/input
+				if (printf("%" FUNGEDATAPRI " ", StackPop(ip->stack)) < 0)
+					ipReverse(ip);
 				break;
 
 			case '~':
@@ -413,6 +420,9 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				break;
 			case 'o':
 				RunFileOutput(ip);
+				break;
+			case '=':
+				RunSystemExecute(ip);
 				break;
 
 			case '(':

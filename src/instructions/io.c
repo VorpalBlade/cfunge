@@ -21,7 +21,6 @@
 
 #include "../global.h"
 #include "io.h"
-#include "../interpreter.h"
 #include "../funge-space/funge-space.h"
 #include "../vector.h"
 #include "../rect.h"
@@ -42,7 +41,7 @@ FUNGE_FAST void RunFileInput(instructionPointer * restrict ip)
 	}
 
 	{
-		char * filename;
+		char * restrict filename;
 		bool binary;
 		fungePosition offset;
 		fungeVector size;
@@ -86,7 +85,7 @@ FUNGE_FAST void RunFileOutput(instructionPointer * restrict ip)
 	}
 
 	{
-		char * filename;
+		char * restrict filename;
 		bool textfile;
 		fungePosition offset;
 		fungeVector size;

@@ -41,8 +41,8 @@ static void FingerBASEoutputBinary(instructionPointer * ip)
 	x = StackPop(ip->stack);
 	cf_flockfile(stdout);
 	binary(x);
+	cf_putchar_unlocked(' ');
 	cf_funlockfile(stdout);
-	putchar(' ');
 }
 
 static void FingerBASEoutputOctal(instructionPointer * ip)

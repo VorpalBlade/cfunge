@@ -1,0 +1,14 @@
+v       ; This file test for potential floating point exceptions.             ;
+        ; It does not show where it is, use a debugger if you run into issues ;
+
+> 00/ 00% v             ; Core instructions ;
+v         <
+   >a"PXIF oN">:#,_v    ; Just tells it couldn't test FIXP ;
+> #^  "PXIF"4( 0D 0U 0T 01 0J v
+v                             <
+
+   >a"ILPC oN">:#,_v    ; Just tells it couldn't test CPLI ;
+> #^  "ILPC"4( nD  v
+v                  <
+
+> a"dehsiniF">:#,_@

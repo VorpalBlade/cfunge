@@ -21,6 +21,11 @@
 
 // Do not include directly, include global.h instead. It includes
 // this file.
+//
+// This file is used for:
+//  * Stuff from Gnulib that we want.
+//  * Setting up defines for different platforms as needed.
+
 #ifndef _HAD_SRC_SUPPORT_H
 #define _HAD_SRC_SUPPORT_H
 
@@ -28,6 +33,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
+// GC may cause threading to happen...
+// ...but wihtout threading we can avoid locking for some stuff.
+#ifndef DISABLE_GC
+#  define NEED_LOCKED
+#else
+#  undef NEED_LOCKED
+#endif
 
 #ifndef DISABLE_GC
 
@@ -81,25 +94,36 @@ size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
 // This is glibc specific, so here is a version from gnulib.
 ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 
+// Useful in case of a lot of IO operations.
+#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
+#  define cf_getc_unlocked(x)              getc_unlocked((x))
+#  define cf_putc_unlocked(x, y)           putc_unlocked((x), (y))
+#  define cf_putchar_unlocked(x)           putchar_unlocked((x))
+#  ifdef NEED_LOCKED
+#    define cf_flockfile(x)                flockfile((x))
+#    define cf_funlockfile(x)              funlockfile((x))
+#    define cf_putchar_maybe_locked(x)     putchar((x))
+#    define cf_putc_maybe_locked(x, y)     putc((x), (y))
+#  else /* NEED_LOCKED */
+#    define cf_flockfile(x)                /* NO-OP */
+#    define cf_funlockfile(x)              /* NO-OP */
+#    define cf_putchar_maybe_locked(x)     putchar_unlocked((x))
+#    define cf_putc_maybe_locked(x, y)     putc_unlocked((x), (y))
+#  endif /* NEED_LOCKED */
+#else /* _POSIX_THREAD_SAFE_FUNCTIONS */
+#  define cf_getc_unlocked(x)              getc((x))
+#  define cf_putc_unlocked(x, y)           putc((x), (y))
+#  define cf_putchar_unlocked(x)           putchar((x))
+#  define cf_flockfile(x)                  /* NO-OP */
+#  define cf_funlockfile(x)                /* NO-OP */
+#  define cf_putchar_maybe_locked(x)       putchar((x))
+#  define cf_putc_maybe_locked(x, y)       putc((x), (y))
+#endif /* _POSIX_THREAD_SAFE_FUNCTIONS */
+
 // Yep, crap.
 #ifdef __WIN32__
 #  define random rand
 #  define srandom srand
-#endif
-
-// Useful in case of a lot of IO operations.
-#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
-#  define cf_getc_unlocked(x)    getc_unlocked((x))
-#  define cf_putc_unlocked(x, y) putc_unlocked((x), (y))
-#  define cf_putchar_unlocked(x) putchar_unlocked((x))
-#  define cf_flockfile(x)        flockfile((x))
-#  define cf_funlockfile(x)      funlockfile((x))
-#else
-#  define cf_getc_unlocked(x)    getc((x))
-#  define cf_putc_unlocked(x, y) putc((x), (y))
-#  define cf_putchar_unlocked(x) putchar((x))
-#  define cf_flockfile(x)        /* NO-OP */
-#  define cf_funlockfile(x)      /* NO-OP */
 #endif
 
 #endif

@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// This file should be included everywhere.
 #ifndef _HAD_SRC_GLOBAL_H
 #define _HAD_SRC_GLOBAL_H
 

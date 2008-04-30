@@ -44,13 +44,23 @@ static size_t TOSSSize = 0;
 // Now, win32 is crap and insane, so we just fake it, much simpler.
 static const char * environ[] = {
 	"SYSTEM=windows crap",
-	"SUPPORTS=not environ at least, get a sane system if you want this to work."
+	"SUPPORTS=not environ at least, get a sane system if you want this to work.",
+	"REALLY=we mean it, cfunge on windows is NOT SUPPORTED."
 };
 #else
 #  ifndef _GNU_SOURCE
 extern char **environ;
 #  endif
 #endif
+
+#define FUNGE_FLAGS_CONCURRENT 0x01
+#define FUNGE_FLAGS_INPUT      0x02
+#define FUNGE_FLAGS_OUTPUT     0x04
+#define FUNGE_FLAGS_EXECUTE    0x08
+#define FUNGE_FLAGS_STD108     0x20
+
+#define FUNGE_FLAGS_NOTSANDBOX FUNGE_FLAGS_INPUT | FUNGE_FLAGS_OUTPUT | FUNGE_FLAGS_EXECUTE
+
 
 // Push a single request value.
 // pushStack is stack to push on.
@@ -60,17 +70,17 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 		case 1: { // Flags
 			FUNGEDATATYPE tmp = 0x0;
 #ifdef CONCURRENT_FUNGE
-			tmp |= 0x01;
+			tmp |= FUNGE_FLAGS_CONCURRENT;
 #endif
 			if (!SettingSandbox) {
-				// i = 0x02, o = 0x04
-				tmp |= 0x06;
+				// i, o and =
+				tmp |= FUNGE_FLAGS_NOTSANDBOX;
 			}
 			if (SettingCurrentStandard == stdver108)
-				tmp |= 0x20;
+				tmp |= FUNGE_FLAGS_STD108;
 			StackPush(pushStack, tmp);
+			break;
 		}
-		break;
 		case 2: // Cell size
 			StackPush(pushStack, sizeof(FUNGEDATATYPE));
 			break;
@@ -81,7 +91,12 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 			StackPush(pushStack, FUNGEVERSION);
 			break;
 		case 5: // Operating paradigm
-			StackPush(pushStack, 0);
+			if (SettingSandbox) {
+				StackPush(pushStack, 0);
+			} else {
+				// 1 = As system()
+				StackPush(pushStack, 1);
+			}
 			break;
 		case 6: // Path separator
 #ifdef __WIN32__
