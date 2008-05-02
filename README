@@ -119,7 +119,7 @@ some of those cases:
    depending on exact situation.
  * ( and ) with a negative count reflects and doesn't pop any fingerprint.
  * Loaded fingerprints are inherited to child IPs at split (t).
- * stdout is only flushed at:
+ * STDOUT is only flushed at:
    * Newline (line feed, ASCII 10) printed using , instruction.
    * Any input instructions.
    * End of program.

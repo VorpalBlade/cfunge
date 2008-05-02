@@ -224,7 +224,7 @@ FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fi
 }
 
 #if CHAR_BIT != 8
-#  error CHAR_BIT != 8, please make sure the function below the location of this error works on your system.
+#  error "CHAR_BIT != 8, please make sure the function below the location of this error works on your system."
 #endif
 
 void ManagerList(void)

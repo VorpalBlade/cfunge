@@ -129,7 +129,7 @@ static char * RunPerl(const char * restrict perlcode)
 					char * p;
 					int readErrno;
 
-					returnedData = cf_calloc_noptr(bufsize, sizeof(char));
+					returnedData = calloc_nogc(bufsize, sizeof(char));
 					if (!returnedData)
 						return NULL;
 					p = returnedData;
@@ -153,7 +153,7 @@ static char * RunPerl(const char * restrict perlcode)
 							if ((n + 1) >= STRINGALLOCCHUNK) {
 								char * reallocRes;
 								bufsize += STRINGALLOCCHUNK;
-								reallocRes = cf_realloc(returnedData, bufsize * sizeof(char));
+								reallocRes = realloc_nogc(returnedData, bufsize * sizeof(char));
 								if (!reallocRes) {
 									if (SettingWarnings)
 										perror("RunPerl, realloc for returnedData failed");
@@ -201,7 +201,7 @@ static void FingerPERLeval(instructionPointer * ip)
 #ifdef DISABLE_GC
 	cf_free(perlcode);
 #endif
-	cf_free(result);
+	free_nogc(result);
 }
 
 // I - As E but cast to integer.
@@ -224,7 +224,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 #ifdef DISABLE_GC
 	cf_free(perlcode);
 #endif
-	cf_free(result);
+	free_nogc(result);
 }
 
 bool FingerPERLload(instructionPointer * ip)

@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (optind >= argc) {
-		fputs("No file provided\n", stderr);
+		fputs("Error: No file provided.\n", stderr);
 		return EXIT_FAILURE;
 	} else {
 		// Copy the rest to the variables in interpreter.c/interpreter.h
