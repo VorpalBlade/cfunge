@@ -179,7 +179,6 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				// May not be perfectly uniform.
 				// If this matters for you, contact me (with a patch).
 				long int rnd = random() % 4;
-				assert((rnd >= 0) && (rnd <= 3));
 				switch (rnd) {
 					case 0: ipGoNorth(ip); break;
 					case 1: ipGoEast(ip); break;

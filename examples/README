@@ -20,3 +20,6 @@ Those that are known:
      For this example to work the interpreter must be compiled with concurrency.
    * roman.b98
      This shows an example of how to use fingerprints. Also valid in unefunge98.
+   * count.b98
+     This one just asks for a number to be input, then prints all numbers from
+     1 up to (and including) that number. The number entered should be positive.
