@@ -10,11 +10,32 @@ For more info:
 and
   bzr help revisionspec
 
+0.2.1-pre1
+----------
+Important changes in this release:
+ * Support for the (optional) i, o and = instructions.
+ * Internal API was cleaned up to be more consistent with itself.
+ * Fix some places were cfunge wasn't 100% standard conforming.
+   (Note that mycology didn't detect these issues.)
+ * Some fixes for bugs that caused crashes.
+ * A lot of less serious bugs were fixed.
+ * Some code were optimised (including the hash library).
+ * And some added fingerprints.
+
+Added fingerprints:
+ * CPLI Complex Integer extension
+ * FIXP Some useful math functions
+ * FPDP Double precision floating point
+ * FPSP Single precision floating point
+ * HRTI High-Resolution Timer Interface
+ * PERL Generic Interface to the Perl Language (not available in sandbox mode)
+ * TOYS Funge-98 Standard Toys
+
 
 0.2.0
 -----
 This release adds fingerprint support (along with several fingerprints),
-concurrency, a lot of bug fixes and implementating missing features.
+concurrency, a lot of bug fixes and implementing missing features.
 
 Added fingerprints:
  * BASE I/O for numbers in other bases
@@ -25,6 +46,7 @@ Added fingerprints:
  * REFC Referenced Cells Extension
  * ROMA Funge-98 Roman Numerals
  * SUBR Subroutine extension
+
 
 0.1.0
 -----

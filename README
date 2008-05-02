@@ -24,9 +24,9 @@ REQUIRED:
 
  * A POSIX system. Linux 2.6.24 is known to work, so is FreeBSD 7.0. Windows may
    or may not work, but I won't fix any bugs that can't be reproduced on a POSIX
-   system, except if someone else provides a patch. Patches are welcome only if
-   they don't mess up source too much (anything using Win32/64 specific API
-   counts as messing up).
+   system, except if someone else provides a patch. Patches for Windows are
+   welcome only if they don't mess up source too much (anything using Win32/64
+   specific API(s) counts as messing up).
 
 RECOMMENDED:
   Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later
