@@ -70,8 +70,8 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // Converted value is returned in *value.
 // Return value is last index used in string.
 __attribute__((warn_unused_result, nonnull, FUNGE_IN_FAST))
-static ptrdiff_t parseInt(const char * restrict s,
-                          FUNGEDATATYPE * value, FUNGEDATATYPE base)
+static inline ptrdiff_t parseInt(const char * restrict s,
+                                 FUNGEDATATYPE * value, FUNGEDATATYPE base)
 {
 	FUNGEDATATYPE result = 0;
 	size_t i;
