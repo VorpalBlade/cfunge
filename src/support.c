@@ -105,7 +105,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 			if (cur_len + 1 >= needed) {
 				result = -1;
 // This is for Windows only really.
-#ifndef EOVERFLOW
+#ifdef EOVERFLOW
 				errno = EOVERFLOW;
 #endif
 				goto unlock_return;
