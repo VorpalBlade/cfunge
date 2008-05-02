@@ -57,18 +57,24 @@
 
 #if defined(USE64)
 // The type of the data cells
-typedef int_fast64_t  FUNGEDATATYPE;
-typedef uint_fast64_t FUNGEunsignedDATATYPE;
+typedef int64_t  FUNGEDATATYPE;
+typedef uint64_t FUNGEunsignedDATATYPE;
 // Generic print
 #  define FUNGEDATAPRI PRIdFAST64
 // Specific ones:
 #  define FUNGEDATAoctPRI PRIoFAST64
 #  define FUNGEDATAhexPRI PRIxFAST64
+// And limits:
+#define FUNGEDATA_MIN INT64_MIN
+#define FUNGEDATA_MAX INT64_MAX
+
 // And of vector values
-typedef int_fast64_t FUNGEVECTORTYPE;
+typedef int64_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRIdFAST64
 // FIXME: Will long long always be 64-bit?
 #  define ABS(x) llabs(x)
+
+
 #elif defined(USE32)
 // The type of the data cells
 typedef int32_t FUNGEDATATYPE;
@@ -78,10 +84,16 @@ typedef uint32_t FUNGEunsignedDATATYPE;
 // Specific ones:
 #  define FUNGEDATAoctPRI PRIo32
 #  define FUNGEDATAhexPRI PRIx32
+// And limits:
+#define FUNGEDATA_MIN INT32_MIN
+#define FUNGEDATA_MAX INT32_MAX
+
 // And of vector values
 typedef int32_t FUNGEVECTORTYPE;
 #  define FUNGEVECTORPRI PRId32
 #  define ABS(x) abs(x)
+
+
 #else
 #  error "Err, you actually got to select either 32-bit or 64-bit data type. If you used the normal build system this error should not happen."
 #endif

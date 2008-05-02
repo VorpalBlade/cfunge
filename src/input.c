@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <assert.h>
 
 // We use static buffer for input to save input
 // from one read to the next if there was any
@@ -63,12 +64,52 @@ FUNGE_FAST FUNGEDATATYPE input_getchar(void)
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
+// Start of s as if it is in base.
+// Unlike strtoll this does not clamp on overflow but stop reading just before
+// a overflow would happen.
+// Converted value is returned in *value.
+// Return value is last index used in string.
+__attribute__((warn_unused_result, nonnull, FUNGE_IN_FAST))
+static ptrdiff_t parseInt(const char * restrict s,
+                          FUNGEDATATYPE * value, FUNGEDATATYPE base)
+{
+	FUNGEDATATYPE result = 0;
+	size_t i;
+
+	assert(s != NULL);
+	assert(value != NULL);
+
+	for (i = 0; i <= strlen(s); i++) {
+		// Will it overflow?
+		if (result > (FUNGEDATA_MAX / base)) {
+			break;
+		} else {
+			FUNGEDATATYPE tmp;
+			char c = s[i];
+			// Pointer into digits.
+			const char * p = strchr(digits, c);
+			// Still a digit?
+			if (!p || ((p - digits) >= (ptrdiff_t)base))
+				break;
+
+			tmp = (FUNGEDATATYPE)(p - digits);
+			// Break if it will overflow!
+			if ((result * base) > (FUNGEDATA_MAX  - tmp))
+				break;
+			result = (result * base) + tmp;
+		}
+	}
+	*value = result;
+	return (ptrdiff_t)i;
+}
+
 // Note, no need to optimise really, this is user input
 // bound anyway.
 FUNGE_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 {
 	bool found = false;
-	char* endptr = NULL;
+	char * endptr = NULL;
+	assert(value != NULL);
 
 	getTheLine();
 	// Find first char that is a number, then convert number.
@@ -85,7 +126,9 @@ FUNGE_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 				continue;
 		}
 		found = true;
-		*value = strtoll(lastlineCurrent, &endptr, base);
+		// Ok, we found it, lets convert it.
+		endptr = lastlineCurrent + parseInt(lastlineCurrent, value,
+		                                    (FUNGEDATATYPE)base);
 		break;
 	} while (*(lastlineCurrent++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.

@@ -431,7 +431,9 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 
 			cf_flockfile(file);
 			if (lastnewline > 0) {
-				for (ssize_t i = 0; i <= lastnewline; i++) {
+				// Why the cast? To allow GCC to optimize better, by being able to
+				// check if the loop is infinite or not.
+				for (size_t i = 0; i <= (size_t)lastnewline; i++) {
 					cf_putc_unlocked(towrite[i], file);
 				}
 			}

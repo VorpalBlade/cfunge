@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 				}
 				break;
 			case 't':
-				SettingTraceLevel = atoi(optarg);
+				SettingTraceLevel = (uint_fast16_t)atoi(optarg);
 				break;
 			case 'V':
 				printVersion();

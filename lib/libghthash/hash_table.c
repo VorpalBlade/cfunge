@@ -353,7 +353,7 @@ FUNGE_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
 
 	hk_fill(&key, p_key_data);
 	l_key = get_hash_value(p_ht, &key) & p_ht->i_size_mask;
-	if (search_in_bucket(p_ht, l_key, &key, 0)) {
+	if (search_in_bucket(p_ht, l_key, &key, GHT_HEURISTICS_NONE)) {
 		/* Don't insert if the key is already present. */
 		return -1;
 	}
@@ -471,7 +471,7 @@ FUNGE_FAST FUNGEDATATYPE ght_remove(ght_hash_table_t * restrict p_ht,
 	assert((p_ht->pp_entries[l_key] ? p_ht->pp_entries[l_key]->p_prev == NULL : 1));
 
 	/* LOCK: p_ht->pp_entries[l_key] */
-	p_out = search_in_bucket(p_ht, l_key, &key, 0);
+	p_out = search_in_bucket(p_ht, l_key, &key, GHT_HEURISTICS_NONE);
 
 	/* Link p_out out of the list. */
 	if (p_out) {

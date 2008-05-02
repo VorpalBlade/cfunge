@@ -74,8 +74,8 @@ FUNGE_FAST void RunIterate(instructionPointer * restrict ip)
 			case 'k':
 			case ';':
 				if (SettingWarnings)
-				fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
-				        ip->position.x, ip->position.y, (char)kInstr, kInstr);
+					fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
+					        ip->position.x, ip->position.y, (char)kInstr, kInstr);
 				ipReverse(ip);
 				break;
 			case '@':

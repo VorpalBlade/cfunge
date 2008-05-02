@@ -100,9 +100,9 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 			break;
 		case 6: // Path separator
 #ifdef __WIN32__
-			StackPush(pushStack, '\\');
+			StackPush(pushStack, (FUNGEDATATYPE)'\\');
 #else
-			StackPush(pushStack, '/');
+			StackPush(pushStack, (FUNGEDATATYPE)'/');
 #endif
 			break;
 		case 7: // Scalars / vector
@@ -168,8 +168,8 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 #endif
 			break;
 		case 19: // Command line arguments
-			StackPush(pushStack, '\0');
-			StackPush(pushStack, '\0');
+			StackPush(pushStack, (FUNGEDATATYPE)'\0');
+			StackPush(pushStack, (FUNGEDATATYPE)'\0');
 			for (int i = fungeargc - 1; i >= 0; i--) {
 				StackPushString(pushStack, fungeargv[i], strlen(fungeargv[i]));
 			}
@@ -177,11 +177,11 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 		case 20: { // Environment variables
 			const char * tmp;
 			int i = 0;
-			StackPush(pushStack, '\0');
+			StackPush(pushStack, (FUNGEDATATYPE)'\0');
 
 			while (true) {
 				tmp = environ[i];
-				if (!tmp || *tmp == '\0')
+				if (!tmp || *tmp == (FUNGEDATATYPE)'\0')
 					break;
 				if (SettingSandbox) {
 					if (!CheckEnvIsSafe(tmp)) {
