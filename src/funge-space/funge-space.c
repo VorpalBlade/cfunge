@@ -231,7 +231,7 @@ static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 
 	assert(filename != NULL);
 
-	file = fopen(filename, "r");
+	file = fopen(filename, "rb");
 	if (!file) {
 		return NULL;
 	} else {
@@ -364,7 +364,7 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 	assert(offset != NULL);
 	assert(size != NULL);
 
-	file = fopen(filename, "w");
+	file = fopen(filename, "wb");
 	if (!file)
 		return false;
 

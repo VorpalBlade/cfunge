@@ -36,6 +36,7 @@
 #include "BASE/BASE.h"
 #include "CPLI/CPLI.h"
 #include "DIRF/DIRF.h"
+#include "FILE/FILE.h"
 #include "FIXP/FIXP.h"
 #include "FPDP/FPDP.h"
 #include "FPSP/FPSP.h"
@@ -71,6 +72,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// DIRF - Directory functions extension, NOT SAFE
 	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
+	// FILE - File I/O functions
+	{ .fprint = 0x46494c45, .loader = &FingerFILEload, .opcodes = "CGLOPRSW",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
 	// FIXP - Some useful math functions
 	{ .fprint = 0x46495850, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",

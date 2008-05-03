@@ -32,7 +32,7 @@
 #endif
 
 // How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 32
+#define ALLOCCHUNKSIZE 64
 
 /******************************
  * Constructor and destructor *
