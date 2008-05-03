@@ -28,6 +28,9 @@ src/fingerprints/FPSP/FPSP.h
 src/fingerprints/HRTI
 src/fingerprints/HRTI/HRTI.c
 src/fingerprints/HRTI/HRTI.h
+src/fingerprints/JSTR
+src/fingerprints/JSTR/JSTR.c
+src/fingerprints/JSTR/JSTR.h
 src/fingerprints/MODU
 src/fingerprints/MODU/MODU.c
 src/fingerprints/MODU/MODU.h
@@ -62,6 +65,8 @@ src/global.h
 src/input.c
 src/input.h
 src/instructions
+src/instructions/execute.c
+src/instructions/execute.h
 src/instructions/io.c
 src/instructions/io.h
 src/instructions/iterate.c

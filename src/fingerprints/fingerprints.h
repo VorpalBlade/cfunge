@@ -40,6 +40,7 @@
 #include "FPDP/FPDP.h"
 #include "FPSP/FPSP.h"
 #include "HRTI/HRTI.h"
+#include "JSTR/JSTR.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
@@ -83,6 +84,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// HRTI - High-Resolution Timer Interface
 	{ .fprint = 0x48525449, .loader = &FingerHRTIload, .opcodes = "EGMST",
 	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
+	// JSTR - Read and write strings in Funge-Space.
+	{ .fprint = 0x4a535452, .loader = &FingerJSTRload, .opcodes = "GP",
+	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
