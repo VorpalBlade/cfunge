@@ -392,9 +392,9 @@ static void FingerFILEfwrite(instructionPointer * ip)
 			if (ferror(fp)) {
 				clearerr(fp);
 				ipReverse(ip);
-				return;
 			}
 		}
+		cf_free(buf);
 	}
 }
 

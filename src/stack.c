@@ -32,7 +32,7 @@
 #endif
 
 // How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 64
+#define ALLOCCHUNKSIZE 4096
 
 /******************************
  * Constructor and destructor *
@@ -65,7 +65,7 @@ FUNGE_FAST void StackFree(fungeStack * stack)
 #ifdef CONCURRENT_FUNGE
 // Used for concurrency
 __attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST))
-FUNGE_FAST static inline fungeStack * StackDuplicate(const fungeStack * old)
+static inline fungeStack * StackDuplicate(const fungeStack * old)
 {
 	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
@@ -81,10 +81,41 @@ FUNGE_FAST static inline fungeStack * StackDuplicate(const fungeStack * old)
 }
 #endif
 
+__attribute__((nonnull, FUNGE_IN_FAST, noreturn))
+static void StackOOM(void)
+{
+	perror("Emergency! Failed to allocate enough memory for new stack items");
+	abort();
+}
 
-/************************
- * Basic push/pop/peeks *
- ************************/
+/*************************************
+ * Basic push/pop/peeks and prealloc *
+ *************************************/
+
+__attribute__((nonnull, FUNGE_IN_FAST))
+static inline void StackPreallocSpace(fungeStack * restrict stack, size_t minfree)
+{
+	if ((stack->top + minfree) < stack->size) {
+		size_t newsize = stack->size + ALLOCCHUNKSIZE;
+		if ((newsize - minfree) < stack->top)
+			// Round to whole ALLOCCHUNKSIZE upwards.
+			newsize += (minfree % ALLOCCHUNKSIZE + 1) * ALLOCCHUNKSIZE;
+		stack->entries = (FUNGEDATATYPE*)cf_realloc(stack->entries, newsize * sizeof(FUNGEDATATYPE));
+		if (!stack->entries) {
+			StackOOM();
+		}
+		stack->size += minfree;
+	}
+}
+
+__attribute__((nonnull, FUNGE_IN_FAST))
+static inline void StackPushNoCheck(fungeStack * restrict stack, FUNGEDATATYPE value)
+{
+	// This should only be used if that is true...
+	assert(stack->top < stack->size);
+	stack->entries[stack->top] = value;
+	stack->top++;
+}
 
 FUNGE_FAST void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 {
@@ -95,16 +126,12 @@ FUNGE_FAST void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 	if (stack->top == stack->size) {
 		stack->entries = (FUNGEDATATYPE*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(FUNGEDATATYPE));
 		if (!stack->entries) {
-			perror("Emergency! Failed to allocate enough memory for new stack items");
-			abort();
+			StackOOM();
 		}
-		stack->entries[stack->top] = value;
-		stack->top++;
 		stack->size += ALLOCCHUNKSIZE;
-	} else {
-		stack->entries[stack->top] = value;
-		stack->top++;
 	}
+	stack->entries[stack->top] = value;
+	stack->top++;
 }
 
 FUNGE_FAST inline FUNGEDATATYPE StackPop(fungeStack * restrict stack)
@@ -184,8 +211,9 @@ FUNGE_FAST void StackPushString(fungeStack * restrict stack, const char * restri
 	assert(stack != NULL);
 	// Increment it once or it won't work
 	len++;
+	StackPreallocSpace(stack, len);
 	while (len-- > 0)
-		StackPush(stack, str[len]);
+		StackPushNoCheck(stack, str[len]);
 }
 
 FUNGE_FAST char *StackPopString(fungeStack * restrict stack)
@@ -237,6 +265,7 @@ FUNGE_FAST void StackDupTop(fungeStack * restrict stack)
 
 	tmp = StackPeek(stack);
 	StackPush(stack, tmp);
+	// If it was empty, push a second zero.
 	if (stack->top == 1)
 		StackPush(stack, 0);
 }
@@ -245,10 +274,12 @@ FUNGE_FAST void StackSwapTop(fungeStack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
 	FUNGEDATATYPE a, b;
+	// Well this have to work logically...
 	a = StackPop(stack);
 	b = StackPop(stack);
-	StackPush(stack, a);
-	StackPush(stack, b);
+	StackPreallocSpace(stack, 2);
+	StackPushNoCheck(stack, a);
+	StackPushNoCheck(stack, b);
 }
 
 

@@ -175,12 +175,11 @@ FUNGE_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * r
 			}
 			break;
 		case 20: { // Environment variables
-			const char * tmp;
 			int i = 0;
 			StackPush(pushStack, (FUNGEDATATYPE)'\0');
 
 			while (true) {
-				tmp = environ[i];
+				const char * tmp = environ[i];
 				if (!tmp || *tmp == (FUNGEDATATYPE)'\0')
 					break;
 				if (SettingSandbox) {
