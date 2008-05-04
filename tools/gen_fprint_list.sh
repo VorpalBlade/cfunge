@@ -74,20 +74,11 @@ addtolist() {
 	echo "$1" >> "fingerprints.h"
 }
 
-# $1 = fprint name
-printfprintinfo() {
+
+# $1 is fingerprint name
+# Returns if ok, otherwise it dies.
+checkfprint() {
 	local FPRINT="$1"
-
-	# Variables
-	local URL=""
-	local SAFE=""
-	local OPCODES=""
-	local DESCRIPTION=""
-
-	local OPCODES=""
-
-	progress "Processing $FPRINT"
-
 	if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
 		status "Fingerprint name $FPRINT ok style."
 	elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
@@ -97,7 +88,31 @@ printfprintinfo() {
 	else
 		die "Not valid format for fingerprint name."
 	fi
+}
 
+# This is to allow sorted list even with aliases...
+# I hate aliases...
+ENTRIES=()
+ENTRYL1=()
+ENTRYL2=()
+ENTRYL3=()
+
+# $1 = fprint name
+genfprintinfo() {
+	local FPRINT="$1"
+
+	# Variables
+	local URL=""
+	local SAFE=""
+	local OPCODES=""
+	local DESCRIPTION=""
+	local MYALIASES=()
+
+	local OPCODES=""
+
+	progress "Processing $FPRINT"
+
+	checkfprint "$FPRINT"
 
 	if [[ ! -e $FPRINT ]]; then
 		die "A fingerprint called $FPRINT is not yet generated!"
@@ -118,8 +133,8 @@ printfprintinfo() {
 	# First line is %fingerprint-spec 1.0
 	exec 4<"${FPRINT}.spec"
 	read -ru 4 line
-	if [[ "$line" != "%fingerprint-spec 1.0" ]]; then
-		die "Either the spec file is not a fingerprint spec, or it is not version 1.0 of the format."
+	if [[ "$line" != "%fingerprint-spec 1.1" ]]; then
+		die "Either the spec file is not a fingerprint spec, or it is not version 1.1 of the format."
 	fi
 
 	# 0: pre-"begin instrs"
@@ -141,6 +156,9 @@ printfprintinfo() {
 					;;
 				"%url")
 					URL="$data"
+					;;
+				"%alias")
+					MYALIASES+=( "$data" )
 					;;
 				"%desc")
 					DESCRIPTION="$data"
@@ -211,11 +229,27 @@ printfprintinfo() {
 		printf -v hex '%x' "'${FPRINT:$i:1}"
 		FPRINTHEX+="$hex"
 	done
-
-	addtolist "	// ${FPRINT} - ${DESCRIPTION}"
-	addtolist "	{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
-	addtolist "	  .url = \"${URL}\", .safe = ${SAFE} },"
+	ENTRIES+=( "$FPRINTHEX" )
+	ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
+	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
+	ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 	statuslvl2 "Done"
+	if [[ ${!MYALIASES[*]} ]]; then
+		progresslvl2 "Generating aliases..."
+		local myalias
+		for myalias in "${MYALIASES[@]}"; do
+			checkfprint "$myalias"
+			local ALIASHEX='0x'
+			for (( i = 0; i < ${#myalias}; i++ )); do
+				printf -v hex '%x' "'${myalias:$i:1}"
+				ALIASHEX+="$hex"
+			done
+			ENTRIES+=("$ALIASHEX")
+			ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
+			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .loader = &Finger${myalias}load, .opcodes = \"${OPCODES}\","
+			ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+		done
+	fi
 }
 
 cd "src/fingerprints/" || die "change directory failed"
@@ -295,8 +329,16 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 EOF
 
 for fprint in "${FPRINTS[@]}"; do
-	printfprintinfo "$fprint"
+	genfprintinfo "$fprint"
 done
+# I really hate aliases...
+SORTEDENTRIES=( $(IFS=$'\n'; echo "${ENTRIES[*]}" | sort -n) )
+for entry in "${SORTEDENTRIES[@]}"; do
+	addtolist "${ENTRYL1[$entry]}"
+	addtolist "${ENTRYL2[$entry]}"
+	addtolist "${ENTRYL3[$entry]}"
+done
+
 
 cat >> "fingerprints.h" << EOF
 	// Last should be 0

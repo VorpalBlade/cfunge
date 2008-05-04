@@ -1,4 +1,4 @@
-%fingerprint-spec 1.0
+%fingerprint-spec 1.1
 %fprint:JSTR
 %url:http://www.imaginaryrobots.net/projects/funge/myexts.txt
 %desc:Read and write strings in Funge-Space.

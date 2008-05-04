@@ -1,4 +1,4 @@
-%fingerprint-spec 1.0
+%fingerprint-spec 1.1
 %fprint:NULL
 # Note this file can NOT be used to generate the fingerprint
 # itself

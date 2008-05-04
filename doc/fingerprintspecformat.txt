@@ -1,11 +1,12 @@
 cfunge use a special file format to generate fingerprints from.
 The format is quite simple. An example follows:
 
-%fingerprint-spec 1.0
+%fingerprint-spec 1.1
 %fprint:TEST
 %url:http://example.com
 %desc:This is a test of the fingerprint spec file system.
 %safe:true
+%alias:FOOO
 %begin-instrs
 # a comment
 #I	name	desc
@@ -13,20 +14,26 @@ A	foobar	Description
 B	quux	Other Description
 %end
 
-The first line should always be "%fingerprint-spec 1.0" (or in future versions,
+The first line should always be "%fingerprint-spec 1.1" (or in future versions,
 possibly higher numbers).
 
 Note:
 * The format is case sensitive.
 * Any lines after the first starting with a # is considered a comment.
 
-After that fprint, url, desc and safe can follow in any order.
+After that fprint, url, desc, safe and alias can follow in any order.
  * fprint is the fingerprint name
  * url is the url for more info on the fingerprint (docs and such)
  * desc is a short one line description. Less than 60 chars is definitly
    recommended.
  * safe can be either true or false, true indicates it is safe in sandbox mode
    and false that it isn't.
+ * alias is special because it is:
+    * It is optional.
+    * You can have several.
+   alias allows a fingerprint to be known under several names. It's use is
+   highly discouraged. If you really want to use it, you need to work out how
+   by reading the code.
 
 After that, to indicate that the instruction list begins, use %begin-instrs
 The instruction list must be sorted and contain no duplicates.

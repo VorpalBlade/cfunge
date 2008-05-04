@@ -41,6 +41,7 @@
 #include "FPDP/FPDP.h"
 #include "FPSP/FPSP.h"
 #include "HRTI/HRTI.h"
+#include "INDV/INDV.h"
 #include "JSTR/JSTR.h"
 #include "MODU/MODU.h"
 #include "NULL/NULL.h"
@@ -88,6 +89,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// HRTI - High-Resolution Timer Interface
 	{ .fprint = 0x48525449, .loader = &FingerHRTIload, .opcodes = "EGMST",
 	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
+	// INDV - Pointer functions
+	{ .fprint = 0x494e4456, .loader = &FingerINDVload, .opcodes = "GPVW",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// JSTR - Read and write strings in Funge-Space.
 	{ .fprint = 0x4a535452, .loader = &FingerJSTRload, .opcodes = "GP",
 	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
@@ -103,6 +107,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// PERL - Generic Interface to the Perl Language
 	{ .fprint = 0x5045524c, .loader = &FingerPERLload, .opcodes = "EIS",
 	  .url = "http://catseye.tc/projects/funge98/library/PERL.html", .safe = false },
+	// PNTR - Alias for INDV - Pointer functions
+	{ .fprint = 0x504e5452, .loader = &FingerPNTRload, .opcodes = "GPVW",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// REFC - Referenced Cells Extension
 	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },

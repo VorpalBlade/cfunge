@@ -1,4 +1,4 @@
-%fingerprint-spec 1.0
+%fingerprint-spec 1.1
 %fprint:ROMA
 %url:http://catseye.tc/projects/funge98/library/ROMA.html
 %desc:Roman Numerals
