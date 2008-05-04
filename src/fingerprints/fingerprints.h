@@ -50,6 +50,7 @@
 #include "REFC/REFC.h"
 #include "ROMA/ROMA.h"
 #include "SUBR/SUBR.h"
+#include "TIME/TIME.h"
 #include "TOYS/TOYS.h"
 
 typedef struct s_ImplementedFingerprintEntry {
@@ -118,6 +119,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// TIME - Time and Date functions
+	{ .fprint = 0x54494d45, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// TOYS - Funge-98 Standard Toys
 	{ .fprint = 0x544f5953, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
