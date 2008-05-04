@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
 		switch (opt) {
 			case 'F':
-				SettingEnableFingerprints = false;
+				SettingDisableFingerprints = true;
 				break;
 			case 'f':
 				printFeatures();

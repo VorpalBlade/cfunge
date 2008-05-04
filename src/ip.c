@@ -48,7 +48,7 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 		return false;
 	me->stack              = me->stackstack->stacks[me->stackstack->current];
 	me->ID                 = 0;
-	if (SettingEnableFingerprints) {
+	if (!SettingDisableFingerprints) {
 		if (!ManagerCreate(me))
 			return false;
 	}
@@ -84,7 +84,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 		return false;
 
 	new->stack              = new->stackstack->stacks[new->stackstack->current];
-	if (SettingEnableFingerprints) {
+	if (!SettingDisableFingerprints) {
 		if (!ManagerDuplicate(old, new))
 			return false;
 	}
@@ -102,7 +102,7 @@ FUNGE_FAST static inline void ipFreeResources(instructionPointer * ip)
 		ip->stackstack = NULL;
 	}
 	ip->stack = NULL;
-	if (SettingEnableFingerprints) {
+	if (!SettingDisableFingerprints) {
 		ManagerFree(ip);
 	}
 	if (ip->fingerHRTItimestamp) {

@@ -114,7 +114,7 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 		}
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
-		if (!SettingEnableFingerprints) {
+		if (SettingDisableFingerprints) {
 			PrintUnknownInstrWarn(opcode, ip);
 			ipReverse(ip);
 		} else {
@@ -431,7 +431,7 @@ FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * re
 				// outside such a range. This prevents long lockups here.
 				if (fpsize < 1) {
 					ipReverse(ip);
-				} else if (!SettingEnableFingerprints) {
+				} else if (SettingDisableFingerprints) {
 					StackPopNDiscard(ip->stack, fpsize);
 					ipReverse(ip);
 				} else {

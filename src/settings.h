@@ -44,7 +44,7 @@ extern uint_fast16_t SettingTraceLevel;
 extern bool SettingWarnings;
 
 // Should fingerprints be enabled
-extern bool SettingEnableFingerprints;
+extern bool SettingDisableFingerprints;
 
 // If true:
 // * Any file or filesystem IO is forbidden.
