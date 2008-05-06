@@ -93,17 +93,22 @@ Short descriptions of implemented fingerprints:
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
+ FILE File I/O functions
  FIXP Some useful math functions
  FPDP Double precision floating point
  FPSP Single precision floating point
  HRTI High-Resolution Timer Interface
+ INDV Pointer functions
+ JSTR Read and write strings in Funge-Space
  MODU Modulo Arithmetic Extension
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
  PERL Generic Interface to the Perl Language (not available in sandbox mode)
+ PNTR Alias for INDV
  REFC Referenced Cells Extension
  ROMA Funge-98 Roman Numerals
  SUBR Subroutine extension
+ TIME Time and Date functions
  TOYS Funge-98 Standard Toys
 For more details please see the specs for each fingerprint.
 In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the

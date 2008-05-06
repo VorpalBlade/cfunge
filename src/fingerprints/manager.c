@@ -31,7 +31,6 @@
 #include <assert.h>
 
 #define ALLOCCHUNKSIZE 2
-fungeOpcodeStack* fingerOpcodes[FINGEROPCODECOUNT];
 
 #define MANAGER_INTERNAL
 #include "fingerprints.h"
@@ -77,7 +76,7 @@ static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
  * Duplicate an opcode stack, used for split (t).
  */
 __attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
-FUNGE_FAST static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old)
+static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old)
 {
 	fungeOpcodeStack * tmp;
 
@@ -172,34 +171,36 @@ FUNGE_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
 }
 #endif
 
+
+#define FPRINT_NOTFOUND -1
 /**
  * Return value is index into ImplementedFingerprints array.
  * -1 means not found.
  */
-FUNGE_FAST static inline ssize_t FindFingerPrint(FUNGEDATATYPE fingerprint)
+__attribute__((warn_unused_result,FUNGE_IN_FAST))
+static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 {
-	int i = 0;
-	bool found = false;
+	size_t i = 0;
 	do {
-		if (fingerprint == ImplementedFingerprints[i].fprint) {
+		if (fingerprint <= ImplementedFingerprints[i].fprint) {
+			// Then it is larger... as in "not found"
+			if (fingerprint != ImplementedFingerprints[i].fprint)
+				return -1;
 			// If we run in a sandbox, can fingerprint be loaded?
 			// If not: break, as we know we found the right fingerprint,
 			// so no need to search more.
 			if (SettingSandbox && !ImplementedFingerprints[i].safe)
-				break;
-			found = true;
-			break;
+				return FPRINT_NOTFOUND;
+			return i;
 		}
 	} while (ImplementedFingerprints[++i].fprint != 0);
-	if (!found)
-		return -1;
-	return i;
+	return FPRINT_NOTFOUND;
 }
 
 FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
 {
 	ssize_t index = FindFingerPrint(fingerprint);
-	if (index == -1) {
+	if (index == FPRINT_NOTFOUND) {
 		return false;
 	} else {
 		bool gotLoaded = ImplementedFingerprints[index].loader(ip);
@@ -227,9 +228,9 @@ FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fi
 #  error "CHAR_BIT != 8, please make sure the function below the location of this error works on your system."
 #endif
 
-void ManagerList(void)
+FUNGE_FAST void ManagerList(void)
 {
-	int i = 0;
+	size_t i = 0;
 	puts("Supported fingerprints in this binary:");
 	do {
 		// This hack is here to reconstruct the name from the fingerprint.

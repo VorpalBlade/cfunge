@@ -10,6 +10,21 @@ For more info:
 and
   bzr help revisionspec
 
+
+Development
+-----------
+These are important changes in development version since last release.
+ * Speedup in pushing strings on stack.
+ * Aliases for fingerprints supported (spec fileformat changed).
+
+Added fingerprints:
+ * FILE File I/O functions
+ * INDV Pointer functions
+ * JSTR Read and write strings in Funge-Space
+ * PNTR Alias for INDV
+ * TIME Time and Date functions
+
+
 0.2.1-pre1
 ----------
 Important changes in this release:
