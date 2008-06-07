@@ -34,7 +34,7 @@
 // On empty string
 #define FUNGE_NOCOMMAND -2
 
-FUNGE_FAST void RunSystemExecute(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void RunSystemExecute(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 

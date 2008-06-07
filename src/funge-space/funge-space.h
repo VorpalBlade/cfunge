@@ -39,7 +39,7 @@ bool FungeSpaceCreate(void) __attribute__((warn_unused_result, FUNGE_IN_FAST));
 /**
  * Destroy a funge-space.
  */
-void FungeSpaceFree(void) FUNGE_FAST;
+void FungeSpaceFree(void) FUNGE_ATTR_FAST;
 /**
  * Get a cell.
  */

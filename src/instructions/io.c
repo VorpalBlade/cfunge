@@ -31,7 +31,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-FUNGE_FAST void RunFileInput(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 
@@ -75,7 +75,7 @@ FUNGE_FAST void RunFileInput(instructionPointer * restrict ip)
 	}
 }
 
-FUNGE_FAST void RunFileOutput(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 

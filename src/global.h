@@ -51,36 +51,38 @@
 #ifdef __GNUC__
 #  ifdef __i386__
 /// Select fast calling convention on platforms that need it. For use in lists with other attributes.
+/// Deprecated.
 #    define  FUNGE_IN_FAST regparm(3)
 /// Select fast calling convention on platforms that need it. For stand alone.
-#    define  FUNGE_FAST __attribute__((FUNGE_IN_FAST))
+#    define  FUNGE_ATTR_FAST __attribute__((FUNGE_IN_FAST))
 #  else
 /// Select fast calling convention on platforms that need it. For use in lists with other attributes.
+/// Deprecated.
 #    define  FUNGE_IN_FAST /* NO-OP */
 /// Select fast calling convention on platforms that need it. For stand alone.
-#    define  FUNGE_FAST /* NO-OP */
+#    define  FUNGE_ATTR_FAST /* NO-OP */
 #  endif
 #else
 // Only define this one, as /**/ doesn't nest.
 /// Select fast calling convention on platforms that need it. For stand alone.
 /// See FUNGE_IN_FAST for use inside attribute lists
-#  define  FUNGE_FAST /* NO-OP */
+#  define  FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
 #ifdef __GNUC__
 #  define FUNGE_ATTR_MALLOC      __attribute__((malloc))
+#  define FUNGE_ATTR_NOINLINE    __attribute__((noinline))
 #  define FUNGE_ATTR_NONNULL     __attribute__((nonnull))
 #  define FUNGE_ATTR_NORET       __attribute__((noreturn))
-#  define FUNGE_ATTR_PURE       __attribute__((pure))
+#  define FUNGE_ATTR_PURE        __attribute__((pure))
 #  define FUNGE_ATTR_WARN_UNUSED __attribute__((warn_unused_result))
-#  define FUNGE_ATTR_FAST        FUNGE_FAST
 #else
 #  define FUNGE_ATTR_MALLOC      /* NO-OP */
+#  define FUNGE_ATTR_NOINLINE    /* NO-OP */
 #  define FUNGE_ATTR_NONNULL     /* NO-OP */
 #  define FUNGE_ATTR_NORET       /* NO-OP */
 #  define FUNGE_ATTR_PURE        /* NO-OP */
 #  define FUNGE_ATTR_WARN_UNUSED /* NO-OP */
-#  define FUNGE_ATTR_FAST        /* NO-OP */
 #endif
 
 /*@}*/
