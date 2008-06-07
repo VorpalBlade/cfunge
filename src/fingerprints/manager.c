@@ -61,7 +61,7 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void)
 /**
  * Free an opcode stack.
  */
-FUNGE_FAST
+FUNGE_ATTR_FAST
 static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
 {
 	if (!me)
@@ -98,7 +98,7 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * re
 #endif
 
 
-FUNGE_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
+FUNGE_ATTR_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Do we need to realloc?
@@ -135,7 +135,7 @@ static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack)
  * Opcode Manager functions *
  ****************************/
 
-FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST bool ManagerCreate(instructionPointer * restrict ip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
 		ip->fingerOpcodes[i] = CreateOpcodeStack();
@@ -145,7 +145,7 @@ FUNGE_FAST bool ManagerCreate(instructionPointer * restrict ip)
 	return true;
 }
 
-FUNGE_FAST void ManagerFree(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ManagerFree(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
@@ -155,7 +155,7 @@ FUNGE_FAST void ManagerFree(instructionPointer * restrict ip)
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
+FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
                                  instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -197,7 +197,7 @@ static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 	return FPRINT_NOTFOUND;
 }
 
-FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
 {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == FPRINT_NOTFOUND) {
@@ -214,7 +214,7 @@ FUNGE_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fing
 	}
 }
 
-FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
 {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1)
@@ -228,7 +228,7 @@ FUNGE_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fi
 #  error "CHAR_BIT != 8, please make sure the function below the location of this error works on your system."
 #endif
 
-FUNGE_FAST void ManagerList(void)
+FUNGE_ATTR_FAST void ManagerList(void)
 {
 	size_t i = 0;
 	puts("Supported fingerprints in this binary:");

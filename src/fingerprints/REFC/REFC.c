@@ -69,7 +69,7 @@ static void FingerREFCdereference(instructionPointer * ip)
 	StackPushVector(ip->stack, &references[ref]);
 }
 
-FUNGE_FAST static inline bool InitReferences(void)
+FUNGE_ATTR_FAST static inline bool InitReferences(void)
 {
 	assert(!references);
 	references = (fungePosition*)cf_malloc_noptr(ALLOCCHUNK * sizeof(fungePosition));

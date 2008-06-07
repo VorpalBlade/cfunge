@@ -144,7 +144,7 @@ extern "C"
 	 *      @c ght_crc_hash()
 	 */
 	// Not used as a typedef any longer.
-	//typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key) FUNGE_FAST;
+	//typedef ght_uint32_t (*ght_fn_hash_t)(const ght_hash_key_t *p_key) FUNGE_ATTR_FAST;
 
 	/**
 	 * The hash table structure.
@@ -182,7 +182,7 @@ extern "C"
 	 *
 	 * @return a pointer to the hash table or NULL upon error.
 	 */
-	ght_hash_table_t *ght_create(size_t i_size) FUNGE_FAST;
+	ght_hash_table_t *ght_create(size_t i_size) FUNGE_ATTR_FAST;
 
 	/**
 	 * Enable or disable automatic rehashing.
@@ -198,7 +198,7 @@ extern "C"
 	 * @param b_rehash TRUE if rehashing should be used or FALSE if it
 	 *        should not be used.
 	 */
-	void ght_set_rehash(ght_hash_table_t *p_ht, bool b_rehash) FUNGE_FAST;
+	void ght_set_rehash(ght_hash_table_t *p_ht, bool b_rehash) FUNGE_ATTR_FAST;
 
 #ifdef GHT_USE_MACROS
 #  define ght_size(p_ht) (p_ht->i_items)
@@ -262,7 +262,7 @@ extern "C"
 	 */
 	int ght_insert(ght_hash_table_t * restrict p_ht,
 	               FUNGEDATATYPE p_entry_data,
-	               const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
+	               const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
 	 * Replace an entry in the hash table. This function will return an
@@ -279,7 +279,7 @@ extern "C"
 	 */
 	FUNGEDATATYPE ght_replace(ght_hash_table_t * restrict p_ht,
 	                          FUNGEDATATYPE p_entry_data,
-	                          const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
+	                          const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 
 	/**
@@ -293,7 +293,7 @@ extern "C"
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
 	FUNGEDATATYPE *ght_get(ght_hash_table_t * restrict p_ht,
-	                       const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
+	                       const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -306,7 +306,7 @@ extern "C"
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
 	FUNGEDATATYPE ght_remove(ght_hash_table_t * restrict p_ht,
-	                         const fungeSpaceHashKey * restrict p_key_data) FUNGE_FAST;
+	                         const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
 	 * Return the first entry in the hash table. This function should be
@@ -349,7 +349,7 @@ extern "C"
 	 *
 	 * @see ght_next()
 	 */
-	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_FAST;
+	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_ATTR_FAST;
 
 	/**
 	 * Return the next entry in the hash table. This function should be
@@ -368,7 +368,7 @@ extern "C"
 	 *
 	 * @see ght_first()
 	 */
-	void *ght_next(ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_FAST;
+	void *ght_next(ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_ATTR_FAST;
 
 	/**
 	 * Rehash the hash table.
@@ -386,7 +386,7 @@ extern "C"
 	 *
 	 * @see ght_create()
 	 */
-	void ght_rehash(ght_hash_table_t *p_ht, size_t i_size) FUNGE_FAST;
+	void ght_rehash(ght_hash_table_t *p_ht, size_t i_size) FUNGE_ATTR_FAST;
 
 	/**
 	 * Free the hash table. ght_finalize() should typically be called
@@ -410,7 +410,7 @@ extern "C"
 	 *
 	 * @param p_ht the table to remove.
 	 */
-	void ght_finalize(ght_hash_table_t *p_ht) FUNGE_FAST;
+	void ght_finalize(ght_hash_table_t *p_ht) FUNGE_ATTR_FAST;
 
 	/* exported hash functions */
 
@@ -426,7 +426,7 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_rotating_hash(), ght_crc_hash()
 	 */
-	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
+	ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key) FUNGE_ATTR_FAST;
 
 	/**
 	 * CRC32 hash. CRC32 hash is a good hash function. This came from Dru
@@ -438,10 +438,10 @@ extern "C"
 	 * @see ght_fn_hash_t
 	 * @see ght_one_at_a_time_hash(), ght_rotating_hash()
 	 */
-	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
+	ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key) FUNGE_ATTR_FAST;
 
 	// Fast hash, sometimes better than CRC, sometimes worse.
-	ght_uint32_t murmur_hash(const ght_hash_key_t *p_key) FUNGE_FAST;
+	ght_uint32_t murmur_hash(const ght_hash_key_t *p_key) FUNGE_ATTR_FAST;
 
 
 #ifdef USE_PROFILING

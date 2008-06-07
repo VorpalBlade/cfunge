@@ -36,7 +36,7 @@ typedef struct sFungeFileHandle {
 static FungeFileHandle** handles = NULL;
 static FUNGEDATATYPE maxHandle = 0;
 
-FUNGE_FAST static inline FUNGEDATATYPE findNextFreeHandle(void)
+FUNGE_ATTR_FAST static inline FUNGEDATATYPE findNextFreeHandle(void)
 {
 	for (FUNGEDATATYPE i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
@@ -55,7 +55,7 @@ FUNGE_FAST static inline FUNGEDATATYPE findNextFreeHandle(void)
 	}
 }
 
-FUNGE_FAST static inline FUNGEDATATYPE AllocateHandle(void)
+FUNGE_ATTR_FAST static inline FUNGEDATATYPE AllocateHandle(void)
 {
 	FUNGEDATATYPE h;
 
@@ -69,7 +69,7 @@ FUNGE_FAST static inline FUNGEDATATYPE AllocateHandle(void)
 	return h;
 }
 
-FUNGE_FAST static inline void FreeHandle(FUNGEDATATYPE h)
+FUNGE_ATTR_FAST static inline void FreeHandle(FUNGEDATATYPE h)
 {
 	if (!handles[h])
 		return;
@@ -81,7 +81,7 @@ FUNGE_FAST static inline void FreeHandle(FUNGEDATATYPE h)
 	handles[h] = NULL;
 }
 
-FUNGE_FAST static inline bool ValidHandle(FUNGEDATATYPE h)
+FUNGE_ATTR_FAST static inline bool ValidHandle(FUNGEDATATYPE h)
 {
 	if ((h < 0) || (h > maxHandle) || (!handles[h])) {
 		return false;
@@ -107,7 +107,7 @@ static void FingerFILEfclose(instructionPointer * ip)
 	FreeHandle(h);
 }
 
-FUNGE_FAST static inline void append(char * restrict * restrict str,
+FUNGE_ATTR_FAST static inline void append(char * restrict * restrict str,
                                      size_t * restrict s, size_t * restrict p,
                                      int ch)
 {
@@ -398,7 +398,7 @@ static void FingerFILEfwrite(instructionPointer * ip)
 	}
 }
 
-FUNGE_FAST static inline bool InitHandleList(void)
+FUNGE_ATTR_FAST static inline bool InitHandleList(void)
 {
 	assert(!handles);
 	handles = (FungeFileHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeFileHandle*));

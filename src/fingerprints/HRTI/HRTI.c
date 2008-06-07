@@ -102,7 +102,7 @@ static void FingerHRTIsecond(instructionPointer * ip)
 
 
 
-FUNGE_FAST static inline bool SetupHRTI(instructionPointer * ip)
+FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
 {
 	// This bit is global
 	if (resolution == 0) {

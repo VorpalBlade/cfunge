@@ -51,7 +51,7 @@ static void FingerPERLshelled(instructionPointer * ip)
 }
 
 // Yes... This is a mess...
-FUNGE_FAST
+FUNGE_ATTR_FAST
 static char * RunPerl(const char * restrict perlcode)
 {
 	pid_t pid;
