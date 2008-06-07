@@ -23,3 +23,8 @@ Those that are known:
    * count.b98
      This one just asks for a number to be input, then prints all numbers from
      1 up to (and including) that number. The number entered should be positive.
+Unknown ones:
+   * fib.bf
+     Calculate the n-th element in the Fibonacci sequence.
+   * hello.bf
+     Standard Hello world, done in the most simple way possible.
