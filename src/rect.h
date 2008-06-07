@@ -29,11 +29,12 @@
 
 #include "global.h"
 
+/// A rectangle in Funge-Space.
 typedef struct s_fungeRect {
-	FUNGEVECTORTYPE x;
-	FUNGEVECTORTYPE y;
-	FUNGEVECTORTYPE w;
-	FUNGEVECTORTYPE h;
+	FUNGEVECTORTYPE x; ///< Upper left corner.
+	FUNGEVECTORTYPE y; ///< Upper left corner.
+	FUNGEVECTORTYPE w; ///< Width.
+	FUNGEVECTORTYPE h; ///< Height.
 } fungeRect;
 
 #endif

@@ -38,6 +38,7 @@
  */
 /*@{*/
 #ifndef __GNUC__
+/// Make non-GCC compilers happy.
 #  define  __attribute__(x)  /* NO-OP */
 #endif
 /*@}*/

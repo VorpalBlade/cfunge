@@ -45,40 +45,49 @@
 #  undef NEED_LOCKED
 #endif
 
+/**
+ * @defgroup MEMORY_ALLOC Memory allocation
+ * These should be used when allocating memory
+ */
+/*@{*/
 #ifndef DISABLE_GC
 
 #  include <gc/gc.h>
 
 #  define cf_malloc(x)           GC_MALLOC(x)
-// Use this for strings and other stuff containing no pointers when possible.
+/// Use this for strings and other stuff containing no pointers when possible.
 #  define cf_malloc_noptr(x)     GC_MALLOC_ATOMIC(x)
-// This memory is not collectable. Avoid using this unless you have to.
+/// This memory is not collectable. Avoid using this unless you have to.
 #  define cf_malloc_nocollect(x) GC_MALLOC_UNCOLLECTABLE(x)
 #  define cf_free(x)             GC_FREE(x)
 #  define cf_realloc(x,y)        GC_REALLOC(x, y)
 #  define cf_calloc(x,y)         GC_MALLOC((x)*(y))
+/// See cf_malloc_noptr for what _noptr means.
 #  define cf_calloc_noptr(x,y)   GC_MALLOC_ATOMIC((x)*(y))
 
 #  define gc_collect_full()      GC_gcollect()
 #  define gc_collect_some()      GC_collect_a_little()
-
+/// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           GC_STRDUP(x)
 
 #else
 
 #  define cf_malloc(x)           malloc(x)
-// Use this for strings and other stuff containing no pointers when possible.
+/// Use this for strings and other stuff containing no pointers when possible.
+/// Differ from normal malloc if GC is enabled.
 #  define cf_malloc_noptr(x)     malloc(x)
-// This memory is not collectable. Avoid using this unless you have to.
+/// This memory is not collectable. Avoid using this unless you have to.
+/// Differ from normal malloc if GC is enabled.
 #  define cf_malloc_nocollect(x) malloc(x)
 #  define cf_free(x)             free(x)
 #  define cf_realloc(x,y)        realloc(x, y)
 #  define cf_calloc(x,y)         calloc((x), (y))
+/// See cf_malloc_noptr for what _noptr means.
 #  define cf_calloc_noptr(x,y)   calloc((x), (y))
 
 #  define gc_collect_full()      /* NO OP */
 #  define gc_collect_some()      /* NO OP */
-
+/// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           strdup(x)
 
 #endif
@@ -90,13 +99,16 @@
 #define realloc_nogc(x,y)      realloc((x), (y))
 #define free_nogc(x)           free(x);
 #define strdup_nogc(x)         strdup((x))
+/*@}*/
 
+/// strndup is glibc specific, so here is a version from gnulib.
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 char * cf_strndup(const char *string, size_t n);
+/// strnlen is glibc specific, so here is a version from gnulib.
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 size_t cf_strnlen(const char *string, size_t maxlen);
 
-/// This is glibc specific, so here is a version from gnulib.
+/// getline is glibc specific, so here is a version from gnulib.
 FUNGE_ATTR_FAST
 ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 

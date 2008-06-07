@@ -38,8 +38,7 @@ const char **fungeargv = NULL;
 int fungeargc = 0;
 
 // These are NOT worth inlineing, even though only called once.
-
-__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
 static void printFeatures(void)
 {
 	puts("Features compiled into this binary:");
@@ -74,7 +73,7 @@ static void printFeatures(void)
 	ManagerList();
 }
 
-__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
 static void printHelp(void)
 {
 	puts("Usage: cfunge [OPTIONS] [FILE] [SCRIPT OPTIONS]");
@@ -94,7 +93,7 @@ static void printHelp(void)
 	exit(EXIT_SUCCESS);
 }
 
-__attribute__((noreturn, noinline, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
 static void printVersion(void)
 {
 	printf("cfunge %s\n", APPVERSION);

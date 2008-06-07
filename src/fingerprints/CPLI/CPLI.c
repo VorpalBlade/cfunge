@@ -103,11 +103,11 @@ static void FingerCPLIabs(instructionPointer * ip)
 
 bool FingerCPLIload(instructionPointer * ip)
 {
-	ManagerAddOpcode(CPLI,  'A', add)
-	ManagerAddOpcode(CPLI,  'D', div)
-	ManagerAddOpcode(CPLI,  'M', mul)
-	ManagerAddOpcode(CPLI,  'O', out)
-	ManagerAddOpcode(CPLI,  'S', sub)
-	ManagerAddOpcode(CPLI,  'V', abs)
+	ManagerAddOpcode(CPLI, 'A', add)
+	ManagerAddOpcode(CPLI, 'D', div)
+	ManagerAddOpcode(CPLI, 'M', mul)
+	ManagerAddOpcode(CPLI, 'O', out)
+	ManagerAddOpcode(CPLI, 'S', sub)
+	ManagerAddOpcode(CPLI, 'V', abs)
 	return true;
 }

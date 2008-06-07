@@ -24,7 +24,6 @@
  * The fingerprint manager.
  */
 
-
 #ifndef _HAD_SRC_FINGERPRINTS_MANAGER_H
 #define _HAD_SRC_FINGERPRINTS_MANAGER_H
 
@@ -36,61 +35,79 @@
 
 #include "../ip.h"
 
+/// Function prototype for a fingerprint instruction.
 typedef void (*fingerprintOpcode)(instructionPointer * ip);
 
+/**
+ * An opcode stack.
+ * @warning
+ * Fingerprints should not directly touch these, use the functions below for that.
+ */
 typedef struct s_fungeOpcodeStack {
-	// This is current size of the array entries
+	/// This is current size of the array entries
 	size_t             size;
-	// This is current top item in stack (may not be last item)
-	// Note: One-indexed, as 0 = empty stack.
+	/// This is current top item in stack (may not be last item)
+	/// Note: One-indexed, as 0 = empty stack.
 	size_t             top;
+	/// Pointer to entries of the stack.
 	fingerprintOpcode *entries;
 } fungeOpcodeStack;
 #define fungeOpcodeStackDefined
 
 /**
- * Loads a fingerprint into IP. Should use ManagerAddOpcode (or OpcodeStackAdd)!
- * Returns true if successful, otherwise false.
- * Should leave things in a clean state if it fails.
- * Note: opcodes can be removed by manager at any point without prior warning.
+ * Function prototype for fingerprint loader. It should load a fingerprint
+ * into IP using either ManagerAddOpcode or OpcodeStackAdd! The former is
+ * recommended. May also do some other setup like initialising static variables.
+ * Please leave things in a clean state if it fails.
+ * @return Returns true if successful, otherwise false.
+ * @note Opcodes can be removed by manager at any point without prior warning.
  */
 typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
- * Add func to the correct opcode in ip.
+ * Add func to the correct opcode (instruction) in ip.
+ * If possible use ManagerAddOpcode() macro instead!
+ * @param ip IP to add this opcode to.
+ * @param opcode What opcode to add.
+ * @param func Function pointer to routine implementing the instruction.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
 
 /**
  * Initialise stacks for IP
+ * @note Don't call this directly from fingerprints.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerCreate(instructionPointer * restrict ip);
 
 /**
  * Free stacks for IP
+ * @note Don't call this directly from fingerprints.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void ManagerFree(instructionPointer * restrict ip);
 
 #ifdef CONCURRENT_FUNGE
 /**
- * Duplicate a loaded fingerprints.
+ * Duplicate the loaded fingerprint stacks to another IP, used for Concurrent Funge.
+ * @note Don't call this directly from fingerprints.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
 #endif
 
 /**
- * Try to load fingerprint.
- * Returns false if it failed (should reflect then), otherwise true.
+ * Try to load a fingerprint.
+ * @return Returns false if it failed (should reflect then), otherwise true.
+ * @note Don't call this directly from fingerprints.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
 
 /**
- * Try to unload fingerprint.
- * Returns false if it failed (should reflect then), otherwise true.
+ * Try to unload a fingerprint.
+ * @return Returns false if it failed (should reflect then), otherwise true.
+ * @note Don't call this directly from fingerprints.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
@@ -101,7 +118,15 @@ bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
 FUNGE_ATTR_FAST FUNGE_ATTR_NORET
 void ManagerList(void);
 
-/// For use in fingerprint loading routines ONLY
+/// For use in fingerprint loading routines ONLY.
+/// Example code:
+/// @code
+/// ManagerAddOpcode(CPLI, 'V', abs)
+/// @endcode
+/// This will "bind" the function named FingerCPLIabs to the instruction V.
+/// @param fprint Fingerprint name
+/// @param opcode Instruction char (range A-Z)
+/// @param name Function name. Real function name constructed from fprint and this.
 #define ManagerAddOpcode(fprint, opcode, name) \
 	if (!OpcodeStackAdd(ip, (opcode), &Finger ## fprint ## name)) \
 		return false;
