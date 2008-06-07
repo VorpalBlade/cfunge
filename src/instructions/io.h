@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * execute.c contains the implementation of the instructions i and o.
+ */
+
 #ifndef _HAD_SRC_INSTRUCTIONS_IO_H
 #define _HAD_SRC_INSTRUCTIONS_IO_H
 
@@ -29,7 +34,9 @@
 #include "../funge-space/funge-space.h"
 
 // These are the i and o instructions.
-void RunFileInput(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
-void RunFileOutput(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunFileInput(instructionPointer * restrict ip);
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunFileOutput(instructionPointer * restrict ip);
 
 #endif

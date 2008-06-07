@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * interate.c contains the implementation of the k instruction.
+ */
+
 #ifndef _HAD_SRC_INSTRUCTIONS_ITERATE_H
 #define _HAD_SRC_INSTRUCTIONS_ITERATE_H
 
@@ -30,9 +35,11 @@
 
 
 #ifdef CONCURRENT_FUNGE
-void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex);
 #else
-void RunIterate(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunIterate(instructionPointer * restrict ip);
 #endif
 
 #endif

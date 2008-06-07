@@ -91,11 +91,14 @@
 #define free_nogc(x)           free(x);
 #define strdup_nogc(x)         strdup((x))
 
-char * cf_strndup(const char *string, size_t n) __attribute__((warn_unused_result, FUNGE_IN_FAST));
-size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_ATTR_FAST;
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+char * cf_strndup(const char *string, size_t n);
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+size_t cf_strnlen(const char *string, size_t maxlen);
 
 /// This is glibc specific, so here is a version from gnulib.
-ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 
 /**
  * @defgroup STDIO_UNLOCKED Unlocked I/O defines

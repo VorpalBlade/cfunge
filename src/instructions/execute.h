@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * execute.c contains the implementation of the = instruction.
+ */
+
 #ifndef _HAD_SRC_INSTRUCTIONS_EXECUTE_H
 #define _HAD_SRC_INSTRUCTIONS_EXECUTE_H
 
@@ -27,7 +32,8 @@
 #include "../ip.h"
 #include "../stack.h"
 
-// This is the = instruction.
-void RunSystemExecute(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+/// This is the = instruction.
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunSystemExecute(instructionPointer * restrict ip);
 
 #endif

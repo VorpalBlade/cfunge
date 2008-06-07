@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * sysinfo.c contains the implementation of the y instruction.
+ */
+
 #ifndef _HAD_SRC_INSTRUCTIONS_SYSINFO_H
 #define _HAD_SRC_INSTRUCTIONS_SYSINFO_H
 
@@ -28,6 +33,7 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
-void RunSysInfo(instructionPointer * ip) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void RunSysInfo(instructionPointer * ip);
 
 #endif

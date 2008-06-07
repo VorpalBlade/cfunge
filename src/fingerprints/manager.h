@@ -19,6 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * The fingerprint manager.
+ */
+
+
 #ifndef _HAD_SRC_FINGERPRINTS_MANAGER_H
 #define _HAD_SRC_FINGERPRINTS_MANAGER_H
 
@@ -52,43 +58,50 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
  * Add func to the correct opcode in ip.
  */
-bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
 
 /**
  * Initialise stacks for IP
  */
-bool ManagerCreate(instructionPointer * restrict ip) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool ManagerCreate(instructionPointer * restrict ip);
 
 /**
  * Free stacks for IP
  */
-void ManagerFree(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void ManagerFree(instructionPointer * restrict ip);
 
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate a loaded fingerprints.
  */
-bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
 #endif
 
 /**
  * Try to load fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
 
 /**
  * Try to unload fingerprint.
  * Returns false if it failed (should reflect then), otherwise true.
  */
-bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
 
 /**
  * Print out list of supported fingerprints
  */
-void ManagerList(void) __attribute__((noreturn, FUNGE_IN_FAST));
+FUNGE_ATTR_FAST FUNGE_ATTR_NORET
+void ManagerList(void);
 
-// For use in fingerprint loading routines ONLY
+/// For use in fingerprint loading routines ONLY
 #define ManagerAddOpcode(fprint, opcode, name) \
 	if (!OpcodeStackAdd(ip, (opcode), &Finger ## fprint ## name)) \
 		return false;
