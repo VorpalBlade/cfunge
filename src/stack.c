@@ -64,7 +64,7 @@ FUNGE_ATTR_FAST void StackFree(fungeStack * stack)
 
 #ifdef CONCURRENT_FUNGE
 // Used for concurrency
-__attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline fungeStack * StackDuplicate(const fungeStack * old)
 {
 	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
@@ -81,7 +81,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 }
 #endif
 
-__attribute__((nonnull, FUNGE_IN_FAST, noreturn))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
 static void StackOOM(void)
 {
 	perror("Emergency! Failed to allocate enough memory for new stack items");
@@ -92,7 +92,7 @@ static void StackOOM(void)
  * Basic push/pop/peeks and prealloc *
  *************************************/
 
-__attribute__((nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void StackPreallocSpace(fungeStack * restrict stack, size_t minfree)
 {
 	if ((stack->top + minfree) < stack->size) {
@@ -108,7 +108,7 @@ static inline void StackPreallocSpace(fungeStack * restrict stack, size_t minfre
 	}
 }
 
-__attribute__((nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void StackPushNoCheck(fungeStack * restrict stack, FUNGEDATATYPE value)
 {
 	// This should only be used if that is true...
@@ -290,7 +290,7 @@ FUNGE_ATTR_FAST void StackSwapTop(fungeStack * restrict stack)
 
 
 // For use with call in gdb
-void StackDump(const fungeStack * stack) __attribute__((unused));
+void StackDump(const fungeStack * stack) FUNGE_ATTR_UNUSED;
 
 void StackDump(const fungeStack * stack)
 {

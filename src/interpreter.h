@@ -45,9 +45,9 @@
  * (They are declared in main.c by the way.)
  */
 /*@{*/
-/// argv array, don't change.
+/// Copy of argv array, don't modify.
 extern const char **fungeargv;
-/// argc, don't change.
+/// Copy of argc, don't modify.
 extern int fungeargc;
 /*@}*/
 

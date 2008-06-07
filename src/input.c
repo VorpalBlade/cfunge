@@ -69,7 +69,7 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // a overflow would happen.
 // Converted value is returned in *value.
 // Return value is last index used in string.
-__attribute__((warn_unused_result, nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline ptrdiff_t parseInt(const char * restrict s,
                                  FUNGEDATATYPE * value, FUNGEDATATYPE base)
 {

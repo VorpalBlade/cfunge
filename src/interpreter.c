@@ -57,7 +57,7 @@ static instructionPointer *IP = NULL;
 /**
  * Print warning on unknown instruction if such warnings are enabled.
  */
-__attribute__((nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
 	if (SettingWarnings)
@@ -501,7 +501,7 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 
 
 #ifdef CONCURRENT_FUNGE
-__attribute__((nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void ThreadForward(instructionPointer * ip)
 {
 	assert(ip != NULL);
@@ -514,7 +514,7 @@ static inline void ThreadForward(instructionPointer * ip)
 #endif
 
 
-__attribute__((noreturn, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NORET
 static inline void interpreterMainLoop(void)
 {
 #ifdef CONCURRENT_FUNGE

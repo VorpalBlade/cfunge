@@ -23,7 +23,7 @@
 #include "../../stack.h"
 
 // This simply fetches the second vector.
-__attribute__((nonnull, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 {
 	fungeVector a, b;

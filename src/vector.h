@@ -41,6 +41,9 @@ typedef fungeVector fungePosition;
 
 /// Useful to create a vector in a list of parameter for example.
 /// The vector is created on the stack.
+/// @param a This should be the x value.
+/// @param b This should be the y value.
+/// @return A pointer to a vector allocated on the stack, so no need to free it.
 #define VectorCreateRef(a, b) (& (fungeVector) { .x = (a), .y = (b) })
 
 /**

@@ -33,6 +33,7 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
+/// Implements the y instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void RunSysInfo(instructionPointer * ip);
 

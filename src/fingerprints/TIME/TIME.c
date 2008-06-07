@@ -51,7 +51,7 @@ static void FingerTIMEdayOfYear(instructionPointer * ip)
 }
 
 // G - Set to use UTC.
-static void FingerTIMEuseGMT(__attribute__((unused)) instructionPointer * ip)
+static void FingerTIMEuseGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = true;
 }
@@ -64,7 +64,7 @@ static void FingerTIMEhour(instructionPointer * ip)
 }
 
 // L - Set to use local time.
-static void FingerTIMEuseLocal(__attribute__((unused)) instructionPointer * ip)
+static void FingerTIMEuseLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = false;
 }

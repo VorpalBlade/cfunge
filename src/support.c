@@ -61,7 +61,7 @@ FUNGE_ATTR_FAST char * cf_strndup(const char *string, size_t n)
 #endif
 
 // This function is from Gnulib
-__attribute__((warn_unused_result, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline ssize_t
 cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 {

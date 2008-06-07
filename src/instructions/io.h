@@ -33,9 +33,10 @@
 #include "../stack.h"
 #include "../funge-space/funge-space.h"
 
-// These are the i and o instructions.
+/// The i instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void RunFileInput(instructionPointer * restrict ip);
+/// The o instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void RunFileOutput(instructionPointer * restrict ip);
 

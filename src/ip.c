@@ -30,7 +30,7 @@
 
 #include <assert.h>
 
-__attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool ipCreateInPlace(instructionPointer *me)
 {
 	assert(me != NULL);
@@ -65,7 +65,7 @@ FUNGE_ATTR_FAST instructionPointer * ipCreate(void)
 }
 
 #ifdef CONCURRENT_FUNGE
-__attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new)
 {
 	assert(old != NULL);

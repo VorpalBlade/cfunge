@@ -34,9 +34,8 @@
 
 /// What version of the Funge standard we are executing.
 /// @note
-/// Out of order to initialise to 0 :D
-/// (A few bytes smaller binary that way)
-/// (The standard one should be 0 always)
+/// Out of order to make default initialise to 0.
+/// (A few bytes smaller binary that way, The standard one should always be 0)
 typedef enum { stdver98 = 0, stdver93 = 1, stdver108 = 2 } standardVersion;
 
 /// What version we should simulate.
@@ -53,12 +52,14 @@ extern bool SettingDisableFingerprints;
 
 /// Sandbox, prevent bad programs affecting system.
 /// If true:
-/// * Any file or filesystem IO is forbidden.
-/// * The program can not access network using network fingerprints.
-/// * The environment variables it can see are restricted.
+/// - Any file, filesystem or network IO is forbidden.
+/// - The program can not access network using network fingerprints.
+/// - The environment variables it can see are restricted.
+///
 /// Summary:
-/// * In core opcodes: =, o and i are forbidden.
-/// * In fingerprints: Non-safe fingerprints are not loaded.
+/// - In core opcodes: =, o and i are forbidden and certain environment
+///   variables are hidden.
+/// - In fingerprints: Non-safe fingerprints are not loaded.
 extern bool SettingSandbox;
 
 #endif

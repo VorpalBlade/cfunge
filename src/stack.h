@@ -39,6 +39,7 @@ struct s_instructionPointer;
 #endif
 
 /// A Funge stack.
+/// @warning Don't access directly, use functions and macros below.
 typedef struct s_fungeStack {
 	size_t         size; ///< This is current size of the array entries.
 	size_t         top;  /**< This is current top item in stack (may not be last item).
@@ -112,10 +113,14 @@ void StackPushString(fungeStack * restrict stack, const char * restrict str, siz
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 char * StackPopString(fungeStack * restrict stack);
 /**
- * Pop a fixed number of chars. Return as null-terminated string.
+ * Pop a fixed number of chars from a stack.
+ * @param stack A pointer to the stack in question.
+ * @param len The number of chars to pop.
+ * @return Result returned as null-terminated string.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 char * StackPopSizedString(fungeStack * restrict stack, size_t len);
+/// Clear all items from a stack.
 #define StackClear(stack) { stack->top = 0; }
 /**
  * Duplicate top element of the stack.
@@ -152,8 +157,11 @@ fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old);
 #endif
 
 /**
- * Begin a new stack on the stack stack.
- * count is how many arguments to copy over.
+ * Begin a new stack on the stack-stack.
+ * @param ip Instruction pointer this is for.
+ * @param me What stack-stack to operate on.
+ * @param count How many items to copy over.
+ * @param storageOffset New storage offset.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool StackStackBegin(struct s_instructionPointer * restrict ip,
@@ -162,7 +170,9 @@ bool StackStackBegin(struct s_instructionPointer * restrict ip,
                      const fungePosition * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
- * count is how many items to copy over.
+ * @param ip Instruction pointer this is for.
+ * @param me What stack-stack to operate on.
+ * @param count How many items to copy over.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool StackStackEnd(struct s_instructionPointer * restrict ip,
@@ -170,6 +180,10 @@ bool StackStackEnd(struct s_instructionPointer * restrict ip,
                    FUNGEDATATYPE count);
 /**
  * Transfer items from one stack to another (not in order).
+ * Used for u instruction.
+ * @param count How many items to copy over.
+ * @param TOSS Pointer to top stack on the stack-stack.
+ * @param SOSS Pointer to second stack on the stack-stack.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS);

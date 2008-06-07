@@ -43,7 +43,7 @@
 /**
  * Create an opcode stack.
  */
-__attribute__((malloc,warn_unused_result,FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 static inline fungeOpcodeStack* CreateOpcodeStack(void)
 {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
@@ -75,7 +75,7 @@ static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
 /**
  * Duplicate an opcode stack, used for split (t).
  */
-__attribute__((malloc,nonnull,warn_unused_result,FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old)
 {
 	fungeOpcodeStack * tmp;
@@ -119,7 +119,7 @@ FUNGE_ATTR_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcod
 /**
  * Pop a function pointer from an opcode stack, discarding it.
  */
-__attribute__((nonnull,FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack)
 {
 	assert(stack != NULL);
@@ -177,7 +177,7 @@ FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
  * Return value is index into ImplementedFingerprints array.
  * -1 means not found.
  */
-__attribute__((warn_unused_result,FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 {
 	size_t i = 0;

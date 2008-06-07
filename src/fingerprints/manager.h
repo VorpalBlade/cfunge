@@ -74,15 +74,19 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
 
 /**
- * Initialise stacks for IP
- * @note Don't call this directly from fingerprints.
+ * Initialise opcode stacks for IP
+ * @warning Don't call this directly from fingerprints.
+ * @param ip IP to operate on.
+ * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerCreate(instructionPointer * restrict ip);
 
 /**
- * Free stacks for IP
- * @note Don't call this directly from fingerprints.
+ * Free opcode stacks for IP
+ * @warning Don't call this directly from fingerprints.
+ * @param ip IP to operate on.
+ * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void ManagerFree(instructionPointer * restrict ip);
@@ -90,7 +94,10 @@ void ManagerFree(instructionPointer * restrict ip);
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate the loaded fingerprint stacks to another IP, used for Concurrent Funge.
- * @note Don't call this directly from fingerprints.
+ * @warning Don't call this directly from fingerprints.
+ * @param oldip Old IP to copy loaded fingerprints from.
+ * @param newip Target to copy to.
+ * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
@@ -98,16 +105,20 @@ bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPoin
 
 /**
  * Try to load a fingerprint.
- * @return Returns false if it failed (should reflect then), otherwise true.
- * @note Don't call this directly from fingerprints.
+ * @warning Don't call this directly from fingerprints.
+ * @param ip IP to operate on.
+ * @param fingerprint Fingerprint to load.
+ * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
 
 /**
  * Try to unload a fingerprint.
- * @return Returns false if it failed (should reflect then), otherwise true.
- * @note Don't call this directly from fingerprints.
+ * @warning Don't call this directly from fingerprints.
+ * @param ip IP to operate on.
+ * @param fingerprint Fingerprint to unload.
+ * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);

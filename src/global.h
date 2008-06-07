@@ -33,8 +33,7 @@
 
 /**
  * @defgroup compat Compiler/system compatibility defines.
- * For compatibility with other compilers to prevent them
- * failing at things like: __attribute__((noreturn))
+ * Compatiblity stuff to support systems lacking some functions of features.
  */
 /*@{*/
 #ifndef __GNUC__
@@ -51,39 +50,37 @@
 /*@{*/
 #ifdef __GNUC__
 #  ifdef __i386__
-/// Select fast calling convention on platforms that need it. For use in lists with other attributes.
-/// Deprecated.
-#    define  FUNGE_IN_FAST regparm(3)
-/// Select fast calling convention on platforms that need it. For stand alone.
-#    define  FUNGE_ATTR_FAST __attribute__((FUNGE_IN_FAST))
+/// Used to select fast calling convention on platforms that need it.
+#    define  FUNGE_ATTR_FAST __attribute__((regparm(3)))
 #  else
-/// Select fast calling convention on platforms that need it. For use in lists with other attributes.
-/// Deprecated.
-#    define  FUNGE_IN_FAST /* NO-OP */
-/// Select fast calling convention on platforms that need it. For stand alone.
+/// Used to select fast calling convention on platforms that need it.
 #    define  FUNGE_ATTR_FAST /* NO-OP */
 #  endif
 #else
-// Only define this one, as /**/ doesn't nest.
-/// Select fast calling convention on platforms that need it. For stand alone.
-/// See FUNGE_IN_FAST for use inside attribute lists
+/// Used to select fast calling convention on platforms that need it.
 #  define  FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
 #ifdef __GNUC__
-#  define FUNGE_ATTR_MALLOC      __attribute__((malloc))
-#  define FUNGE_ATTR_NOINLINE    __attribute__((noinline))
-#  define FUNGE_ATTR_NONNULL     __attribute__((nonnull))
-#  define FUNGE_ATTR_NORET       __attribute__((noreturn))
-#  define FUNGE_ATTR_PURE        __attribute__((pure))
-#  define FUNGE_ATTR_WARN_UNUSED __attribute__((warn_unused_result))
+#  define FUNGE_ATTR_CONST         __attribute__((const))
+#  define FUNGE_ATTR_ALWAYS_INLINE __attribute__((always_inline))
+#  define FUNGE_ATTR_MALLOC        __attribute__((malloc))
+#  define FUNGE_ATTR_NOINLINE      __attribute__((noinline))
+#  define FUNGE_ATTR_NONNULL       __attribute__((nonnull))
+#  define FUNGE_ATTR_NORET         __attribute__((noreturn))
+#  define FUNGE_ATTR_PURE          __attribute__((pure))
+#  define FUNGE_ATTR_UNUSED        __attribute__((unused))
+#  define FUNGE_ATTR_WARN_UNUSED   __attribute__((warn_unused_result))
 #else
-#  define FUNGE_ATTR_MALLOC      /* NO-OP */
-#  define FUNGE_ATTR_NOINLINE    /* NO-OP */
-#  define FUNGE_ATTR_NONNULL     /* NO-OP */
-#  define FUNGE_ATTR_NORET       /* NO-OP */
-#  define FUNGE_ATTR_PURE        /* NO-OP */
-#  define FUNGE_ATTR_WARN_UNUSED /* NO-OP */
+#  define FUNGE_ATTR_CONST         /* NO-OP */
+#  define FUNGE_ATTR_ALWAYS_INLINE /* NO-OP */
+#  define FUNGE_ATTR_MALLOC        /* NO-OP */
+#  define FUNGE_ATTR_NOINLINE      /* NO-OP */
+#  define FUNGE_ATTR_NONNULL       /* NO-OP */
+#  define FUNGE_ATTR_NORET         /* NO-OP */
+#  define FUNGE_ATTR_PURE          /* NO-OP */
+#  define FUNGE_ATTR_UNUSED        /* NO-OP */
+#  define FUNGE_ATTR_WARN_UNUSED   /* NO-OP */
 #endif
 
 /*@}*/

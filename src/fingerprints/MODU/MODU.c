@@ -23,8 +23,7 @@
 #include "../../stack.h"
 
 // This was more or less taken from CCBI
-
-__attribute__((const, FUNGE_IN_FAST))
+FUNGE_ATTR_CONST FUNGE_ATTR_FAST
 static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 {
 	x /= y;

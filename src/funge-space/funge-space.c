@@ -48,7 +48,7 @@ static fungeSpace *fspace = NULL;
 /**
  * Check if position is in range.
  */
-__attribute__((pure, FUNGE_IN_FAST))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
 	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
@@ -206,7 +206,7 @@ FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 
 
 // For use with call in gdb
-void FungeSpaceDump(void) __attribute__((unused));
+void FungeSpaceDump(void) FUNGE_ATTR_UNUSED;
 
 void FungeSpaceDump(void)
 {
@@ -223,8 +223,7 @@ void FungeSpaceDump(void)
 
 #endif
 
-
-__attribute__((nonnull, always_inline, warn_unused_result, FUNGE_IN_FAST))
+FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 {
 	FILE * file;

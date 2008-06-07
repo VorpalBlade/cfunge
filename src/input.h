@@ -33,8 +33,10 @@
 
 /**
  * For use in input instruction & and in some fingerprints.
- * Returns true if it got an integer in the given base, otherwise false.
- * The read integer is returned in the value parameter.
+ * @param value Pointer to some memory to place the read integer in.
+ * @param base What base to read the number as.
+ * @return Returns true if it got an integer in the given base, otherwise false.
+ * @note The read integer is returned in the value parameter.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool input_getint(FUNGEDATATYPE * value, int base);
@@ -42,7 +44,7 @@ bool input_getint(FUNGEDATATYPE * value, int base);
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,
  * otherwise it reuse the values from the old buffer).
- * Returns next char from the buffer.
+ * @return Returns next char from the buffer.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 FUNGEDATATYPE input_getchar(void);

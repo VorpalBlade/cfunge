@@ -29,7 +29,7 @@
 // The resolution.
 static suseconds_t resolution = 0;
 
-__attribute__((FUNGE_IN_FAST, nonnull, warn_unused_result, pure))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline FUNGEDATATYPE GetDifference(const struct timeval * before,
                                           const struct timeval * after)
 {
@@ -38,7 +38,7 @@ static inline FUNGEDATATYPE GetDifference(const struct timeval * before,
 }
 
 // This function checks that the IP got a non-null HRTI data pointer.
-__attribute__((FUNGE_IN_FAST, nonnull, warn_unused_result))
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool CheckIPgotHRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {

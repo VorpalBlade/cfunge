@@ -124,12 +124,20 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #  ifdef NEED_LOCKED
 #    define cf_flockfile(x)                flockfile((x))
 #    define cf_funlockfile(x)              funlockfile((x))
+/// putchar that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #    define cf_putchar_maybe_locked(x)     putchar((x))
+/// putc that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #    define cf_putc_maybe_locked(x, y)     putc((x), (y))
 #  else /* NEED_LOCKED */
 #    define cf_flockfile(x)                /* NO-OP */
 #    define cf_funlockfile(x)              /* NO-OP */
+/// putchar that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #    define cf_putchar_maybe_locked(x)     putchar_unlocked((x))
+/// putc that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #    define cf_putc_maybe_locked(x, y)     putc_unlocked((x), (y))
 #  endif /* NEED_LOCKED */
 #else /* _POSIX_THREAD_SAFE_FUNCTIONS */
@@ -138,7 +146,11 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #  define cf_putchar_unlocked(x)           putchar((x))
 #  define cf_flockfile(x)                  /* NO-OP */
 #  define cf_funlockfile(x)                /* NO-OP */
+/// putchar that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #  define cf_putchar_maybe_locked(x)       putchar((x))
+/// putc that will be locked only if the app could contain threads
+/// (for example Boehm-GC could lead to that).
 #  define cf_putc_maybe_locked(x, y)       putc((x), (y))
 #endif /* _POSIX_THREAD_SAFE_FUNCTIONS */
 /*@}*/

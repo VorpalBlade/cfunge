@@ -18,12 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * safe_env.c is a perfect hash generated with gperf used to check
+ * if a certain environment variable should be visible in sandbox mode.
+ */
+
 #ifndef _HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
 #define _HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
 
 #include "../global.h"
 #include <stdbool.h>
 
-bool CheckEnvIsSafe(const char *envvar) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+/**
+ * Check if an environment variable is safe for sandbox.
+ * @param envvar The string to check, this must be a full line like:
+ * foo=bar.
+ * @return True if safe, otherwise false.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool CheckEnvIsSafe(const char *envvar);
 
 #endif

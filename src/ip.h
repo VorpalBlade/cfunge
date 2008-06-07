@@ -37,10 +37,14 @@
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
+/// Type of ip delta.
 typedef fungeVector ipDelta;
 
+/// IP mode: code.
 #define ipmCODE 0
+/// IP mode: string.
 #define ipmSTRING 1
+/// Type of the ipMode entry.
 typedef uint_fast8_t ipMode;
 
 
@@ -95,10 +99,13 @@ FUNGE_ATTR_FAST
 void ipFree(instructionPointer * restrict ip);
 
 /**
- * steps let you take several steps at once. You can also take negative
+ * Move the IP forward.
+ * @param ip Instruction pointer to operate on.
+ * @param steps Number of steps forward to take. You can also take negative
  * count of steps.
- * However if you will wrap, you probably want to set a temp delta instead and
- * take one step for now.
+ * @note
+ * steps let you take several steps at once. However if you will wrap, you
+ * probably want to set a temp delta instead and take +/- one step for now.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipForward(instructionPointer * restrict ip, int_fast64_t steps);
@@ -111,42 +118,57 @@ void ipForward(instructionPointer * restrict ip, int_fast64_t steps);
 		(ip)->delta.x *= -1; \
 		(ip)->delta.y *= -1; \
 	}
+/// Turn the IP left as [ would do.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipTurnLeft(instructionPointer * restrict ip);
+/// Turn the IP right as ] would do.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipTurnRight(instructionPointer * restrict ip);
+/// Set delta of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta);
+/// Set position of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position);
 
 // To make things simpler.
+/// Set IP delta to west.
 #define ipGoWest(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
+/// Set IP delta to east.
 #define ipGoEast(ip)  ipSetDelta(ip, VectorCreateRef( 1,  0))
+/// Set IP delta to north.
 #define ipGoNorth(ip) ipSetDelta(ip, VectorCreateRef( 0, -1))
+/// Set IP delta to south.
 #define ipGoSouth(ip) ipSetDelta(ip, VectorCreateRef( 0,  1))
 
 #ifdef CONCURRENT_FUNGE
 /**
  * Create a new IP list with the single default IP in it.
+ * @warning Should only be called from internal setup code.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ipList* ipListCreate(void);
 /**
- * Free IP list.
+ * Free an IP list.
+ * @warning Should only be called from internal tear-down code.
+ * @param me ipList to free.
  */
 FUNGE_ATTR_FAST
 void ipListFree(ipList* me);
 /**
  * Add a new IP, one place before current one.
- * Returns index of next to execute as that may have changed after this call.
- * A value of -1 = failed to create IP.
+ * @param me ipList to operate on.
+ * @param index What entry in the list to duplicate.
+ * @return Returns the index of next to execute as that may have changed after
+ * this call. A value of -1 = failed to create IP.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ssize_t ipListDuplicateIP(ipList** me, size_t index);
 /**
  * Terminate an ip.
- * Returns index of next to execute as that may have changed after this call.
+ * @param me ipList to operate on.
+ * @param index What entry in the list to terminate.
+ * @return Returns index of next to execute as that may have changed after this call.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ssize_t ipListTerminateIP(ipList** me, size_t index);
