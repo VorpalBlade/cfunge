@@ -18,26 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/**
+ * @file
+ * Definition of, and functions for, a Funge vector.
+ */
 #ifndef _HAD_SRC_VECTOR_H
 #define _HAD_SRC_VECTOR_H
 
 #include "global.h"
 #include <stdbool.h>
 
+/// A vector in funge space
 typedef struct s_fungeVector {
-	FUNGEVECTORTYPE x;
-	FUNGEVECTORTYPE y;
+	FUNGEVECTORTYPE x; ///< You should be able to guess what this is.
+	FUNGEVECTORTYPE y; ///< You should be able to guess what this is.
 } fungeVector;
 
+/// A synomym for fungeVector.
+/// @note
+/// This should probably be deprecated.
 typedef fungeVector fungePosition;
 
-// Useful to create a vector in a list of parameter for example.
+/// Useful to create a vector in a list of parameter for example.
+/// The vector is created on the stack.
 #define VectorCreateRef(a, b) (& (fungeVector) { .x = (a), .y = (b) })
 
 /**
  * Checks if vector is cardinal (as in ^>v<).
+ * @param v The vector to check.
  */
-bool VectorIsCardinal(const fungeVector * v) __attribute__((pure,FUNGE_IN_FAST));
+FUNGE_ATTR_PURE FUNGE_ATTR_FAST
+bool VectorIsCardinal(const fungeVector * v);
 
 #endif

@@ -46,16 +46,17 @@
 /**
  * Either the IP or the IP list.
  */
+/*@{*/
 #ifdef CONCURRENT_FUNGE
 static ipList *IPList = NULL;
 #else
 static instructionPointer *IP = NULL;
 #endif
+/*@}*/
 
 /**
  * Print warning on unknown instruction if such warnings are enabled.
  */
-
 __attribute__((nonnull, FUNGE_IN_FAST))
 static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
@@ -66,7 +67,8 @@ static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointe
 }
 
 // These two are called from elsewhere. Avoid code duplication.
-FUNGE_FAST inline void IfEastWest(instructionPointer * restrict ip)
+
+FUNGE_ATTR_FAST inline void IfEastWest(instructionPointer * restrict ip)
 {
 	if (StackPop(ip->stack) == 0)
 		ipGoEast(ip);
@@ -74,7 +76,7 @@ FUNGE_FAST inline void IfEastWest(instructionPointer * restrict ip)
 		ipGoWest(ip);
 }
 
-FUNGE_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 {
 	if (StackPop(ip->stack) == 0)
 		ipGoSouth(ip);
@@ -95,9 +97,9 @@ FUNGE_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 		break;
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
+FUNGE_ATTR_FAST bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
 #else
-FUNGE_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 #endif
 {
 	// First check if we are in string mode, and do special stuff then.
@@ -576,7 +578,7 @@ static void DebugFreeThings(void)
 }
 #endif
 
-FUNGE_FAST void interpreterRun(const char *filename)
+FUNGE_ATTR_FAST void interpreterRun(const char *filename)
 {
 	if (!FungeSpaceCreate()) {
 		perror("Couldn't create funge space!?");

@@ -35,14 +35,14 @@ static char*  lastline = NULL;
 static size_t linelength = 0;
 static char*  lastlineCurrent = NULL;
 
-FUNGE_FAST static inline void getTheLine(void)
+FUNGE_ATTR_FAST static inline void getTheLine(void)
 {
 	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
 		cf_getline(&lastline, &linelength, stdin);
 		lastlineCurrent = lastline;
 	}
 }
-FUNGE_FAST static inline void discardTheLine(void)
+FUNGE_ATTR_FAST static inline void discardTheLine(void)
 {
 	if (lastline != NULL)
 		cf_free(lastline);
@@ -51,7 +51,7 @@ FUNGE_FAST static inline void discardTheLine(void)
 }
 
 
-FUNGE_FAST FUNGEDATATYPE input_getchar(void)
+FUNGE_ATTR_FAST FUNGEDATATYPE input_getchar(void)
 {
 	char tmp;
 	getTheLine();
@@ -105,7 +105,7 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 
 // Note, no need to optimise really, this is user input
 // bound anyway.
-FUNGE_FAST bool input_getint(FUNGEDATATYPE * value, int base)
+FUNGE_ATTR_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 {
 	bool found = false;
 	char * endptr = NULL;

@@ -31,14 +31,14 @@
 #  include <gc/ec.h>
 #endif
 
-// How many new items to allocate in one go?
+/// How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 4096
 
 /******************************
  * Constructor and destructor *
  ******************************/
 
-FUNGE_FAST fungeStack * StackCreate(void)
+FUNGE_ATTR_FAST fungeStack * StackCreate(void)
 {
 	fungeStack * tmp = (fungeStack*)cf_malloc(sizeof(fungeStack));
 	if (tmp == NULL)
@@ -51,7 +51,7 @@ FUNGE_FAST fungeStack * StackCreate(void)
 	return tmp;
 }
 
-FUNGE_FAST void StackFree(fungeStack * stack)
+FUNGE_ATTR_FAST void StackFree(fungeStack * stack)
 {
 	if (!stack)
 		return;
@@ -117,7 +117,7 @@ static inline void StackPushNoCheck(fungeStack * restrict stack, FUNGEDATATYPE v
 	stack->top++;
 }
 
-FUNGE_FAST void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
+FUNGE_ATTR_FAST void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 {
 	assert(stack != NULL);
 	assert(stack->top <= stack->size);
@@ -134,7 +134,7 @@ FUNGE_FAST void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value)
 	stack->top++;
 }
 
-FUNGE_FAST inline FUNGEDATATYPE StackPop(fungeStack * restrict stack)
+FUNGE_ATTR_FAST inline FUNGEDATATYPE StackPop(fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -147,7 +147,7 @@ FUNGE_FAST inline FUNGEDATATYPE StackPop(fungeStack * restrict stack)
 	}
 }
 
-FUNGE_FAST void StackPopDiscard(fungeStack * restrict stack)
+FUNGE_ATTR_FAST void StackPopDiscard(fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -158,7 +158,7 @@ FUNGE_FAST void StackPopDiscard(fungeStack * restrict stack)
 	}
 }
 
-FUNGE_FAST void StackPopNDiscard(fungeStack * restrict stack, size_t n)
+FUNGE_ATTR_FAST void StackPopNDiscard(fungeStack * restrict stack, size_t n)
 {
 	assert(stack != NULL);
 
@@ -173,7 +173,7 @@ FUNGE_FAST void StackPopNDiscard(fungeStack * restrict stack, size_t n)
 }
 
 
-FUNGE_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
+FUNGE_ATTR_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -189,14 +189,14 @@ FUNGE_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack)
  * Push and pop for data types. *
  ********************************/
 
-FUNGE_FAST void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value)
+FUNGE_ATTR_FAST void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value)
 {
 	// TODO: Optimise
 	StackPush(stack, value->x);
 	StackPush(stack, value->y);
 }
 
-FUNGE_FAST fungeVector StackPopVector(fungeStack * restrict stack)
+FUNGE_ATTR_FAST fungeVector StackPopVector(fungeStack * restrict stack)
 {
 	// TODO Optimise
 	FUNGEVECTORTYPE x, y;
@@ -205,7 +205,7 @@ FUNGE_FAST fungeVector StackPopVector(fungeStack * restrict stack)
 	return (fungeVector) { .x = x, .y = y };
 }
 
-FUNGE_FAST void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len)
+FUNGE_ATTR_FAST void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len)
 {
 	assert(str != NULL);
 	assert(stack != NULL);
@@ -216,7 +216,7 @@ FUNGE_FAST void StackPushString(fungeStack * restrict stack, const char * restri
 		StackPushNoCheck(stack, str[len]);
 }
 
-FUNGE_FAST char *StackPopString(fungeStack * restrict stack)
+FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 {
 	FUNGEDATATYPE c;
 #ifndef DISABLE_GC
@@ -243,7 +243,7 @@ FUNGE_FAST char *StackPopString(fungeStack * restrict stack)
 #endif
 }
 
-FUNGE_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
+FUNGE_ATTR_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
 {
 	char * x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
 
@@ -258,7 +258,7 @@ FUNGE_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
 /***************
  * Other stuff *
  ***************/
-FUNGE_FAST void StackDupTop(fungeStack * restrict stack)
+FUNGE_ATTR_FAST void StackDupTop(fungeStack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
 	FUNGEDATATYPE tmp;
@@ -270,7 +270,7 @@ FUNGE_FAST void StackDupTop(fungeStack * restrict stack)
 		StackPush(stack, 0);
 }
 
-FUNGE_FAST void StackSwapTop(fungeStack * restrict stack)
+FUNGE_ATTR_FAST void StackSwapTop(fungeStack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
 	FUNGEDATATYPE a, b;
@@ -309,7 +309,7 @@ void StackDump(const fungeStack * stack)
  * Stack-stacks *
  ****************/
 
-FUNGE_FAST fungeStackStack * StackStackCreate(void)
+FUNGE_ATTR_FAST fungeStackStack * StackStackCreate(void)
 {
 	fungeStackStack * stackStack;
 	fungeStack      * stack;
@@ -328,7 +328,7 @@ FUNGE_FAST fungeStackStack * StackStackCreate(void)
 	return stackStack;
 }
 
-FUNGE_FAST void StackStackFree(fungeStackStack * me)
+FUNGE_ATTR_FAST void StackStackFree(fungeStackStack * me)
 {
 	if (!me)
 		return;
@@ -340,7 +340,7 @@ FUNGE_FAST void StackStackFree(fungeStackStack * me)
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old)
+FUNGE_ATTR_FAST fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old)
 {
 	fungeStackStack * stackStack;
 
@@ -363,7 +363,7 @@ FUNGE_FAST fungeStackStack * StackStackDuplicate(const fungeStackStack * restric
 #endif
 
 
-FUNGE_FAST static void OOMstackStack(const instructionPointer * restrict ip)
+FUNGE_ATTR_FAST static void OOMstackStack(const instructionPointer * restrict ip)
 {
 	if (SettingWarnings) {
 		fprintf(stderr,
@@ -376,7 +376,7 @@ FUNGE_FAST static void OOMstackStack(const instructionPointer * restrict ip)
 #endif
 }
 
-FUNGE_FAST bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
+FUNGE_ATTR_FAST bool StackStackBegin(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count, const fungePosition * restrict storageOffset)
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
@@ -440,7 +440,7 @@ FUNGE_FAST bool StackStackBegin(instructionPointer * restrict ip, fungeStackStac
 }
 
 
-FUNGE_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count)
+FUNGE_ATTR_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack ** me, FUNGEDATATYPE count)
 {
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
@@ -496,7 +496,7 @@ FUNGE_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackStack 
 }
 
 
-FUNGE_FAST void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)
+FUNGE_ATTR_FAST void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)
 {
 	assert(TOSS != NULL);
 	assert(SOSS != NULL);

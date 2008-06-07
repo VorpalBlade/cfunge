@@ -19,6 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * The file input.c contains functions for reading user input from STDIN,
+ * buffered as needed.
+ */
+
 #ifndef _HAD_SRC_INPUT_H
 #define _HAD_SRC_INPUT_H
 
@@ -30,13 +36,15 @@
  * Returns true if it got an integer in the given base, otherwise false.
  * The read integer is returned in the value parameter.
  */
-bool input_getint(FUNGEDATATYPE * value, int base) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+bool input_getint(FUNGEDATATYPE * value, int base);
 /**
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,
  * otherwise it reuse the values from the old buffer).
  * Returns next char from the buffer.
  */
-FUNGEDATATYPE input_getchar(void) __attribute__((warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+FUNGEDATATYPE input_getchar(void);
 
 #endif

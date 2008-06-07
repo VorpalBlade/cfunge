@@ -19,6 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * Contains command line parsing and such.
+ */
 #include "global.h"
 
 #include <stdio.h>
@@ -30,7 +34,7 @@
 #include "settings.h"
 #include "fingerprints/manager.h"
 
-char **fungeargv = NULL;
+const char **fungeargv = NULL;
 int fungeargc = 0;
 
 // These are NOT worth inlineing, even though only called once.
@@ -52,10 +56,9 @@ static void printFeatures(void)
 #endif
 
 #ifndef DISABLE_GC
-	puts(" + This binary uses Boehm GC.");
+	puts(" * This binary uses Boehm GC.");
 #else
-	puts(" - This binary does NOT use Boehm GC!");
-	puts("   You are on your own if you disable Boehm GC!");
+	puts(" * This binary does not use Boehm GC.");
 #endif
 
 #if defined(USE64)
@@ -167,7 +170,7 @@ int main(int argc, char *argv[])
 		// for later reuse by y instruction.
 		if (argc > 1) {
 			fungeargc = argc - optind;
-			fungeargv = (char**)cf_malloc(fungeargc * sizeof(char*));
+			fungeargv = (const char**)cf_malloc(fungeargc * sizeof(char*));
 			for (int i = optind; i < argc; i++) {
 				fungeargv[i - optind] = cf_strdup(argv[i]);
 				if (fungeargv[i - optind] == NULL) {

@@ -29,14 +29,14 @@
 #include <errno.h>
 
 // This function is from Gnulib, with some changes
-FUNGE_FAST size_t cf_strnlen(const char *string, size_t maxlen)
+FUNGE_ATTR_FAST size_t cf_strnlen(const char *string, size_t maxlen)
 {
 	const char *end = (const char*)memchr(string, '\0', maxlen);
 	return end ? (size_t)(end - string) : maxlen;
 }
 
 // This function is from Gnulib, with some changes
-FUNGE_FAST char * cf_strndup(const char *string, size_t n)
+FUNGE_ATTR_FAST char * cf_strndup(const char *string, size_t n)
 {
 	if (!string || !*string)
 		return NULL;
@@ -137,7 +137,7 @@ unlock_return:
 }
 
 // This function is from Gnulib
-FUNGE_FAST ssize_t
+FUNGE_ATTR_FAST ssize_t
 cf_getline(char **lineptr, size_t *n, FILE *stream)
 {
 	return cf_getdelim(lineptr, n, '\n', stream);

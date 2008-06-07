@@ -56,7 +56,7 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 	return true;
 }
 
-FUNGE_FAST instructionPointer * ipCreate(void)
+FUNGE_ATTR_FAST instructionPointer * ipCreate(void)
 {
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
 	if (!ipCreateInPlace(tmp))
@@ -93,7 +93,7 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 }
 #endif
 
-FUNGE_FAST static inline void ipFreeResources(instructionPointer * ip)
+FUNGE_ATTR_FAST static inline void ipFreeResources(instructionPointer * ip)
 {
 	if (!ip)
 		return;
@@ -112,7 +112,7 @@ FUNGE_FAST static inline void ipFreeResources(instructionPointer * ip)
 }
 
 
-FUNGE_FAST void ipFree(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ipFree(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
@@ -120,7 +120,7 @@ FUNGE_FAST void ipFree(instructionPointer * restrict ip)
 	cf_free(ip);
 }
 
-FUNGE_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
+FUNGE_ATTR_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
 {
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;
@@ -128,7 +128,7 @@ FUNGE_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
 	FungeSpaceWrap(&ip->position, &ip->delta);
 }
 
-FUNGE_FAST void ipTurnRight(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ipTurnRight(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -139,7 +139,7 @@ FUNGE_FAST void ipTurnRight(instructionPointer * restrict ip)
 	ip->delta.y = tmpX;
 }
 
-FUNGE_FAST void ipTurnLeft(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ipTurnLeft(instructionPointer * restrict ip)
 {
 	FUNGEVECTORTYPE tmpX;
 
@@ -150,7 +150,7 @@ FUNGE_FAST void ipTurnLeft(instructionPointer * restrict ip)
 	ip->delta.y = -tmpX;
 }
 
-FUNGE_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
+FUNGE_ATTR_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
 	assert(delta != NULL);
@@ -158,7 +158,7 @@ FUNGE_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta * res
 	ip->delta.y = delta->y;
 }
 
-FUNGE_FAST void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
+FUNGE_ATTR_FAST void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
 {
 	assert(ip != NULL);
 	assert(position != NULL);
@@ -173,7 +173,7 @@ FUNGE_FAST void ipSetPosition(instructionPointer * restrict ip, const fungePosit
  ***********/
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_FAST ipList* ipListCreate(void)
+FUNGE_ATTR_FAST ipList* ipListCreate(void)
 {
 	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
 	if (!tmp)
@@ -186,7 +186,7 @@ FUNGE_FAST ipList* ipListCreate(void)
 	return tmp;
 }
 
-FUNGE_FAST void ipListFree(ipList* me)
+FUNGE_ATTR_FAST void ipListFree(ipList* me)
 {
 	if (!me)
 		return;
@@ -196,7 +196,7 @@ FUNGE_FAST void ipListFree(ipList* me)
 	cf_free(me);
 }
 
-FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
+FUNGE_ATTR_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 {
 	ipList *list;
 
@@ -248,7 +248,7 @@ FUNGE_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	return index - 1;
 }
 
-FUNGE_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
+FUNGE_ATTR_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
 {
 	ipList *list;
 

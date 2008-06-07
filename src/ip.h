@@ -19,6 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * Definition and functions for of instruction pointer and instruction
+ * pointer list.
+ */
+
 #ifndef _HAD_SRC_IP_H
 #define _HAD_SRC_IP_H
 
@@ -42,27 +48,29 @@ typedef uint_fast8_t ipMode;
 struct s_fungeOpcodeStack;
 #endif
 
-// This is for size of opcode array.
+/// This is for size of opcode array.
 #define FINGEROPCODECOUNT 26
 
+/// Instruction pointer.
 typedef struct s_instructionPointer {
-	fungeStack                * stack;    /**< Pointer to top stack. */
-	fungePosition               position; /**< Current position. */
-	ipDelta                     delta;    /**< Current delta. */
-	fungePosition               storageOffset;
-	ipMode                      mode;     /**< String or code mode. */
-	bool                        needMove:1; /**< Should ipForward be called at end of main loop. Is reset to true each time. */
-	bool                        stringLastWasSpace:1; /**< Used in string mode for SGML style spaces. */
-	FUNGEDATATYPE               ID;
-	fungeStackStack           * stackstack;
-	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  /**< Array of fingerprint opcodes */
+	fungeStack                * stack;    ///< Pointer to top stack.
+	fungePosition               position; ///< Current position.
+	ipDelta                     delta;    ///< Current delta.
+	fungePosition               storageOffset; ///< The storage offset for current IP.
+	ipMode                      mode;     ///< String or code mode.
+	bool                        needMove:1; ///< Should ipForward be called at end of main loop. Is reset to true each time.
+	bool                        stringLastWasSpace:1; ///< Used in string mode for SGML style spaces.
+	FUNGEDATATYPE               ID;                   ///< The ID of this IP.
+	fungeStackStack           * stackstack;           ///< The stack stack.
+	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	// Here comes fingerprint per-ip data. Please avoid when possible.
-	struct timeval            * fingerHRTItimestamp;
+	// And make the data as small as possible.
+	struct timeval            * fingerHRTItimestamp; ///< Data for fingerprint HRTI.
 } instructionPointer;
 #define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
-// For concurrent funge
+/// Instruction pointer list. For concurrent funge.
 typedef struct s_ipList {
 	size_t              size; /**< Total size */
 	size_t              top; /**< Top running one */
@@ -78,11 +86,13 @@ typedef struct s_ipList {
 /**
  * Create a new instruction pointer.
  */
-instructionPointer * ipCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+instructionPointer * ipCreate(void);
 /**
  * Free an instruction pointer.
  */
-void ipFree(instructionPointer * restrict ip) FUNGE_FAST;
+FUNGE_ATTR_FAST
+void ipFree(instructionPointer * restrict ip);
 
 /**
  * steps let you take several steps at once. You can also take negative
@@ -90,7 +100,8 @@ void ipFree(instructionPointer * restrict ip) FUNGE_FAST;
  * However if you will wrap, you probably want to set a temp delta instead and
  * take one step for now.
  */
-void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void ipForward(instructionPointer * restrict ip, int_fast64_t steps);
 
 /**
  * Mirror IP direction.
@@ -100,11 +111,14 @@ void ipForward(instructionPointer * restrict ip, int_fast64_t steps) __attribute
 		(ip)->delta.x *= -1; \
 		(ip)->delta.y *= -1; \
 	}
-
-void ipTurnLeft(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
-void ipTurnRight(instructionPointer * restrict ip) __attribute__((nonnull, FUNGE_IN_FAST));
-void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta) __attribute__((nonnull, FUNGE_IN_FAST));
-void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void ipTurnLeft(instructionPointer * restrict ip);
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void ipTurnRight(instructionPointer * restrict ip);
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta);
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position);
 
 // To make things simpler.
 #define ipGoWest(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
@@ -116,22 +130,26 @@ void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restr
 /**
  * Create a new IP list with the single default IP in it.
  */
-ipList* ipListCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+ipList* ipListCreate(void);
 /**
  * Free IP list.
  */
-void ipListFree(ipList* me) FUNGE_FAST;
+FUNGE_ATTR_FAST
+void ipListFree(ipList* me);
 /**
  * Add a new IP, one place before current one.
  * Returns index of next to execute as that may have changed after this call.
  * A value of -1 = failed to create IP.
  */
-ssize_t ipListDuplicateIP(ipList** me, size_t index) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+ssize_t ipListDuplicateIP(ipList** me, size_t index);
 /**
  * Terminate an ip.
  * Returns index of next to execute as that may have changed after this call.
  */
-ssize_t ipListTerminateIP(ipList** me, size_t index) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+ssize_t ipListTerminateIP(ipList** me, size_t index);
 #endif
 
 

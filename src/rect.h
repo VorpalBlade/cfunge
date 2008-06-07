@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * Definition of a rectangle in fugne space.
+ */
+
 #ifndef _HAD_SRC_RECT_H
 #define _HAD_SRC_RECT_H
 

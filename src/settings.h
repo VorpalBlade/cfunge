@@ -19,6 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * Definition of variables holding settings for current session.
+ */
 
 // This file contains global runtime settings
 #ifndef _HAD_SRC_SETTINGS_H
@@ -28,31 +32,33 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-
-// Out of order to initialise to 0 :D
-// (A few bytes smaller binary that way)
-// (The standard one should be 0 always
+/// What version of the Funge standard we are executing.
+/// @note
+/// Out of order to initialise to 0 :D
+/// (A few bytes smaller binary that way)
+/// (The standard one should be 0 always)
 typedef enum { stdver98 = 0, stdver93 = 1, stdver108 = 2 } standardVersion;
 
-// What version we should simulate.
-// Affects space processing.
+/// What version we should simulate.
+/// Affects space processing.
 extern standardVersion SettingCurrentStandard;
 
-// Level of trace output
+/// Level of trace output
 extern uint_fast16_t SettingTraceLevel;
-// Should we enable warnings
+/// Should we enable warnings
 extern bool SettingWarnings;
 
-// Should fingerprints be enabled
+/// Should fingerprints be enabled
 extern bool SettingDisableFingerprints;
 
-// If true:
-// * Any file or filesystem IO is forbidden.
-// * The program can not access network using network fingerprints.
-// * The environment variables it can see are restricted.
-// Summary:
-// * In core opcodes: =, o and i are forbidden.
-// * In fingerprints: Non-safe fingerprints are not loaded.
+/// Sandbox, prevent bad programs affecting system.
+/// If true:
+/// * Any file or filesystem IO is forbidden.
+/// * The program can not access network using network fingerprints.
+/// * The environment variables it can see are restricted.
+/// Summary:
+/// * In core opcodes: =, o and i are forbidden.
+/// * In fingerprints: Non-safe fingerprints are not loaded.
 extern bool SettingSandbox;
 
 #endif

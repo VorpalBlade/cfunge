@@ -19,6 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+ * Definition of, and functions for, a Funge stack.
+ */
+
 #ifndef _HAD_SRC_STACK_H
 #define _HAD_SRC_STACK_H
 
@@ -33,79 +38,95 @@
 struct s_instructionPointer;
 #endif
 
+/// A Funge stack.
 typedef struct s_fungeStack {
-	size_t         size; /**< This is current size of the array entries */
+	size_t         size; ///< This is current size of the array entries.
 	size_t         top;  /**< This is current top item in stack (may not be last item).
 	                          Note: One-indexed, as 0 = empty stack. */
-	FUNGEDATATYPE *entries;
+	FUNGEDATATYPE *entries; ///< Pointer to entries.
 } fungeStack;
 
-
+/// A Funge stack-stack.
 typedef struct s_fungeStackStack {
-	size_t         size;     /**< This is number of elements in stacks. */
-	size_t         current;  /**< Top stack and current stack */
-	fungeStack   * stacks[]; /**< Array of pointers to stacks */
+	size_t         size;     ///< This is number of elements in stacks.
+	size_t         current;  ///< Top stack and current stack.
+	fungeStack   * stacks[]; ///< Array of pointers to stacks.
 } fungeStackStack;
 
 /**
  * Create a new stack.
  */
-fungeStack * StackCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+fungeStack * StackCreate(void);
 /**
  * Destroy a stack.
+ * @param stack Pointer to stack to free.
  */
-void StackFree(fungeStack * stack) FUNGE_FAST;
+FUNGE_ATTR_FAST
+void StackFree(fungeStack * stack);
 
 /**
  * Push a item on the stack.
  */
-void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackPush(fungeStack * restrict stack, FUNGEDATATYPE value);
 /**
  * Pop item from stack.
  */
-FUNGEDATATYPE StackPop(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+FUNGEDATATYPE StackPop(fungeStack * restrict stack);
 /**
  * Pop one item and discard it.
  */
-void StackPopDiscard(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackPopDiscard(fungeStack * restrict stack);
 /**
  * Pop a number of items and discard them.
  */
-void StackPopNDiscard(fungeStack * restrict stack, size_t n) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackPopNDiscard(fungeStack * restrict stack, size_t n);
 /**
  * Stack peek.
  */
-FUNGEDATATYPE StackPeek(const fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+FUNGEDATATYPE StackPeek(const fungeStack * restrict stack);
 
 /**
  * Push a vector.
  */
-void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackPushVector(fungeStack * restrict stack, const fungeVector * restrict value);
 /**
  * Pop a vector.
  */
-fungeVector StackPopVector(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+fungeVector StackPopVector(fungeStack * restrict stack);
 /**
  * Push a null-terminated string to a 0"gnirts".
  */
-void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len);
 /**
  * Pop a 0"gnirts" and return a null-terminated string.
  */
-char * StackPopString(fungeStack * restrict stack) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+char * StackPopString(fungeStack * restrict stack);
 /**
  * Pop a fixed number of chars. Return as null-terminated string.
  */
-char * StackPopSizedString(fungeStack * restrict stack, size_t len) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+char * StackPopSizedString(fungeStack * restrict stack, size_t len);
 #define StackClear(stack) { stack->top = 0; }
 /**
  * Duplicate top element of the stack.
  */
-void StackDupTop(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackDupTop(fungeStack * restrict stack);
 /**
  * Swap the top two elements of the stack.
  */
-void StackSwapTop(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackSwapTop(fungeStack * restrict stack);
 
 //
 // Stack-stack functions
@@ -114,37 +135,43 @@ void StackSwapTop(fungeStack * restrict stack) __attribute__((nonnull, FUNGE_IN_
 /**
  * Create a new stack-stack.
  */
-fungeStackStack * StackStackCreate(void) __attribute__((malloc, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+fungeStackStack * StackStackCreate(void);
 /**
  * Free a stack-stack and any stacks it contain.
  */
-void StackStackFree(fungeStackStack * me) FUNGE_FAST;
+FUNGE_ATTR_FAST
+void StackStackFree(fungeStackStack * me);
 
 #ifdef CONCURRENT_FUNGE
 /**
  * Deep copy a stack-stack, used for concurrency.
  */
-fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old) __attribute__((malloc, nonnull, warn_unused_result, FUNGE_IN_FAST));
+FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+fungeStackStack * StackStackDuplicate(const fungeStackStack * restrict old);
 #endif
 
 /**
  * Begin a new stack on the stack stack.
  * count is how many arguments to copy over.
  */
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool StackStackBegin(struct s_instructionPointer * restrict ip,
                      fungeStackStack ** me,
                      FUNGEDATATYPE count,
-                     const fungePosition * restrict storageOffset) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+                     const fungePosition * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
  * count is how many items to copy over.
  */
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool StackStackEnd(struct s_instructionPointer * restrict ip,
                    fungeStackStack ** me,
-                   FUNGEDATATYPE count) __attribute__((nonnull, warn_unused_result, FUNGE_IN_FAST));
+                   FUNGEDATATYPE count);
 /**
  * Transfer items from one stack to another (not in order).
  */
-void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS)  __attribute__((nonnull, FUNGE_IN_FAST));
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void StackStackTransfer(FUNGEDATATYPE count, fungeStack * restrict TOSS, fungeStack * restrict SOSS);
 
 #endif

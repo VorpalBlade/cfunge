@@ -47,10 +47,8 @@ CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
 
 ################################################################################
 # Boehm GC
-OPTION(LEAK_MODE "If this is enabled, do not use boehm-gc. Do not enable unless you know what you are doing." OFF)
-IF(LEAK_MODE)
-	ADD_DEFINITIONS(-DDISABLE_GC)
-ELSE(LEAK_MODE)
+OPTION(USE_GC "If this is enabled, use Boehm-GC." OFF)
+IF(USE_GC)
 	PKGCONFIG(bdw-gc BoehmIncDir BoehmLinkDir BoehmLinkFlags BoehmCflags)
 	IF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
 		MESSAGE(STATUS "Found Boehm GC")
@@ -76,7 +74,9 @@ ELSE(LEAK_MODE)
 	INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
 	INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
 	LINK_DIRECTORIES(${BoehmLinkDir})
-ENDIF(LEAK_MODE)
+ELSE(USE_GC)
+	ADD_DEFINITIONS(-DDISABLE_GC)
+ENDIF(USE_GC)
 
 ################################################################################
 # Other options

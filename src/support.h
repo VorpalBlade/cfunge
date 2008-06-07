@@ -19,12 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Do not include directly, include global.h instead. It includes
-// this file.
-//
-// This file is used for:
-//  * Stuff from Gnulib that we want.
-//  * Setting up defines for different platforms as needed.
+/**
+ * @file
+ * Support routines to handle different systems and similar.
+ * @warning
+ * Never include this file directly, it is included by global.h
+ * @note
+ * This file contains stuff from Gnulib that we want and some
+ * defines to support different platforms and configurations.
+ */
 
 #ifndef _HAD_SRC_SUPPORT_H
 #define _HAD_SRC_SUPPORT_H
@@ -89,12 +92,16 @@
 #define strdup_nogc(x)         strdup((x))
 
 char * cf_strndup(const char *string, size_t n) __attribute__((warn_unused_result, FUNGE_IN_FAST));
-size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_FAST;
+size_t cf_strnlen(const char *string, size_t maxlen) FUNGE_ATTR_FAST;
 
-// This is glibc specific, so here is a version from gnulib.
-ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
+/// This is glibc specific, so here is a version from gnulib.
+ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_ATTR_FAST;
 
-// Useful in case of a lot of IO operations.
+/**
+ * @defgroup STDIO_UNLOCKED Unlocked I/O defines
+ * These are useful in case of a lot of IO operations.
+ */
+/*@{*/
 #if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
 #  define cf_getc_unlocked(x)              getc_unlocked((x))
 #  define cf_putc_unlocked(x, y)           putc_unlocked((x), (y))
@@ -119,6 +126,7 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream) FUNGE_FAST;
 #  define cf_putchar_maybe_locked(x)       putchar((x))
 #  define cf_putc_maybe_locked(x, y)       putc((x), (y))
 #endif /* _POSIX_THREAD_SAFE_FUNCTIONS */
+/*@}*/
 
 // Yep, crap.
 #ifdef __WIN32__
