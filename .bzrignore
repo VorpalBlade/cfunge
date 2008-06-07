@@ -13,4 +13,6 @@
 ./cfunge.static.*
 ./cmake_install.cmake
 ./dist
+./doxygen-docs
+./other
 Makefile
