@@ -61,8 +61,8 @@ typedef struct s_instructionPointer {
 	fungePosition               position; ///< Current position.
 	ipDelta                     delta;    ///< Current delta.
 	fungePosition               storageOffset; ///< The storage offset for current IP.
-	ipMode                      mode;     ///< String or code mode.
-	bool                        needMove:1; ///< Should ipForward be called at end of main loop. Is reset to true each time.
+	ipMode                      mode;          ///< String or code mode.
+	bool                        needMove:1;    ///< Should ipForward be called at end of main loop. Is reset to true each time.
 	bool                        stringLastWasSpace:1; ///< Used in string mode for SGML style spaces.
 	FUNGEDATATYPE               ID;                   ///< The ID of this IP.
 	fungeStackStack           * stackstack;           ///< The stack stack.
