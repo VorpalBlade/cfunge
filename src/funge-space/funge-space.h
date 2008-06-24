@@ -96,13 +96,24 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void FungeSpaceWrap(fungePosition * restrict position,
                     const fungeVector * restrict delta);
 /**
- * Load a file into funge-space at 0,0. Optimised, use when possible.
- * Mostly used for loading initial file.
+ * Load a file into funge-space at 0,0. Optimised compared to
+ * FungeSpaceLoadAtOffset(). Only used for loading initial file.
  * @param filename Filename to load.
  * @return True if successful, otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool FungeSpaceLoad(const char * restrict filename);
+
+#ifdef FUNGE_EXTERNAL_LIBRARY
+/**
+ * Load a string into funge-space at 0,0. Optimised.
+ * cfunge itself doesn't use this. However cfunge have been/will be integreated
+ * as a library in C-INTERCAL, which use it.
+ * @param program Program to load.
+ */
+FUNGE_ATTR_FAST
+void FungeSpaceLoadString(const char * restrict program);
+#endif
 
 /**
  * Load a file into funge space at an offset. Used for the i instruction.
