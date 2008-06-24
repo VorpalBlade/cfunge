@@ -94,9 +94,9 @@ ENDIF(CONCURRENT_FUNGE)
 
 OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with GC)." OFF)
 IF(USE_MUDFLAP)
-	if (NOT LEAK_MODE)
+	if (USE_GC)
 		MESSAGE(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
-	ENDIF (NOT LEAK_MODE)
+	ENDIF (USE_GC)
 	ADD_DEFINITIONS(-fmudflap)
 ENDIF(USE_MUDFLAP)
 
