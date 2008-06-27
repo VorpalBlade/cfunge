@@ -54,50 +54,68 @@
 
 #  include <gc/gc.h>
 
+/// If built with GC support this will malloc using GC.
 #  define cf_malloc(x)           GC_MALLOC(x)
 /// Use this for strings and other stuff containing no pointers when possible.
 #  define cf_malloc_noptr(x)     GC_MALLOC_ATOMIC(x)
-/// This memory is not collectable. Avoid using this unless you have to.
+/// This memory is not collectable when GC is enabled. Avoid using this unless
+/// you have to.
 #  define cf_malloc_nocollect(x) GC_MALLOC_UNCOLLECTABLE(x)
+/// Use this free when you used cf_malloc().
 #  define cf_free(x)             GC_FREE(x)
+/// Realloc for cf_malloc().
 #  define cf_realloc(x,y)        GC_REALLOC(x, y)
+/// If built with GC support this will calloc using GC. It is an alias to
+/// GC_MALLOC(), because GC always zero out the memory.
 #  define cf_calloc(x,y)         GC_MALLOC((x)*(y))
 /// See cf_malloc_noptr for what _noptr means.
 #  define cf_calloc_noptr(x,y)   GC_MALLOC_ATOMIC((x)*(y))
 
+/// Collect memory if GC is used
 #  define gc_collect_full()      GC_gcollect()
-#  define gc_collect_some()      GC_collect_a_little()
 /// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           GC_STRDUP(x)
 
 #else
 
+/// If built with GC support this will malloc using GC.
 #  define cf_malloc(x)           malloc(x)
 /// Use this for strings and other stuff containing no pointers when possible.
 /// Differ from normal malloc if GC is enabled.
 #  define cf_malloc_noptr(x)     malloc(x)
-/// This memory is not collectable. Avoid using this unless you have to.
-/// Differ from normal malloc if GC is enabled.
+/// This memory is not collectable when GC is enabled. Avoid using this unless
+/// you have to. Differ from normal malloc if GC is enabled.
 #  define cf_malloc_nocollect(x) malloc(x)
+/// Use this free when you used cf_malloc().
 #  define cf_free(x)             free(x)
+/// Realloc for cf_malloc().
 #  define cf_realloc(x,y)        realloc(x, y)
+/// If built with GC support this will calloc using GC.
 #  define cf_calloc(x,y)         calloc((x), (y))
 /// See cf_malloc_noptr for what _noptr means.
 #  define cf_calloc_noptr(x,y)   calloc((x), (y))
 
+/// Collect memory if GC is used
 #  define gc_collect_full()      /* NO OP */
-#  define gc_collect_some()      /* NO OP */
 /// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           strdup(x)
 
 #endif
 
-// Use these only if you have to, for example if some external library
-// did the malloc.
+/// Malloc without GC. Use this only if you have to, for example if some
+/// external library need it.
 #define malloc_nogc(x)         malloc((x))
+/// Calloc without GC. Use this only if you have to, for example if some
+/// external library need it.
 #define calloc_nogc(x,y)       calloc((x), (y))
+/// Realloc without GC. Use this only if you have to, for example if some
+/// external library did the malloc.
 #define realloc_nogc(x,y)      realloc((x), (y))
+/// Free without GC. Use this only if you have to, for example if some external
+/// library did the malloc.
 #define free_nogc(x)           free(x);
+/// Strdup without GC. Use this only if you have to, for example if some
+/// external library need it.
 #define strdup_nogc(x)         strdup((x))
 /*@}*/
 
