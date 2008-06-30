@@ -261,7 +261,6 @@ FungeSpaceLoad(const char * restrict filename)
 	if (!file)
 		return false;
 
-	memset(&buf, 0, sizeof(buf));
 	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
 		for (size_t i = 0; i < linelen; i++) {
 			switch (buf[i]) {
@@ -361,7 +360,8 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
                        bool binary)
 {
 	FILE * file;
-	char * line = NULL;
+	char buf[1024];
+	bool lastwascr = false;
 	size_t linelen = 0;
 
 	FUNGEVECTORTYPE y = 0;
@@ -377,32 +377,41 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	size->x = 0;
 	size->y = 0;
 
-	while (cf_getline(&line, &linelen, file) != -1) {
-		for (size_t i = 0; i < (linelen + 1); i++) {
-			if (line[i] == '\0') {
-				break;
-			} else if (!binary && (line[i] == '\r') && (line[i+1] == '\n')) {
-				if (x > size->x) size->x = x;
-				x = 0;
-				y++;
-				i++;
-				continue;
-			} else if (!binary && (line[i] == '\n' || line[i] == '\r')) {
-				if (x > size->x) size->x = x;
-				x = 0;
-				y++;
-				continue;
+	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
+		for (size_t i = 0; i < linelen; i++) {
+			if (binary) {
+				if (buf[i] != ' ')
+					FungeSpaceSetOff((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y), offset);
+				x++;
+			} else {
+				switch (buf[i]) {
+					case '\r':
+						lastwascr = true;
+						break;
+					case '\n':
+						if (x > size->x) size->x = x;
+						x = 0;
+						y++;
+						lastwascr = false;
+						break;
+					default:
+						if (lastwascr) {
+							lastwascr = false;
+							if (x > size->x) size->x = x;
+							x = 0;
+							y++;
+						}
+						if (buf[i] != ' ')
+							FungeSpaceSetOff((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y), offset);
+						x++;
+						break;
+				}
 			}
-			if (line[i] != ' ')
-				FungeSpaceSetOff((FUNGEDATATYPE)line[i], VectorCreateRef(x, y), offset);
-			x++;
 		}
 	}
 	if (x > size->x) size->x = x;
 	if (y > size->y) size->y = y;
 	fclose(file);
-	if (line != NULL)
-		cf_free(line);
 	return true;
 }
 
