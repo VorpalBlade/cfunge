@@ -294,7 +294,7 @@ FungeSpaceLoad(const char * restrict filename)
 	if (fspace->bottomRightCorner.x < x)
 		fspace->bottomRightCorner.x = x;
 	if (lastwascr) {
-		noendingnewline = true;
+		noendingnewline = false;
 		y++;
 	}
 	if (noendingnewline) y++;
@@ -308,6 +308,7 @@ FungeSpaceLoad(const char * restrict filename)
 FUNGE_ATTR_FAST void
 FungeSpaceLoadString(const char * restrict program)
 {
+	bool lastwascr = false;
 	bool noendingnewline = true;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
@@ -315,31 +316,38 @@ FungeSpaceLoadString(const char * restrict program)
 	size_t linelen = strlen(program) + 1;
 
 	for (size_t i = 0; i < linelen; i++) {
-		if (program[i] == '\0') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
-			break;
-		} else if (program[i] == '\r' && program[i+1] == '\n') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
-			x = 0;
-			y++;
-			i++;
-			noendingnewline = false;
-			continue;
-		} else if (program[i] == '\n' || program[i] == '\r') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
-			x = 0;
-			y++;
-			noendingnewline = false;
-			continue;
+		switch (program[i]) {
+			case '\r':
+				lastwascr = true;
+				break;
+			case '\n':
+				if (fspace->bottomRightCorner.x < x)
+					fspace->bottomRightCorner.x = x;
+				x = 0;
+				y++;
+				lastwascr = false;
+				noendingnewline = false;
+				break;
+			default:
+				if (lastwascr) {
+					if (fspace->bottomRightCorner.x < x)
+						fspace->bottomRightCorner.x = x;
+					lastwascr = false;
+					x = 0;
+					y++;
+				}
+				FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
+				x++;
+				noendingnewline = true;
+				break;
 		}
-		FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
-		x++;
-		noendingnewline = true;
 	}
-
+	if (fspace->bottomRightCorner.x < x)
+		fspace->bottomRightCorner.x = x;
+	if (lastwascr) {
+		noendingnewline = false;
+		y++;
+	}
 	if (noendingnewline) y++;
 	if (fspace->bottomRightCorner.y < y)
 		fspace->bottomRightCorner.y = y;
