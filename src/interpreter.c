@@ -554,7 +554,7 @@ static inline void interpreterMainLoop(void)
 		if (SettingTraceLevel > 8) {
 			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
-			PrintStackTop(ip->stack);
+			PrintStackTop(IP->stack);
 		} else if (SettingTraceLevel > 3) {
 			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
