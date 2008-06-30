@@ -179,4 +179,8 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #  define srandom srand
 #endif
 
+#ifdef __WIN32__
+#  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is also unsupported."
+#endif
+
 #endif
