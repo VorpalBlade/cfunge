@@ -104,7 +104,7 @@ static inline void StackPreallocSpace(fungeStack * restrict stack, size_t minfre
 		if (!stack->entries) {
 			StackOOM();
 		}
-		stack->size += minfree;
+		stack->size = newsize;
 	}
 }
 

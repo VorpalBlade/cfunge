@@ -35,14 +35,14 @@
 #define FUNGESPACEINITIALSIZE 150000
 
 typedef struct _fungeSpace {
-	// These two form a rectangle for the program size
+	/// These two form a rectangle for the program size
 	fungePosition     topLeftCorner;
 	fungePosition     bottomRightCorner;
-	// And this is the hash table.
+	/// And this is the hash table.
 	ght_hash_table_t *entries;
 } fungeSpace;
 
-// Funge-space storage.
+/// Funge-space storage.
 static fungeSpace *fspace = NULL;
 
 /**
