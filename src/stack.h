@@ -133,6 +133,12 @@ void StackDupTop(fungeStack * restrict stack);
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void StackSwapTop(fungeStack * restrict stack);
 
+/**
+ * Print some tracing info.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void PrintStackTop(const fungeStack * stack);
+
 //
 // Stack-stack functions
 //

@@ -526,11 +526,16 @@ static inline void interpreterMainLoop(void)
 
 			opcode = FungeSpaceGet(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
-			if (SettingTraceLevel > 3)
+			if (SettingTraceLevel > 8) {
 				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
-			else if (SettingTraceLevel > 2)
+				PrintStackTop(IPList->ips[i].stack);
+			} else if (SettingTraceLevel > 3) {
+				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+				        i, IPList->ips[i].ID,
+				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
+			} else if (SettingTraceLevel > 2)
 				fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 
@@ -546,10 +551,14 @@ static inline void interpreterMainLoop(void)
 
 		opcode = FungeSpaceGet(&IP->position);
 #    ifndef DISABLE_TRACE
-		if (SettingTraceLevel > 3)
+		if (SettingTraceLevel > 8) {
 			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
-		else if (SettingTraceLevel > 2)
+			PrintStackTop(ip->stack);
+		} else if (SettingTraceLevel > 3) {
+			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+			        IP->position.x, IP->position.y, (char)opcode, opcode);
+		} else if (SettingTraceLevel > 2)
 			fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 

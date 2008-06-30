@@ -304,6 +304,22 @@ void StackDump(const fungeStack * stack)
 
 #endif
 
+// This is for tracing
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void PrintStackTop(const fungeStack * stack)
+{
+	if (!stack)
+		return;
+	if (stack->top == 0) {
+		fputs("\tStack is empty.\n", stderr);
+	} else {
+		fprintf(stderr, "\tStack has %zu elements, top 5 (or less) elements:\n\t\t", stack->top);
+		for (ssize_t i = stack->top; (i > 0) && (i > ((ssize_t)stack->top - 5)); i--)
+			fprintf(stderr, "%" FUNGEDATAPRI " ", stack->entries[i-1]);
+		fputs("\n", stderr);
+	}
+}
+
 
 /****************
  * Stack-stacks *
