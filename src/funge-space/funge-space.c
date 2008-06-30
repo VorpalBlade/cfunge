@@ -300,40 +300,26 @@ FungeSpaceLoad(const char * restrict filename)
 FUNGE_ATTR_FAST void
 FungeSpaceLoadString(const char * restrict program)
 {
-	bool noendingnewline = true;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;
 
 	for (size_t i = 0; i < strlen(program); i++) {
 		if (program[i] == '\0') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
 			break;
 		} else if (program[i] == '\r' && program[i+1] == '\n') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
 			x = 0;
 			y++;
 			i++;
-			noendingnewline = false;
 			continue;
 		} else if (program[i] == '\n' || program[i] == '\r') {
-			if (fspace->bottomRightCorner.x < x)
-				fspace->bottomRightCorner.x = x;
 			x = 0;
 			y++;
-			noendingnewline = false;
 			continue;
 		}
-		FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
+		FungeSpaceSet((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
 		x++;
-		noendingnewline = true;
 	}
-
-	if (noendingnewline) y++;
-	if (fspace->bottomRightCorner.y < y)
-		fspace->bottomRightCorner.y = y;
 }
 #endif
 
