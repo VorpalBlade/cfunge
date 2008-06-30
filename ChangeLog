@@ -11,11 +11,13 @@ and
   bzr help revisionspec
 
 
-Development
------------
-These are important changes in development version since last release.
+0.2.1-pre2
+----------
+Important changes in this release:
  * Speedup in pushing strings on stack.
  * Aliases for fingerprints supported (spec fileformat changed).
+ * Added doxygen documentation for API exposed to fingerprints.
+ * To help C-INTERCAL add a FungeSpaceLoadString()
 
 Added fingerprints:
  * FILE File I/O functions
@@ -23,6 +25,7 @@ Added fingerprints:
  * JSTR Read and write strings in Funge-Space
  * PNTR Alias for INDV
  * TIME Time and Date functions
+ * TURT Simple Turtle Graphics Library
 
 
 0.2.1-pre1
