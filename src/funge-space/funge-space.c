@@ -248,8 +248,9 @@ FUNGE_ATTR_FAST bool
 FungeSpaceLoad(const char * restrict filename)
 {
 	FILE * file;
-	char * line = NULL;
+	char buf[1024];
 	size_t linelen = 0;
+	bool lastwascr = false;
 	bool noendingnewline = true;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
@@ -260,39 +261,46 @@ FungeSpaceLoad(const char * restrict filename)
 	if (!file)
 		return false;
 
-	while (cf_getline(&line, &linelen, file) != -1) {
-		for (size_t i = 0; i < (linelen + 1); i++) {
-			if (line[i] == '\0') {
-				if (fspace->bottomRightCorner.x < x)
-					fspace->bottomRightCorner.x = x;
-				break;
-			} else if (line[i] == '\r' && line[i+1] == '\n') {
-				if (fspace->bottomRightCorner.x < x)
-					fspace->bottomRightCorner.x = x;
-				x = 0;
-				y++;
-				i++;
-				noendingnewline = false;
-				continue;
-			} else if (line[i] == '\n' || line[i] == '\r') {
-				if (fspace->bottomRightCorner.x < x)
-					fspace->bottomRightCorner.x = x;
-				x = 0;
-				y++;
-				noendingnewline = false;
-				continue;
+	memset(&buf, 0, sizeof(buf));
+	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
+		for (size_t i = 0; i < linelen; i++) {
+			switch (buf[i]) {
+				case '\r':
+					lastwascr = true;
+					break;
+				case '\n':
+					if (fspace->bottomRightCorner.x < x)
+						fspace->bottomRightCorner.x = x;
+					x = 0;
+					y++;
+					lastwascr = false;
+					noendingnewline = false;
+					break;
+				default:
+					if (lastwascr) {
+						if (fspace->bottomRightCorner.x < x)
+							fspace->bottomRightCorner.x = x;
+						lastwascr = false;
+						x = 0;
+						y++;
+					}
+					FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y));
+					x++;
+					noendingnewline = true;
+					break;
 			}
-			FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)line[i], VectorCreateRef(x, y));
-			x++;
-			noendingnewline = true;
 		}
+	}
+	if (fspace->bottomRightCorner.x < x)
+		fspace->bottomRightCorner.x = x;
+	if (lastwascr) {
+		noendingnewline = true;
+		y++;
 	}
 	if (noendingnewline) y++;
 	if (fspace->bottomRightCorner.y < y)
 		fspace->bottomRightCorner.y = y;
 	fclose(file);
-	if (line != NULL)
-		cf_free(line);
 	return true;
 }
 
