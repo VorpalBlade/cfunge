@@ -52,6 +52,7 @@
 #include "SUBR/SUBR.h"
 #include "TIME/TIME.h"
 #include "TOYS/TOYS.h"
+#include "TURT/TURT.h"
 
 typedef struct s_ImplementedFingerprintEntry {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint. */
@@ -126,6 +127,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// TOYS - Funge-98 Standard Toys
 	{ .fprint = 0x544f5953, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
+	// TURT - Simple Turtle Graphics Library
+	{ .fprint = 0x54555254, .loader = &FingerTURTload, .opcodes = "ABCDEFHILNPQRTU",
+	  .url = "http://catseye.tc/projects/funge98/library/TURT.html", .safe = true },
 	// Last should be 0
 	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
