@@ -215,7 +215,6 @@ static const char* toCSSColour(uint32_t c)
 	static char s[8];
 	size_t i;
 	i = snprintf(s, sizeof(s), "#%02x%02x%02x", c & 0xff, c >> 8 & 0xff, c >> 16 & 0xff);
-	printf("css: %zu\n", i);
 	return s;
 }
 
