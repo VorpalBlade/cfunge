@@ -45,11 +45,11 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-static int getInt(tc c)
+FUNGE_ATTR_FAST static inline int getInt(tc c)
 {
 	return (c < 0 ? -c : c) / 1000;
 }
-static unsigned int getDec(tc c)
+FUNGE_ATTR_FAST static inline unsigned int getDec(tc c)
 {
 	return abs(c) % 1000;
 }
@@ -89,18 +89,19 @@ typedef struct Drawing {
 static Turtle turt;
 static Drawing pic;
 
-static Path* CreatePath(Point a, bool b, uint32_t c)
+FUNGE_ATTR_FAST static inline Path* CreatePath(Point a, bool b, uint32_t c)
 {
 	Path* p = malloc(sizeof(Path));
 	if (!p)
 		return NULL;
+	p->next = NULL;
 	p->d.p = a;
 	p->d.colour = c;
 	p->penDown = b;
 	return p;
 }
 
-static void addPath(Point pt, bool penDown, uint32_t colour)
+FUNGE_ATTR_FAST static inline void addPath(Point pt, bool penDown, uint32_t colour)
 {
 	Path* p = CreatePath(pt, penDown, colour);
 
@@ -111,7 +112,7 @@ static void addPath(Point pt, bool penDown, uint32_t colour)
 	pic.path = p;
 }
 
-static void normalize(void)
+FUNGE_ATTR_FAST static inline void normalize(void)
 {
 	while (turt.heading > 2*M_PI)
 		turt.heading -= 2 * M_PI;
@@ -121,7 +122,7 @@ static void normalize(void)
 	turt.cos = cos(turt.heading);
 }
 
-static void newDraw(void)
+FUNGE_ATTR_FAST static inline void newDraw(void)
 {
 	if (turt.p.x < turt.min.x)
 		turt.min.x = turt.p.x;
@@ -130,11 +131,12 @@ static void newDraw(void)
 		turt.min.y = turt.p.y;
 }
 
-static void move(tc distance)
+FUNGE_ATTR_FAST static inline void move(tc distance)
 {
 	// have to check for under-/overflow...
 
-	tc dx, dy, nx, ny;
+	tc dx, dy;
+	int64_t nx, ny;
 	double tmp;
 
 	tmp = round(turt.cos * distance);
@@ -167,22 +169,22 @@ static void move(tc distance)
 
 
 // helpers...
-static double toRad(FUNGEDATATYPE c)
+FUNGE_ATTR_FAST static inline double toRad(FUNGEDATATYPE c)
 {
 	return (M_PI / 180.0) * c;
 }
-static FUNGEDATATYPE toDeg(double r)
+FUNGE_ATTR_FAST static inline FUNGEDATATYPE toDeg(double r)
 {
 	double d = round((180.0 / M_PI) * r);
 	return (FUNGEDATATYPE)d;
 }
 
-static uint32_t toRGB(FUNGEDATATYPE c)
+FUNGE_ATTR_FAST static inline uint32_t toRGB(FUNGEDATATYPE c)
 {
 	return (uint32_t)(c & ((1 << 24) - 1));
 }
 
-static void addPoint(void)
+FUNGE_ATTR_FAST static inline void addPoint(void)
 {
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
@@ -204,13 +206,14 @@ static void addPoint(void)
 // if we've moved to a location with the pen up, and the pen is now down, it
 // may be that we'll move to another location with the pen down so there's no
 // need to add a point unless the pen is lifted up or we need to look at the drawing
-static void tryAddPoint(void)
+FUNGE_ATTR_FAST static inline void tryAddPoint(void)
 {
 	if (turt.movedWithoutDraw && turt.penDown)
 		addPoint();
 }
 
-static const char* toCSSColour(uint32_t c)
+// Uses a static buffer, not reentrant!
+FUNGE_ATTR_FAST static inline const char* toCSSColour(uint32_t c)
 {
 	static char s[8];
 	size_t i;
@@ -218,17 +221,20 @@ static const char* toCSSColour(uint32_t c)
 	return s;
 }
 
-static void freeResources(void)
+FUNGE_ATTR_FAST static inline void freeResources(void)
 {
 	Path* p = pic.pathBeg;
 	if (p) {
-		for (Path* prev = p; p; prev = p, p = p->next) {
-			free(prev);
+		Path* next;
+		while (p) {
+			next = p->next;
+			free(p);
+			p = next;
 		}
 		free(p);
-		pic.pathBeg = NULL;
-		pic.path = NULL;
 	}
+	pic.pathBeg = NULL;
+	pic.path = NULL;
 	free(pic.dots);
 	pic.dots = NULL;
 }
@@ -320,6 +326,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	p = pic.pathBeg;
 
 	if (p) {
+		Path* prev;
 		uint8_t i;
 		fprintf(file, PATH_START_STRING, toCSSColour(p->d.colour));
 
@@ -331,7 +338,8 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		// SVG suggests a maximum line length of 255
 		i = 0;
 
-		for (Path* prev = p; p; prev = p, p = p->next) {
+		prev = p;
+		while (p) {
 			if (p->penDown) {
 				// start a new path if the colour changes
 				if (p->d.colour != prev->d.colour)
@@ -351,11 +359,12 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 			}
 
 			if (++i >= NODES_PER_LINE) {
-				fputs("\n\t\n", file);
+				fputs("\n\t", file);
 				i = 0;
 			}
+			prev = p;
+			p = p->next;
 		}
-
 		fputs(PATH_END_STRING, file);
 	}
 
