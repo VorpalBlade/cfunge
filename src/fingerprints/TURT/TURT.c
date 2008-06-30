@@ -45,10 +45,12 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-static int getInt(tc c) {
+static int getInt(tc c)
+{
 	return (c < 0 ? -c : c) / 1000;
 }
-static unsigned int getDec(tc c) {
+static unsigned int getDec(tc c)
+{
 	return abs(c) % 1000;
 }
 
@@ -80,14 +82,15 @@ typedef struct Drawing {
 	size_t       dots_size;
 	Dot*         dots;
 	Path*        pathBeg;
-    Path*        path;
+	Path*        path;
 	uint32_t bgColour;
 } Drawing;
 
 static Turtle turt;
 static Drawing pic;
 
-static Path* CreatePath(Point a, bool b, uint32_t c) {
+static Path* CreatePath(Point a, bool b, uint32_t c)
+{
 	Path* p = malloc(sizeof(Path));
 	if (!p)
 		return NULL;
@@ -97,7 +100,8 @@ static Path* CreatePath(Point a, bool b, uint32_t c) {
 	return p;
 }
 
-static void addPath(Point pt, bool penDown, uint32_t colour) {
+static void addPath(Point pt, bool penDown, uint32_t colour)
+{
 	Path* p = CreatePath(pt, penDown, colour);
 
 	if (pic.pathBeg == NULL)
@@ -107,16 +111,18 @@ static void addPath(Point pt, bool penDown, uint32_t colour) {
 	pic.path = p;
 }
 
-static void normalize(void) {
+static void normalize(void)
+{
 	while (turt.heading > 2*M_PI)
-		turt.heading -= 2*M_PI;
+		turt.heading -= 2 * M_PI;
 	while (turt.heading < 0)
-		turt.heading += 2*M_PI;
+		turt.heading += 2 * M_PI;
 	turt.sin = sin(turt.heading);
 	turt.cos = cos(turt.heading);
 }
 
-static void newDraw(void) {
+static void newDraw(void)
+{
 	if (turt.p.x < turt.min.x)
 		turt.min.x = turt.p.x;
 
@@ -124,7 +130,8 @@ static void newDraw(void) {
 		turt.min.y = turt.p.y;
 }
 
-static void move(tc distance) {
+static void move(tc distance)
+{
 	// have to check for under-/overflow...
 
 	tc dx, dy, nx, ny;
@@ -160,21 +167,25 @@ static void move(tc distance) {
 
 
 // helpers...
-static double toRad(FUNGEDATATYPE c) {
+static double toRad(FUNGEDATATYPE c)
+{
 	return (M_PI / 180.0) * c;
 }
-static FUNGEDATATYPE toDeg(double r) {
+static FUNGEDATATYPE toDeg(double r)
+{
 	double d = round((180.0 / M_PI) * r);
 	return (FUNGEDATATYPE)d;
 }
 
-static uint32_t toRGB(FUNGEDATATYPE c) {
-	 return (uint32_t)(c & ((1 << 24) - 1));
+static uint32_t toRGB(FUNGEDATATYPE c)
+{
+	return (uint32_t)(c & ((1 << 24) - 1));
 }
 
-static void addPoint(void) {
+static void addPoint(void)
+{
 
-	for(size_t i = 0; i < pic.dots_size; i++) {
+	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
 		if ((dot->p.x == turt.p.x) && (dot->p.y == turt.p.y)) {
 			if (dot->colour != turt.colour)
@@ -193,12 +204,14 @@ static void addPoint(void) {
 // if we've moved to a location with the pen up, and the pen is now down, it
 // may be that we'll move to another location with the pen down so there's no
 // need to add a point unless the pen is lifted up or we need to look at the drawing
-static void tryAddPoint(void) {
+static void tryAddPoint(void)
+{
 	if (turt.movedWithoutDraw && turt.penDown)
 		addPoint();
 }
 
-static const char* toCSSColour(uint32_t c) {
+static const char* toCSSColour(uint32_t c)
+{
 	static char s[8];
 	size_t i;
 	i = snprintf(s, sizeof(s), "#%02x%02x%02x", c & 0xff, c >> 8 & 0xff, c >> 16 & 0xff);
@@ -206,7 +219,8 @@ static const char* toCSSColour(uint32_t c) {
 	return s;
 }
 
-static void freeResources(void) {
+static void freeResources(void)
+{
 	Path* p = pic.pathBeg;
 	if (p) {
 		for (Path* prev = p; p; prev = p, p = p->next) {
@@ -302,7 +316,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	        (turt.min.y - TURT_PADDING) < 0 ? "-" : "", getInt(turt.min.y - TURT_PADDING), getDec(turt.min.y - TURT_PADDING),
 	        (TURT_PADDING - turt.min.x) < 0 ? "-" : "", getInt((TURT_PADDING - turt.min.x)*2), getDec((TURT_PADDING - turt.min.x)*2),
 	        (TURT_PADDING - turt.min.y) < 0 ? "-" : "", getInt((TURT_PADDING - turt.min.y)*2), getDec((TURT_PADDING - turt.min.y)*2)
-	);
+	       );
 
 	p = pic.pathBeg;
 
@@ -327,14 +341,14 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 				fprintf(file, "L%s%d.%.4u,%s%d.%.4u ",
 				        (p->d.p.x < 0) ? "-" : "", getInt(p->d.p.x), getDec(p->d.p.x),
 				        (p->d.p.y < 0) ? "-" : "", getInt(p->d.p.y), getDec(p->d.p.y)
-				);
+				       );
 
 			// if the last one doesn't draw anything, skip it, it's useless
 			} else if (p != pic.path) {
 				fprintf(file, "M%s%d.%.4u,%s%d.%.4u ",
 				        (p->d.p.x < 0) ? "-" : "", getInt(p->d.p.x), getDec(p->d.p.x),
 				        (p->d.p.y < 0) ? "-" : "", getInt(p->d.p.y), getDec(p->d.p.y)
-				);
+				       );
 			}
 
 			if (++i >= NODES_PER_LINE) {
@@ -348,12 +362,11 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
-		fprintf(file,
-			"\n<circle cx=\"%s%d.%.4u\" cy=\"%s%d.%.4u\" r=\"0.00005\" fill=\"%s\" />",
-			(dot->p.x < 0) ? "-" : "", getInt(dot->p.x), getDec(dot->p.x),
-			(dot->p.y < 0) ? "-" : "", getInt(dot->p.y), getDec(dot->p.y),
-			toCSSColour(dot->colour)
-		);
+		fprintf(file, "\n<circle cx=\"%s%d.%.4u\" cy=\"%s%d.%.4u\" r=\"0.00005\" fill=\"%s\" />",
+		        (dot->p.x < 0) ? "-" : "", getInt(dot->p.x), getDec(dot->p.x),
+		        (dot->p.y < 0) ? "-" : "", getInt(dot->p.y), getDec(dot->p.y),
+		        toCSSColour(dot->colour)
+		       );
 	}
 
 	fputs("\n</svg>", file);
@@ -424,7 +437,8 @@ static void FingerTURTqueryBounds(instructionPointer * ip)
 
 static bool initialized = false;
 
-static void inititalize(void) {
+static void inititalize(void)
+{
 	if (!initialized) {
 		initialized = true;
 		filename = DEFAULT_FILENAME;
