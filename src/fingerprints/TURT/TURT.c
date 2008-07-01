@@ -242,7 +242,7 @@ static inline const char* toCSSColour(uint32_t c)
 {
 	static char s[8];
 	size_t i;
-	i = snprintf(s, sizeof(s), "#%02x%02x%02x", c & 0xff, c >> 8 & 0xff, c >> 16 & 0xff);
+	i = snprintf(s, sizeof(s), "#%02x%02x%02x", c >> 16 & 0xff, c >> 8 & 0xff, c & 0xff);
 	return s;
 }
 
@@ -296,6 +296,7 @@ static void FingerTURTback(instructionPointer * ip)
 // C - Pen Colour (24-bit RGB)
 static void FingerTURTpenColour(instructionPointer * ip)
 {
+	tryAddPoint();
 	turt.colour = toRGB(StackPop(ip->stack));
 }
 
@@ -335,6 +336,13 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
 
+
+static inline void PrintPoint(FILE * f, char prefix, tc x, tc y) {
+	fprintf(f, "%c%s%d.%.4u,%s%d.%.4u ", prefix,
+	        (x < 0) ? "-" : "", getInt(x), getDec(x),
+	        (y < 0) ? "-" : "", getInt(y), getDec(y)
+	       );
+}
 
 // I - Print current Drawing (if possible)
 static void FingerTURTprintDrawing(instructionPointer * ip)
@@ -377,21 +385,15 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		prev = p;
 		while (p) {
 			if (p->penDown) {
+				PrintPoint(file, 'L', p->d.p.x, p->d.p.y);
 				// start a new path if the colour changes
-				if (p->d.colour != prev->d.colour)
+				if (p->d.colour != prev->d.colour) {
 					fprintf(file, PATH_END_STRING PATH_START_STRING "\n\t", toCSSColour(p->d.colour));
-
-				fprintf(file, "L%s%d.%.4u,%s%d.%.4u ",
-				        (p->d.p.x < 0) ? "-" : "", getInt(p->d.p.x), getDec(p->d.p.x),
-				        (p->d.p.y < 0) ? "-" : "", getInt(p->d.p.y), getDec(p->d.p.y)
-				       );
-
+					PrintPoint(file, 'M', p->d.p.x, p->d.p.y);
+				}
 			// if the last one doesn't draw anything, skip it, it's useless
 			} else if (p != pic.path) {
-				fprintf(file, "M%s%d.%.4u,%s%d.%.4u ",
-				        (p->d.p.x < 0) ? "-" : "", getInt(p->d.p.x), getDec(p->d.p.x),
-				        (p->d.p.y < 0) ? "-" : "", getInt(p->d.p.y), getDec(p->d.p.y)
-				       );
+				PrintPoint(file, 'M', p->d.p.x, p->d.p.y);
 			}
 
 			if (++i >= NODES_PER_LINE) {
