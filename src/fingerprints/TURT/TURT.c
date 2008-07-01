@@ -291,7 +291,8 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
-#define PATH_START_STRING "\n<path stroke=\"%s\" stroke-linecap=\"round\" d=\""
+#define PATH_START_STRING "\n<path style=\"fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:%s;stroke-width:0.0001px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
+// style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
 #define PATH_END_STRING   "\n\"/>"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
@@ -313,7 +314,8 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	// if we need more size (unlikely), baseProfile="full" below
 	// static assert (MAX - MIN <= 32767_9999);
 
-	fputs("<?xml version =\"1.0\" standalone=\"no\"?>\n", file);
+	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
+	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
 	fprintf(file, "<svg version=\"1.1\" baseProfile=\"tiny\" "
 	              "xmlns=\"http://www.w3.org/2000/svg\" "
 	              "viewBox=\"%s%d.%.4u %s%d.%.4u %s%d.%.4u %s%d.%.4u\">",
@@ -451,6 +453,7 @@ static void inititalize(void)
 		initialized = true;
 		filename = DEFAULT_FILENAME;
 		turt.movedWithoutDraw = true;
+		normalize();
 	}
 }
 
