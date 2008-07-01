@@ -41,7 +41,7 @@ typedef int32_t tc;
 // SVGT limits all numbers to -32767.9999 - 32767.9999, not -32768 - 32767
 // that limits our width to 32767.9999, hence the min and max values
 // we add a PADDING value to get nice viewBoxes for small drawings
-#define TURT_PADDING 10
+#define TURT_PADDING 1
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
@@ -50,6 +50,7 @@ static inline int getInt(tc c)
 {
 	return (c < 0 ? -c : c) / 1000;
 }
+
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline unsigned int getDec(tc c)
 {
@@ -61,7 +62,6 @@ static inline double getDouble(tc c)
 {
 	return (double)c / 1000;
 }
-
 
 typedef struct Point {
 	tc x, y;
@@ -302,6 +302,7 @@ static void FingerTURTpenColour(instructionPointer * ip)
 // D - Show Display (0 = no, 1 = yes)
 static void FingerTURTshowDisplay(instructionPointer * ip)
 {
+	// What display? We don't have one as far as I know?
 	FUNGEDATATYPE a;
 	a = StackPop(ip->stack);
 	switch (a) {
@@ -420,7 +421,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 // L - Turn Left (angle in degrees)
 static void FingerTURTturnLeft(instructionPointer * ip)
 {
-	turt.heading += toRad(StackPop(ip->stack)); normalize();
+	turt.heading -= toRad(StackPop(ip->stack)); normalize();
 }
 
 // N - Clear Paper with Colour (24-bit RGB)
@@ -455,7 +456,7 @@ static void FingerTURTqueryPosition(instructionPointer * ip)
 // R - Turn Right (angle in degrees)
 static void FingerTURTturnRight(instructionPointer * ip)
 {
-	turt.heading -= toRad(StackPop(ip->stack)); normalize();
+	turt.heading += toRad(StackPop(ip->stack)); normalize();
 }
 
 // T - Teleport (x, y coords relative to origin; 00T = home)
@@ -486,6 +487,7 @@ static void inititalize(void)
 		initialized = true;
 		filename = DEFAULT_FILENAME;
 		turt.movedWithoutDraw = true;
+		// To set up turt.sin/turt.cos.
 		normalize();
 	}
 }

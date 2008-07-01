@@ -1,1 +1,19 @@
-"TRUT"4( 29*N 1P 55*F 9a*H 5F I @
+"TRUT"4( 29*N 0H 1P 55*F 9a*H 5F 9a*L 5F 0P 5B 9a*R aB 1P I @
+
+This program should draw a pattern like below.
+The * is a dot. The horizontal line should be
+25 units long, then at a straight angle a 5 units
+long line. Then another of length 5. The dot should
+be 5 units above the base line.
+
+                          *
+
+
+
+
+ _________________________.
+                          |
+                          |
+                          |
+                          |
+                          ._____

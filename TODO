@@ -3,6 +3,9 @@ This file details current status of the Befunge93/98/108 interpreter cfunge.
 Before next release
 -------------------
  * Test
+ * TURT:
+   * Support for background color
+   * Support for adding dots after lines.
 
 Future
 ------
