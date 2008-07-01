@@ -1,6 +1,6 @@
 "TRUT"4(                             v
 29*N 0H 1P                          v>
-52*F 53*F                          v>
+52*1-F 0P 2F 1P 53*1-F             v>
 2f+8*8*8*8*8*6*5*1+C 9a*H 5F 9a*L v>
 0C 5F                            v>
 0P 5B 9a*R aB 1P                v>
@@ -8,20 +8,24 @@ I @                             >
 
 This program should draw a pattern like below.
 The * is a dot.
-The horizontal (black) line should be 25 units long
+The horizontal (black) line should be 25 units long.
+	There should be a gap 2/3rd along the line of 2 units.
 Then a red line (5 units long) at a straight angle.
+	The specs doesn't say if 90 degrees is upwards or downwards. So either is
+	allowed.
 	The red should be (#ff0001) (a slight slight green tint).
 Then another (black) line of length 5 at straight angle.
+	This should be 90 degrees *right* from the red line.
 The dot (black) should be 5 units above the vertical line.
+	Or below, depending on where 90 degrees is.
 
                           *
 
 
 
-
- _________________________.
-                          |
-                          |
-                          |
-                          |
-                          ._____
+---------  --------------.
+                         |
+                         |
+                         |
+                         |
+                         .-----
