@@ -372,6 +372,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	if (p) {
 		Path* prev;
 		uint8_t i;
+		bool openpath = true;
 		fprintf(file, PATH_START_STRING, toCSSColour(p->d.colour));
 
 		fputs("\n\t", file);
@@ -385,11 +386,16 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		prev = p;
 		while (p) {
 			if (p->penDown) {
+				if (!openpath) {
+					fprintf(file, PATH_START_STRING "\n\t", toCSSColour(p->d.colour));
+					PrintPoint(file, 'M', prev->d.p.x, prev->d.p.y);
+				}
 				PrintPoint(file, 'L', p->d.p.x, p->d.p.y);
 				// start a new path if the colour changes
-				if (p->d.colour != prev->d.colour) {
-					fprintf(file, PATH_END_STRING PATH_START_STRING "\n\t", toCSSColour(p->d.colour));
-					PrintPoint(file, 'M', p->d.p.x, p->d.p.y);
+				if (p->next && (p->d.colour != p->next->d.colour)) {
+					fputs(PATH_END_STRING, file);
+					openpath = false;
+
 				}
 			// if the last one doesn't draw anything, skip it, it's useless
 			} else if (p != pic.path) {

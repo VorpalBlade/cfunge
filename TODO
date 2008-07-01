@@ -4,8 +4,8 @@ Before next release
 -------------------
  * Test
  * TURT:
-   * Support for background color
-   * Support for adding dots after lines.
+   * Support for background colour
+   * Support for adding dots after lines in all cases.
 
 Future
 ------
