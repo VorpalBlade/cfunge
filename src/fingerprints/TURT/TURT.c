@@ -29,7 +29,7 @@
 #include <math.h>
 
 // This fingerprint is basically a translation from D to C of the TURT
-// fingerprint of CCBI, but with a few bug fixes here and there.
+// fingerprint of CCBI, but with a lot of bug fixes.
 
 #define DEFAULT_FILENAME "cfunge_TURT.svg"
 static const char* filename = NULL;
@@ -54,6 +54,14 @@ FUNGE_ATTR_FAST static inline unsigned int getDec(tc c)
 	return abs(c) % 1000;
 }
 
+FUNGE_ATTR_FAST static inline double getDouble(tc c)
+{
+	double decimals = ((double)(c % 1000)) / 1000;
+	double integer = (c / 1000);
+	return integer + decimals;
+}
+
+
 typedef struct Point {
 	tc x, y;
 } Point;
@@ -61,6 +69,7 @@ typedef struct Point {
 typedef struct Turtle {
 	Point p;
 	Point min;
+	Point max;
 	double heading, sin, cos;
 	uint32_t colour;
 	bool penDown:1;
@@ -126,9 +135,13 @@ FUNGE_ATTR_FAST static inline void newDraw(void)
 {
 	if (turt.p.x < turt.min.x)
 		turt.min.x = turt.p.x;
+	if (turt.p.x > turt.max.x)
+		turt.max.x = turt.p.x;
 
 	if (turt.p.y < turt.min.y)
 		turt.min.y = turt.p.y;
+	if (turt.p.y > turt.max.y)
+		turt.max.y = turt.p.y;
 }
 
 FUNGE_ATTR_FAST static inline void move(tc distance)
@@ -239,6 +252,17 @@ FUNGE_ATTR_FAST static inline void freeResources(void)
 	pic.dots = NULL;
 }
 
+static inline void GenerateViewBox(FILE * f) {
+	double minx, miny, w, h;
+	minx = getDouble(turt.min.x - TURT_PADDING);
+	miny = getDouble(turt.min.y - TURT_PADDING);
+	w = getDouble(turt.max.x - turt.min.x + TURT_PADDING);
+	h = getDouble(turt.max.y - turt.min.y + TURT_PADDING);
+	fputs("viewBox=\"", f);
+	fprintf(f, "%f %f %f %f", minx, miny, w, h);
+	fputs("\"", f);
+}
+
 /*
  * The actual fingerprint functions
  */
@@ -291,10 +315,11 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
-#define PATH_START_STRING "\n<path style=\"fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:%s;stroke-width:0.0001px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
+#define PATH_START_STRING "\n<path style=\"fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
 #define PATH_END_STRING   "\n\"/>"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
+
 
 // I - Print current Drawing (if possible)
 static void FingerTURTprintDrawing(instructionPointer * ip)
@@ -315,14 +340,9 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
 	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
-	fprintf(file, "<svg version=\"1.1\" baseProfile=\"tiny\" "
-	              "xmlns=\"http://www.w3.org/2000/svg\" "
-	              "viewBox=\"%s%d.%.4u %s%d.%.4u %s%d.%.4u %s%d.%.4u\">",
-	        (turt.min.x - TURT_PADDING) < 0 ? "-" : "", getInt(turt.min.x - TURT_PADDING), getDec(turt.min.x - TURT_PADDING),
-	        (turt.min.y - TURT_PADDING) < 0 ? "-" : "", getInt(turt.min.y - TURT_PADDING), getDec(turt.min.y - TURT_PADDING),
-	        (TURT_PADDING - turt.min.x) < 0 ? "-" : "", getInt((TURT_PADDING - turt.min.x)*2), getDec((TURT_PADDING - turt.min.x)*2),
-	        (TURT_PADDING - turt.min.y) < 0 ? "-" : "", getInt((TURT_PADDING - turt.min.y)*2), getDec((TURT_PADDING - turt.min.y)*2)
-	       );
+	fputs("<svg version=\"1.1\" baseProfile=\"tiny\" xmlns=\"http://www.w3.org/2000/svg\" ", file);
+	GenerateViewBox(file);
+	fputs(">", file);
 
 	p = pic.pathBeg;
 
