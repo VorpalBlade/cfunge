@@ -45,20 +45,21 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-FUNGE_ATTR_FAST static inline int getInt(tc c)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline int getInt(tc c)
 {
 	return (c < 0 ? -c : c) / 1000;
 }
-FUNGE_ATTR_FAST static inline unsigned int getDec(tc c)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline unsigned int getDec(tc c)
 {
 	return abs(c) % 1000;
 }
 
-FUNGE_ATTR_FAST static inline double getDouble(tc c)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline double getDouble(tc c)
 {
-	double decimals = ((double)(c % 1000)) / 1000;
-	double integer = (c / 1000);
-	return integer + decimals;
+	return (double)c / 1000;
 }
 
 
@@ -98,7 +99,8 @@ typedef struct Drawing {
 static Turtle turt;
 static Drawing pic;
 
-FUNGE_ATTR_FAST static inline Path* CreatePath(Point a, bool b, uint32_t c)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline Path* CreatePath(Point a, bool b, uint32_t c)
 {
 	Path* p = malloc(sizeof(Path));
 	if (!p)
@@ -110,7 +112,8 @@ FUNGE_ATTR_FAST static inline Path* CreatePath(Point a, bool b, uint32_t c)
 	return p;
 }
 
-FUNGE_ATTR_FAST static inline void addPath(Point pt, bool penDown, uint32_t colour)
+FUNGE_ATTR_FAST
+static inline void addPath(Point pt, bool penDown, uint32_t colour)
 {
 	Path* p = CreatePath(pt, penDown, colour);
 
@@ -121,7 +124,8 @@ FUNGE_ATTR_FAST static inline void addPath(Point pt, bool penDown, uint32_t colo
 	pic.path = p;
 }
 
-FUNGE_ATTR_FAST static inline void normalize(void)
+FUNGE_ATTR_FAST
+static inline void normalize(void)
 {
 	while (turt.heading > 2*M_PI)
 		turt.heading -= 2 * M_PI;
@@ -131,7 +135,8 @@ FUNGE_ATTR_FAST static inline void normalize(void)
 	turt.cos = cos(turt.heading);
 }
 
-FUNGE_ATTR_FAST static inline void newDraw(void)
+FUNGE_ATTR_FAST
+static inline void newDraw(void)
 {
 	if (turt.p.x < turt.min.x)
 		turt.min.x = turt.p.x;
@@ -144,7 +149,8 @@ FUNGE_ATTR_FAST static inline void newDraw(void)
 		turt.max.y = turt.p.y;
 }
 
-FUNGE_ATTR_FAST static inline void move(tc distance)
+FUNGE_ATTR_FAST
+static inline void move(tc distance)
 {
 	// have to check for under-/overflow...
 
@@ -182,22 +188,26 @@ FUNGE_ATTR_FAST static inline void move(tc distance)
 
 
 // helpers...
-FUNGE_ATTR_FAST static inline double toRad(FUNGEDATATYPE c)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline double toRad(FUNGEDATATYPE c)
 {
 	return (M_PI / 180.0) * c;
 }
-FUNGE_ATTR_FAST static inline FUNGEDATATYPE toDeg(double r)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline FUNGEDATATYPE toDeg(double r)
 {
 	double d = round((180.0 / M_PI) * r);
 	return (FUNGEDATATYPE)d;
 }
 
-FUNGE_ATTR_FAST static inline uint32_t toRGB(FUNGEDATATYPE c)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
+static inline uint32_t toRGB(FUNGEDATATYPE c)
 {
 	return (uint32_t)(c & ((1 << 24) - 1));
 }
 
-FUNGE_ATTR_FAST static inline void addPoint(void)
+FUNGE_ATTR_FAST
+static inline void addPoint(void)
 {
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
@@ -219,14 +229,16 @@ FUNGE_ATTR_FAST static inline void addPoint(void)
 // if we've moved to a location with the pen up, and the pen is now down, it
 // may be that we'll move to another location with the pen down so there's no
 // need to add a point unless the pen is lifted up or we need to look at the drawing
-FUNGE_ATTR_FAST static inline void tryAddPoint(void)
+FUNGE_ATTR_FAST
+static inline void tryAddPoint(void)
 {
 	if (turt.movedWithoutDraw && turt.penDown)
 		addPoint();
 }
 
 // Uses a static buffer, not reentrant!
-FUNGE_ATTR_FAST static inline const char* toCSSColour(uint32_t c)
+FUNGE_ATTR_FAST
+static inline const char* toCSSColour(uint32_t c)
 {
 	static char s[8];
 	size_t i;
@@ -234,7 +246,8 @@ FUNGE_ATTR_FAST static inline const char* toCSSColour(uint32_t c)
 	return s;
 }
 
-FUNGE_ATTR_FAST static inline void freeResources(void)
+FUNGE_ATTR_FAST
+static inline void freeResources(void)
 {
 	Path* p = pic.pathBeg;
 	if (p) {
@@ -252,6 +265,7 @@ FUNGE_ATTR_FAST static inline void freeResources(void)
 	pic.dots = NULL;
 }
 
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void GenerateViewBox(FILE * f) {
 	double minx, miny, w, h;
 	minx = getDouble(turt.min.x - TURT_PADDING);
