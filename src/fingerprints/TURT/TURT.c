@@ -292,7 +292,6 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 }
 
 #define PATH_START_STRING "\n<path style=\"fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:%s;stroke-width:0.0001px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
-// style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
 #define PATH_END_STRING   "\n\"/>"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
@@ -332,10 +331,10 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		uint8_t i;
 		fprintf(file, PATH_START_STRING, toCSSColour(p->d.colour));
 
+		fputs("\n\t", file);
 		// need to move to the start if we draw immediately
 		if (p->penDown)
 			fputs("M0,0 ", file);
-		fputs("\n\t", file);
 
 		// SVG suggests a maximum line length of 255
 		i = 0;
