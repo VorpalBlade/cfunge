@@ -1,5 +1,6 @@
-"CERF"4(v                        ; This program tests invalid D ;
-v       <
+v > "CFER oN" >:#,_@             ; This program tests invalid D in REFC ;
+>#^"CFER"4(nv
+v           <
 >1. #v 0D  "DAB" >:#,_  @        ; Derefence 0 ;
      >a"DOOG">:#,_v
 v                 <
@@ -10,9 +11,9 @@ v                 <
 v                 <
 
 
->3. #v 45+D  "DAB" >:#,_  @      ; Derefence postive ;
-     >a"DOOG">:#,_v
-v                 <
+>3. 45+ #v D  "DAB" >:#,_  @     ; Derefence postive ;
+         >a"DOOG">:#,_v
+v                     <
 
 
 >4. #v nD  "DAB" >:#,_  @        ; Derefence on empty stack ;
