@@ -10,6 +10,13 @@ For more info:
 and
   bzr help revisionspec
 
+Development version
+-------------------
+These are important changes since last release:
+ * Fix a few bugs in loading code.
+ * Add support for showing top 5 elements on the stack when tracing.
+ * Fix bug in StackPreallocSpace() that resulted in crash later on.
+
 
 0.2.1-pre2
 ----------

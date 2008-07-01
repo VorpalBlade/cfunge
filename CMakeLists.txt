@@ -33,17 +33,23 @@ MARK_AS_ADVANCED(
 	USE_WERROR
 )
 
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH
+	${CMAKE_SOURCE_DIR}/cmake/Modules
+)
+
+
 # if you want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 INCLUDE(UsePkgConfig)
-INCLUDE(CheckTypeSize)
 
-CHECK_TYPE_SIZE("void*" SIZEOF_VOID_P)
-
-
+SET(MAN_INSTALL_PREFIX
+	"${CMAKE_INSTALL_PREFIX}/share/man"
+	CACHE PATH "Where to install man page."
+)
 
 ################################################################################
 # Boehm GC
@@ -236,9 +242,20 @@ IF(USE_MUDFLAP)
 ENDIF(USE_MUDFLAP)
 
 
+################################################################################
+# Generate man page
+ADD_CUSTOM_TARGET(build-man
+	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V ./cfunge > doc/cfunge.1
+	DEPENDS cfunge
+	COMMENT "Generating man page..."
+	VERBATIM
+)
 
 ################################################################################
 # Installation
 INSTALL(TARGETS cfunge
 	RUNTIME DESTINATION bin
+)
+INSTALL(FILES doc/cfunge.1
+	DESTINATION ${MAN_INSTALL_PREFIX}/man1
 )
