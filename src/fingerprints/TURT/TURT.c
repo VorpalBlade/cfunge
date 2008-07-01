@@ -263,6 +263,7 @@ static inline void freeResources(void)
 	pic.path = NULL;
 	free(pic.dots);
 	pic.dots = NULL;
+	pic.dots_size = 0;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
