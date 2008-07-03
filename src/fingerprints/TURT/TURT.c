@@ -48,19 +48,19 @@ typedef int32_t tc;
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline int getInt(tc c)
 {
-	return (c < 0 ? -c : c) / 1000;
+	return (c < 0 ? -c : c) / 10000;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline unsigned int getDec(tc c)
 {
-	return abs(c) % 1000;
+	return abs(c) % 10000;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline double getDouble(tc c)
 {
-	return (double)c / 1000;
+	return (double)c / 10000;
 }
 
 typedef struct Point {
@@ -266,18 +266,6 @@ static inline void freeResources(void)
 	pic.dots_size = 0;
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void GenerateViewBox(FILE * f) {
-	double minx, miny, w, h;
-	minx = getDouble(turt.min.x - TURT_PADDING);
-	miny = getDouble(turt.min.y - TURT_PADDING);
-	w = getDouble(turt.max.x - turt.min.x + TURT_PADDING);
-	h = getDouble(turt.max.y - turt.min.y + TURT_PADDING);
-	fputs("viewBox=\"", f);
-	fprintf(f, "%f %f %f %f", minx, miny, w, h);
-	fputs("\"", f);
-}
-
 /*
  * The actual fingerprint functions
  */
@@ -332,14 +320,28 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
-#define PATH_START_STRING "\n<path style=\"fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
+#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
 #define PATH_END_STRING   "\n\"/>"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
 
 
+#define PRINTFIXED(n) (n < 0) ? "-" : "", getInt(n), getDec(n)
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void GenerateSize(FILE * f) {
+	tc minx, miny, w, h;
+	minx = turt.min.x - TURT_PADDING;
+	miny = turt.min.y - TURT_PADDING;
+	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
+	h = turt.max.y - turt.min.y + 2* TURT_PADDING;
+	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\"",
+			PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+}
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void PrintPoint(FILE * f, char prefix, tc x, tc y) {
-	fprintf(f, "%c%s%d.%.4u,%s%d.%.4u ", prefix,
+	fprintf(f, "%c%s%d.%04u,%s%d.%04u ", prefix,
 	        (x < 0) ? "-" : "", getInt(x), getDec(x),
 	        (y < 0) ? "-" : "", getInt(y), getDec(y)
 	       );
@@ -363,9 +365,10 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	// static assert (MAX - MIN <= 32767_9999);
 
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
+	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", file);
 	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
 	fputs("<svg version=\"1.1\" baseProfile=\"tiny\" xmlns=\"http://www.w3.org/2000/svg\" ", file);
-	GenerateViewBox(file);
+	GenerateSize(file);
 	fputs(">", file);
 
 	p = pic.pathBeg;
@@ -415,7 +418,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
-		fprintf(file, "\n<circle cx=\"%s%d.%.4u\" cy=\"%s%d.%.4u\" r=\"0.00005\" fill=\"%s\" />",
+		fprintf(file, "\n<circle cx=\"%s%d.%04u\" cy=\"%s%d.%04u\" r=\"0.00005\" fill=\"%s\" />",
 		        (dot->p.x < 0) ? "-" : "", getInt(dot->p.x), getDec(dot->p.x),
 		        (dot->p.y < 0) ? "-" : "", getInt(dot->p.y), getDec(dot->p.y),
 		        toCSSColour(dot->colour)
