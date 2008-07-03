@@ -4,3 +4,15 @@
 
 v ,a   = "echo 'Will run: exit 2'; exit 2" 0 <
 > 0" :)2 eb dluohs( lavteR" >:#,_ $ . a,@
+
+This program should ouput (on a POSIX system):
+	Hi there (and now a ls):
+	<list of files in current directory, as ls outputs it>
+
+	Retval (should be 0): 0
+	Will run: exit 2
+
+	Retval (should be 2): 2
+There should be no indention in the output. (It was done here to it clear this
+line is not part of the output.)
+The blank lines should match.
