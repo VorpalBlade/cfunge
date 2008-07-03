@@ -320,7 +320,7 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
-#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1\" d=\""
+#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter\" d=\""
 #define PATH_END_STRING   "\n\"/>"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
@@ -418,7 +418,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
-		fprintf(file, "\n<circle cx=\"%s%d.%04u\" cy=\"%s%d.%04u\" r=\"0.00005\" fill=\"%s\" />",
+		fprintf(file, "\n<circle cx=\"%s%d.%04u\" cy=\"%s%d.%04u\" r=\"0.000025\" fill=\"%s\" />",
 		        (dot->p.x < 0) ? "-" : "", getInt(dot->p.x), getDec(dot->p.x),
 		        (dot->p.y < 0) ? "-" : "", getInt(dot->p.y), getDec(dot->p.y),
 		        toCSSColour(dot->colour)
