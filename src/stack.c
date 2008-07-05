@@ -198,7 +198,7 @@ FUNGE_ATTR_FAST void StackPushVector(fungeStack * restrict stack, const fungeVec
 
 FUNGE_ATTR_FAST fungeVector StackPopVector(fungeStack * restrict stack)
 {
-	// TODO Optimise
+	// TODO: Optimise
 	FUNGEVECTORTYPE x, y;
 	y = StackPop(stack);
 	x = StackPop(stack);

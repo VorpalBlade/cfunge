@@ -36,7 +36,9 @@ typedef struct sFungeFileHandle {
 static FungeFileHandle** handles = NULL;
 static FUNGEDATATYPE maxHandle = 0;
 
-FUNGE_ATTR_FAST static inline FUNGEDATATYPE findNextFreeHandle(void)
+/// Used by AllocateHandle() below to find next free handle.
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline FUNGEDATATYPE findNextFreeHandle(void)
 {
 	for (FUNGEDATATYPE i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
@@ -55,7 +57,10 @@ FUNGE_ATTR_FAST static inline FUNGEDATATYPE findNextFreeHandle(void)
 	}
 }
 
-FUNGE_ATTR_FAST static inline FUNGEDATATYPE AllocateHandle(void)
+/// Get a new handle to use for a file, also allocates buffer for it.
+/// @return Handle, or -1 on failure
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline FUNGEDATATYPE AllocateHandle(void)
 {
 	FUNGEDATATYPE h;
 
@@ -69,7 +74,9 @@ FUNGE_ATTR_FAST static inline FUNGEDATATYPE AllocateHandle(void)
 	return h;
 }
 
-FUNGE_ATTR_FAST static inline void FreeHandle(FUNGEDATATYPE h)
+/// Free a handle. fclose() the file before calling this.
+FUNGE_ATTR_FAST
+static inline void FreeHandle(FUNGEDATATYPE h)
 {
 	if (!handles[h])
 		return;
@@ -81,7 +88,9 @@ FUNGE_ATTR_FAST static inline void FreeHandle(FUNGEDATATYPE h)
 	handles[h] = NULL;
 }
 
-FUNGE_ATTR_FAST static inline bool ValidHandle(FUNGEDATATYPE h)
+/// Checks if handle is valid.
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline bool ValidHandle(FUNGEDATATYPE h)
 {
 	if ((h < 0) || (h > maxHandle) || (!handles[h])) {
 		return false;
@@ -90,7 +99,7 @@ FUNGE_ATTR_FAST static inline bool ValidHandle(FUNGEDATATYPE h)
 	}
 }
 
-// C - Close a file
+/// C - Close a file
 static void FingerFILEfclose(instructionPointer * ip)
 {
 	FUNGEDATATYPE h;
@@ -107,6 +116,14 @@ static void FingerFILEfclose(instructionPointer * ip)
 	FreeHandle(h);
 }
 
+/**
+ * Append a char to a string.
+ * @param str String buffer to append to.
+ * @param s   Size of buffer.
+ * @param p   Position of last char in buffer.
+ * @param ch  Char to append.
+ * @note Will realloc buffer string if needed, s and p may be updated too.
+ */
 FUNGE_ATTR_FAST static inline void append(char * restrict * restrict str,
                                      size_t * restrict s, size_t * restrict p,
                                      int ch)
@@ -120,7 +137,7 @@ FUNGE_ATTR_FAST static inline void append(char * restrict * restrict str,
 	(*p)++;
 }
 
-// G - Get string from file (like c fgets)
+/// G - Get string from file (like c fgets)
 static void FingerFILEfgets(instructionPointer * ip)
 {
 	FUNGEDATATYPE h;
@@ -187,7 +204,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 	}
 }
 
-// L - Get current location in file
+/// L - Get current location in file
 static void FingerFILEftell(instructionPointer * ip)
 {
 	FUNGEDATATYPE h;
@@ -211,7 +228,7 @@ static void FingerFILEftell(instructionPointer * ip)
 	StackPush(ip->stack, (FUNGEDATATYPE)pos);
 }
 
-// O - Open a file (Va = i/o buffer vector)
+/// O - Open a file (Va = i/o buffer vector)
 static void FingerFILEfopen(instructionPointer * ip)
 {
 	char * restrict filename;
@@ -259,7 +276,7 @@ end:
 	return;
 }
 
-// P - Put string to file (like c fputs)
+/// P - Put string to file (like c fputs)
 static void FingerFILEfputs(instructionPointer * ip)
 {
 	char * restrict str;
@@ -282,7 +299,7 @@ static void FingerFILEfputs(instructionPointer * ip)
 #endif
 }
 
-// R - Read n bytes from file to i/o buffer
+/// R - Read n bytes from file to i/o buffer
 static void FingerFILEfread(instructionPointer * ip)
 {
 	FUNGEDATATYPE n, h;
@@ -325,7 +342,7 @@ static void FingerFILEfread(instructionPointer * ip)
 	}
 }
 
-// S - Seek to position in file
+/// S - Seek to position in file
 static void FingerFILEfseek(instructionPointer * ip)
 {
 	FUNGEDATATYPE n, m, h;
@@ -364,7 +381,7 @@ static void FingerFILEfseek(instructionPointer * ip)
 	ipReverse(ip);
 }
 
-// W - Write n bytes from i/o buffer to file
+/// W - Write n bytes from i/o buffer to file
 static void FingerFILEfwrite(instructionPointer * ip)
 {
 	FUNGEDATATYPE n, h;
