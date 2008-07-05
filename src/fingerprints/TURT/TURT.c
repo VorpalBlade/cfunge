@@ -93,7 +93,8 @@ typedef struct Drawing {
 	Dot*         dots;
 	Path*        pathBeg;
 	Path*        path;
-	uint32_t bgColour;
+	uint32_t     bgColour;
+	bool         bgSet:1;
 } Drawing;
 
 static Turtle turt;
@@ -335,8 +336,12 @@ static inline void GenerateSize(FILE * f) {
 	miny = turt.min.y - TURT_PADDING;
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2* TURT_PADDING;
-	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\"",
-			PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\">\n",
+	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	if (pic.bgSet) {
+		fprintf(f, "<rect style=\"fill:%s;stroke:none\" x=\"%s%d.%04u\" y=\"%s%d.%04u\" width=\"%s%d.%04u\" height=\"%s%d.%04u\" />",
+		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	}
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
@@ -369,7 +374,6 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
 	fputs("<svg version=\"1.1\" baseProfile=\"tiny\" xmlns=\"http://www.w3.org/2000/svg\" ", file);
 	GenerateSize(file);
-	fputs(">", file);
 
 	p = pic.pathBeg;
 
@@ -440,6 +444,7 @@ static void FingerTURTturnLeft(instructionPointer * ip)
 static void FingerTURTclearPaper(instructionPointer * ip)
 {
 	pic.bgColour = toRGB(StackPop(ip->stack));
+	pic.bgSet = true;
 	freeResources();
 }
 

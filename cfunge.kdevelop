@@ -71,6 +71,7 @@
       <path>Makefile</path>
       <path>other</path>
       <path>dist</path>
+      <path>doxygen-docs</path>
     </blacklist>
     <other>
       <prio>0</prio>

@@ -16,6 +16,9 @@ src/fingerprints/CPLI/CPLI.h
 src/fingerprints/DIRF
 src/fingerprints/DIRF/DIRF.c
 src/fingerprints/DIRF/DIRF.h
+src/fingerprints/FILE
+src/fingerprints/FILE/FILE.c
+src/fingerprints/FILE/FILE.h
 src/fingerprints/FIXP
 src/fingerprints/FIXP/FIXP.c
 src/fingerprints/FIXP/FIXP.h
@@ -28,6 +31,9 @@ src/fingerprints/FPSP/FPSP.h
 src/fingerprints/HRTI
 src/fingerprints/HRTI/HRTI.c
 src/fingerprints/HRTI/HRTI.h
+src/fingerprints/INDV
+src/fingerprints/INDV/INDV.c
+src/fingerprints/INDV/INDV.h
 src/fingerprints/JSTR
 src/fingerprints/JSTR/JSTR.c
 src/fingerprints/JSTR/JSTR.h
@@ -52,9 +58,15 @@ src/fingerprints/ROMA/ROMA.h
 src/fingerprints/SUBR
 src/fingerprints/SUBR/SUBR.c
 src/fingerprints/SUBR/SUBR.h
+src/fingerprints/TIME
+src/fingerprints/TIME/TIME.c
+src/fingerprints/TIME/TIME.h
 src/fingerprints/TOYS
 src/fingerprints/TOYS/TOYS.c
 src/fingerprints/TOYS/TOYS.h
+src/fingerprints/TURT
+src/fingerprints/TURT/TURT.c
+src/fingerprints/TURT/TURT.h
 src/fingerprints/fingerprints.h
 src/fingerprints/manager.c
 src/fingerprints/manager.h
