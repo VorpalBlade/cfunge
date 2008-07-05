@@ -322,7 +322,7 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 }
 
 #define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter\" d=\""
-#define PATH_END_STRING   "\n\"/>"
+#define PATH_END_STRING   "\n\" />"
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
 
@@ -336,10 +336,10 @@ static inline void GenerateSize(FILE * f) {
 	miny = turt.min.y - TURT_PADDING;
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2* TURT_PADDING;
-	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\">\n",
+	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\">",
 	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
 	if (pic.bgSet) {
-		fprintf(f, "<rect style=\"fill:%s;stroke:none\" x=\"%s%d.%04u\" y=\"%s%d.%04u\" width=\"%s%d.%04u\" height=\"%s%d.%04u\" />",
+		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" x=\"%s%d.%04u\" y=\"%s%d.%04u\" width=\"%s%d.%04u\" height=\"%s%d.%04u\" />",
 		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
 	}
 }
