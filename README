@@ -28,12 +28,10 @@ REQUIRED:
    welcome only if they don't mess up source too much (anything using Win32/64
    specific API(s) counts as messing up).
 
-RECOMMENDED:
-  Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later
-  is HIGHLY recommended. If you lack it you could try building without garbage
-  collector but it is unsupported. If you still want to try, enable LEAK_MODE
-  option in cmake. If a bug only happens in this mode, it probably won't get
-  fixed as fast. Patches are welcome though.
+OPTIONAL:
+  Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later.
+  If you lack it you could try building without garbage collector. To do so
+  disable the USE_GC option in cmake.
 
 
 Configuring
@@ -60,10 +58,9 @@ For more information see:
 and/or
   ccmake --help
 
-To disable garbage collector (not supported, see above) you could run cmake with
--DLEAK_MODE=ON. Use this only if you can't build Boehm-GC the correct way and
-don't want, or can, use the binary downloads that are statically linked to
-Boehm-GC.
+To enable garbage collector you can run cmake with -DUSE_GC=ON. However using a
+GC isn't as fast as not using one and it could also cause issues with certain
+fingerprints.
 
 
 Compiling
