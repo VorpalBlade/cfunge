@@ -15,5 +15,6 @@
 ./cmake_install.cmake
 ./dist
 ./doxygen-docs
+./install_manifest.txt
 ./other
 Makefile
