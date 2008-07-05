@@ -1,14 +1,21 @@
-"TRUT"4(                      11x
-a7+3*5*N 0C                   11x>  ; Clear with blue. Set pen to black      ;
-0H 1P                         11x>  ; Set direction, pen down.               ;
-52*1-F 0P 2F 1P 53*1-F        11x>  ; Draw first line with a gap in it.      ;
-2f+8*8*8*8*8*6*5*1+C 9a*H     11x>  ; Set colour to red and turn to 90 deg.  ;
-5F 9a*L                       11x>  ; Draw vertical line, turn 90 deg right. ;
-0C 5F                         11x>  ; Change to black, draw line.            ;
-0P 5B 9a*R aB 1P              11x>  ; Lift pen Go back and draw first dot.   ;
-0P f1+8*8*a*6*C               11x>  ; Lift pen, Set green.                   ;
-005-T 1P                      11x>  ; Teleport to the other dot, pen down.   ;
-I @                              >  ; Print out and quit.                    ;
+v > a"detroppus ton TRUT">:#,_@
+>#^"TRUT"4(n                                           11x  ; Load fingerprint                      ;
+" si neP :FEDNU">:#,_E.a,                              11x> ; UNDEF: Initial pen state              ;
+"=x si noitisoP :FEDNU">:#,_Q."=y",,.a,                11x> ; UNDEF: Initial position               ;
+" si gnidaeH :FEDNU">:#,_A.a"seerged">:#,_             11x> ; UNDEF: Initial heading                ;
+"( era sdnuoB :FEDNU">:#,_U.."( )",,,..a'),,           11x> ; UNDEF: Bounds                         ;
+a7+3*5*N 0C                                            11x> ; Clear with blue. Set pen to black     ;
+0H 1P                                                  11x> ; Set direction, pen down.              ;
+52*1-F 0P 2F 1P 53*1-F                                 11x> ; Draw first line with a gap in it.     ;
+2f+8*8*8*8*8*6*5*1+C 9a*H                              11x> ; Set colour to red and turn to 90 deg. ;
+5F 9a*L                                                11x> ; Draw vertical line, turn 90 deg right.;
+0C 5F                                                  11x> ; Change to black, draw line.           ;
+0P 5B 9a*R aB 1P                                       11x> ; Lift pen Go back and draw first dot.  ;
+0P f1+8*8*a*6*C                                        11x> ; Lift pen, Set green.                  ;
+005-T 1P                                               11x> ; Teleport to the other dot, pen down.  ;
+I a"egami kcehc won ,ENOD">:#,_@                          > ; Print out and quit.                   ;
+
+What the image should look like:
 
 This program should draw a pattern like below.
 The * is a dot.

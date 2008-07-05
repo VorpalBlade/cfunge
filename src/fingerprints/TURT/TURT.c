@@ -47,7 +47,7 @@ typedef int32_t tc;
 #define TURT_MAX  163839999 - TURT_PADDING
 
 #define PATH_START_STRING "\n<path style=\"stroke:%s\" d=\""
-#define PATH_END_STRING   "\n\"/>"
+#define PATH_END_STRING   "\"/>"
 /// SVG suggests a maximum line length of 255 (according to CCBI code comment)
 #define NODES_PER_LINE 10
 
@@ -279,10 +279,9 @@ static inline void freeResources(void)
 	pic.dots_size = 0;
 }
 
-/// Generate the size for the svg "header".
+/// Print the "header" of the SVG file
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void GenerateSize(FILE * f)
-{
+static inline void PrintHeader(FILE * f) {
 	tc minx, miny, w, h;
 
 	minx = turt.min.x - TURT_PADDING;
@@ -290,29 +289,23 @@ static inline void GenerateSize(FILE * f)
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2 * TURT_PADDING;
 
-	fprintf(f, "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" ", PRINTFIXED(w * 10000), PRINTFIXED(h * 10000));
-	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">",
-	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
-	// This is because we want transparency if possible.
-	if (pic.bgSet) {
-		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
-		        "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
-		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />\n",
-		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
-	}
-}
-
-/// Print the "header" of the SVG file
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintHeader(FILE * f) {
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", f);
 	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", f);
 	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", f);
 	fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" baseProfile=\"full\" ", f);
-	GenerateSize(f);
-	fputs("<defs><style type=\"text/css\"><![CDATA[\n", f);
-	fputs("path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}\n", f);
-	fputs("]]></style></defs>", f);
+	fprintf(f, "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" ", PRINTFIXED(w * 10000), PRINTFIXED(h * 10000));
+	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">\n",
+	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	fputs("<defs><style type=\"text/css\"><![CDATA["
+	      "path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}"
+	      "]]></style></defs>", f);
+	// This check is because we want transparency if possible.
+	if (pic.bgSet) {
+		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
+		        "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
+		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
+		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	}
 }
 
 /// Used to print a point in a path element.
