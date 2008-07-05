@@ -57,12 +57,6 @@ static inline unsigned int getDec(tc c)
 	return abs(c) % 10000;
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline double getDouble(tc c)
-{
-	return (double)c / 10000;
-}
-
 typedef struct Point {
 	tc x, y;
 } Point;
@@ -94,6 +88,10 @@ typedef struct Drawing {
 	Path*        pathBeg;
 	Path*        path;
 	uint32_t     bgColour;
+	/**
+	 * When possible prefer transparency.
+	 * This can be done because specs doesn't say what default is.
+	 */
 	bool         bgSet:1;
 } Drawing;
 
@@ -326,7 +324,7 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 // SVG suggests a maximum line length of 255
 #define NODES_PER_LINE 10
 
-
+#define FIXEDFMT   "%s%d.%04u"
 #define PRINTFIXED(n) (n < 0) ? "-" : "", getInt(n), getDec(n)
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
@@ -336,20 +334,20 @@ static inline void GenerateSize(FILE * f) {
 	miny = turt.min.y - TURT_PADDING;
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2* TURT_PADDING;
-	fprintf(f, "viewBox=\"%s%d.%04u %s%d.%04u %s%d.%04u %s%d.%04u\">",
+	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">",
 	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	// This is because we want transparency if possible.
 	if (pic.bgSet) {
-		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" x=\"%s%d.%04u\" y=\"%s%d.%04u\" width=\"%s%d.%04u\" height=\"%s%d.%04u\" />",
+		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
+		           "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
+		           "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
 		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
 	}
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void PrintPoint(FILE * f, char prefix, tc x, tc y) {
-	fprintf(f, "%c%s%d.%04u,%s%d.%04u ", prefix,
-	        (x < 0) ? "-" : "", getInt(x), getDec(x),
-	        (y < 0) ? "-" : "", getInt(y), getDec(y)
-	       );
+	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
 }
 
 // I - Print current Drawing (if possible)
@@ -422,10 +420,8 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
-		fprintf(file, "\n<circle cx=\"%s%d.%04u\" cy=\"%s%d.%04u\" r=\"0.000025\" fill=\"%s\" />",
-		        (dot->p.x < 0) ? "-" : "", getInt(dot->p.x), getDec(dot->p.x),
-		        (dot->p.y < 0) ? "-" : "", getInt(dot->p.y), getDec(dot->p.y),
-		        toCSSColour(dot->colour)
+		fprintf(file, "\n<circle cx=\"" FIXEDFMT "\" cy=\"" FIXEDFMT "\" r=\"0.000025\" fill=\"%s\" />",
+		        PRINTFIXED(dot->p.x), PRINTFIXED(dot->p.y), toCSSColour(dot->colour)
 		       );
 	}
 
