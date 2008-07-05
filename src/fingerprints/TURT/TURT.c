@@ -46,13 +46,13 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter\" d=\""
-#define PATH_END_STRING   "\n\" />"
-/// SVG suggests a maximum line length of 255
+#define PATH_START_STRING "\n<path style=\"stroke:%s\" d=\""
+#define PATH_END_STRING   "\n\"/>"
+/// SVG suggests a maximum line length of 255 (according to CCBI code comment)
 #define NODES_PER_LINE 10
 
 #define FIXEDFMT   "%s%d.%04u"
-#define PRINTFIXED(n) (n < 0) ? "-" : "", getInt(n), getDec(n)
+#define PRINTFIXED(n) ((n) < 0) ? "-" : "", getInt(n), getDec(n)
 
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
@@ -72,11 +72,11 @@ typedef struct Point {
 } Point;
 
 typedef struct Turtle {
+	/// We use radians here.
+	long double heading, sin, cos;
 	Point p;
 	Point min;
 	Point max;
-	/// We use radians here.
-	double heading, sin, cos;
 	uint32_t colour;
 	bool penDown:1;
 	bool movedWithoutDraw:1;
@@ -141,8 +141,8 @@ static inline void normalize(void)
 		turt.heading -= 2 * M_PI;
 	while (turt.heading < 0)
 		turt.heading += 2 * M_PI;
-	turt.sin = sin(turt.heading);
-	turt.cos = cos(turt.heading);
+	turt.sin = sinl(turt.heading);
+	turt.cos = cosl(turt.heading);
 }
 
 FUNGE_ATTR_FAST
@@ -162,17 +162,19 @@ static inline void newDraw(void)
 FUNGE_ATTR_FAST
 static inline void move(tc distance)
 {
-	// have to check for under-/overflow...
-
 	tc dx, dy;
 	int64_t nx, ny;
-	double tmp;
+	long double tmp;
 
-	tmp = round(turt.cos * distance);
+	if (turt.penDown && turt.movedWithoutDraw)
+		addPath(turt.p, false, 0);
+
+	tmp = roundl(turt.cos * distance);
 	dx = (tc)tmp;
-	tmp = round(turt.sin * distance);
+	tmp = roundl(turt.sin * distance);
 	dy = (tc)tmp;
 
+	// have to check for under-/overflow...
 	nx = turt.p.x + dx;
 	if (nx > TURT_MAX)
 		nx = TURT_MAX;
@@ -188,7 +190,7 @@ static inline void move(tc distance)
 	turt.p.y = ny;
 
 	// a -> ... -> z is equivalent to a -> z if not drawing
-	if (turt.penDown || (pic.path && pic.path->penDown)) {
+	if (turt.penDown) {
 		addPath(turt.p, turt.penDown, turt.colour);
 		newDraw();
 		turt.movedWithoutDraw = false;
@@ -199,14 +201,14 @@ static inline void move(tc distance)
 
 // helpers...
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline double toRad(FUNGEDATATYPE c)
+static inline long double toRad(FUNGEDATATYPE c)
 {
 	return (M_PI / 180.0) * c;
 }
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline FUNGEDATATYPE toDeg(double r)
 {
-	double d = round((180.0 / M_PI) * r);
+	long double d = roundl((180.0 / M_PI) * r);
 	return (FUNGEDATATYPE)d;
 }
 
@@ -281,17 +283,20 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void GenerateSize(FILE * f)
 {
 	tc minx, miny, w, h;
+
 	minx = turt.min.x - TURT_PADDING;
 	miny = turt.min.y - TURT_PADDING;
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2 * TURT_PADDING;
+
+	fprintf(f, "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" ", PRINTFIXED(w * 10000), PRINTFIXED(h * 10000));
 	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">",
 	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
 	// This is because we want transparency if possible.
 	if (pic.bgSet) {
 		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
 		        "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
-		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
+		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />\n",
 		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
 	}
 }
@@ -300,6 +305,18 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void PrintPoint(FILE * f, char prefix, tc x, tc y)
 {
 	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
+}
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void PrintHeader(FILE * f) {
+	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", f);
+	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", f);
+	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", f);
+	fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" baseProfile=\"full\" ", f);
+	GenerateSize(f);
+	fputs("<defs><style type=\"text/css\"><![CDATA[\n", f);
+	fputs("path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}", f);
+	fputs("]]></style></defs>", f);
 }
 
 /*
@@ -373,11 +390,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	// if we need more size (unlikely), baseProfile="full" below
 	assert(TURT_MAX - TURT_MIN <= 327679999);
 
-	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
-	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", file);
-	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
-	fputs("<svg version=\"1.1\" baseProfile=\"tiny\" xmlns=\"http://www.w3.org/2000/svg\" ", file);
-	GenerateSize(file);
+	PrintHeader(file);
 
 	p = pic.pathBeg;
 
@@ -426,7 +439,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
 		Dot* dot = &pic.dots[i];
-		fprintf(file, "\n<circle cx=\"" FIXEDFMT "\" cy=\"" FIXEDFMT "\" r=\"0.000025\" fill=\"%s\" />",
+		fprintf(file, "\n<circle cx=\"" FIXEDFMT "\" cy=\"" FIXEDFMT "\" r=\"0.000025\" fill=\"%s\"/>",
 		        PRINTFIXED(dot->p.x), PRINTFIXED(dot->p.y), toCSSColour(dot->colour)
 		       );
 	}
@@ -447,6 +460,10 @@ static void FingerTURTclearPaper(instructionPointer * ip)
 {
 	pic.bgColour = toRGB(StackPop(ip->stack));
 	pic.bgSet = true;
+	turt.min.x = 0;
+	turt.max.x = 0;
+	turt.min.y = 0;
+	turt.max.y = 0;
 	freeResources();
 }
 
