@@ -3,15 +3,17 @@ This file details current status of the Befunge93/98/108 interpreter cfunge.
 Before next release
 -------------------
  * Test
- * TURT:
-   * Test adding dots after lines in all cases. Some may not work correctly.
+   * TURT:
+     * Test adding dots after lines in all cases. Some may not work correctly.
+   * For i: Check that binary mode works
 
 Future
 ------
-Things that will be supported but aren't yet:
- * For i: Check that binary mode works
  * Several more fingerprints
+ * Better hash library.
+ * Change TURT to use some XML library to generate the file.
 
-Ideas:
+Ideas for future
+----------------
  * Make trace interface better, possibly make it interface with some sort of
    debugger (like the one of CCBI but better).
