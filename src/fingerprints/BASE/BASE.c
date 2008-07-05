@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <math.h>
 
-// FIXME: replace with non-recursive.
 FUNGE_ATTR_FAST static void binary(FUNGEDATATYPE number)
 {
 	if (number > 0) {
