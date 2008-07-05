@@ -279,6 +279,7 @@ static inline void freeResources(void)
 	pic.dots_size = 0;
 }
 
+/// Generate the size for the svg "header".
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void GenerateSize(FILE * f)
 {
@@ -301,12 +302,7 @@ static inline void GenerateSize(FILE * f)
 	}
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintPoint(FILE * f, char prefix, tc x, tc y)
-{
-	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
-}
-
+/// Print the "header" of the SVG file
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void PrintHeader(FILE * f) {
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", f);
@@ -315,9 +311,17 @@ static inline void PrintHeader(FILE * f) {
 	fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" baseProfile=\"full\" ", f);
 	GenerateSize(f);
 	fputs("<defs><style type=\"text/css\"><![CDATA[\n", f);
-	fputs("path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}", f);
+	fputs("path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}\n", f);
 	fputs("]]></style></defs>", f);
 }
+
+/// Used to print a point in a path element.
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void PrintPoint(FILE * f, char prefix, tc x, tc y)
+{
+	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
+}
+
 
 /*
  * The actual fingerprint functions
