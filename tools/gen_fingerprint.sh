@@ -299,7 +299,7 @@ EOF
 
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	ord number "${OPCODES:$i:1}"
-	addtoc "// ${OPCODES:$i:1} - ${OPCODE_DESC[$number]}"
+	addtoc "/// ${OPCODES:$i:1} - ${OPCODE_DESC[$number]}"
 	addtoc "static void Finger${FPRINT}${OPCODE_NAMES[$number]}(instructionPointer * ip)"
 	addtoc '{'
 	addtoc '}'

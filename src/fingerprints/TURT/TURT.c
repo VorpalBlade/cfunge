@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 // This fingerprint is basically a translation from D to C of the TURT
 // fingerprint of CCBI, but with a lot of bug fixes.
@@ -34,8 +35,8 @@
 #define DEFAULT_FILENAME "cfunge_TURT.svg"
 static const char* filename = NULL;
 
-// fixed point with 5 decimals
-// tc meaning "turtle coordinate"
+/// fixed point with 5 decimals
+/// tc meaning "turtle coordinate"
 typedef int32_t tc;
 
 // SVGT limits all numbers to -32767.9999 - 32767.9999, not -32768 - 32767
@@ -44,6 +45,15 @@ typedef int32_t tc;
 #define TURT_PADDING 1
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
+
+#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter\" d=\""
+#define PATH_END_STRING   "\n\" />"
+/// SVG suggests a maximum line length of 255
+#define NODES_PER_LINE 10
+
+#define FIXEDFMT   "%s%d.%04u"
+#define PRINTFIXED(n) (n < 0) ? "-" : "", getInt(n), getDec(n)
+
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline int getInt(tc c)
@@ -65,6 +75,7 @@ typedef struct Turtle {
 	Point p;
 	Point min;
 	Point max;
+	/// We use radians here.
 	double heading, sin, cos;
 	uint32_t colour;
 	bool penDown:1;
@@ -225,9 +236,9 @@ static inline void addPoint(void)
 	newDraw();
 }
 
-// if we've moved to a location with the pen up, and the pen is now down, it
-// may be that we'll move to another location with the pen down so there's no
-// need to add a point unless the pen is lifted up or we need to look at the drawing
+/// If we've moved to a location with the pen up, and the pen is now down, it
+/// may be that we'll move to another location with the pen down so there's no
+/// need to add a point unless the pen is lifted up or we need to look at the drawing
 FUNGE_ATTR_FAST
 static inline void tryAddPoint(void)
 {
@@ -235,7 +246,8 @@ static inline void tryAddPoint(void)
 		addPoint();
 }
 
-// Uses a static buffer, not reentrant!
+/// Generates a CSS colour
+/// Uses a static buffer, not reentrant!
 FUNGE_ATTR_FAST
 static inline const char* toCSSColour(uint32_t c)
 {
@@ -265,30 +277,55 @@ static inline void freeResources(void)
 	pic.dots_size = 0;
 }
 
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void GenerateSize(FILE * f)
+{
+	tc minx, miny, w, h;
+	minx = turt.min.x - TURT_PADDING;
+	miny = turt.min.y - TURT_PADDING;
+	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
+	h = turt.max.y - turt.min.y + 2 * TURT_PADDING;
+	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">",
+	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	// This is because we want transparency if possible.
+	if (pic.bgSet) {
+		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
+		        "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
+		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
+		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+	}
+}
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void PrintPoint(FILE * f, char prefix, tc x, tc y)
+{
+	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
+}
+
 /*
  * The actual fingerprint functions
  */
 
-// A - Query Position (x, y coordinates)
+/// A - Query Position (x, y coordinates)
 static void FingerTURTqueryHeading(instructionPointer * ip)
 {
 	StackPush(ip->stack, toDeg(turt.heading));
 }
 
-// B - Back (distance in pixles)
+/// B - Back (distance in pixles)
 static void FingerTURTback(instructionPointer * ip)
 {
 	move(-StackPop(ip->stack));
 }
 
-// C - Pen Colour (24-bit RGB)
+/// C - Pen Colour (24-bit RGB)
 static void FingerTURTpenColour(instructionPointer * ip)
 {
 	tryAddPoint();
 	turt.colour = toRGB(StackPop(ip->stack));
 }
 
-// D - Show Display (0 = no, 1 = yes)
+/// D - Show Display (0 = no, 1 = yes)
 static void FingerTURTshowDisplay(instructionPointer * ip)
 {
 	// What display? We don't have one as far as I know?
@@ -301,56 +338,25 @@ static void FingerTURTshowDisplay(instructionPointer * ip)
 	}
 }
 
-// E - Query Pen (0 = up, 1 = down)
+/// E - Query Pen (0 = up, 1 = down)
 static void FingerTURTqueryPen(instructionPointer * ip)
 {
 	StackPush(ip->stack, turt.penDown);
 }
 
-// F - Forward (distance in pixels)
+/// F - Forward (distance in pixels)
 static void FingerTURTforward(instructionPointer * ip)
 {
 	move(StackPop(ip->stack));
 }
 
-// H - Set Heading (angle in degrees, relative to 0deg, east)
+/// H - Set Heading (angle in degrees, relative to 0deg, east)
 static void FingerTURTsetHeading(instructionPointer * ip)
 {
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
-#define PATH_START_STRING "\n<path style=\"fill:none;stroke:%s;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter\" d=\""
-#define PATH_END_STRING   "\n\" />"
-// SVG suggests a maximum line length of 255
-#define NODES_PER_LINE 10
-
-#define FIXEDFMT   "%s%d.%04u"
-#define PRINTFIXED(n) (n < 0) ? "-" : "", getInt(n), getDec(n)
-
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void GenerateSize(FILE * f) {
-	tc minx, miny, w, h;
-	minx = turt.min.x - TURT_PADDING;
-	miny = turt.min.y - TURT_PADDING;
-	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
-	h = turt.max.y - turt.min.y + 2* TURT_PADDING;
-	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">",
-	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
-	// This is because we want transparency if possible.
-	if (pic.bgSet) {
-		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
-		           "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
-		           "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
-		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
-	}
-}
-
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintPoint(FILE * f, char prefix, tc x, tc y) {
-	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
-}
-
-// I - Print current Drawing (if possible)
+/// I - Print current Drawing (if possible)
 static void FingerTURTprintDrawing(instructionPointer * ip)
 {
 	FILE * file;
@@ -365,7 +371,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	}
 
 	// if we need more size (unlikely), baseProfile="full" below
-	// static assert (MAX - MIN <= 32767_9999);
+	assert(TURT_MAX - TURT_MIN <= 327679999);
 
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
 	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", file);
@@ -430,13 +436,13 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	fclose(file);
 }
 
-// L - Turn Left (angle in degrees)
+/// L - Turn Left (angle in degrees)
 static void FingerTURTturnLeft(instructionPointer * ip)
 {
 	turt.heading -= toRad(StackPop(ip->stack)); normalize();
 }
 
-// N - Clear Paper with Colour (24-bit RGB)
+/// N - Clear Paper with Colour (24-bit RGB)
 static void FingerTURTclearPaper(instructionPointer * ip)
 {
 	pic.bgColour = toRGB(StackPop(ip->stack));
@@ -444,7 +450,7 @@ static void FingerTURTclearPaper(instructionPointer * ip)
 	freeResources();
 }
 
-// P - Pen Position (0 = up, 1 = down)
+/// P - Pen Position (0 = up, 1 = down)
 static void FingerTURTpenPosition(instructionPointer * ip)
 {
 	FUNGEDATATYPE a;
@@ -459,20 +465,20 @@ static void FingerTURTpenPosition(instructionPointer * ip)
 	}
 }
 
-// Q - Query Position (x, y coordinates)
+/// Q - Query Position (x, y coordinates)
 static void FingerTURTqueryPosition(instructionPointer * ip)
 {
 	StackPush(ip->stack, turt.p.x);
 	StackPush(ip->stack, turt.p.y);
 }
 
-// R - Turn Right (angle in degrees)
+/// R - Turn Right (angle in degrees)
 static void FingerTURTturnRight(instructionPointer * ip)
 {
 	turt.heading += toRad(StackPop(ip->stack)); normalize();
 }
 
-// T - Teleport (x, y coords relative to origin; 00T = home)
+/// T - Teleport (x, y coords relative to origin; 00T = home)
 static void FingerTURTteleport(instructionPointer * ip)
 {
 	tryAddPoint();
@@ -483,7 +489,7 @@ static void FingerTURTteleport(instructionPointer * ip)
 	turt.movedWithoutDraw = true;
 }
 
-// U - Query Bounds (two pairs of x, y coordinates)
+/// U - Query Bounds (two pairs of x, y coordinates)
 static void FingerTURTqueryBounds(instructionPointer * ip)
 {
 	StackPush(ip->stack, TURT_MIN);
