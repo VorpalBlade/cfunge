@@ -1,5 +1,5 @@
 "TRUT"4(                      11x
-a7+3*5*N                      11x>  ; Clear with blue.                       ;
+a7+3*5*N 0C                   11x>  ; Clear with blue. Set pen to black      ;
 0H 1P                         11x>  ; Set direction, pen down.               ;
 52*1-F 0P 2F 1P 53*1-F        11x>  ; Draw first line with a gap in it.      ;
 2f+8*8*8*8*8*6*5*1+C 9a*H     11x>  ; Set colour to red and turn to 90 deg.  ;
@@ -17,7 +17,7 @@ The horizontal (black) line should be 25 units long.
 Then a red line (5 units long) at a straight angle.
 	The specs doesn't say if 90 degrees is upwards or downwards. So either is
 	allowed.
-	The red should be (#ff0001) (a slight slight green tint).
+	The red should be (#ff0001) (a slight slight blue tint).
 Then another (black) line of length 5 at straight angle.
 	This should be 90 degrees *right* from the red line.
 The dots should be 5 units above the first line.
