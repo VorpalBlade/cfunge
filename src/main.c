@@ -34,7 +34,7 @@
 #include "settings.h"
 #include "fingerprints/manager.h"
 
-const char **fungeargv = NULL;
+char **fungeargv = NULL;
 int fungeargc = 0;
 
 // These are NOT worth inlineing, even though only called once.
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 		// for later reuse by y instruction.
 		if (argc > 1) {
 			fungeargc = argc - optind;
-			fungeargv = (const char**)cf_malloc(fungeargc * sizeof(char*));
+			fungeargv = (char**)cf_malloc(fungeargc * sizeof(char*));
 			for (int i = optind; i < argc; i++) {
 				fungeargv[i - optind] = cf_strdup(argv[i]);
 				if (fungeargv[i - optind] == NULL) {

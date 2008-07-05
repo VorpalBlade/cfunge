@@ -584,6 +584,10 @@ static void DebugFreeThings(void)
 	ipFree(IP);
 # endif
 	FungeSpaceFree();
+	for (int i = 0; i < fungeargc; i++) {
+		cf_free(fungeargv[i]);
+	}
+	cf_free(fungeargv);
 }
 #endif
 

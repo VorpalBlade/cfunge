@@ -46,7 +46,7 @@
  */
 /*@{*/
 /// Copy of argv array, don't modify.
-extern const char **fungeargv;
+extern char **fungeargv;
 /// Copy of argc, don't modify.
 extern int fungeargc;
 /*@}*/
