@@ -77,7 +77,7 @@ typedef struct Point {
 
 typedef struct Turtle {
 	/// We use radians here.
-	long double heading, sin, cos;
+	double heading, sin, cos;
 	Point p;
 	Point min;
 	Point max;
@@ -145,8 +145,8 @@ static inline void normalize(void)
 		turt.heading -= 2 * M_PI;
 	while (turt.heading < 0)
 		turt.heading += 2 * M_PI;
-	turt.sin = sinl(turt.heading);
-	turt.cos = cosl(turt.heading);
+	turt.sin = sin(turt.heading);
+	turt.cos = cos(turt.heading);
 }
 
 FUNGE_ATTR_FAST
@@ -168,14 +168,14 @@ static inline void move(tc distance)
 {
 	tc dx, dy;
 	int64_t nx, ny;
-	long double tmp;
+	double tmp;
 
 	if (turt.penDown && turt.movedWithoutDraw)
 		addPath(turt.p, false, 0);
 
-	tmp = roundl(turt.cos * distance);
+	tmp = round(turt.cos * distance);
 	dx = (tc)tmp;
-	tmp = roundl(turt.sin * distance);
+	tmp = round(turt.sin * distance);
 	dy = (tc)tmp;
 
 	// have to check for under-/overflow...
@@ -205,14 +205,14 @@ static inline void move(tc distance)
 
 // helpers...
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline long double toRad(FUNGEDATATYPE c)
+static inline double toRad(FUNGEDATATYPE c)
 {
 	return (M_PI / 180.0) * c;
 }
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline FUNGEDATATYPE toDeg(double r)
 {
-	long double d = roundl((180.0 / M_PI) * r);
+	double d = round((180.0 / M_PI) * r);
 	return (FUNGEDATATYPE)d;
 }
 
