@@ -263,7 +263,6 @@ static inline const char* toCSSColour(uint32_t c)
 	return s;
 }
 
-FUNGE_ATTR_FAST
 static inline void freeResources(void)
 {
 	Path* p = pic.pathBeg;
@@ -536,7 +535,9 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	GenerateCircles(gw);
 	// End <svg>
 	genxEndElement(gw);
-	genxEndDocument(gw);
+	if (genxEndDocument(gw) != GENX_SUCCESS) {
+		goto error;
+	}
 	goto exit;
 
 error:

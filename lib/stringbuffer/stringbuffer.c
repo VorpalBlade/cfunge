@@ -58,9 +58,10 @@ struct StringBuffer {
  *
  * @param len The number of bytes to allocate.
  */
+FUNGE_ATTR_FAST
 static bool stringbuffer_ensure(StringBuffer *sb, size_t len);
 
-
+FUNGE_ATTR_FAST
 StringBuffer *stringbuffer_new(void) {
     StringBuffer *sb;
 
@@ -75,6 +76,7 @@ StringBuffer *stringbuffer_new(void) {
     return sb;
 }
 
+FUNGE_ATTR_FAST
 char *stringbuffer_finish(StringBuffer *sb) {
     char *result;
 
@@ -84,6 +86,7 @@ char *stringbuffer_finish(StringBuffer *sb) {
     return result;
 }
 
+FUNGE_ATTR_FAST
 void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     size_t len;
 
@@ -93,6 +96,7 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     sb->pos += len;
 }
 
+FUNGE_ATTR_FAST
 void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
     size_t size;
 
@@ -120,12 +124,14 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
     }
 }
 
+FUNGE_ATTR_FAST
 void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2) {
     stringbuffer_ensure(sb, sb2->pos+1);
     memcpy(sb->buf+sb->pos, sb2->buf, sb2->pos);
     sb->pos += sb2->pos;
 }
 
+FUNGE_ATTR_FAST
 static bool stringbuffer_ensure(StringBuffer *sb, size_t len) {
     char *tmp;
     size_t new_size;
