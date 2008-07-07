@@ -866,7 +866,7 @@ busted:
 	return NULL;
 }
 
-/*
+/**
  * get namespace prefix
  */
 FUNGE_ATTR_FAST utf8 genxGetNamespacePrefix(genxNamespace ns)
@@ -880,7 +880,7 @@ FUNGE_ATTR_FAST utf8 genxGetNamespacePrefix(genxNamespace ns)
 	return ns->declaration->name + STRLEN_XMLNS_COLON;
 }
 
-/*
+/**
  * DeclareElement - see genx.h for details
  */
 FUNGE_ATTR_FAST
@@ -1082,7 +1082,7 @@ static genxStatus sendxBounded(genxWriter w, constUtf8 start, constUtf8 end)
  *  for internal routines.
  */
 
-/*
+/**
  * Start a document
  */
 FUNGE_ATTR_FAST genxStatus genxStartDocFile(genxWriter w, FILE * file)

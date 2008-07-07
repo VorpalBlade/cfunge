@@ -210,7 +210,7 @@ genxStatus genxPI(genxWriter w, constUtf8 target, constUtf8 text);
 /**
  * Start an element
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxStartElementLiteral(genxWriter w,
                                    constUtf8 xmlns, constUtf8 type);
 
@@ -218,20 +218,20 @@ genxStatus genxStartElementLiteral(genxWriter w,
  * Start a predeclared element
  * - element must have been declared
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxStartElement(genxElement e);
 
 /**
  * Write an attribute
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxAddAttributeLiteral(genxWriter w, constUtf8 xmlns,
                                    constUtf8 name, constUtf8 value);
 
 /**
  * Write a predeclared attribute
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxAddAttribute(genxAttribute a, constUtf8 value);
 
 /**
@@ -249,7 +249,7 @@ genxStatus genxUnsetDefaultNamespace(genxWriter w);
 /**
  * Write an end tag
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxEndElement(genxWriter w);
 
 /**
@@ -257,11 +257,11 @@ genxStatus genxEndElement(genxWriter w);
  * You can't write any text outside the root element, except with
  *  genxComment and genxPI
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxAddText(genxWriter w, constUtf8 start);
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxAddCountedText(genxWriter w, constUtf8 start, int byteCount);
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST
 genxStatus genxAddBoundedText(genxWriter w, constUtf8 start, constUtf8 end);
 
 /**

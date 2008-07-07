@@ -21,6 +21,8 @@
 
 #include "TURT.h"
 #include "../../stack.h"
+#include "../../../lib/genx/genx.h"
+#include "../../../lib/stringbuffer/stringbuffer.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -54,6 +56,8 @@ typedef int32_t tc;
 #define FIXEDFMT   "%s%d.%04u"
 #define PRINTFIXED(n) ((n) < 0) ? "-" : "", getInt(n), getDec(n)
 
+// For use with genx:
+static constUtf8 gns = NULL;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline int getInt(tc c)
@@ -281,7 +285,7 @@ static inline void freeResources(void)
 
 /// Print the "header" of the SVG file
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintHeader(FILE * f) {
+static inline void PrintHeader(genxWriter gw) {
 	tc minx, miny, w, h;
 
 	minx = turt.min.x - TURT_PADDING;
@@ -289,30 +293,59 @@ static inline void PrintHeader(FILE * f) {
 	w = turt.max.x - turt.min.x + 2 * TURT_PADDING;
 	h = turt.max.y - turt.min.y + 2 * TURT_PADDING;
 
-	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", f);
-	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", f);
-	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", f);
-	fputs("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" baseProfile=\"full\" ", f);
-	fprintf(f, "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" ", PRINTFIXED(w * 10000), PRINTFIXED(h * 10000));
-	fprintf(f, "viewBox=\"" FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT "\">\n",
-	        PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
-	fputs("<defs><style type=\"text/css\"><![CDATA["
-	      "path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}"
-	      "]]></style></defs>", f);
+	genxStartElementLiteral(gw, gns, (constUtf8)"svg");
+	genxAddAttributeLiteral(gw, gns, (constUtf8)"version", (constUtf8)"1.1");
+	genxAddAttributeLiteral(gw, gns, (constUtf8)"baseProfile", (constUtf8)"full");
+	genxAddAttributeLiteral(gw, gns, (constUtf8)"xmlns", (constUtf8)"http://www.w3.org/2000/svg");
+// 	{
+// 		// For * 10000 in <svg>
+// 		char swex[64];
+// 		char shex[64];
+// 		snprintf(swex, sizeof(swex), FIXEDFMT, PRINTFIXED(w * 10000));
+// 		snprintf(shex, sizeof(shex), FIXEDFMT, PRINTFIXED(h * 10000));
+// 		genxAddAttributeLiteral(gw, gns, (constUtf8)"width", (constUtf8)swex);
+// 		genxAddAttributeLiteral(gw, gns, (constUtf8)"height", (constUtf8)shex);
+// 	}
+	{
+		char sviewbox[256];
+		snprintf(sviewbox, sizeof(sviewbox), FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT,
+		         PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"viewBox", (constUtf8)sviewbox);
+	}
+	genxStartElementLiteral(gw, gns, (constUtf8)"defs");
+	genxStartElementLiteral(gw, gns, (constUtf8)"style");
+	genxAddAttributeLiteral(gw, gns, (constUtf8)"type", (constUtf8)"text/css");
+	genxAddText(gw,
+	            (constUtf8)"path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}");
+	genxEndElement(gw);
+	genxEndElement(gw);
 	// This check is because we want transparency if possible.
 	if (pic.bgSet) {
-		fprintf(f, "\n<rect style=\"fill:%s;stroke:none\" "
-		        "x=\"" FIXEDFMT "\" y=\"" FIXEDFMT "\" "
-		        "width=\"" FIXEDFMT "\" height=\"" FIXEDFMT "\" />",
-		        toCSSColour(pic.bgColour), PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+		char sminx[64];
+		char sminy[64];
+		char sw[64];
+		char sh[64];
+		char scss[sizeof("fill:#112233;stroke:none")];
+		snprintf(sminx, sizeof(sminx), FIXEDFMT, PRINTFIXED(minx));
+		snprintf(sminy, sizeof(sminy), FIXEDFMT, PRINTFIXED(miny));
+		snprintf(sw, sizeof(sw), FIXEDFMT, PRINTFIXED(w));
+		snprintf(sh, sizeof(sh), FIXEDFMT, PRINTFIXED(h));
+		snprintf(scss, sizeof(scss), "fill:%s;stroke:none", toCSSColour(pic.bgColour));
+		genxStartElementLiteral(gw, gns, (constUtf8)"rect");
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"style", (constUtf8)scss);
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"x", (constUtf8)sminx);
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"y", (constUtf8)sminy);
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"width", (constUtf8)sw);
+		genxAddAttributeLiteral(gw, gns, (constUtf8)"height", (constUtf8)sh);
+		genxEndElement(gw);
 	}
 }
 
 /// Used to print a point in a path element.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintPoint(FILE * f, char prefix, tc x, tc y)
+static inline void PrintPoint(StringBuffer * sb, char prefix, tc x, tc y)
 {
-	fprintf(f, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
+	stringbuffer_append_printf(sb, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
 }
 
 
@@ -370,77 +403,158 @@ static void FingerTURTsetHeading(instructionPointer * ip)
 	turt.heading = toRad(StackPop(ip->stack)); normalize();
 }
 
+
+static inline bool GeneratePath(genxWriter gw, uint32_t colour, const char * path,
+                                genxElement g_path, genxAttribute g_style, genxAttribute g_d)
+{
+	char sstyle[sizeof("stroke:#112233")];
+	snprintf(sstyle, sizeof(sstyle), "stroke:%s", toCSSColour(colour));
+
+	genxStartElement(g_path);
+	genxAddAttribute(g_style, (constUtf8)sstyle);
+	genxAddAttribute(g_d, (constUtf8)path);
+	genxEndElement(gw);
+	return true;
+}
+
+static inline bool GeneratePaths(genxWriter gw)
+{
+	genxElement g_path;
+	genxAttribute g_style, g_d;
+	genxStatus status;
+	Path *p, *prev;
+	StringBuffer * sb;
+	char * path_data;
+
+	p = pic.pathBeg;
+	if (!p)
+		return false;
+
+	sb = stringbuffer_new();
+	if (!sb)
+		return false;
+	// Create elements.
+	g_path  = genxDeclareElement(gw, NULL, (constUtf8)"path", &status);
+	g_style = genxDeclareAttribute(gw, NULL, (constUtf8)"style", &status);
+	g_d     = genxDeclareAttribute(gw, NULL, (constUtf8)"d", &status);
+
+	if (p->penDown)
+		stringbuffer_append_string(sb, "M0,0 ");
+
+	while (p) {
+		// Time to create a new one?
+		if (!sb) {
+			sb = stringbuffer_new();
+			if (!sb)
+				return false;
+			if (p->penDown)
+				PrintPoint(sb, 'M', prev->d.p.x, prev->d.p.y);
+		}
+		if (p->penDown) {
+			PrintPoint(sb, 'L', p->d.p.x, p->d.p.y);
+		} else if (p != pic.path) {
+			PrintPoint(sb, 'M', p->d.p.x, p->d.p.y);
+		}
+		if (p->next && (p->d.colour != p->next->d.colour)) {
+			path_data = stringbuffer_finish(sb);
+			sb = NULL;
+			GeneratePath(gw, p->d.colour, path_data, g_path, g_style, g_d);
+			// TODO: Should we free?
+			if (path_data)
+				free_nogc(path_data);
+			path_data = NULL;
+		}
+		prev = p;
+		p = p->next;
+	}
+	// Final printout:
+	path_data = stringbuffer_finish(sb);
+	if (strlen(path_data) > 0) {
+		GeneratePath(gw, prev->d.colour, path_data, g_path, g_style, g_d);
+	}
+	if (path_data) free_nogc(path_data);
+	return true;
+}
+
+static inline bool GenerateCircle(genxWriter gw, Dot* dot,
+                                  genxElement g_circle, genxAttribute g_cx, genxAttribute g_cy,
+                                  genxAttribute g_r, genxAttribute g_fill)
+{
+	char buf[64];
+	genxStartElement(g_circle);
+	snprintf(buf, sizeof(buf), FIXEDFMT, PRINTFIXED(dot->p.x));
+	genxAddAttribute(g_cx, (constUtf8)buf);
+	snprintf(buf, sizeof(buf), FIXEDFMT, PRINTFIXED(dot->p.y));
+	genxAddAttribute(g_cy, (constUtf8)buf);
+	genxAddAttribute(g_r, (constUtf8)"0.000025");
+	genxAddAttribute(g_fill, (constUtf8)toCSSColour(dot->colour));
+	genxEndElement(gw);
+	return true;
+}
+
+static inline bool GenerateCircles(genxWriter gw)
+{
+	genxStatus status;
+	genxElement g_circle;
+	genxAttribute g_cx, g_cy, g_r, g_fill;
+
+	// Create elements.
+	g_circle = genxDeclareElement(gw, NULL, (constUtf8)"circle", &status);
+	g_cx   = genxDeclareAttribute(gw, NULL, (constUtf8)"cx", &status);
+	g_cy   = genxDeclareAttribute(gw, NULL, (constUtf8)"cy", &status);
+	g_r    = genxDeclareAttribute(gw, NULL, (constUtf8)"r", &status);
+	g_fill = genxDeclareAttribute(gw, NULL, (constUtf8)"fill", &status);
+
+	for (size_t i = 0; i < pic.dots_size; i++) {
+		if (!GenerateCircle(gw, &pic.dots[i], g_circle, g_cx, g_cy, g_r, g_fill))
+			return false;
+	}
+	return true;
+}
+
 /// I - Print current Drawing (if possible)
 static void FingerTURTprintDrawing(instructionPointer * ip)
 {
 	FILE * file;
-	Path* p;
+	genxWriter gw;
 
 	tryAddPoint();
 
 	file = fopen(filename, "wb");
 	if (!file) {
-		ipReverse(ip);
+		goto error;
 		return;
 	}
 
-	PrintHeader(file);
-
-	p = pic.pathBeg;
-
-	if (p) {
-		Path* prev;
-		uint8_t i;
-		bool openpath = true;
-		fprintf(file, PATH_START_STRING, toCSSColour(p->d.colour));
-
-		fputs("\n\t", file);
-		// need to move to the start if we draw immediately
-		if (p->penDown)
-			fputs("M0,0 ", file);
-
-		// SVG suggests a maximum line length of 255
-		i = 0;
-
-		prev = p;
-		while (p) {
-			if (p->penDown) {
-				if (!openpath) {
-					fprintf(file, PATH_START_STRING "\n\t", toCSSColour(p->d.colour));
-					PrintPoint(file, 'M', prev->d.p.x, prev->d.p.y);
-				}
-				PrintPoint(file, 'L', p->d.p.x, p->d.p.y);
-				// start a new path if the colour changes
-				if (p->next && (p->d.colour != p->next->d.colour)) {
-					fputs(PATH_END_STRING, file);
-					openpath = false;
-
-				}
-			// if the last one doesn't draw anything, skip it, it's useless
-			} else if (p != pic.path) {
-				PrintPoint(file, 'M', p->d.p.x, p->d.p.y);
-			}
-
-			if (++i >= NODES_PER_LINE) {
-				fputs("\n\t", file);
-				i = 0;
-			}
-			prev = p;
-			p = p->next;
-		}
-		fputs(PATH_END_STRING, file);
+	gw = genxNew(NULL, NULL, NULL);
+	if (!gw) {
+		goto error;
 	}
 
-	for (size_t i = 0; i < pic.dots_size; i++) {
-		Dot* dot = &pic.dots[i];
-		fprintf(file, "\n<circle cx=\"" FIXEDFMT "\" cy=\"" FIXEDFMT "\" r=\"0.000025\" fill=\"%s\"/>",
-		        PRINTFIXED(dot->p.x), PRINTFIXED(dot->p.y), toCSSColour(dot->colour)
-		       );
+	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
+	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", file);
+	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
+
+	if (genxStartDocFile(gw, file) != GENX_SUCCESS) {
+		goto error;
 	}
 
-	fputs("\n</svg>", file);
+	PrintHeader(gw);
 
-	fclose(file);
+	GeneratePaths(gw);
+	GenerateCircles(gw);
+	// End <svg>
+	genxEndElement(gw);
+	genxEndDocument(gw);
+	goto exit;
+
+error:
+	ipReverse(ip);
+exit:
+	if (file)
+		fclose(file);
+	if (gw)
+		genxDispose(gw);
 }
 
 /// L - Turn Left (angle in degrees)
