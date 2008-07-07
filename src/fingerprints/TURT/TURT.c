@@ -384,9 +384,6 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		return;
 	}
 
-	// if we need more size (unlikely), baseProfile="full" below
-	assert(TURT_MAX - TURT_MIN <= 327679999);
-
 	PrintHeader(file);
 
 	p = pic.pathBeg;
