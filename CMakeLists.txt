@@ -211,6 +211,7 @@ INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 	lib/libghthash/*.c
+	lib/genx/*.c
 	src/*.c
 	src/funge-space/*.c
 	src/instructions/*.c
