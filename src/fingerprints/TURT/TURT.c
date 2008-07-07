@@ -297,15 +297,6 @@ static inline void PrintHeader(genxWriter gw) {
 	genxAddAttributeLiteral(gw, gns, (constUtf8)"version", (constUtf8)"1.1");
 	genxAddAttributeLiteral(gw, gns, (constUtf8)"baseProfile", (constUtf8)"full");
 	genxAddAttributeLiteral(gw, gns, (constUtf8)"xmlns", (constUtf8)"http://www.w3.org/2000/svg");
-// 	{
-// 		// For * 10000 in <svg>
-// 		char swex[64];
-// 		char shex[64];
-// 		snprintf(swex, sizeof(swex), FIXEDFMT, PRINTFIXED(w * 10000));
-// 		snprintf(shex, sizeof(shex), FIXEDFMT, PRINTFIXED(h * 10000));
-// 		genxAddAttributeLiteral(gw, gns, (constUtf8)"width", (constUtf8)swex);
-// 		genxAddAttributeLiteral(gw, gns, (constUtf8)"height", (constUtf8)shex);
-// 	}
 	{
 		char sviewbox[256];
 		snprintf(sviewbox, sizeof(sviewbox), FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT,
