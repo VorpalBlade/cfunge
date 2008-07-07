@@ -69,6 +69,9 @@ typedef struct genxNamespace_rec * genxNamespace;
 typedef struct genxElement_rec * genxElement;
 typedef struct genxAttribute_rec * genxAttribute;
 
+typedef void * (* genxAlloc)(void * userData, size_t bytes);
+typedef void (* genxDealloc)(void * userData, void * data);
+
 /*
  * Constructors, set/get
  */
@@ -80,9 +83,7 @@ typedef struct genxAttribute_rec * genxAttribute;
  * Returns NULL if it fails, which can only be due to an allocation failure.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-genxWriter genxNew(void * (*alloc)(void * userData, int bytes),
-                   void (* dealloc)(void * userData, void * data),
-                   void * userData);
+genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData);
 
 /**
  * Dispose of a writer, freeing all associated memory
@@ -113,9 +114,6 @@ void * genxGetUserData(genxWriter w);
  *  the memory; this would be appropriate in an Apache context.
  * If "alloc" is not provided, genx routines use malloc() to allocate memory
  */
-typedef void * (* genxAlloc)(void * userData, int bytes);
-typedef void (* genxDealloc)(void * userData, void * data);
-
 FUNGE_ATTR_FAST
 void genxSetAlloc(genxWriter w, genxAlloc alloc);
 

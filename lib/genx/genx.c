@@ -37,8 +37,8 @@ typedef enum {
  */
 typedef struct {
 	genxWriter writer;
-	int        count;
-	int        space;
+	ssize_t    count;
+	size_t     space;
 	void * *   pointers;
 } plist;
 
@@ -46,9 +46,9 @@ typedef struct {
  * text collector, for attribute values
  */
 typedef struct {
-	utf8 buf;
-	int  used;
-	int  space;
+	utf8   buf;
+	size_t used;
+	size_t space;
 } collector;
 
 /*******************************
@@ -199,7 +199,7 @@ FUNGE_ATTR_FAST static void endCollect(collector * c)
 
 FUNGE_ATTR_FAST static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
 {
-	int sl = strlen((const char *) string);
+	size_t sl = strlen((const char *) string);
 
 	if (sl >= c->space)
 		if ((w->status = growCollector(w, c, sl)) != GENX_SUCCESS)
@@ -232,9 +232,9 @@ FUNGE_ATTR_FAST static genxStatus initPlist(genxWriter w, plist * pl)
 FUNGE_ATTR_FAST static Boolean checkExpand(plist * pl)
 {
 	void * * newlist;
-	int i;
+	ssize_t i;
 
-	if (pl->count < pl->space)
+	if ((size_t)pl->count < pl->space)
 		return True;
 
 	pl->space *= 2;
@@ -249,7 +249,7 @@ FUNGE_ATTR_FAST static Boolean checkExpand(plist * pl)
 	return True;
 }
 
-/*
+/**
  * stick something on the end of a plist
  */
 FUNGE_ATTR_FAST static genxStatus listAppend(plist * pl, void * pointer)
@@ -261,12 +261,12 @@ FUNGE_ATTR_FAST static genxStatus listAppend(plist * pl, void * pointer)
 	return GENX_SUCCESS;
 }
 
-/*
+/**
  * insert in place, shuffling up
  */
-FUNGE_ATTR_FAST static genxStatus listInsert(plist * pl, void * pointer, int at)
+FUNGE_ATTR_FAST static genxStatus listInsert(plist * pl, void * pointer, ssize_t at)
 {
-	int i;
+	ssize_t i;
 
 	if (!checkExpand(pl))
 		return GENX_ALLOC_FAILED;
@@ -285,7 +285,7 @@ FUNGE_ATTR_FAST static genxStatus listInsert(plist * pl, void * pointer, int at)
 
 FUNGE_ATTR_FAST static genxNamespace findNamespace(plist * pl, constUtf8 uri)
 {
-	int i;
+	ssize_t i;
 	genxNamespace * nn = (genxNamespace *) pl->pointers;
 
 	for (i = 0; i < pl->count; i++)
@@ -297,7 +297,7 @@ FUNGE_ATTR_FAST static genxNamespace findNamespace(plist * pl, constUtf8 uri)
 
 FUNGE_ATTR_FAST static genxElement findElement(plist * pl, constUtf8 xmlns, constUtf8 type)
 {
-	int i;
+	ssize_t i;
 	genxElement * ee = (genxElement *) pl->pointers;
 
 	for (i = 0; i < pl->count; i++) {
@@ -323,20 +323,20 @@ FUNGE_ATTR_FAST static genxElement findElement(plist * pl, constUtf8 xmlns, cons
  */
 FUNGE_ATTR_FAST static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 {
-	int high, low;
+	ssize_t high, low;
 	utf8 * pp = (utf8 *) w->prefixes.pointers;
 	unsigned char buf[1024];
 
 	if (prefix[0] == 0)
 		prefix = (constUtf8) "xmlns";
 	else {
-		sprintf((char *) buf, "xmlns:%s", prefix);
+		snprintf((char *) buf, sizeof(buf), "xmlns:%s", prefix);
 		prefix = buf;
 	}
 
 	high = w->prefixes.count; low = -1;
 	while (high - low > 1) {
-		int probe = (high + low) / 2;
+		ssize_t probe = (high + low) / 2;
 		if (strcmp((const char *) prefix, (const char *) pp[probe]) < 0)
 			high = probe;
 		else
@@ -493,9 +493,7 @@ FUNGE_ATTR_FAST static Boolean isNameChar(genxWriter w, int c)
  * Construct a new genxWriter
  */
 FUNGE_ATTR_FAST
-genxWriter genxNew(void * (* alloc)(void * userData, int bytes),
-                   void (* dealloc)(void * userData, void * data),
-                   void * userData)
+genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData)
 {
 	genxWriter w;
 	genxNamespace xml;
@@ -613,7 +611,7 @@ genxDealloc genxGetDealloc(genxWriter w)
  */
 FUNGE_ATTR_FAST void genxDispose(genxWriter w)
 {
-	int i;
+	ssize_t i;
 	genxNamespace * nn = (genxNamespace *) w->namespaces.pointers;
 	genxElement * ee = (genxElement *) w->elements.pointers;
 	genxAttribute * aa = (genxAttribute *) w->attributes.pointers;
@@ -793,7 +791,7 @@ genxNamespace genxDeclareNamespace(genxWriter w, constUtf8 uri,
 
 		/* make a default prefix if none provided */
 		if (defaultPref == NULL) {
-			sprintf((char *) newPrefix, "g%d", w->nextPrefix++);
+			snprintf((char *) newPrefix, sizeof(newPrefix), "g%d", w->nextPrefix++);
 			defaultPref = newPrefix;
 		}
 
@@ -941,7 +939,7 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
                                       constUtf8 name, constUtf8 valuestr,
                                       genxStatus * statusP)
 {
-	int high, low;
+	ssize_t high, low;
 	genxAttribute * aa = (genxAttribute *) w->attributes.pointers;
 	genxAttribute a;
 
@@ -963,7 +961,7 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 	/* attribute list has to be kept sorted per c14n rules */
 	high = w->attributes.count; low = -1;
 	while (high - low > 1) {
-		int probe = (high + low) / 2;
+		ssize_t probe = (high + low) / 2;
 		if (orderAttributes(&w->arec, aa[probe]) < 0)
 			high = probe;
 		else
@@ -1096,7 +1094,7 @@ FUNGE_ATTR_FAST genxStatus genxStartDocSender(genxWriter w, genxSender * sender)
  */
 FUNGE_ATTR_FAST static genxStatus writeStartTag(genxWriter w)
 {
-	int i;
+	ssize_t i;
 	genxAttribute * aa = (genxAttribute *) w->attributes.pointers;
 	genxElement e = w->nowStarting;
 
@@ -1144,7 +1142,7 @@ FUNGE_ATTR_FAST static genxStatus writeStartTag(genxWriter w)
  */
 FUNGE_ATTR_FAST static genxStatus unsetDefaultNamespace(genxWriter w)
 {
-	int i;
+	ssize_t i;
 	Boolean found = False;
 
 	/* don't put it in if not needed */
@@ -1203,7 +1201,7 @@ FUNGE_ATTR_FAST genxStatus genxUnsetDefaultNamespace(genxWriter w)
 FUNGE_ATTR_FAST genxStatus genxStartElement(genxElement e)
 {
 	genxWriter w = e->writer;
-	int i;
+	ssize_t i;
 
 	switch (w->sequence) {
 		case SEQUENCE_NO_DOC:
@@ -1250,7 +1248,7 @@ FUNGE_ATTR_FAST static genxStatus addNamespace(genxNamespace ns, constUtf8 prefi
 {
 	genxWriter w = ns->writer;
 	genxAttribute decl;
-	int i;
+	ssize_t i;
 	genxElement e;
 
 	/*
@@ -1445,7 +1443,7 @@ FUNGE_ATTR_FAST genxStatus genxAddAttribute(genxAttribute a, constUtf8 valuestr)
 FUNGE_ATTR_FAST genxStatus genxEndElement(genxWriter w)
 {
 	genxElement e;
-	int i;
+	ssize_t i;
 
 	switch (w->sequence) {
 		case SEQUENCE_NO_DOC:
@@ -1850,4 +1848,3 @@ FUNGE_ATTR_FAST const char * genxGetVersion(void)
 {
 	return GENX_VERSION;
 }
-
