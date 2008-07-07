@@ -312,7 +312,7 @@ FungeSpaceLoadString(const char * restrict program)
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;
-	size_t linelen = strlen(program) + 1;
+	size_t linelen = strlen(program);
 
 	for (size_t i = 0; i < linelen; i++) {
 		switch (program[i]) {
