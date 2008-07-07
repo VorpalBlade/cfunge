@@ -20,7 +20,7 @@
 #define STRLEN_XMLNS_COLON 6
 
 
-/*******************************
+/**
  * writer state
  */
 typedef enum {
@@ -32,7 +32,7 @@ typedef enum {
 	SEQUENCE_CONTENT
 } writerSequence;
 
-/*******************************
+/**
  * generic pointer list
  */
 typedef struct {
@@ -42,7 +42,7 @@ typedef struct {
 	void * *   pointers;
 } plist;
 
-/*******************************
+/**
  * text collector, for attribute values
  */
 typedef struct {
@@ -55,7 +55,7 @@ typedef struct {
  * Structs with opaquely-exposed handles
  */
 
-/*
+/**
  * This one's tricky, to handle stacking namespaces
  *  'declaration' is the current attribute which would be used to
  *    declare the currently-effective prefix
@@ -90,11 +90,11 @@ struct genxAttribute_rec {
 	utf8          name;
 	genxNamespace ns;
 	collector     value;
-	int           provided;   /* provided for current element? */
+	int           provided;   /**< provided for current element? */
 	attrType      atype;
 };
 
-/*******************************
+/**
  * genx's sandbox
  */
 struct genxWriter_rec {
@@ -123,13 +123,16 @@ struct genxWriter_rec {
 /*******************************
  * Forward declarations
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
                                       constUtf8 name, constUtf8 valuestr,
                                       genxStatus * statusP);
-FUNGE_ATTR_FAST static genxStatus addNamespace(genxNamespace ns, constUtf8 prefix);
-FUNGE_ATTR_FAST static genxStatus unsetDefaultNamespace(genxWriter w);
-FUNGE_ATTR_FAST static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr);
+FUNGE_ATTR_FAST
+static genxStatus addNamespace(genxNamespace ns, constUtf8 prefix);
+FUNGE_ATTR_FAST
+static genxStatus unsetDefaultNamespace(genxWriter w);
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr);
 
 /*******************************
  * End of declarations
@@ -138,7 +141,8 @@ FUNGE_ATTR_FAST static genxStatus addAttribute(genxAttribute a, constUtf8 values
 /*******************************
  * private memory utilities
  */
-FUNGE_ATTR_FAST static inline void * allocate(genxWriter w, size_t bytes)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline void * allocate(genxWriter w, size_t bytes)
 {
 	if (w->alloc)
 		return (void *)(*w->alloc)(w->userData, bytes);
@@ -146,7 +150,8 @@ FUNGE_ATTR_FAST static inline void * allocate(genxWriter w, size_t bytes)
 		return (void *) malloc(bytes);
 }
 
-FUNGE_ATTR_FAST static inline void deallocate(genxWriter w, void * data)
+FUNGE_ATTR_FAST
+static inline void deallocate(genxWriter w, void * data)
 {
 	if (w->dealloc)
 		(*w->dealloc)(w->userData, data);
@@ -154,7 +159,8 @@ FUNGE_ATTR_FAST static inline void deallocate(genxWriter w, void * data)
 		free(data);
 }
 
-FUNGE_ATTR_FAST static utf8 copy(genxWriter w, constUtf8 from)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static utf8 copy(genxWriter w, constUtf8 from)
 {
 	utf8 temp;
 
@@ -164,7 +170,8 @@ FUNGE_ATTR_FAST static utf8 copy(genxWriter w, constUtf8 from)
 	return temp;
 }
 
-FUNGE_ATTR_FAST static genxStatus initCollector(genxWriter w, collector * c)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus initCollector(genxWriter w, collector * c)
 {
 	c->space = 100;
 	if ((c->buf = (utf8) allocate(w, c->space)) == NULL)
@@ -173,7 +180,8 @@ FUNGE_ATTR_FAST static genxStatus initCollector(genxWriter w, collector * c)
 	return GENX_SUCCESS;
 }
 
-FUNGE_ATTR_FAST static genxStatus growCollector(genxWriter w, collector * c, size_t size)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus growCollector(genxWriter w, collector * c, size_t size)
 {
 	utf8 newSpace;
 
@@ -197,7 +205,8 @@ FUNGE_ATTR_FAST static void endCollect(collector * c)
 	c->buf[c->used] = 0;
 }
 
-FUNGE_ATTR_FAST static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
 {
 	size_t sl = strlen((const char *) string);
 
@@ -214,7 +223,8 @@ FUNGE_ATTR_FAST static genxStatus collectString(genxWriter w, collector * c, con
 /*******************************
  * private list utilities
  */
-FUNGE_ATTR_FAST static genxStatus initPlist(genxWriter w, plist * pl)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus initPlist(genxWriter w, plist * pl)
 {
 	pl->writer = w;
 	pl->count = 0;
@@ -226,10 +236,11 @@ FUNGE_ATTR_FAST static genxStatus initPlist(genxWriter w, plist * pl)
 	return GENX_SUCCESS;
 }
 
-/*
+/**
  * make room in a plist
  */
-FUNGE_ATTR_FAST static Boolean checkExpand(plist * pl)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static Boolean checkExpand(plist * pl)
 {
 	void * * newlist;
 	ssize_t i;
@@ -252,7 +263,8 @@ FUNGE_ATTR_FAST static Boolean checkExpand(plist * pl)
 /**
  * stick something on the end of a plist
  */
-FUNGE_ATTR_FAST static genxStatus listAppend(plist * pl, void * pointer)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus listAppend(plist * pl, void * pointer)
 {
 	if (!checkExpand(pl))
 		return GENX_ALLOC_FAILED;
@@ -264,7 +276,8 @@ FUNGE_ATTR_FAST static genxStatus listAppend(plist * pl, void * pointer)
 /**
  * insert in place, shuffling up
  */
-FUNGE_ATTR_FAST static genxStatus listInsert(plist * pl, void * pointer, ssize_t at)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus listInsert(plist * pl, void * pointer, ssize_t at)
 {
 	ssize_t i;
 
@@ -283,7 +296,8 @@ FUNGE_ATTR_FAST static genxStatus listInsert(plist * pl, void * pointer, ssize_t
  * list lookups
  */
 
-FUNGE_ATTR_FAST static genxNamespace findNamespace(plist * pl, constUtf8 uri)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxNamespace findNamespace(plist * pl, constUtf8 uri)
 {
 	ssize_t i;
 	genxNamespace * nn = (genxNamespace *) pl->pointers;
@@ -295,7 +309,8 @@ FUNGE_ATTR_FAST static genxNamespace findNamespace(plist * pl, constUtf8 uri)
 	return NULL;
 }
 
-FUNGE_ATTR_FAST static genxElement findElement(plist * pl, constUtf8 xmlns, constUtf8 type)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxElement findElement(plist * pl, constUtf8 xmlns, constUtf8 type)
 {
 	ssize_t i;
 	genxElement * ee = (genxElement *) pl->pointers;
@@ -316,12 +331,13 @@ FUNGE_ATTR_FAST static genxElement findElement(plist * pl, constUtf8 xmlns, cons
 	return NULL;
 }
 
-/*
+/**
  * store & intern a prefix, after giving it the
  *  "xmlns:" prefix.  Don't allow storing the same one twice unless 'force'
  *  is set.
  */
-FUNGE_ATTR_FAST static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 {
 	ssize_t high, low;
 	utf8 * pp = (utf8 *) w->prefixes.pointers;
@@ -330,7 +346,7 @@ FUNGE_ATTR_FAST static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boo
 	if (prefix[0] == 0)
 		prefix = (constUtf8) "xmlns";
 	else {
-		snprintf((char *) buf, sizeof(buf), "xmlns:%s", prefix);
+		snprintf((char *) buf, sizeof(buf), "xmlns:%s", (const char*)prefix);
 		prefix = buf;
 	}
 
@@ -369,11 +385,12 @@ FUNGE_ATTR_FAST static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boo
  * UTF8 bit-banging
  */
 
-/*
+/**
  * Retrieve the character pointed at, and advance the pointer; return -1 on
  *  error
  */
-FUNGE_ATTR_FAST int genxNextUnicodeChar(constUtf8 * sp)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+int genxNextUnicodeChar(constUtf8 * sp)
 {
 	constUtf8 s = (constUtf8) * sp;
 	int c;
@@ -459,7 +476,8 @@ malformed:
 	return -1;
 }
 
-FUNGE_ATTR_FAST static Boolean isXMLChar(genxWriter w, int c)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline Boolean isXMLChar(genxWriter w, int c)
 {
 	if (c < 0)
 		return False;
@@ -469,7 +487,8 @@ FUNGE_ATTR_FAST static Boolean isXMLChar(genxWriter w, int c)
 		return (c <= 0x10ffff);
 }
 
-FUNGE_ATTR_FAST static Boolean isLetter(genxWriter w, int c)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline Boolean isLetter(genxWriter w, int c)
 {
 	if (c < 0 || c > 0xffff)
 		return False;
@@ -477,7 +496,8 @@ FUNGE_ATTR_FAST static Boolean isLetter(genxWriter w, int c)
 		return w->xmlChars[c] & GENX_LETTER;
 }
 
-FUNGE_ATTR_FAST static Boolean isNameChar(genxWriter w, int c)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline Boolean isNameChar(genxWriter w, int c)
 {
 	if (c < 0 || c > 0xffff)
 		return False;
@@ -489,7 +509,7 @@ FUNGE_ATTR_FAST static Boolean isNameChar(genxWriter w, int c)
  * Constructors, setters/getters
  */
 
-/*
+/**
  * Construct a new genxWriter
  */
 FUNGE_ATTR_FAST
@@ -715,7 +735,8 @@ FUNGE_ATTR_FAST int genxCharClass(genxWriter w, int c)
 	return ret;
 }
 
-FUNGE_ATTR_FAST static genxStatus checkNCName(genxWriter w, constUtf8 name)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus checkNCName(genxWriter w, constUtf8 name)
 {
 	int c;
 
@@ -901,13 +922,14 @@ genxElement genxDeclareElement(genxWriter w,
 	return el;
 }
 
-/*
+/**
  * C14n ordering for attributes:
  * - first, namespace declarations by the prefix being declared
  * - second, unprefixed attributes by attr name
  * - third, prefixed attrs by ns uri then local part
  */
-FUNGE_ATTR_FAST static int orderAttributes(genxAttribute a1, genxAttribute a2)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static int orderAttributes(genxAttribute a1, genxAttribute a2)
 {
 	if (a1->atype == a2->atype) {
 		if (a1->atype == ATTR_PREFIXED && a1->ns != a2->ns)
@@ -934,7 +956,7 @@ FUNGE_ATTR_FAST static int orderAttributes(genxAttribute a1, genxAttribute a2)
  * internal declare-attribute.  This one allows colonized values for
  *  names, so that you can declare xmlns:-type attributes
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
                                       constUtf8 name, constUtf8 valuestr,
                                       genxStatus * statusP)
@@ -1027,7 +1049,8 @@ genxAttribute genxDeclareAttribute(genxWriter w,
 /*******************************
  * I/O
  */
-FUNGE_ATTR_FAST static genxStatus sendx(genxWriter w, constUtf8 s)
+FUNGE_ATTR_FAST
+static genxStatus sendx(genxWriter w, constUtf8 s)
 {
 	if (w->sender)
 		return (*w->sender->send)(w->userData, s);
@@ -1039,7 +1062,8 @@ FUNGE_ATTR_FAST static genxStatus sendx(genxWriter w, constUtf8 s)
 	}
 }
 
-FUNGE_ATTR_FAST static genxStatus sendxBounded(genxWriter w, constUtf8 start, constUtf8 end)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus sendxBounded(genxWriter w, constUtf8 start, constUtf8 end)
 {
 	if (w->sender)
 		return (*w->sender->sendBounded)(w->userData, start, end);
@@ -1083,7 +1107,7 @@ FUNGE_ATTR_FAST genxStatus genxStartDocSender(genxWriter w, genxSender * sender)
 	return GENX_SUCCESS;
 }
 
-/*
+/**
  * Write out the attributes we've been gathering up for an element.  We save
  *  them until we've gathered them all so they can be writen in canonical
  *  order.
@@ -1092,7 +1116,8 @@ FUNGE_ATTR_FAST genxStatus genxStartDocSender(genxWriter w, genxSender * sender)
  *  we build it, then as each attribute is added, we fill in its value and
  *  mark the fact that it's been added, in the "provided" field.
  */
-FUNGE_ATTR_FAST static genxStatus writeStartTag(genxWriter w)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus writeStartTag(genxWriter w)
 {
 	ssize_t i;
 	genxAttribute * aa = (genxAttribute *) w->attributes.pointers;
@@ -1140,7 +1165,8 @@ FUNGE_ATTR_FAST static genxStatus writeStartTag(genxWriter w)
 /*
  * internal clear-er; no sequence checking
  */
-FUNGE_ATTR_FAST static genxStatus unsetDefaultNamespace(genxWriter w)
+FUNGE_ATTR_FAST
+static genxStatus unsetDefaultNamespace(genxWriter w)
 {
 	ssize_t i;
 	Boolean found = False;
@@ -1244,7 +1270,8 @@ FUNGE_ATTR_FAST genxStatus genxStartElement(genxElement e)
 /*
  * internal namespace adder; no sequence checking
  */
-FUNGE_ATTR_FAST static genxStatus addNamespace(genxNamespace ns, constUtf8 prefix)
+FUNGE_ATTR_FAST
+static genxStatus addNamespace(genxNamespace ns, constUtf8 prefix)
 {
 	genxWriter w = ns->writer;
 	genxAttribute decl;
@@ -1362,7 +1389,8 @@ FUNGE_ATTR_FAST genxStatus genxAddNamespace(genxNamespace ns, utf8 prefix)
  * most of the work here is normalizing the value, which is the same
  *  as regular normalization except for " is replaced by "&quot;"
  */
-FUNGE_ATTR_FAST static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr)
 {
 	constUtf8 lastv = (constUtf8) valuestr;
 	genxWriter w = a->writer;
@@ -1540,7 +1568,7 @@ FUNGE_ATTR_FAST genxStatus genxEndElement(genxWriter w)
  *  character, breakerP* indirectly points to the last place genx
  *  changed the UTF8, e.g. by escaping a '<'
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static genxStatus addChar(genxWriter w, int c, constUtf8 next,
                           constUtf8 * lastsP, constUtf8 * breakerP)
 {
