@@ -157,8 +157,11 @@ typedef int32_t FUNGEVECTORTYPE;
 /*@}*/
 
 
+// This is done in other to make integration with IFFI easier for ais523.
+#ifndef FUNGEHANDPRINT
 /// Handprint: CFUN
-#define FUNGEHANDPRINT 0x4346554e
+#  define FUNGEHANDPRINT 0x4346554e
+#endif
 /// Version, for -V.
 #define APPVERSION  "0.2.1-pre2"
 /// For y instruction.
