@@ -1,5 +1,6 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
+    This code was taken (and slightly modified to compile in cfunge) from:
+      CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 2008 Crossfire Development Team
 

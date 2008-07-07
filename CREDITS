@@ -1,0 +1,52 @@
+For license please see the the file COPYING.
+
+Developer
+---------
+
+Arvid Norlander <anmaster [AT] tele2 no spam DOT se>
+
+
+Thanks to
+---------
+
+Alex Smith (maintainer of C-INTERCAL)...
+  ...for finding several bugs in cfunge.
+  ...for writing the C-INTERCAL/Befunge FFI.
+
+Matti Niemenmaa...
+  ...for being the author of the excellent Befunge test suite Mycology.
+  ...for writing the Befunge interpreter CCBI which was very helpful to study
+     when writing cfunge.
+
+
+Third party code
+----------------
+
+Some of the code has been inspired by how the Befunge interpreter CCBI
+(coded in D) solves certain issues:
+  CCBI was written by Matti Niemenmaa.
+  See http://iki.fi/matti.niemenmaa/befunge/ccbi.html for more information.
+
+Some code have been taken from other projects (all in lib/*).
+They have been modified as needed to work in the cfunge project.
+
+Some whole libraries were imported:
+
+  Genx, A library for writing XML files.
+    By: Tim Bray.
+    URL: http://www.tbray.org/ongoing/genx/
+    lib/genx/*
+
+  libghthash, A generic hash library.
+    By: Simon Kagstrom
+    URL: http://www.ipd.bth.se/ska/sim_home/libghthash.html
+    lib/libghthash/*
+
+Just a few files were taken from:
+
+  CrossFire, A Multiplayer game for X-windows:
+    By: Crossfire Development Team
+    URL: http://crossfire.real-time.com/
+    lib/stringbuffer/*
+      Some string buffer routines to make constructing strings by appending
+      easier.
