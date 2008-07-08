@@ -35,12 +35,16 @@ static char*  lastline = NULL;
 static size_t linelength = 0;
 static char*  lastlineCurrent = NULL;
 
-FUNGE_ATTR_FAST static inline void getTheLine(void)
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline bool getTheLine(void)
 {
 	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
-		cf_getline(&lastline, &linelength, stdin);
+		ssize_t retval = cf_getline(&lastline, &linelength, stdin);
+		if (retval == -1)
+			return false;
 		lastlineCurrent = lastline;
 	}
+	return true;
 }
 FUNGE_ATTR_FAST static inline void discardTheLine(void)
 {
@@ -51,15 +55,17 @@ FUNGE_ATTR_FAST static inline void discardTheLine(void)
 }
 
 
-FUNGE_ATTR_FAST FUNGEDATATYPE input_getchar(void)
+FUNGE_ATTR_FAST bool input_getchar(FUNGEDATATYPE * chr)
 {
 	char tmp;
-	getTheLine();
+	if (!getTheLine())
+		return false;
 	tmp = *lastlineCurrent;
 	lastlineCurrent++;
 	if (lastlineCurrent && (*lastlineCurrent == '\0'))
 		discardTheLine();
-	return (FUNGEDATATYPE)tmp;
+	*chr = (FUNGEDATATYPE)tmp;
+	return true;
 }
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -105,20 +111,21 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 
 // Note, no need to optimise really, this is user input
 // bound anyway.
-FUNGE_ATTR_FAST bool input_getint(FUNGEDATATYPE * value, int base)
+FUNGE_ATTR_FAST ret_getint input_getint(FUNGEDATATYPE * value, int base)
 {
 	bool found = false;
 	char * endptr = NULL;
 	assert(value != NULL);
 
-	getTheLine();
+	if (!getTheLine())
+		return rgi_eof;
 	// Find first char that is a number, then convert number.
 	do {
 		if (base == 10) {
 			if (!isdigit(*lastlineCurrent))
 				continue;
 		} else if (base == 16) {
-			if (!isdigit(*lastlineCurrent))
+			if (!isxdigit(*lastlineCurrent))
 				continue;
 		} else {
 			const char * p = strchr(digits, *lastlineCurrent);
@@ -136,5 +143,5 @@ FUNGE_ATTR_FAST bool input_getint(FUNGEDATATYPE * value, int base)
 		discardTheLine();
 	else
 		lastlineCurrent = endptr;
-	return found;
+	return found ? rgi_success : rgi_noint;
 }

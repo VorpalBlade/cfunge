@@ -363,17 +363,27 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 					ipReverse(ip);
 				break;
 
-			case '~':
+			case '~': {
+				FUNGEDATATYPE a;
 				fflush(stdout);
-				StackPush(ip->stack, input_getchar());
+				if (input_getchar(&a)) {
+					StackPush(ip->stack, a);
+				} else {
+					ipReverse(ip);
+				}
 				break;
+			}
 			case '&': {
 				FUNGEDATATYPE a;
-				bool gotint = false;
+				ret_getint gotint = rgi_noint;
 				fflush(stdout);
-				while (!gotint)
+				while (gotint == rgi_noint)
 					gotint = input_getint(&a, 10);
-				StackPush(ip->stack, a);
+				if (gotint == rgi_success) {
+					StackPush(ip->stack, a);
+				} else {
+					ipReverse(ip);
+				}
 				break;
 			}
 

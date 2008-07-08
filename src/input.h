@@ -31,6 +31,12 @@
 #include "global.h"
 #include <stdbool.h>
 
+typedef enum ret_getint {
+	rgi_success = 0,
+	rgi_eof = 1,
+	rgi_noint = 2,
+} ret_getint;
+
 /**
  * For use in input instruction & and in some fingerprints.
  * @param value Pointer to some memory to place the read integer in.
@@ -39,7 +45,7 @@
  * @note The read integer is returned in the value parameter.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool input_getint(FUNGEDATATYPE * value, int base);
+ret_getint input_getint(FUNGEDATATYPE * value, int base);
 /**
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,
@@ -47,6 +53,6 @@ bool input_getint(FUNGEDATATYPE * value, int base);
  * @return Returns next char from the buffer.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-FUNGEDATATYPE input_getchar(void);
+bool input_getchar(FUNGEDATATYPE * chr);
 
 #endif

@@ -97,6 +97,7 @@ static void FingerBASEoutputBase(instructionPointer * ip)
 static void FingerBASEinputBase(instructionPointer * ip)
 {
 	FUNGEDATATYPE base;
+	ret_getint gotint = rgi_noint;
 	FUNGEDATATYPE a = 0;
 
 	base = StackPop(ip->stack);
@@ -107,8 +108,14 @@ static void FingerBASEinputBase(instructionPointer * ip)
 
 	fflush(stdout);
 
-	while (!input_getint(&a, base));
-	StackPush(ip->stack, a);
+	while (gotint == rgi_noint) {
+		gotint = input_getint(&a, base);
+	}
+	if (gotint == rgi_success) {
+		StackPush(ip->stack, a);
+	} else {
+		ipReverse(ip);
+	}
 }
 
 
