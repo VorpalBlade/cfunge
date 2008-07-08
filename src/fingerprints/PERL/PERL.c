@@ -25,6 +25,7 @@
 #include "PERL.h"
 #include "../../stack.h"
 #include "../../settings.h"
+#include "../../../lib/stringbuffer/stringbuffer.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -124,49 +125,41 @@ static char * RunPerl(const char * restrict perlcode)
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
 					ssize_t n;
-					size_t bufsize = STRINGALLOCCHUNK;
-					char * returnedData;
-					char * p;
+					StringBuffer * sb;
+					char * buf;
 					int readErrno;
 
-					returnedData = calloc_nogc(bufsize, sizeof(char));
-					if (!returnedData)
+					sb = stringbuffer_new();
+					if (!sb)
 						return NULL;
-					p = returnedData;
+					buf = calloc_nogc(STRINGALLOCCHUNK, sizeof(char));
+					if (!buf) {
+						stringbuffer_destroy(sb);
+						return NULL;
+					}
 
 					// Read the result
-					// Yes this is very messy. Needs cleaning up.
 					while (true) {
-						n = read(outfds[0], p, STRINGALLOCCHUNK);
+						n = read(outfds[0], buf, STRINGALLOCCHUNK);
 						readErrno = errno;
 						if (n == -1) {
 							close(outfds[0]);
 							if (readErrno == EAGAIN) {
-								return returnedData;
+								free_nogc(buf);
+								return stringbuffer_finish(sb);
 							} else {
 								if (SettingWarnings)
 									perror("RunPerl, read failed");
-								cf_free(returnedData);
+								free_nogc(buf);
+								stringbuffer_destroy(sb);
 								return NULL;
 							}
 						} else if (n > 0) {
-							if ((n + 1) >= STRINGALLOCCHUNK) {
-								char * reallocRes;
-								bufsize += STRINGALLOCCHUNK;
-								reallocRes = realloc_nogc(returnedData, bufsize * sizeof(char));
-								if (!reallocRes) {
-									if (SettingWarnings)
-										perror("RunPerl, realloc for returnedData failed");
-									close(outfds[0]);
-									return returnedData;
-								} else {
-									returnedData = reallocRes;
-									p = returnedData + (bufsize - 2 * STRINGALLOCCHUNK) + n;
-									memset(p, '\0', STRINGALLOCCHUNK);
-								}
-							} else {
+							stringbuffer_append_string(sb, buf);
+							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
-								return returnedData;
+								free_nogc(buf);
+								return stringbuffer_finish(sb);
 							}
 						}
 					}
