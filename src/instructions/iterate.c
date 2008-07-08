@@ -56,30 +56,47 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 		ipForward(ip, 1);
 		kInstr = FungeSpaceGet(&ip->position);
 
-		// We should reach past any spaces and execute first instruction we find
-		// This is undef in 98 but defined in 108.
-		if (kInstr == ' ') {
-			do {
+		// We should reach past any spaces and ;; pairs and execute first
+		// instruction we find. This is undef in 98 but defined in 108.
+		
+		if (kInstr == ' ' || kInstr == ';') {
+			bool injump = false;
+			if (kInstr == ';')
+				injump = true;
+			while (true) {
 				ipForward(ip, 1);
-			} while ((kInstr = FungeSpaceGet(&ip->position)) == ' ');
+				kInstr = FungeSpaceGet(&ip->position);
+				if (kInstr == ';') {
+					injump = !injump;
+					continue;
+				} else if (kInstr == ' ') {
+					continue;
+				} else {
+					if (injump)
+						continue;
+					else
+						break;
+				}
+			}
 		}
 		// First store pos where we got to restore to to "move past" instruction.
 		posinstr = ip->position;
 		// Then go back and execute it at k...
 		ip->position = oldpos;
 
+		// We special case some stuff here that breaks otherwise.
 		switch (kInstr) {
 			case 'z':
 				return;
 			case 'k':
-			case ';':
 				if (SettingWarnings)
 					fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
 					        ip->position.x, ip->position.y, (char)kInstr, kInstr);
 				ipReverse(ip);
 				break;
 			case '@':
-				// Iterating over @ is insane, to avoid issues when doing concurrent execution lets just kill current IP.
+				// Iterating over @ is insane, to avoid issues when doing
+				// concurrent execution lets just kill current IP.
 #ifdef CONCURRENT_FUNGE
 				ExecuteInstruction(kInstr, ip, threadindex);
 #else
@@ -91,8 +108,9 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 				// Storing second part of the current IP state (why: see above)
 				ipDelta olddelta = ip->delta;
 
-				// This horrible kludge is needed because ipListDuplicateIP calls realloc
-				// so IP pointer may end up invalid. A horrible hack yes.
+				// This horrible kludge is needed because ipListDuplicateIP
+				// calls realloc so IP pointer may end up invalid. A horrible
+				// hack yes.
 #ifdef CONCURRENT_FUNGE
 				ssize_t oldindex = *threadindex;
 #endif
