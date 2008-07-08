@@ -56,9 +56,10 @@
 
 typedef struct s_ImplementedFingerprintEntry {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint. */
+	const char            * uri;      /**< URI, used for Funge-108. */
 	const fingerprintLoader loader;   /**< Loader function pointer. */
 	const char            * opcodes;  /**< Sorted string with all implemented opcodes. */
-	const char            * url;      /**< URI, used to show links for more info about fingerprints. */
+	const char            * url;      /**< URL, used to show links for more info about fingerprints. */
 	const bool              safe:1;   /**< If true, this fingerprint is safe in sandbox mode. */
 } ImplementedFingerprintEntry;
 
@@ -68,70 +69,70 @@ typedef struct s_ImplementedFingerprintEntry {
 // .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
-	{ .fprint = 0x42415345, .loader = &FingerBASEload, .opcodes = "BHINO",
+	{ .fprint = 0x42415345, .uri = NULL, .loader = &FingerBASEload, .opcodes = "BHINO",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// CPLI - Complex Integer extension
-	{ .fprint = 0x43504c49, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
+	{ .fprint = 0x43504c49, .uri = NULL, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// DIRF - Directory functions extension, NOT SAFE
-	{ .fprint = 0x44495246, .loader = &FingerDIRFload, .opcodes = "CMR",
+	{ .fprint = 0x44495246, .uri = NULL, .loader = &FingerDIRFload, .opcodes = "CMR",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
 	// FILE - File I/O functions
-	{ .fprint = 0x46494c45, .loader = &FingerFILEload, .opcodes = "CGLOPRSW",
+	{ .fprint = 0x46494c45, .uri = NULL, .loader = &FingerFILEload, .opcodes = "CGLOPRSW",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
 	// FIXP - Some useful math functions
-	{ .fprint = 0x46495850, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
+	{ .fprint = 0x46495850, .uri = NULL, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// FPDP - Double precision floating point
-	{ .fprint = 0x46504450, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	{ .fprint = 0x46504450, .uri = NULL, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// FPSP - Single precision floating point
-	{ .fprint = 0x46505350, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	{ .fprint = 0x46505350, .uri = NULL, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// HRTI - High-Resolution Timer Interface
-	{ .fprint = 0x48525449, .loader = &FingerHRTIload, .opcodes = "EGMST",
+	{ .fprint = 0x48525449, .uri = NULL, .loader = &FingerHRTIload, .opcodes = "EGMST",
 	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
 	// INDV - Pointer functions
-	{ .fprint = 0x494e4456, .loader = &FingerINDVload, .opcodes = "GPVW",
+	{ .fprint = 0x494e4456, .uri = NULL, .loader = &FingerINDVload, .opcodes = "GPVW",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// JSTR - Read and write strings in Funge-Space.
-	{ .fprint = 0x4a535452, .loader = &FingerJSTRload, .opcodes = "GP",
+	{ .fprint = 0x4a535452, .uri = NULL, .loader = &FingerJSTRload, .opcodes = "GP",
 	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
 	// MODU - Modulo Arithmetic
-	{ .fprint = 0x4d4f4455, .loader = &FingerMODUload, .opcodes = "MRU",
+	{ .fprint = 0x4d4f4455, .uri = NULL, .loader = &FingerMODUload, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
 	// NULL - Null
-	{ .fprint = 0x4e554c4c, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	{ .fprint = 0x4e554c4c, .uri = NULL, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library
-	{ .fprint = 0x4f525448, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ",
+	{ .fprint = 0x4f525448, .uri = NULL, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/ORTH.html", .safe = true },
 	// PERL - Generic Interface to the Perl Language
-	{ .fprint = 0x5045524c, .loader = &FingerPERLload, .opcodes = "EIS",
+	{ .fprint = 0x5045524c, .uri = NULL, .loader = &FingerPERLload, .opcodes = "EIS",
 	  .url = "http://catseye.tc/projects/funge98/library/PERL.html", .safe = false },
 	// PNTR - Alias for INDV - Pointer functions
-	{ .fprint = 0x504e5452, .loader = &FingerPNTRload, .opcodes = "GPVW",
+	{ .fprint = 0x504e5452, .uri = NULL, .loader = &FingerPNTRload, .opcodes = "GPVW",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// REFC - Referenced Cells Extension
-	{ .fprint = 0x52454643, .loader = &FingerREFCload, .opcodes = "DR",
+	{ .fprint = 0x52454643, .uri = NULL, .loader = &FingerREFCload, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
 	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .loader = &FingerROMAload, .opcodes = "CDILMVX",
+	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &FingerROMAload, .opcodes = "CDILMVX",
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .loader = &FingerSUBRload, .opcodes = "CJR",
+	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "CJR",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// TIME - Time and Date functions
-	{ .fprint = 0x54494d45, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",
+	{ .fprint = 0x54494d45, .uri = NULL, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// TOYS - Funge-98 Standard Toys
-	{ .fprint = 0x544f5953, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	{ .fprint = 0x544f5953, .uri = NULL, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
 	// TURT - Simple Turtle Graphics Library
-	{ .fprint = 0x54555254, .loader = &FingerTURTload, .opcodes = "ABCDEFHILNPQRTU",
+	{ .fprint = 0x54555254, .uri = NULL, .loader = &FingerTURTload, .opcodes = "ABCDEFHILNPQRTU",
 	  .url = "http://catseye.tc/projects/funge98/library/TURT.html", .safe = true },
 	// Last should be 0
-	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
+	{ .fprint = 0, .uri = NULL, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
 
 #endif

@@ -111,11 +111,11 @@ fi
 progress "Parsing spec file"
 IFS=$'\n'
 
-# First line is %fingerprint-spec 1.0
+# First line is %fingerprint-spec 1.2
 exec 4<"src/fingerprints/${FPRINT}.spec"
 read -ru 4 line
-if [[ "$line" != "%fingerprint-spec 1.1" ]]; then
-	die "Either the spec file is not a fingerprint spec, or it is not version 1.1 of the format."
+if [[ "$line" != "%fingerprint-spec 1.2" ]]; then
+	die "Either the spec file is not a fingerprint spec, or it is not version 1.2 of the format."
 fi
 
 # 0: pre-"begin instrs"
@@ -138,6 +138,9 @@ while read -ru 4 line; do
 			"%url")
 				URL="$data"
 				;;
+			"%f108-uri")
+				# We don't need to care about this.
+				;;
 			"%alias")
 				echo "Note: This script doesn't handle %alias, you got to add that on your own." >&2
 				;;
@@ -149,6 +152,12 @@ while read -ru 4 line; do
 				;;
 			"%begin-instrs")
 				parsestate=1
+				;;
+			"#"*)
+				# A comment, ignore
+				;;
+			*)
+				die "Unknown entry $type found."
 				;;
 		esac
 	else

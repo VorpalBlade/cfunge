@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:TOYS
 %url:http://catseye.tc/projects/funge98/library/TOYS.html
 %desc:Funge-98 Standard Toys

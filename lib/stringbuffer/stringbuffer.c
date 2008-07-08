@@ -78,6 +78,12 @@ StringBuffer *stringbuffer_new(void) {
 }
 
 FUNGE_ATTR_FAST
+void stringbuffer_destroy(StringBuffer *sb) {
+    free(sb->buf);
+    free(sb);
+}
+
+FUNGE_ATTR_FAST
 char *stringbuffer_finish(StringBuffer *sb) {
     char *result;
 

@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:ORTH
 %url:http://catseye.tc/projects/funge98/library/ORTH.html
 %desc:Orthogonal Easement Library

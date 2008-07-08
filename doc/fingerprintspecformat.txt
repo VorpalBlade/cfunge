@@ -1,9 +1,10 @@
 cfunge use a special file format to generate fingerprints from.
 The format is quite simple. An example follows:
 
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:TEST
-%url:http://example.com
+%url:http://example.com/desc/test.html
+%f108-uri:http://example.com/test
 %desc:This is a test of the fingerprint spec file system.
 %safe:true
 %alias:FOOO
@@ -14,16 +15,17 @@ A	foobar	Description
 B	quux	Other Description
 %end
 
-The first line should always be "%fingerprint-spec 1.1" (or in future versions,
+The first line should always be "%fingerprint-spec 1.2" (or in future versions,
 possibly higher numbers).
 
 Note:
-* The format is case sensitive.
-* Any lines after the first starting with a # is considered a comment.
+ * The format is case sensitive.
+ * Any lines after the first starting with a # is considered a comment.
 
 After that fprint, url, desc, safe and alias can follow in any order.
  * fprint is the fingerprint name
  * url is the url for more info on the fingerprint (docs and such)
+ * f108-uri is an optional Funge-108 URI for the fingerprint.
  * desc is a short one line description. Less than 60 chars is definitly
    recommended.
  * safe can be either true or false, true indicates it is safe in sandbox mode

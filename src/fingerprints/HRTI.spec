@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:HRTI
 %url:http://catseye.tc/projects/funge98/library/HRTI.html
 %desc:High-Resolution Timer Interface

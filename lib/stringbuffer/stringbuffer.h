@@ -86,6 +86,17 @@ char *stringbuffer_finish(StringBuffer *sb);
 
 
 /**
+ * Deallocate the string buffer instance and don't resturn string.
+ *
+ * The passed string buffer must not be accessed afterwards.
+ *
+ * @param sb The string buffer to deallocate.
+ *
+ */
+FUNGE_ATTR_FAST
+void stringbuffer_destroy(StringBuffer *sb);
+
+/**
  * Append a string to a string buffer instance.
  *
  * @param sb The string buffer to modify.

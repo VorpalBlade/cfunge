@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:TURT
 %url:http://catseye.tc/projects/funge98/library/TURT.html
 %desc:Simple Turtle Graphics Library

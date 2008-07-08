@@ -103,6 +103,7 @@ genfprintinfo() {
 
 	# Variables
 	local URL=""
+	local F108_URI="NULL"
 	local SAFE=""
 	local OPCODES=""
 	local DESCRIPTION=""
@@ -130,11 +131,11 @@ genfprintinfo() {
 	progresslvl2 "Parsing spec file"
 	IFS=$'\n'
 	local line type data instr name desc number
-	# First line is %fingerprint-spec 1.0
+	# First line is %fingerprint-spec 1.2
 	exec 4<"${FPRINT}.spec"
 	read -ru 4 line
-	if [[ "$line" != "%fingerprint-spec 1.1" ]]; then
-		die "Either the spec file is not a fingerprint spec, or it is not version 1.1 of the format."
+	if [[ "$line" != "%fingerprint-spec 1.2" ]]; then
+		die "Either the spec file is not a fingerprint spec, or it is not version 1.2 of the format."
 	fi
 
 	# 0: pre-"begin instrs"
@@ -157,6 +158,9 @@ genfprintinfo() {
 				"%url")
 					URL="$data"
 					;;
+				"%f108-uri")
+					F108_URI="\"$data\""
+					;;
 				"%alias")
 					MYALIASES+=( "$data" )
 					;;
@@ -168,6 +172,12 @@ genfprintinfo() {
 					;;
 				"%begin-instrs")
 					parsestate=1
+					;;
+				"#"*)
+					# A comment, ignore
+					;;
+				*)
+					die "Unknown entry $type found in ${FPRINT}."
 					;;
 			esac
 		else
@@ -231,7 +241,7 @@ genfprintinfo() {
 	done
 	ENTRIES+=( "$FPRINTHEX" )
 	ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
-	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
+	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
 	ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 	statuslvl2 "Done"
 	if [[ ${!MYALIASES[*]} ]]; then
@@ -246,7 +256,7 @@ genfprintinfo() {
 			done
 			ENTRIES+=("$ALIASHEX")
 			ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
-			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .loader = &Finger${myalias}load, .opcodes = \"${OPCODES}\","
+			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &Finger${myalias}load, .opcodes = \"${OPCODES}\","
 			ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 		done
 	fi
@@ -315,9 +325,10 @@ cat >> "fingerprints.h" << EOF
 
 typedef struct s_ImplementedFingerprintEntry {
 	const FUNGEDATATYPE     fprint;   /**< Fingerprint. */
+	const char            * uri;      /**< URI, used for Funge-108. */
 	const fingerprintLoader loader;   /**< Loader function pointer. */
 	const char            * opcodes;  /**< Sorted string with all implemented opcodes. */
-	const char            * url;      /**< URI, used to show links for more info about fingerprints. */
+	const char            * url;      /**< URL, used to show links for more info about fingerprints. */
 	const bool              safe:1;   /**< If true, this fingerprint is safe in sandbox mode. */
 } ImplementedFingerprintEntry;
 
@@ -342,7 +353,7 @@ done
 
 cat >> "fingerprints.h" << EOF
 	// Last should be 0
-	{ .fprint = 0, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
+	{ .fprint = 0, .uri = NULL, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
 
 #endif

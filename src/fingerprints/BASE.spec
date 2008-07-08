@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:BASE
 %url:http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html
 %desc:I/O for numbers in other bases

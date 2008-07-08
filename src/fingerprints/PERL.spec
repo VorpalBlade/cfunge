@@ -1,4 +1,4 @@
-%fingerprint-spec 1.1
+%fingerprint-spec 1.2
 %fprint:PERL
 %url:http://catseye.tc/projects/funge98/library/PERL.html
 %desc:Generic Interface to the Perl Language
