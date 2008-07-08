@@ -40,11 +40,23 @@
  *
  */
 
+/**
+ * @defgroup stringbuffer A generic stringbuffer
+ * A generic stringbuffer for building strings with.
+ */
+/*@{*/
+
 #ifndef STRING_BUFFER_H
 #define STRING_BUFFER_H
 
 #include "../../src/global.h"
 
+/// __attribute__, this one isn't generic so we need it for just this one.
+#ifdef __GNUC__
+#  define FUNGE_SB_PRINTF __attribute__((format(printf, 2, 3)))
+#else
+#  define FUNGE_SB_PRINTF /* NO-OP */
+#endif
 
 /**
  * The string buffer state.
@@ -90,7 +102,7 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str);
  *
  * @param format The format string to append.
  */
-FUNGE_ATTR_FAST __attribute__((format(printf, 2, 3)))
+FUNGE_ATTR_FAST FUNGE_SB_PRINTF
 void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 
 /**
@@ -103,5 +115,7 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
  */
 FUNGE_ATTR_FAST
 void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
+
+/*@}*/
 
 #endif

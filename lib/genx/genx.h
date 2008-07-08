@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 /**
- * @defgroup genx XML generation functions.
+ * @defgroup genx Genx - XML generation functions
  * A library for writing XML.
  */
 /*@{*/
@@ -53,24 +53,29 @@ typedef enum {
 
 /** character types */
 #define GENX_XML_CHAR 1
+/** character types */
 #define GENX_LETTER 2
+/** character types */
 #define GENX_NAMECHAR 4
 
+/**
+ * @defgroup genx-types Genx's types
+ */
+/*@{*/
 /** An UTF-8 string */
 typedef unsigned char * utf8;
 /** A const UTF-8 string */
 typedef const unsigned char * constUtf8;
 
-/**
- * genx's own types
- */
+/// A writer, the main struct.
 typedef struct genxWriter_rec * genxWriter;
+/// A namespace.
 typedef struct genxNamespace_rec * genxNamespace;
+/// An element.
 typedef struct genxElement_rec * genxElement;
+/// An attribute.
 typedef struct genxAttribute_rec * genxAttribute;
-
-typedef void * (* genxAlloc)(void * userData, size_t bytes);
-typedef void (* genxDealloc)(void * userData, void * data);
+/*@}*/
 
 /*
  * Constructors, set/get
@@ -80,10 +85,10 @@ typedef void (* genxDealloc)(void * userData, void * data);
  * Create a new writer.  For generating multiple XML documents, it's most
  *  efficient to re-use the same genx object.  However, you can only write
  *  one document at a time with a writer.
- * Returns NULL if it fails, which can only be due to an allocation failure.
+ * @return NULL if it fails, which can only be due to an allocation failure.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData);
+FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
+genxWriter genxNew(void);
 
 /**
  * Dispose of a writer, freeing all associated memory
@@ -94,37 +99,6 @@ void genxDispose(genxWriter w);
 /*
  * Set/get
  */
-
-/**
- * The userdata pointer will be passed to memory-allocation
- *  and I/O callbacks. If not set, genx will pass NULL
- */
-FUNGE_ATTR_FAST
-void genxSetUserData(genxWriter w, void * userData);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-void * genxGetUserData(genxWriter w);
-
-/**
- * User-provided memory allocator, if desired.  For example, if you were
- *  in an Apache module, you could arrange for genx to use ap_palloc by
- *  making the pool accessible via the userData call.
- * The "dealloc" is to be used to free memory allocated with "alloc".  If
- *  alloc is provided but dealloc is NULL, genx will not attempt to free
- *  the memory; this would be appropriate in an Apache context.
- * If "alloc" is not provided, genx routines use malloc() to allocate memory
- */
-FUNGE_ATTR_FAST
-void genxSetAlloc(genxWriter w, genxAlloc alloc);
-
-FUNGE_ATTR_FAST
-void genxSetDealloc(genxWriter w, genxDealloc dealloc);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-genxAlloc   genxGetAlloc(genxWriter w);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-genxDealloc genxGetDealloc(genxWriter w);
 
 /**
  * Get the prefix associated with a namespace
@@ -235,7 +209,7 @@ FUNGE_ATTR_FAST
 genxStatus genxAddAttribute(genxAttribute a, constUtf8 value);
 
 /**
- * add a namespace declaration
+ * Add a namespace declaration
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 genxStatus genxAddNamespace(genxNamespace ns, utf8 prefix);
@@ -278,7 +252,8 @@ genxStatus genxAddCharacter(genxWriter w, int c);
 /**
  * Return the Unicode character encoded by the UTF-8 pointed-to by the
  *  argument, and advance the argument past the encoding of the character.
- * Returns -1 if the UTF-8 is malformed, in which case advances the
+ * @returns
+ *  -1 if the UTF-8 is malformed, in which case advances the
  *  argument to point at the first byte past the point past the malformed
  *  ones.
  */
@@ -293,7 +268,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 genxStatus genxCheckText(genxWriter w, constUtf8 s);
 
 /**
- * return character status, the OR of GENX_XML_CHAR,
+ * Return character status, the OR of GENX_XML_CHAR,
  *  GENX_LETTER, and GENX_NAMECHAR
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
@@ -306,21 +281,27 @@ int genxCharClass(genxWriter w, int c);
  *  (a) there's a bug in your software, e.g. a malformed element name, or
  *  (b) there's a memory allocation or I/O error
  * The output can never be longer than the input.
- * Returns true if any changes were made.
+ * @returns true if any changes were made.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 int genxScrubText(genxWriter w, constUtf8 in, utf8 out);
 
 /**
- * return error messages
+ * Return a specific error message.
+ * @param w The genxWriter in question.
+ * @param status What status to look up.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 const char * genxGetErrorMessage(genxWriter w, genxStatus status);
+/**
+ * Return last error message.
+ * @param w The genxWriter in question.
+ */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 const char * genxLastErrorMessage(genxWriter w);
 
 /**
- * return version
+ * Return version of genx.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 const char * genxGetVersion(void);

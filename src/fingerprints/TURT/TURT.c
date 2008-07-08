@@ -516,7 +516,7 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 		return;
 	}
 
-	gw = genxNew(NULL, NULL, NULL);
+	gw = genxNew();
 	if (!gw) {
 		goto error;
 	}

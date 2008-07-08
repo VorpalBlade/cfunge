@@ -19,6 +19,8 @@
 #define False 0
 #define STRLEN_XMLNS_COLON 6
 
+typedef void * (* genxAlloc)(void * userData, size_t bytes);
+typedef void (* genxDealloc)(void * userData, void * data);
 
 /**
  * writer state
@@ -142,56 +144,50 @@ static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr);
  * private memory utilities
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline void * allocate(genxWriter w, size_t bytes)
+static inline void * allocate(size_t bytes)
 {
-	if (w->alloc)
-		return (void *)(*w->alloc)(w->userData, bytes);
-	else
-		return (void *) malloc(bytes);
+	return (void *) malloc(bytes);
 }
 
 FUNGE_ATTR_FAST
-static inline void deallocate(genxWriter w, void * data)
+static inline void deallocate(void * data)
 {
-	if (w->dealloc)
-		(*w->dealloc)(w->userData, data);
-	else if (w->alloc == NULL)
-		free(data);
+	free(data);
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static utf8 copy(genxWriter w, constUtf8 from)
+static utf8 copy(constUtf8 from)
 {
 	utf8 temp;
 
-	if ((temp = (utf8) allocate(w, strlen((const char *) from) + 1)) == NULL)
+	if ((temp = (utf8) allocate(strlen((const char *) from) + 1)) == NULL)
 		return NULL;
 	strcpy((char *) temp, (const char *) from);
 	return temp;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static genxStatus initCollector(genxWriter w, collector * c)
+static genxStatus initCollector(collector * c)
 {
 	c->space = 100;
-	if ((c->buf = (utf8) allocate(w, c->space)) == NULL)
+	if ((c->buf = (utf8) allocate(c->space)) == NULL)
 		return GENX_ALLOC_FAILED;
 	c->used = 0;
 	return GENX_SUCCESS;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static genxStatus growCollector(genxWriter w, collector * c, size_t size)
+static genxStatus growCollector(collector * c, size_t size)
 {
 	utf8 newSpace;
 
 	c->space = size * 2;
-	if ((newSpace = (utf8) allocate(w, c->space)) == NULL)
+	if ((newSpace = (utf8) allocate(c->space)) == NULL)
 		return GENX_ALLOC_FAILED;
 
 	strncpy((char *) newSpace, (const char *) c->buf, c->used);
 	newSpace[c->used] = 0;
-	deallocate(w, c->buf);
+	deallocate(c->buf);
 	c->buf = newSpace;
 	return GENX_SUCCESS;
 }
@@ -211,14 +207,14 @@ static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
 	size_t sl = strlen((const char *) string);
 
 	if (sl >= c->space)
-		if ((w->status = growCollector(w, c, sl)) != GENX_SUCCESS)
+		if ((w->status = growCollector(c, sl)) != GENX_SUCCESS)
 			return GENX_ALLOC_FAILED;
 
 	strcpy((char *) c->buf, (const char *) string);
 	return GENX_SUCCESS;
 }
 
-#define collectPiece(w,c,d,size) {if (((c)->used+(size))>=(c)->space){if (((w)->status=growCollector(w,c,(c)->used+(size)))!=GENX_SUCCESS) return (w)->status;}strncpy((char *)(c)->buf+(c)->used,d,size);(c)->used+=size;}
+#define collectPiece(w,c,d,size) {if (((c)->used+(size))>=(c)->space){if (((w)->status=growCollector(c,(c)->used+(size)))!=GENX_SUCCESS) return (w)->status;}strncpy((char *)(c)->buf+(c)->used,d,size);(c)->used+=size;}
 
 /*******************************
  * private list utilities
@@ -229,7 +225,7 @@ static genxStatus initPlist(genxWriter w, plist * pl)
 	pl->writer = w;
 	pl->count = 0;
 	pl->space = 10;
-	pl->pointers = (void * *) allocate(w, pl->space * sizeof(void *));
+	pl->pointers = (void * *) allocate(pl->space * sizeof(void *));
 	if (pl->pointers == NULL)
 		return GENX_ALLOC_FAILED;
 
@@ -249,12 +245,12 @@ static Boolean checkExpand(plist * pl)
 		return True;
 
 	pl->space *= 2;
-	newlist = (void * *) allocate(pl->writer, pl->space * sizeof(void *));
+	newlist = (void * *) allocate(pl->space * sizeof(void *));
 	if (newlist == NULL)
 		return False;
 	for (i = 0; i < pl->count; i++)
 		newlist[i] = pl->pointers[i];
-	deallocate(pl->writer, pl->pointers);
+	deallocate(pl->pointers);
 	pl->pointers = newlist;
 
 	return True;
@@ -369,7 +365,7 @@ static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 	}
 
 	/* copy & insert */
-	if ((prefix = copy(w, prefix)) == NULL) {
+	if ((prefix = copy(prefix)) == NULL) {
 		w->status = GENX_ALLOC_FAILED;
 		return NULL;
 	}
@@ -513,23 +509,23 @@ static inline Boolean isNameChar(genxWriter w, int c)
  * Construct a new genxWriter
  */
 FUNGE_ATTR_FAST
-genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData)
+genxWriter genxNew(void)
 {
 	genxWriter w;
 	genxNamespace xml;
 
-	if (alloc)
-		w = (genxWriter)(*alloc)(userData, sizeof(struct genxWriter_rec));
-	else
+	//if (alloc)
+	//	w = (genxWriter)(*alloc)(userData, sizeof(struct genxWriter_rec));
+	//else
 		w = (genxWriter) malloc(sizeof(struct genxWriter_rec));
 
 	if (w == NULL)
 		return NULL;
 
 	w->status = GENX_SUCCESS;
-	w->alloc = alloc;
-	w->dealloc = dealloc;
-	w->userData = userData;
+	w->alloc = NULL;
+	w->dealloc = NULL;
+	w->userData = NULL;
 	w->sequence = SEQUENCE_NO_DOC;
 
 	if (initPlist(w, &w->namespaces) != GENX_SUCCESS ||
@@ -539,10 +535,10 @@ genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData)
 	    initPlist(w, &w->stack) != GENX_SUCCESS)
 		return NULL;
 
-	if ((w->status = initCollector(w, &w->arec.value)) != GENX_SUCCESS)
+	if ((w->status = initCollector(&w->arec.value)) != GENX_SUCCESS)
 		return NULL;
 
-	if ((w->empty = copy(w, (constUtf8) "")) == NULL) {
+	if ((w->empty = copy((constUtf8) "")) == NULL) {
 		w->status = GENX_ALLOC_FAILED;
 		return NULL;
 	}
@@ -594,37 +590,37 @@ genxWriter genxNew(genxAlloc alloc, genxDealloc dealloc, void * userData)
 /*
  * get/set userData
  */
-FUNGE_ATTR_FAST void genxSetUserData(genxWriter w, void * userData)
-{
-	w->userData = userData;
-}
-FUNGE_ATTR_FAST void * genxGetUserData(genxWriter w)
-{
-	return w->userData;
-}
+// FUNGE_ATTR_FAST void genxSetUserData(genxWriter w, void * userData)
+// {
+// 	w->userData = userData;
+// }
+// FUNGE_ATTR_FAST void * genxGetUserData(genxWriter w)
+// {
+// 	return w->userData;
+// }
 
 /*
  * get/set allocator
  */
-FUNGE_ATTR_FAST void genxSetAlloc(genxWriter w, genxAlloc alloc)
-{
-	w->alloc = alloc;
-}
-FUNGE_ATTR_FAST
-void genxSetDealloc(genxWriter w, genxDealloc dealloc)
-{
-	w->dealloc = dealloc;
-}
-FUNGE_ATTR_FAST
-genxAlloc   genxGetAlloc(genxWriter w)
-{
-	return w->alloc;
-}
-FUNGE_ATTR_FAST
-genxDealloc genxGetDealloc(genxWriter w)
-{
-	return w->dealloc;
-}
+// FUNGE_ATTR_FAST void genxSetAlloc(genxWriter w, genxAlloc alloc)
+// {
+// 	w->alloc = alloc;
+// }
+// FUNGE_ATTR_FAST
+// void genxSetDealloc(genxWriter w, genxDealloc dealloc)
+// {
+// 	w->dealloc = dealloc;
+// }
+// FUNGE_ATTR_FAST
+// genxAlloc   genxGetAlloc(genxWriter w)
+// {
+// 	return w->alloc;
+// }
+// FUNGE_ATTR_FAST
+// genxDealloc genxGetDealloc(genxWriter w)
+// {
+// 	return w->dealloc;
+// }
 
 /*
  * Clean up
@@ -638,36 +634,36 @@ FUNGE_ATTR_FAST void genxDispose(genxWriter w)
 	utf8 * pp = (utf8 *) w->prefixes.pointers;
 
 	for (i = 0; i < w->namespaces.count; i++) {
-		deallocate(w, nn[i]->name);
-		deallocate(w, nn[i]);
+		deallocate(nn[i]->name);
+		deallocate(nn[i]);
 	}
 
 	for (i = 0; i < w->elements.count; i++) {
-		deallocate(w, ee[i]->type);
-		deallocate(w, ee[i]);
+		deallocate(ee[i]->type);
+		deallocate(ee[i]);
 	}
 
 	for (i = 0; i < w->attributes.count; i++) {
-		deallocate(w, aa[i]->name);
-		deallocate(w, aa[i]->value.buf);
-		deallocate(w, aa[i]);
+		deallocate(aa[i]->name);
+		deallocate(aa[i]->value.buf);
+		deallocate(aa[i]);
 	}
 
 	for (i = 0; i < w->prefixes.count; i++)
-		deallocate(w, pp[i]);
+		deallocate(pp[i]);
 
-	deallocate(w, w->namespaces.pointers);
-	deallocate(w, w->elements.pointers);
-	deallocate(w, w->attributes.pointers);
-	deallocate(w, w->prefixes.pointers);
-	deallocate(w, w->stack.pointers);
+	deallocate(w->namespaces.pointers);
+	deallocate(w->elements.pointers);
+	deallocate(w->attributes.pointers);
+	deallocate(w->prefixes.pointers);
+	deallocate(w->stack.pointers);
 
-	deallocate(w, w->arec.value.buf);
+	deallocate(w->arec.value.buf);
 
-	deallocate(w, w->empty);
+	deallocate(w->empty);
 
 	/* how Oscar dealt with Igli */
-	deallocate(w, w);
+	deallocate(w);
 }
 
 /*******************************
@@ -816,7 +812,7 @@ genxNamespace genxDeclareNamespace(genxWriter w, constUtf8 uri,
 			defaultPref = newPrefix;
 		}
 
-		ns = (genxNamespace) allocate(w, sizeof(struct genxNamespace_rec));
+		ns = (genxNamespace) allocate(sizeof(struct genxNamespace_rec));
 		if (ns == NULL) {
 			w->status = GENX_ALLOC_FAILED;
 			goto busted;
@@ -824,7 +820,7 @@ genxNamespace genxDeclareNamespace(genxWriter w, constUtf8 uri,
 		ns->writer = w;
 		ns->baroque = False;
 
-		if ((ns->name = copy(w, uri)) == NULL) {
+		if ((ns->name = copy(uri)) == NULL) {
 			w->status = GENX_ALLOC_FAILED;
 			goto busted;
 		}
@@ -901,14 +897,14 @@ genxElement genxDeclareElement(genxWriter w,
 	if (old)
 		return old;
 
-	if ((el = (genxElement) allocate(w, sizeof(struct genxElement_rec))) == NULL) {
+	if ((el = (genxElement) allocate(sizeof(struct genxElement_rec))) == NULL) {
 		w->status = *statusP = GENX_ALLOC_FAILED;
 		return NULL;
 	}
 
 	el->writer = w;
 	el->ns = ns;
-	if ((el->type = copy(w, type)) == NULL) {
+	if ((el->type = copy(type)) == NULL) {
 		w->status = *statusP = GENX_ALLOC_FAILED;
 		return NULL;
 	}
@@ -995,7 +991,7 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 		return aa[low];
 
 	/* not there, build it */
-	a = (genxAttribute) allocate(w, sizeof(struct genxAttribute_rec));
+	a = (genxAttribute) allocate(sizeof(struct genxAttribute_rec));
 	if (a == NULL) {
 		w->status = GENX_ALLOC_FAILED;
 		goto busted;
@@ -1006,12 +1002,12 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 	a->provided = False;
 	a->atype = w->arec.atype;
 
-	if ((a->name = copy(w, name)) == NULL) {
+	if ((a->name = copy(name)) == NULL) {
 		w->status = GENX_ALLOC_FAILED;
 		goto busted;
 	}
 
-	if ((w->status = initCollector(w, &a->value)) != GENX_SUCCESS)
+	if ((w->status = initCollector(&a->value)) != GENX_SUCCESS)
 		goto busted;
 
 	if (valuestr)
