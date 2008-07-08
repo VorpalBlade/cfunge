@@ -158,9 +158,16 @@ typedef int32_t FUNGEVECTORTYPE;
 
 
 // This is done in other to make integration with IFFI easier for ais523.
-#ifndef FUNGEHANDPRINT
-/// Handprint: CFUN
-#  define FUNGEHANDPRINT 0x4346554e
+#ifndef FUNGE_OLD_HANDPRINT
+/// Funge-98 Handprint: CFUN
+#  define FUNGE_OLD_HANDPRINT 0x4346554e
+#endif
+#ifndef FUNGE_NEW_HANDPRINT
+/// Funge-108 Handprint: An URL.
+#  define FUNGE_NEW_HANDPRINT "http://kuonet.org/~anmaster/cfunge"
+#endif
+#ifdef FUNGEHANDPRINT
+#  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"
 #endif
 /// Version, for -V.
 #define APPVERSION  "0.2.1-pre2"

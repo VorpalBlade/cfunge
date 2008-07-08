@@ -85,7 +85,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			StackPush(pushStack, sizeof(FUNGEDATATYPE));
 			break;
 		case 3: // Handprint
-			StackPush(pushStack, FUNGEHANDPRINT);
+			StackPush(pushStack, FUNGE_OLD_HANDPRINT);
 			break;
 		case 4: // Version
 			StackPush(pushStack, FUNGEVERSION);
@@ -194,11 +194,15 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 
 			break;
 		}
-		case 21: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
+		case 21: // 1 0"gnirts" with Funge-108 URI (global env) (108 specific)
+			// Bytes
+			StackPushString(pushStack, FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
+			break;
+		case 22: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
 			// Bytes
 			StackPush(pushStack, 2);
 			break;
-		case 22: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
+		case 23: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
 			StackPush(pushStack, sizeof(FUNGEDATATYPE) * CHAR_BIT);
 			break;
 #ifndef NDEBUG
@@ -210,7 +214,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 }
 
 #define HIGHESTREQUEST_98 20
-#define HIGHESTREQUEST_108 22
+#define HIGHESTREQUEST_108 23
 
 FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 {
