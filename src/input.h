@@ -31,17 +31,22 @@
 #include "global.h"
 #include <stdbool.h>
 
+/**
+ * Return type of input_getint()
+ */
 typedef enum ret_getint {
-	rgi_success = 0,
-	rgi_eof = 1,
-	rgi_noint = 2,
+	rgi_success = 0, ///< Successfully got an integer
+	rgi_eof = 1,     ///< We got an EOF and should reflect
+	rgi_noint = 2,   ///< We didn't get an int, please call us again.
 } ret_getint;
 
 /**
  * For use in input instruction & and in some fingerprints.
  * @param value Pointer to some memory to place the read integer in.
  * @param base What base to read the number as.
- * @return Returns true if it got an integer in the given base, otherwise false.
+ * @return
+ * Returns rgi_success if it got an integer in the given base, otherwise
+ * rgi_noint or rgi_eof.
  * @note The read integer is returned in the value parameter.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
@@ -50,7 +55,8 @@ ret_getint input_getint(FUNGEDATATYPE * value, int base);
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,
  * otherwise it reuse the values from the old buffer).
- * @return Returns next char from the buffer.
+ * @param chr Pointer to a FUNGEDATATYPE to return value in.
+ * @return True if we got a char, false if we got EOF and should reflect.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool input_getchar(FUNGEDATATYPE * chr);
