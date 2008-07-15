@@ -51,9 +51,7 @@ FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0') {
-#ifdef DISABLE_GC
-			cf_free(filename);
-#endif
+			StackFreeString(filename);
 			ipReverse(ip);
 			return;
 		}
@@ -69,9 +67,7 @@ FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
 			StackPushVector(ip->stack, &size);
 			StackPushVector(ip->stack, &offset);
 		}
-#ifdef DISABLE_GC
-		cf_free(filename);
-#endif
+		StackFreeString(filename);
 	}
 }
 
@@ -98,9 +94,7 @@ FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0' || size.x < 1 || size.y < 1) {
-#ifdef DISABLE_GC
-			cf_free(filename);
-#endif
+			StackFreeString(filename);
 			ipReverse(ip);
 			return;
 		}
@@ -109,9 +103,7 @@ FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
 		                          VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
 		                          &size, textfile))
 			ipReverse(ip);
-#ifdef DISABLE_GC
-		cf_free(filename);
-#endif
+			StackFreeString(filename);
 	}
 
 }

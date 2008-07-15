@@ -29,8 +29,8 @@
 
 // Define this if you want the correct but uggly
 // use of enter_ca_mode/exit_ca_mode. It makes
-// everything look uggly!
-//#define TERM_CAP_CORRECT
+// everything look uggly in xterms at least!
+#define TERM_CAP_CORRECT
 
 static bool initialised = false;
 

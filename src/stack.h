@@ -109,9 +109,25 @@ FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void StackPushString(fungeStack * restrict stack, const char * restrict str, size_t len);
 /**
  * Pop a 0"gnirts" and return a null-terminated string.
+ * Use StackFreeString() to free the string.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 char * StackPopString(fungeStack * restrict stack);
+
+#ifdef DISABLE_GC
+/**
+ * Free a 0"gnirts" that was popped with StackPopString().
+ * Do NOT use for StackPopSizedString().
+ */
+#  define StackFreeString(string) cf_free(string)
+#else
+/**
+ * Free a 0"gnirts" that was popped with StackPopString().
+ * Do NOT use for StackPopSizedString().
+ */
+#  define StackFreeString(string) /* NO-OP */
+#endif
+
 /**
  * Pop a fixed number of chars from a stack.
  * @param stack A pointer to the stack in question.
