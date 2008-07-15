@@ -41,9 +41,9 @@
 typedef fungeVector ipDelta;
 
 /// IP mode: code.
-#define ipmCODE 0
+#define ipmCODE 0x0
 /// IP mode: string.
-#define ipmSTRING 1
+#define ipmSTRING 0x1
 /// Type of the ipMode entry.
 typedef uint_fast8_t ipMode;
 

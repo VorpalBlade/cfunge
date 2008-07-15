@@ -50,6 +50,7 @@
 #include "REFC/REFC.h"
 #include "ROMA/ROMA.h"
 #include "SUBR/SUBR.h"
+#include "TERM/TERM.h"
 #include "TIME/TIME.h"
 #include "TOYS/TOYS.h"
 #include "TURT/TURT.h"
@@ -121,6 +122,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "CJR",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// TERM - Terminal control functions
+	{ .fprint = 0x5445524d, .uri = NULL, .loader = &FingerTERMload, .opcodes = "CDGHLSU",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// TIME - Time and Date functions
 	{ .fprint = 0x54494d45, .uri = NULL, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",

@@ -58,7 +58,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 
 		// We should reach past any spaces and ;; pairs and execute first
 		// instruction we find. This is undef in 98 but defined in 108.
-		
+
 		if (kInstr == ' ' || kInstr == ';') {
 			bool injump = false;
 			if (kInstr == ';')
