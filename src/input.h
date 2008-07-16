@@ -51,6 +51,7 @@ typedef enum ret_getint {
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ret_getint input_getint(FUNGEDATATYPE * value, int base);
+
 /**
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,

@@ -122,6 +122,19 @@ static void FingerSTRNget(instructionPointer * ip)
 /// I - Input a string
 static void FingerSTRNinput(instructionPointer * ip)
 {
+	char * line = NULL;
+	char * newline;
+	size_t len = 0;
+	ssize_t retval = cf_getline(&line, &len, stdin);
+	if (retval == -1) {
+		ipReverse(ip);
+		return;
+	}
+	// Discard any trailing newline.
+	newline = strrchr(line, '\n');
+	if (newline)
+		newline[0] = '\0';
+	StackPushString(ip->stack, line, strlen(line));
 }
 
 /// L - Leftmost n characters of string
@@ -217,11 +230,23 @@ static void FingerSTRNright(instructionPointer * ip)
 /// S - String representation of a number
 static void FingerSTRNitoa(instructionPointer * ip)
 {
+	char *s;
+	FUNGEDATATYPE n = StackPop(ip->stack);
+	StringBuffer *sb = stringbuffer_new();
+
+	stringbuffer_append_printf(sb, "%" FUNGEDATAPRI, n);
+	s = stringbuffer_finish(sb);
+	StackPushString(ip->stack, s, strlen(s));
+	free_nogc(s);
 }
 
 /// V - Retrieve value from string
 static void FingerSTRNatoi(instructionPointer * ip)
 {
+	char *s;
+	s = StackPopString(ip->stack);
+	StackPush(ip->stack, atoi(s));
+	StackFreeString(s);
 }
 
 bool FingerSTRNload(instructionPointer * ip)
