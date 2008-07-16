@@ -28,6 +28,9 @@ REQUIRED:
    welcome only if they don't mess up source too much (anything using Win32/64
    specific API(s) counts as messing up).
 
+ * Ncurses (http://www.gnu.org/software/ncurses/), used for the TERM
+   fingerprint. This is most likely already installed.
+
 OPTIONAL:
   Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later.
   If you lack it you could try building without garbage collector. To do so
