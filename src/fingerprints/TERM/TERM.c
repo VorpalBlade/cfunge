@@ -114,7 +114,8 @@ static void finalise(void)
 }
 #endif
 
-static bool initialise(void)
+FUNGE_ATTR_FAST
+static inline bool initialise(void)
 {
 	int errret;
 	if (initialised)

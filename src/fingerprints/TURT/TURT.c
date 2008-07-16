@@ -139,7 +139,7 @@ static inline void addPath(Point pt, bool penDown, uint32_t colour)
 }
 
 FUNGE_ATTR_FAST
-static inline void normalize(void)
+static inline void normalise(void)
 {
 	while (turt.heading > 2*M_PI)
 		turt.heading -= 2 * M_PI;
@@ -390,7 +390,7 @@ static void FingerTURTforward(instructionPointer * ip)
 /// H - Set Heading (angle in degrees, relative to 0deg, east)
 static void FingerTURTsetHeading(instructionPointer * ip)
 {
-	turt.heading = toRad(StackPop(ip->stack)); normalize();
+	turt.heading = toRad(StackPop(ip->stack)); normalise();
 }
 
 
@@ -552,7 +552,7 @@ exit:
 /// L - Turn Left (angle in degrees)
 static void FingerTURTturnLeft(instructionPointer * ip)
 {
-	turt.heading -= toRad(StackPop(ip->stack)); normalize();
+	turt.heading -= toRad(StackPop(ip->stack)); normalise();
 }
 
 /// N - Clear Paper with Colour (24-bit RGB)
@@ -592,7 +592,7 @@ static void FingerTURTqueryPosition(instructionPointer * ip)
 /// R - Turn Right (angle in degrees)
 static void FingerTURTturnRight(instructionPointer * ip)
 {
-	turt.heading += toRad(StackPop(ip->stack)); normalize();
+	turt.heading += toRad(StackPop(ip->stack)); normalise();
 }
 
 /// T - Teleport (x, y coords relative to origin; 00T = home)
@@ -615,22 +615,22 @@ static void FingerTURTqueryBounds(instructionPointer * ip)
 	StackPush(ip->stack, TURT_MAX);
 }
 
-static bool initialized = false;
+static bool initialised = false;
 
-static void inititalize(void)
+static void initialise(void)
 {
-	if (!initialized) {
-		initialized = true;
+	if (!initialised) {
+		initialised = true;
 		filename = DEFAULT_FILENAME;
 		turt.movedWithoutDraw = true;
 		// To set up turt.sin/turt.cos.
-		normalize();
+		normalise();
 	}
 }
 
 bool FingerTURTload(instructionPointer * ip)
 {
-	inititalize();
+	initialise();
 #ifndef NDEBUG
 	atexit(&freeResources);
 #endif

@@ -96,7 +96,7 @@ static void FingerSTRNget(instructionPointer * ip)
 		return;
 	}
 	sb = stringbuffer_new();
-	
+
 	while (true) {
 		FUNGEDATATYPE val;
 		val = FungeSpaceGet(&pos);
@@ -153,7 +153,7 @@ static void FingerSTRNleft(instructionPointer * ip)
 		return;
 	}
 	StackPush(ip->stack, '\0');
-	StackPushString(ip->stack, s, n-1);
+	StackPushString(ip->stack, s, n - 1);
 	StackFreeString(s);
 }
 
@@ -170,13 +170,13 @@ static void FingerSTRNslice(instructionPointer * ip)
 		ipReverse(ip);
 		return;
 	}
-	if (strlen(s) < (size_t)(p+n)) {
+	if (strlen(s) < (size_t)(p + n)) {
 		StackFreeString(s);
 		ipReverse(ip);
 		return;
 	}
 	s[p+n] = '\0';
-	StackPushString(ip->stack, s+p, strlen(s+p));
+	StackPushString(ip->stack, s + p, strlen(s + p));
 	StackFreeString(s);
 }
 
@@ -202,7 +202,7 @@ static void FingerSTRNput(instructionPointer * ip)
 	pos = StackPopVector(ip->stack);
 	s   = StackPopString(ip->stack);
 	len = strlen(s);
-	
+
 	for (size_t i = 0; i < len + 1; i++) {
 		FungeSpaceSet(s[i], &pos);
 		pos.x += 1;
@@ -224,7 +224,7 @@ static void FingerSTRNright(instructionPointer * ip)
 		ipReverse(ip);
 		return;
 	}
-	StackPushString(ip->stack, s+(len-n), n);
+	StackPushString(ip->stack, s + (len - n), n);
 	StackFreeString(s);
 }
 
