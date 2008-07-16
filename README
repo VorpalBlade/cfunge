@@ -97,6 +97,7 @@ Short descriptions of implemented fingerprints:
  FIXP Some useful math functions
  FPDP Double precision floating point
  FPSP Single precision floating point
+ FRTH Some common forth commands
  HRTI High-Resolution Timer Interface
  INDV Pointer functions
  JSTR Read and write strings in Funge-Space

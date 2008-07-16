@@ -1,10 +1,17 @@
 # KDevelop Custom Project File List
 CMakeLists.txt
 lib
+lib/genx
+lib/genx/charProps.c
+lib/genx/genx.c
+lib/genx/genx.h
 lib/libghthash
 lib/libghthash/ght_hash_table.h
 lib/libghthash/hash_functions.c
 lib/libghthash/hash_table.c
+lib/stringbuffer
+lib/stringbuffer/stringbuffer.c
+lib/stringbuffer/stringbuffer.h
 src
 src/fingerprints
 src/fingerprints/BASE
@@ -28,6 +35,9 @@ src/fingerprints/FPDP/FPDP.h
 src/fingerprints/FPSP
 src/fingerprints/FPSP/FPSP.c
 src/fingerprints/FPSP/FPSP.h
+src/fingerprints/FRTH
+src/fingerprints/FRTH/FRTH.c
+src/fingerprints/FRTH/FRTH.h
 src/fingerprints/HRTI
 src/fingerprints/HRTI/HRTI.c
 src/fingerprints/HRTI/HRTI.h
@@ -55,9 +65,15 @@ src/fingerprints/REFC/REFC.h
 src/fingerprints/ROMA
 src/fingerprints/ROMA/ROMA.c
 src/fingerprints/ROMA/ROMA.h
+src/fingerprints/STRN
+src/fingerprints/STRN/STRN.c
+src/fingerprints/STRN/STRN.h
 src/fingerprints/SUBR
 src/fingerprints/SUBR/SUBR.c
 src/fingerprints/SUBR/SUBR.h
+src/fingerprints/TERM
+src/fingerprints/TERM/TERM.c
+src/fingerprints/TERM/TERM.h
 src/fingerprints/TIME
 src/fingerprints/TIME/TIME.c
 src/fingerprints/TIME/TIME.h

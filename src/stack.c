@@ -185,6 +185,20 @@ FUNGE_ATTR_FAST inline FUNGEDATATYPE StackPeek(const fungeStack * restrict stack
 }
 
 
+FUNGE_ATTR_FAST inline FUNGEDATATYPE StackGetIndex(const fungeStack * restrict stack, size_t index)
+{
+	assert(stack != NULL);
+
+	if (stack->top == 0) {
+		return 0;
+	} else if (stack->top <= index) {
+		return 0;
+	} else {
+		return stack->entries[index - 1];
+	}
+}
+
+
 /********************************
  * Push and pop for data types. *
  ********************************/

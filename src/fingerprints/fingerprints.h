@@ -40,6 +40,7 @@
 #include "FIXP/FIXP.h"
 #include "FPDP/FPDP.h"
 #include "FPSP/FPSP.h"
+#include "FRTH/FRTH.h"
 #include "HRTI/HRTI.h"
 #include "INDV/INDV.h"
 #include "JSTR/JSTR.h"
@@ -90,6 +91,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// FPSP - Single precision floating point
 	{ .fprint = 0x46505350, .uri = NULL, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	// FRTH - Some common forth commands
+	{ .fprint = 0x46525448, .uri = NULL, .loader = &FingerFRTHload, .opcodes = "DLOPR",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// HRTI - High-Resolution Timer Interface
 	{ .fprint = 0x48525449, .uri = NULL, .loader = &FingerHRTIload, .opcodes = "EGMST",

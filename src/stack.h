@@ -91,6 +91,17 @@ void StackPopNDiscard(fungeStack * restrict stack, size_t n);
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 FUNGEDATATYPE StackPeek(const fungeStack * restrict stack);
+/**
+ * Get an element from a specific position (counting from stack base).
+ * Will return 0 if element isn't valid.
+ * @note Index is one-based.
+ * @param stack Pointer to stack to operate on.
+ * @param index What index to operate on.
+ */
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+FUNGEDATATYPE StackGetIndex(const fungeStack * restrict stack, size_t index);
+
+
 
 /**
  * Push a vector.

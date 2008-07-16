@@ -10,7 +10,7 @@ For more info:
 and
   bzr help revisionspec
 
-Development version (r307)
+Development version (r309)
 --------------------------
 These are important changes since last release:
  * Fixed a few bugs in loading code.
@@ -33,6 +33,7 @@ These are important changes since last release:
  * New library dependency, due to TERM cfunge now needs ncurses.
 
 Added fingerprints:
+ * FRTH Some common forth commands
  * STRN String functions
  * TERM Terminal control functions
 
