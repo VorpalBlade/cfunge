@@ -104,7 +104,7 @@ void stringbuffer_destroy(StringBuffer *sb);
  * @param c The char to append.
  */
 FUNGE_ATTR_FAST
-void stringbuffer_append_char(StringBuffer *sb, const char str);
+void stringbuffer_append_char(StringBuffer *sb, const char c);
 
 /**
  * Append a string to a string buffer instance.
