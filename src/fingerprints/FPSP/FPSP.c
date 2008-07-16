@@ -28,7 +28,7 @@
 // Based on how CCBI does it.
 
 
-// Lets hope float is always 32 bits...
+/// An union for float and 32-bit int.
 typedef union u_floatint {
 	float f;
 	int32_t i;
@@ -213,9 +213,7 @@ static void FingerFPSPfromascii(instructionPointer * ip)
 	str = StackPopString(ip->stack);
 	a.f = strtof(str, NULL);
 	StackPush(ip->stack, a.i);
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 static void FingerFPSPprint(instructionPointer * ip)

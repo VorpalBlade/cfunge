@@ -37,9 +37,7 @@ static void FingerDIRFchdir(instructionPointer * ip)
 	}
 	if (chdir(str) != 0)
 		ipReverse(ip);
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 static void FingerDIRFmkdir(instructionPointer * ip)
@@ -52,9 +50,7 @@ static void FingerDIRFmkdir(instructionPointer * ip)
 	}
 	if (mkdir(str, S_IRWXU) != 0)
 		ipReverse(ip);
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 static void FingerDIRFrmdir(instructionPointer * ip)
@@ -67,9 +63,7 @@ static void FingerDIRFrmdir(instructionPointer * ip)
 	}
 	if (rmdir(str) != 0)
 		ipReverse(ip);
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 

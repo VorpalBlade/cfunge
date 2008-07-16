@@ -21,6 +21,7 @@
 
 #include "FILE.h"
 #include "../../stack.h"
+#include "../../../lib/stringbuffer/stringbuffer.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -116,27 +117,6 @@ static void FingerFILEfclose(instructionPointer * ip)
 	FreeHandle(h);
 }
 
-/**
- * Append a char to a string.
- * @param str String buffer to append to.
- * @param s   Size of buffer.
- * @param p   Position of last char in buffer.
- * @param ch  Char to append.
- * @note Will realloc buffer string if needed, s and p may be updated too.
- */
-FUNGE_ATTR_FAST static inline void append(char * restrict * restrict str,
-                                     size_t * restrict s, size_t * restrict p,
-                                     int ch)
-{
-	if (*p >= *s) {
-		*str = cf_realloc(*str, (*s) * 2);
-		// TODO Error handling
-		(*s) *= 2;
-	}
-	(*str)[*p] = (char)ch;
-	(*p)++;
-}
-
 /// G - Get string from file (like c fgets)
 static void FingerFILEfgets(instructionPointer * ip)
 {
@@ -153,13 +133,10 @@ static void FingerFILEfgets(instructionPointer * ip)
 	fp = handles[h]->file;
 
 	{
-		char * restrict str = NULL;
-		// Position in string, and size of string
-		size_t p = 0;
-		size_t s = 80;
+		StringBuffer *sb;
 		int ch;
-		str = cf_malloc_noptr(80 * sizeof(char));
-		if (!str) {
+		sb = stringbuffer_new();
+		if (!sb) {
 			ipReverse(ip);
 			return;
 		}
@@ -168,7 +145,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 			ch = fgetc(fp);
 			switch (ch) {
 				case '\r':
-					append(&str, &s, &p, ch);
+					stringbuffer_append_char(sb, ch);
 					ch = fgetc(fp);
 					if (ch != '\n') {
 						ungetc(ch, fp);
@@ -176,31 +153,36 @@ static void FingerFILEfgets(instructionPointer * ip)
 					}
 				// Fallthrough intentional.
 				case '\n':
-					append(&str, &s, &p, ch);
+					stringbuffer_append_char(sb, ch);
 					goto endofloop;
 
 				case EOF:
 					if (ferror(fp)) {
 						clearerr(fp);
 						ipReverse(ip);
-						cf_free(str);
+						stringbuffer_destroy(sb);
 						return;
 					} else {
 						goto endofloop;
 					}
 
 				default:
-					append(&str, &s, &p, ch);
+					stringbuffer_append_char(sb, ch);
 					break;
 			}
 		}
 		// Yeah, can't break two levels otherwise...
 	endofloop:
-		str[p] = '\0';
-		StackPushString(ip->stack, str, p);
-		StackPush(ip->stack, (FUNGEDATATYPE)p);
-		cf_free(str);
-		return;
+		{
+			char * str;
+			size_t len;
+			str = stringbuffer_finish(sb);
+			len = strlen(str);
+			StackPushString(ip->stack, str, len);
+			StackPush(ip->stack, (FUNGEDATATYPE)len);
+			free_nogc(str);
+			return;
+		}
 	}
 }
 
@@ -270,9 +252,7 @@ static void FingerFILEfopen(instructionPointer * ip)
 	StackPush(ip->stack, h);
 // Look... The alternatives to the goto were worse...
 end:
-#ifdef DISABLE_GC
-	cf_free(filename);
-#endif
+	StackFreeString(filename);
 	return;
 }
 
@@ -294,9 +274,7 @@ static void FingerFILEfputs(instructionPointer * ip)
 			ipReverse(ip);
 		}
 	}
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 /// R - Read n bytes from file to i/o buffer

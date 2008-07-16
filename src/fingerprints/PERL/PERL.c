@@ -191,9 +191,7 @@ static void FingerPERLeval(instructionPointer * ip)
 		StackPush(ip->stack, '\0');
 		StackPushString(ip->stack, result, strlen(result));
 	}
-#ifdef DISABLE_GC
-	cf_free(perlcode);
-#endif
+	StackFreeString(perlcode);
 	free_nogc(result);
 }
 
@@ -214,9 +212,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 			StackPush(ip->stack, (FUNGEDATATYPE)i);
 		}
 	}
-#ifdef DISABLE_GC
-	cf_free(perlcode);
-#endif
+	StackFreeString(perlcode);
 	free_nogc(result);
 }
 

@@ -26,7 +26,7 @@
 
 // Based on how CCBI does it.
 
-// Lets hope double is always 64 bits...
+/// An union for double and two 32-bit ints.
 typedef union u_doubleint {
 	double d;
 	struct { int32_t high; int32_t low; } i;
@@ -210,9 +210,7 @@ static void FingerFPDPfromascii(instructionPointer * ip)
 	str = StackPopString(ip->stack);
 	u.d = strtod(str, NULL);
 	pushDbl(ip);
-#ifdef DISABLE_GC
-	cf_free(str);
-#endif
+	StackFreeString(str);
 }
 
 static void FingerFPDPprint(instructionPointer * ip)
