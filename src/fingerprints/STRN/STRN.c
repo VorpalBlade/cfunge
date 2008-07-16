@@ -126,7 +126,7 @@ static void FingerSTRNinput(instructionPointer * ip)
 	char * newline;
 	size_t len = 0;
 	ssize_t retval = cf_getline(&line, &len, stdin);
-	if (retval == -1) {
+	if (retval == -1 || line == NULL) {
 		ipReverse(ip);
 		return;
 	}
@@ -135,6 +135,7 @@ static void FingerSTRNinput(instructionPointer * ip)
 	if (newline)
 		newline[0] = '\0';
 	StackPushString(ip->stack, line, strlen(line));
+	cf_free(line);
 }
 
 /// L - Leftmost n characters of string
