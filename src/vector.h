@@ -28,13 +28,13 @@
 #include "global.h"
 #include <stdbool.h>
 
-/// A vector in funge space
+/// A vector in Funge-Space
 typedef struct s_fungeVector {
 	FUNGEVECTORTYPE x; ///< You should be able to guess what this is.
 	FUNGEVECTORTYPE y; ///< You should be able to guess what this is.
 } fungeVector;
 
-/// A synomym for fungeVector.
+/// A synonym for fungeVector.
 /// @note
 /// This should probably be deprecated.
 typedef fungeVector fungePosition;

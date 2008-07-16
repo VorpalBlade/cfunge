@@ -21,7 +21,7 @@
 
 /**
  * @file
- * Definition of a rectangle in fugne space.
+ * Definition of a rectangle in Funge-Space.
  */
 
 #ifndef _HAD_SRC_RECT_H

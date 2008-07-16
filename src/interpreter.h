@@ -73,10 +73,11 @@ void IfNorthSouth(instructionPointer * restrict ip);
  * @param opcode Instruction to execute
  * @param ip Instruction pointer to execute the instruction in.
  * @param threadindex The thread index (only if CONCURRENT_FUNGE is defined)
+ * @returns
+ * Return value only if CONCURRENT_FUNGE is defined. If true we executed an
+ * instruction that took 0 ticks, so call me again right away (in main loop)!
  */
 #ifdef CONCURRENT_FUNGE
-// If returns true, we executed an instruction that took 0 ticks, so call me
-// again right away (in main loop)!
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 bool ExecuteInstruction(FUNGEDATATYPE opcode,
                         instructionPointer * restrict ip,

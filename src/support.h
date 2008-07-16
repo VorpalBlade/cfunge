@@ -38,7 +38,7 @@
 #include <unistd.h>
 
 // GC may cause threading to happen...
-// ...but wihtout threading we can avoid locking for some stuff.
+// ...but without threading we can avoid locking for some stuff.
 #ifndef DISABLE_GC
 #  define NEED_LOCKED
 #else
@@ -180,7 +180,7 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #endif
 
 #ifdef __WIN32__
-#  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is also unsupported."
+#  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is on your own risk!"
 #endif
 
 #endif

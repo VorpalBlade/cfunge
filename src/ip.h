@@ -37,7 +37,7 @@
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
-/// Type of ip delta.
+/// Type of IP delta.
 typedef fungeVector ipDelta;
 
 /// IP mode: code.
@@ -74,7 +74,7 @@ typedef struct s_instructionPointer {
 #define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
-/// Instruction pointer list. For concurrent funge.
+/// Instruction pointer list. For concurrent Funge.
 typedef struct s_ipList {
 	size_t              size; /**< Total size */
 	size_t              top; /**< Top running one */

@@ -33,7 +33,7 @@
 
 /**
  * @defgroup compat Compiler/system compatibility defines.
- * Compatiblity stuff to support systems lacking some functions of features.
+ * Compatibility stuff to support systems lacking some functions of features.
  */
 /*@{*/
 #ifndef __GNUC__
@@ -44,7 +44,7 @@
 
 
 /**
- * @defgroup attributes Attribute specificications.
+ * @defgroup attributes Attribute specifications.
  * Contains attribute specifications.
  */
 /*@{*/
