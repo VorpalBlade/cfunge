@@ -94,6 +94,13 @@ char *stringbuffer_finish(StringBuffer *sb) {
 }
 
 FUNGE_ATTR_FAST
+void stringbuffer_append_char(StringBuffer *sb, const char c) {
+    stringbuffer_ensure(sb, 1);
+    sb->buf[sb->pos] = c;
+    sb->pos += 1;
+}
+
+FUNGE_ATTR_FAST
 void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     size_t len;
 

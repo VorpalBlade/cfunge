@@ -97,6 +97,16 @@ FUNGE_ATTR_FAST
 void stringbuffer_destroy(StringBuffer *sb);
 
 /**
+ * Append a char to a string buffer instance.
+ *
+ * @param sb The string buffer to modify.
+ *
+ * @param c The char to append.
+ */
+FUNGE_ATTR_FAST
+void stringbuffer_append_char(StringBuffer *sb, const char str);
+
+/**
  * Append a string to a string buffer instance.
  *
  * @param sb The string buffer to modify.
