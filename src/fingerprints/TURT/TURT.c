@@ -349,7 +349,7 @@ static void FingerTURTqueryHeading(instructionPointer * ip)
 	StackPush(ip->stack, toDeg(turt.heading));
 }
 
-/// B - Back (distance in pixles)
+/// B - Back (distance in pixels)
 static void FingerTURTback(instructionPointer * ip)
 {
 	move(-StackPop(ip->stack));

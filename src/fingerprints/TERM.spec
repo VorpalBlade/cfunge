@@ -7,7 +7,7 @@
 #I	name	desc
 C	clearScreen	Clear screen
 D	goDown	Move cursor down n lines
-G	gotoXY	Goto cusor position x,y (home is 0,0)
+G	gotoXY	Goto cursor position x,y (home is 0,0)
 H	goHome	Move cursor to home
 L	clearToEOL	Clear from cursor to end of line
 S	clearToEOS	Clear from cursor to end of screen

@@ -57,7 +57,7 @@ static void FingerTERMgoDown(instructionPointer * ip)
 	}
 }
 
-/// G - Goto cusor position x,y (home is 0,0)
+/// G - Goto cursor position x,y (home is 0,0)
 static void FingerTERMgotoXY(instructionPointer * ip)
 {
 	char *s;

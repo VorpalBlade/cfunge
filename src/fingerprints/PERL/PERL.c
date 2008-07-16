@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Thanks to Heikki Kallasjoki for help with the perl side of this.
+// Thanks to Heikki Kallasjoki for help with the Perl side of this.
 // I would not have managed it without his help.
 
 #include "PERL.h"

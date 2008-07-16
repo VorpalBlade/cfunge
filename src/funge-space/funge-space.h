@@ -96,7 +96,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void FungeSpaceWrap(fungePosition * restrict position,
                     const fungeVector * restrict delta);
 /**
- * Load a file into funge-space at 0,0. Optimised compared to
+ * Load a file into Funge-Space at 0,0. Optimised compared to
  * FungeSpaceLoadAtOffset(). Only used for loading initial file.
  * @param filename Filename to load.
  * @return True if successful, otherwise false.
@@ -106,8 +106,8 @@ bool FungeSpaceLoad(const char * restrict filename);
 
 #ifdef FUNGE_EXTERNAL_LIBRARY
 /**
- * Load a string into funge-space at 0,0. Optimised.
- * cfunge itself doesn't use this. However cfunge have been/will be integreated
+ * Load a string into Funge-Space at 0,0. Optimised.
+ * cfunge itself doesn't use this. However cfunge have been/will be integrated
  * as a library in C-INTERCAL, which use it.
  * @param program Program to load.
  */
@@ -116,7 +116,7 @@ void FungeSpaceLoadString(const char * restrict program);
 #endif
 
 /**
- * Load a file into funge space at an offset. Used for the i instruction.
+ * Load a file into Funge-Space at an offset. Used for the i instruction.
  * @param filename Filename to load.
  * @param offset The offset to load the file at.
  * @param size This variable will be filled in by the function with the width
@@ -131,7 +131,7 @@ bool FungeSpaceLoadAtOffset(const char * restrict filename,
                             fungeVector * restrict size,
                             bool binary);
 /**
- * Write out a file from an area of funge space at an offset. Used for the o
+ * Write out a file from an area of Funge-Space at an offset. Used for the o
  * instruction.
  * @param filename Filename to write to.
  * @param offset The offset to write the file from.
@@ -147,7 +147,7 @@ bool FungeSpaceSaveToFile(const char          * restrict filename,
                           bool textfile);
 
 /**
- * Get the bounding rectangle for the part of funge-space that isn't empty.
+ * Get the bounding rectangle for the part of Funge-Space that isn't empty.
  * @note It won't be too small, but it may be too big.
  * @param rect Out parameter for the bounding rectangle.
  */
