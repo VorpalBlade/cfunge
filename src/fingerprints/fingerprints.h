@@ -49,6 +49,7 @@
 #include "PERL/PERL.h"
 #include "REFC/REFC.h"
 #include "ROMA/ROMA.h"
+#include "STRN/STRN.h"
 #include "SUBR/SUBR.h"
 #include "TERM/TERM.h"
 #include "TIME/TIME.h"
@@ -120,6 +121,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// ROMA - Roman Numerals
 	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &FingerROMAload, .opcodes = "CDILMVX",
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
+	// STRN - String functions
+	{ .fprint = 0x5354524e, .uri = NULL, .loader = &FingerSTRNload, .opcodes = "ACDFGILMNPRSV",
+	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "CJR",
 	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
