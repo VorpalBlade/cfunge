@@ -10,14 +10,31 @@ For more info:
 and
   bzr help revisionspec
 
-Development version
--------------------
+Development version (r307)
+--------------------------
 These are important changes since last release:
  * Fixed a few bugs in loading code.
  * Added support for showing top 5 elements on the stack when tracing.
  * Fixed bug in StackPreallocSpace() that resulted in crash later on.
  * Fixed many bugs in TURT.
  * Added man page.
+ * Imported two new libraries into the code:
+   genx - An XML output library (used by TURT).
+   stringbuffer - Some utilities to build strings in an easy way, code was taken
+                  from crossfire.
+ * Some work on Funge-108 features:
+   * y now works as it should.
+   * k handles ; as in Funge-108 (was undef in Funge-98).
+ * Made & and ~ handle EOF correctly.
+ * Made several fingerprints use stringbuffer, making their code much simpler.
+ * New macro StackFreeString() to make handling Boehm-GC quirk easier.
+ * Update of fingerprint spec format, some preliminary support for Funge-108
+   style fingerprints.
+ * New library dependency, due to TERM cfunge now needs ncurses.
+
+Added fingerprints:
+ * STRN String functions
+ * TERM Terminal control functions
 
 
 0.2.1-pre2

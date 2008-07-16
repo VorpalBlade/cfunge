@@ -107,7 +107,9 @@ Short descriptions of implemented fingerprints:
  PNTR Alias for INDV
  REFC Referenced Cells Extension
  ROMA Funge-98 Roman Numerals
+ STRN String functions
  SUBR Subroutine extension
+ TERM Terminal control functions
  TIME Time and Date functions
  TOYS Funge-98 Standard Toys
  TURT Simple Turtle Graphics Library
