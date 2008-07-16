@@ -22,7 +22,7 @@
 #include "JSTR.h"
 #include "../../stack.h"
 
-// G - Read with delta
+/// G - Read with delta
 static void FingerJSTRpushN(instructionPointer * ip)
 {
 	FUNGEDATATYPE n;
@@ -46,7 +46,7 @@ static void FingerJSTRpushN(instructionPointer * ip)
 	}
 }
 
-// P - Write with delta
+/// P - Write with delta
 static void FingerJSTRpopN(instructionPointer * ip)
 {
 	FUNGEDATATYPE n;
