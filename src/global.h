@@ -102,11 +102,11 @@ typedef int64_t  FUNGEDATATYPE;
 /// As FUNGEDATATYPE, but unsigned (64-bit version).
 typedef uint64_t FUNGEunsignedDATATYPE;
 /// Generic printf code to use.
-#  define FUNGEDATAPRI PRIdFAST64
+#  define FUNGEDATAPRI PRId64
 /// Printf code for octal output.
-#  define FUNGEDATAoctPRI PRIoFAST64
+#  define FUNGEDATAoctPRI PRIo64
 /// Printf code for hexdecimal output.
-#  define FUNGEDATAhexPRI PRIxFAST64
+#  define FUNGEDATAhexPRI PRIx64
 /// Max value for FUNGEDATATYPE
 #  define FUNGEDATA_MIN INT64_MIN
 /// Min value for FUNGEDATATYPE
@@ -115,7 +115,7 @@ typedef uint64_t FUNGEunsignedDATATYPE;
 /// Type of vector values (64-bit version).
 typedef int64_t FUNGEVECTORTYPE;
 /// Generic printf code to use for vector value.
-#  define FUNGEVECTORPRI PRIdFAST64
+#  define FUNGEVECTORPRI PRId64
 // FIXME: Will long long always be 64-bit?
 /**
  * Define the abs() function to use for the set data size.
