@@ -41,16 +41,15 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 		ipReverse(ip);
 	} else {
 		FUNGEDATATYPE kInstr;
-		// The weird stuff below, is, as described by CCBI:
-		//   Instruction executes *at* k
-		//   If the instruction k executes, changes delta or position, we are finished.
-		//   If it doesn't we should jump to *after* the instruction k executed.
-		// Delta is stored below, we only need pos at this point as we don't
-		// know if we will execute anything yet, pointless storing it at this
-		// point then.
-		// It is also used in case of spaces
+		// Note that:
+		//   * Instruction executes *at* k
+		//   * In Funge-108 we skip over the cell we executed
+		//     (if position or delta didn't change).
+		//   * In Funge-98 we don't do that.
+
+		// This is used in case of spaces and with Funge-108
 		fungePosition oldpos = ip->position;
-		// And this is for knowing where to move past
+		// And this is for knowing where to move past (in 108)
 		fungePosition posinstr;
 		// Fetch instruction
 		ipForward(ip, 1);
@@ -79,7 +78,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 				}
 			}
 		}
-		// First store pos where we got to restore to to "move past" instruction.
+		// First store pos where we got to restore to to "move past" instruction in Funge-108.
 		posinstr = ip->position;
 		// Then go back and execute it at k...
 		ip->position = oldpos;
@@ -89,6 +88,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 			case 'z':
 				return;
 			case 'k':
+				// FIXME: Handle nested k correctly instead. I hate this one...
 				if (SettingWarnings)
 					fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
 					        ip->position.x, ip->position.y, (char)kInstr, kInstr);
@@ -105,7 +105,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 				break;
 			default: {
 				// Ok we got to execute it!
-				// Storing second part of the current IP state (why: see above)
+				// Storing second part of the current IP state (for Funge-108)
 				ipDelta olddelta = ip->delta;
 
 				// This horrible kludge is needed because ipListDuplicateIP
@@ -133,12 +133,14 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 				if (kInstr == 't')
 					ip = &((*IPList)->ips[oldindex]);
 #endif
-				// If delta and ip did not change, move forward (why: see above)
-				if (olddelta.x == ip->delta.x
-					&& olddelta.y == ip->delta.y
-					&& oldpos.x == ip->position.x
-					&& oldpos.y == ip->position.y)
-					ip->position = posinstr;
+				// If delta and ip did not change, move forward in Funge-108.
+				if (SettingCurrentStandard == stdver108) {
+					if (olddelta.x == ip->delta.x
+					    && olddelta.y == ip->delta.y
+					    && oldpos.x == ip->position.x
+					    && oldpos.y == ip->position.y)
+						ip->position = posinstr;
+				}
 				break;
 			}
 		}
