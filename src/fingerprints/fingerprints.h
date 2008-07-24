@@ -73,34 +73,34 @@ typedef struct s_ImplementedFingerprintEntry {
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// BASE - I/O for numbers in other bases
 	{ .fprint = 0x42415345, .uri = NULL, .loader = &FingerBASEload, .opcodes = "BHINO",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// CPLI - Complex Integer extension
 	{ .fprint = 0x43504c49, .uri = NULL, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// DIRF - Directory functions extension, NOT SAFE
 	{ .fprint = 0x44495246, .uri = NULL, .loader = &FingerDIRFload, .opcodes = "CMR",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FILE - File I/O functions
 	{ .fprint = 0x46494c45, .uri = NULL, .loader = &FingerFILEload, .opcodes = "CGLOPRSW",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = false },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FIXP - Some useful math functions
 	{ .fprint = 0x46495850, .uri = NULL, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FPDP - Double precision floating point
 	{ .fprint = 0x46504450, .uri = NULL, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FPSP - Single precision floating point
 	{ .fprint = 0x46505350, .uri = NULL, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FRTH - Some common forth commands
 	{ .fprint = 0x46525448, .uri = NULL, .loader = &FingerFRTHload, .opcodes = "DLOPR",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// HRTI - High-Resolution Timer Interface
 	{ .fprint = 0x48525449, .uri = NULL, .loader = &FingerHRTIload, .opcodes = "EGMST",
 	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
 	// INDV - Pointer functions
 	{ .fprint = 0x494e4456, .uri = NULL, .loader = &FingerINDVload, .opcodes = "GPVW",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// JSTR - Read and write strings in Funge-Space.
 	{ .fprint = 0x4a535452, .uri = NULL, .loader = &FingerJSTRload, .opcodes = "GP",
 	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
@@ -118,7 +118,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://catseye.tc/projects/funge98/library/PERL.html", .safe = false },
 	// PNTR - Alias for INDV - Pointer functions
 	{ .fprint = 0x504e5452, .uri = NULL, .loader = &FingerPNTRload, .opcodes = "GPVW",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// REFC - Referenced Cells Extension
 	{ .fprint = 0x52454643, .uri = NULL, .loader = &FingerREFCload, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
@@ -127,16 +127,16 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// STRN - String functions
 	{ .fprint = 0x5354524e, .uri = NULL, .loader = &FingerSTRNload, .opcodes = "ACDFGILMNPRSV",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "CJR",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TERM - Terminal control functions
 	{ .fprint = 0x5445524d, .uri = NULL, .loader = &FingerTERMload, .opcodes = "CDGHLSU",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TIME - Time and Date functions
 	{ .fprint = 0x54494d45, .uri = NULL, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",
-	  .url = "http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html", .safe = true },
+	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TOYS - Funge-98 Standard Toys
 	{ .fprint = 0x544f5953, .uri = NULL, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },

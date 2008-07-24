@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FPSP
-%url:http://web.archive.org/web/20020816190021/http://homer.span.ch/~spaw1088/funge.html
+%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
 %desc:Single precision floating point
 %safe:true
 %begin-instrs
