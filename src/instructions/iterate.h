@@ -36,17 +36,18 @@
 /**
  * Implements the k instruction, prototype differ depending on if
  * CONCURRENT_FUNGE is defined.
- * @param ip Instruction pointer to operate on
+ * @param ip Instruction pointer to operate on.
  * @param IPList Pointer to IP list (only if CONCURRENT_FUNGE is defined).
- * @param threadindex What index in IPList the IP we operate on is
+ * @param threadindex What index in IPList the IP we operate on is.
+ * @param isRecursive Should be false, only set to true by k itself when iterating over another k.
  * (only if CONCURRENT_FUNGE is defined).
  */
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex);
+void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive);
 #else
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunIterate(instructionPointer * restrict ip);
+void RunIterate(instructionPointer * restrict ip, bool isRecursive);
 #endif
 
 #endif

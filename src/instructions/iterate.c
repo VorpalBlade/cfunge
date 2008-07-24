@@ -29,9 +29,15 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
+#  define RunSelf() RunIterate(ip, IPList, threadindex, true)
 #else
-FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
+#  define RunSelf() RunIterate(ip, true)
+#endif
+
+#ifdef CONCURRENT_FUNGE
+FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
+#else
+FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursive)
 #endif
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
@@ -87,13 +93,6 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 		switch (kInstr) {
 			case 'z':
 				return;
-			case 'k':
-				// FIXME: Handle nested k correctly instead. I hate this one...
-				if (SettingWarnings)
-					fprintf(stderr, "WARN: k at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI " cannot execute: %c (%" FUNGEDATAPRI ")\n",
-					        ip->position.x, ip->position.y, (char)kInstr, kInstr);
-				ipReverse(ip);
-				break;
 			case '@':
 				// Iterating over @ is insane, to avoid issues when doing
 				// concurrent execution lets just kill current IP.
@@ -120,21 +119,38 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip)
 						fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
 						        iters, (char)kInstr, kInstr);
 #    endif /* DISABLE_TRACE */
+
+					switch (kInstr) {
 #ifdef CONCURRENT_FUNGE
-					if (kInstr == 't')
-						*threadindex = ipListDuplicateIP(IPList, *threadindex);
-					else
-						ExecuteInstruction(kInstr, ip, threadindex);
-#else
-					ExecuteInstruction(kInstr, ip);
+						case 't':
+							*threadindex = ipListDuplicateIP(IPList, *threadindex);
+							break;
 #endif
+						case 'k':
+							// I HATE this one...
+							ip->position = posinstr;
+							RunSelf();
+							// Check position here.
+							if (posinstr.x == ip->position.x
+							    && posinstr.y == ip->position.y)
+								ip->position = oldpos;
+							break;
+						default:
+#ifdef CONCURRENT_FUNGE
+							ExecuteInstruction(kInstr, ip, threadindex);
+#else
+							ExecuteInstruction(kInstr, ip);
+#endif
+							break;
+					}
 				}
 #ifdef CONCURRENT_FUNGE
 				if (kInstr == 't')
 					ip = &((*IPList)->ips[oldindex]);
 #endif
 				// If delta and ip did not change, move forward in Funge-108.
-				if (SettingCurrentStandard == stdver108) {
+				// ...unless we are recursive, to cause correct behaviour...
+				if (SettingCurrentStandard == stdver108 && !isRecursive) {
 					if (olddelta.x == ip->delta.x
 					    && olddelta.y == ip->delta.y
 					    && oldpos.x == ip->position.x

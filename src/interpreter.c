@@ -252,9 +252,9 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 			}
 			case 'k':
 #ifdef CONCURRENT_FUNGE
-				RunIterate(ip, &IPList, threadindex);
+				RunIterate(ip, &IPList, threadindex, false);
 #else
-				RunIterate(ip);
+				RunIterate(ip, false);
 #endif
 				break;
 
