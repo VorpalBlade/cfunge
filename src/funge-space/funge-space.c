@@ -264,6 +264,9 @@ FungeSpaceLoad(const char * restrict filename)
 	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
 		for (size_t i = 0; i < linelen; i++) {
 			switch (buf[i]) {
+				// Ignore Form Feed.
+				case '\f':
+					break;
 				case '\r':
 					lastwascr = true;
 					break;
@@ -316,6 +319,9 @@ FungeSpaceLoadString(const char * restrict program)
 
 	for (size_t i = 0; i < linelen; i++) {
 		switch (program[i]) {
+			// Ignore Form Feed.
+			case '\f':
+				break;
 			case '\r':
 				lastwascr = true;
 				break;
@@ -385,6 +391,9 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 				x++;
 			} else {
 				switch (buf[i]) {
+					// Ignore Form Feed.
+					case '\f':
+						break;
 					case '\r':
 						lastwascr = true;
 						break;
