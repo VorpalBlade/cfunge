@@ -77,7 +77,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// CPLI - Complex Integer extension
 	{ .fprint = 0x43504c49, .uri = NULL, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
-	// DIRF - Directory functions extension, NOT SAFE
+	// DIRF - Directory functions extension
 	{ .fprint = 0x44495246, .uri = NULL, .loader = &FingerDIRFload, .opcodes = "CMR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FILE - File I/O functions
