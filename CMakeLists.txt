@@ -98,6 +98,11 @@ IF(CONCURRENT_FUNGE)
 	ADD_DEFINITIONS(-DCONCURRENT_FUNGE)
 ENDIF(CONCURRENT_FUNGE)
 
+OPTION(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
+IF(NOT ENABLE_TRACE)
+	ADD_DEFINITIONS(-DDISABLE_TRACE)
+ENDIF(NOT ENABLE_TRACE)
+
 OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with GC)." OFF)
 IF(USE_MUDFLAP)
 	if (USE_GC)

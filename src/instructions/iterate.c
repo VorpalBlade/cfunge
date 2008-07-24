@@ -29,10 +29,22 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-#  define RunSelf() RunIterate(ip, IPList, threadindex, true)
+#  define RUNSELF() RunIterate(ip, IPList, threadindex, true)
+#  define RUNINSTR() ExecuteInstruction(kInstr, ip, threadindex)
 #else
-#  define RunSelf() RunIterate(ip, true)
+#  define RUNSELF() RunIterate(ip, true)
+#  define RUNINSTR() ExecuteInstruction(kInstr, ip)
 #endif
+
+#ifndef DISABLE_TRACE
+static inline void PrintTrace(FUNGEDATATYPE iters, FUNGEDATATYPE kInstr)
+{
+	if (SettingTraceLevel > 5)
+		fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
+				iters, (char)kInstr, kInstr);
+}
+#endif
+
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
@@ -96,11 +108,8 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 			case '@':
 				// Iterating over @ is insane, to avoid issues when doing
 				// concurrent execution lets just kill current IP.
-#ifdef CONCURRENT_FUNGE
-				ExecuteInstruction(kInstr, ip, threadindex);
-#else
-				ExecuteInstruction(kInstr, ip);
-#endif
+				// In other words, execute this once.
+				RUNINSTR();
 				break;
 			default: {
 				// Ok we got to execute it!
@@ -114,11 +123,9 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 				ssize_t oldindex = *threadindex;
 #endif
 				while (iters--) {
-#    ifndef DISABLE_TRACE
-					if (SettingTraceLevel > 5)
-						fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
-						        iters, (char)kInstr, kInstr);
-#    endif /* DISABLE_TRACE */
+#ifndef DISABLE_TRACE
+					PrintTrace(iters, kInstr);
+#endif /* DISABLE_TRACE */
 
 					switch (kInstr) {
 #ifdef CONCURRENT_FUNGE
@@ -129,18 +136,14 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 						case 'k':
 							// I HATE this one...
 							ip->position = posinstr;
-							RunSelf();
+							RUNSELF();
 							// Check position here.
 							if (posinstr.x == ip->position.x
 							    && posinstr.y == ip->position.y)
 								ip->position = oldpos;
 							break;
 						default:
-#ifdef CONCURRENT_FUNGE
-							ExecuteInstruction(kInstr, ip, threadindex);
-#else
-							ExecuteInstruction(kInstr, ip);
-#endif
+							RUNINSTR();
 							break;
 					}
 				}
