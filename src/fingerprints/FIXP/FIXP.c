@@ -35,32 +35,32 @@
 #define FUNGE_PI_180 (M_PI / 180.0)
 #define FUNGE_180_PI (180.0 / M_PI)
 
-// A - and
+/// A - and
 static void FingerFIXPand(instructionPointer * ip)
 {
 	StackPush(ip->stack, StackPop(ip->stack) & StackPop(ip->stack));
 }
 
-// B - acos
+/// B - acos
 static void FingerFIXPacos(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * acos((double)n / 10000) * FUNGE_180_PI);
+	d = roundl(10000 * acosl((long double)n / 10000) * FUNGE_180_PI);
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// C - cos
+/// C - cos
 static void FingerFIXPcos(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * cos(((double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * cosl(((long double)n / 10000) * FUNGE_PI_180));
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 
 }
 
-// D - rand
+/// D - rand
 static void FingerFIXPrand(instructionPointer * ip)
 {
 	FUNGEDATATYPE n = StackPop(ip->stack);
@@ -72,94 +72,94 @@ static void FingerFIXPrand(instructionPointer * ip)
 		StackPush(ip->stack, random() % n);
 }
 
-// I - sin
+/// I - sin
 static void FingerFIXPsin(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * sin(((double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * sinl(((long double)n / 10000) * FUNGE_PI_180));
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// J - asin
+/// J - asin
 static void FingerFIXPasin(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * asin((double)n / 10000) * FUNGE_180_PI);
+	d = roundl(10000 * asinl((long double)n / 10000) * FUNGE_180_PI);
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// N - neg
+/// N - neg
 static void FingerFIXPneg(instructionPointer * ip)
 {
 	StackPush(ip->stack, -StackPop(ip->stack));
 }
 
-// O - or
+/// O - or
 static void FingerFIXPor(instructionPointer * ip)
 {
 	StackPush(ip->stack, StackPop(ip->stack) | StackPop(ip->stack));
 }
 
-// P - mulpi
+/// P - mulpi
 static void FingerFIXPmulpi(instructionPointer * ip)
 {
 	StackPush(ip->stack, (FUNGEDATATYPE)(M_PI * StackPop(ip->stack)));
 }
 
-// Q - sqrt
+/// Q - sqrt
 static void FingerFIXPsqrt(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(sqrt((double)n));
+	d = roundl(sqrtl((long double)n));
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// R - pow
+/// R - pow
 static void FingerFIXPpow(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE a, b;
 	b = StackPop(ip->stack);
 	a = StackPop(ip->stack);
-	d = round(pow((double)a, (double)b));
+	d = roundl(powl((long double)a, (long double)b));
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// S - signbit
+/// S - signbit
 static void FingerFIXPsignbit(instructionPointer * ip)
 {
 	FUNGEDATATYPE n = StackPop(ip->stack);
 	StackPush(ip->stack, n > 0 ? 1 : (n < 0 ? -1 : 0));
 }
 
-// T - tan
+/// T - tan
 static void FingerFIXPtan(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * tan(((double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * tanl(((long double)n / 10000) * FUNGE_PI_180));
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// U - atan
+/// U - atan
 static void FingerFIXPatan(instructionPointer * ip)
 {
-	double d;
+	long double d;
 	FUNGEDATATYPE n = StackPop(ip->stack);
-	d = round(10000 * atan((double)n / 10000)  * FUNGE_180_PI);
+	d = roundl(10000 * atanl((long double)n / 10000)  * FUNGE_180_PI);
 	StackPush(ip->stack, (FUNGEDATATYPE)d);
 }
 
-// V - abs
+/// V - abs
 static void FingerFIXPabs(instructionPointer * ip)
 {
 	StackPush(ip->stack, ABS(StackPop(ip->stack)));
 }
 
-// X - xor
+/// X - xor
 static void FingerFIXPxor(instructionPointer * ip)
 {
 	StackPush(ip->stack, StackPop(ip->stack) ^ StackPop(ip->stack));

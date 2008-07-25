@@ -45,7 +45,7 @@
 // Used when reading back the result
 #define STRINGALLOCCHUNK 1024
 
-// S - Is Perl loaded? Or will it be shelled?
+/// S - Is Perl loaded? Or will it be shelled?
 static void FingerPERLshelled(instructionPointer * ip)
 {
 	StackPush(ip->stack, 1); // Not Perl, at least last I checked this was C.
@@ -179,7 +179,7 @@ static char * RunPerl(const char * restrict perlcode)
 	} // switch
 }
 
-// E - Evaluate 0gnirts
+/// E - Evaluate 0gnirts
 static void FingerPERLeval(instructionPointer * ip)
 {
 	char * restrict result;
@@ -195,7 +195,7 @@ static void FingerPERLeval(instructionPointer * ip)
 	free_nogc(result);
 }
 
-// I - As E but cast to integer.
+/// I - As E but cast to integer.
 static void FingerPERLintEval(instructionPointer * ip)
 {
 	char * restrict result;

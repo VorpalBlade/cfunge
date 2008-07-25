@@ -26,7 +26,7 @@
 #include <sys/time.h>
 #include <assert.h>
 
-// The resolution.
+/// The resolution.
 static suseconds_t resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
@@ -37,7 +37,7 @@ static inline FUNGEDATATYPE GetDifference(const struct timeval * before,
 	       + (FUNGEDATATYPE)after->tv_usec - (FUNGEDATATYPE)before->tv_usec;
 }
 
-// This function checks that the IP got a non-null HRTI data pointer.
+/// This function checks that the IP got a non-null HRTI data pointer.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool CheckIPgotHRTI(instructionPointer * ip)
 {
@@ -51,7 +51,7 @@ static inline bool CheckIPgotHRTI(instructionPointer * ip)
 	return true;
 }
 
-// E - Erase Mark
+/// E - Erase Mark
 static void FingerHRTIeraseMark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
@@ -63,13 +63,13 @@ static void FingerHRTIeraseMark(instructionPointer * ip)
 	ip->fingerHRTItimestamp->tv_usec = 0;
 }
 
-// G - Granularity
+/// G - Granularity
 static void FingerHRTIgranularity(instructionPointer * ip)
 {
 	StackPush(ip->stack, (FUNGEDATATYPE)resolution);
 }
 
-// M - Mark
+/// M - Mark
 static void FingerHRTImark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
@@ -80,7 +80,7 @@ static void FingerHRTImark(instructionPointer * ip)
 	gettimeofday(ip->fingerHRTItimestamp, NULL);
 }
 
-// T - Timer
+/// T - Timer
 static void FingerHRTItimer(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp || (ip->fingerHRTItimestamp->tv_sec == 0)) {
@@ -92,15 +92,13 @@ static void FingerHRTItimer(instructionPointer * ip)
 	}
 }
 
-// S - Second
+/// S - Second
 static void FingerHRTIsecond(instructionPointer * ip)
 {
 	struct timeval curTime;
 	gettimeofday(&curTime, NULL);
 	StackPush(ip->stack, (FUNGEDATATYPE)curTime.tv_usec);
 }
-
-
 
 FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
 {

@@ -36,68 +36,68 @@ static bool TIMEuseUTC = false;
 	else \
 		curTime = localtime(&now);
 
-// D - Get day of month.
+/// D - Get day of month.
 static void FingerTIMEday(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_mday);
 }
 
-// F - Get day of year.
+/// F - Get day of year.
 static void FingerTIMEdayOfYear(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_yday + 1);
 }
 
-// G - Set to use UTC.
+/// G - Set to use UTC.
 static void FingerTIMEuseGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = true;
 }
 
-// H - Get hour.
+/// H - Get hour.
 static void FingerTIMEhour(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_hour);
 }
 
-// L - Set to use local time.
+/// L - Set to use local time.
 static void FingerTIMEuseLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = false;
 }
 
-// M - Get minute.
+/// M - Get minute.
 static void FingerTIMEminute(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_min);
 }
 
-// O - Get month.
+/// O - Get month.
 static void FingerTIMEmonth(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_mon + 1);
 }
 
-// S - Get second.
+/// S - Get second.
 static void FingerTIMEsecond(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_sec);
 }
 
-// W - Get day of week.
+/// W - Get day of week.
 static void FingerTIMEdayOfWeek(instructionPointer * ip)
 {
 	GetTheTime
 	StackPush(ip->stack, curTime->tm_wday + 1);
 }
 
-// Y - Get year.
+/// Y - Get year.
 static void FingerTIMEyear(instructionPointer * ip)
 {
 	GetTheTime

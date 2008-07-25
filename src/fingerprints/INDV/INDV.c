@@ -22,7 +22,7 @@
 #include "INDV.h"
 #include "../../stack.h"
 
-// This simply fetches the second vector.
+/// This simply fetches the second vector.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 {
@@ -34,21 +34,21 @@ static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 	return b;
 }
 
-// G - Get value using indirect vector
+/// G - Get value using indirect vector
 static void FingerINDVgetNum(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
 	StackPush(ip->stack, FungeSpaceGet(&v));
 }
 
-// P - Put value using indirect vector
+/// P - Put value using indirect vector
 static void FingerINDVputNum(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
 	FungeSpaceSet(StackPop(ip->stack), &v);
 }
 
-// V - Get vector using indirect vector
+/// V - Get vector using indirect vector
 static void FingerINDVgetVec(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
@@ -60,7 +60,7 @@ static void FingerINDVgetVec(instructionPointer * ip)
 	);
 }
 
-// W - Write vector using indirect vector
+/// W - Write vector using indirect vector
 static void FingerINDVputVec(instructionPointer * ip)
 {
 	fungeVector a, b;

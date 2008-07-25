@@ -33,7 +33,7 @@
 
 // Also: code based on CCBI.
 
-// A - gable
+/// A - gable
 static void FingerTOYSgable(instructionPointer * ip)
 {
 	FUNGEDATATYPE n, c;
@@ -50,7 +50,7 @@ static void FingerTOYSgable(instructionPointer * ip)
 		StackPush(ip->stack, c);
 }
 
-// B - pair of shoes
+/// B - pair of shoes
 static void FingerTOYSpairOfShoes(instructionPointer * ip)
 {
 	// Got no idea if this is correct.
@@ -64,7 +64,7 @@ static void FingerTOYSpairOfShoes(instructionPointer * ip)
 
 }
 
-// C - bracelet
+/// C - bracelet
 static void FingerTOYSbracelet(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -86,13 +86,13 @@ static void FingerTOYSbracelet(instructionPointer * ip)
 			                 VectorCreateRef(x, y), &t);
 }
 
-// D - toilet seat
+/// D - toilet seat
 static void FingerTOYStoiletSeat(instructionPointer * ip)
 {
 	StackPush(ip->stack, StackPop(ip->stack) - 1);
 }
 
-// E - pitchfork head
+/// E - pitchfork head
 static void FingerTOYSpitchforkHead(instructionPointer * ip)
 {
 	FUNGEDATATYPE sum = 0;
@@ -102,7 +102,7 @@ static void FingerTOYSpitchforkHead(instructionPointer * ip)
 	StackPush(ip->stack, sum);
 }
 
-// F - calipers
+/// F - calipers
 static void FingerTOYScalipers(instructionPointer * ip)
 {
 	fungeVector t;
@@ -119,7 +119,7 @@ static void FingerTOYScalipers(instructionPointer * ip)
 			FungeSpaceSet(StackPop(ip->stack), VectorCreateRef(x, y));
 }
 
-// G - counterclockwise
+/// G - counterclockwise
 static void FingerTOYScounterclockwise(instructionPointer * ip)
 {
 	fungeVector o;
@@ -136,7 +136,7 @@ static void FingerTOYScounterclockwise(instructionPointer * ip)
 			StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(x, y)));
 }
 
-// H - pair of stilts
+/// H - pair of stilts
 static void FingerTOYSpairOfStilts(instructionPointer * ip)
 {
 	FUNGEDATATYPE a, b;
@@ -150,13 +150,13 @@ static void FingerTOYSpairOfStilts(instructionPointer * ip)
 		StackPush(ip->stack, a << b);
 }
 
-// I - doric column
+/// I - doric column
 static void FingerTOYSdoricColumn(instructionPointer * ip)
 {
 	StackPush(ip->stack, StackPop(ip->stack) + 1);
 }
 
-// J - fishhook
+/// J - fishhook
 static void FingerTOYSfishhook(instructionPointer * ip)
 {
 	fungeRect bounds;
@@ -176,7 +176,7 @@ static void FingerTOYSfishhook(instructionPointer * ip)
 	}
 }
 
-// K - scissors
+/// K - scissors
 static void FingerTOYSscissors(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -198,7 +198,7 @@ static void FingerTOYSscissors(instructionPointer * ip)
 			                 VectorCreateRef(x, y), &t);
 }
 
-// L - corner
+/// L - corner
 static void FingerTOYScorner(instructionPointer * ip)
 {
 	ipTurnLeft(ip);
@@ -208,7 +208,7 @@ static void FingerTOYScorner(instructionPointer * ip)
 	ipTurnRight(ip);
 }
 
-// M - kittycat
+/// M - kittycat
 static void FingerTOYSkittycat(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -232,13 +232,13 @@ static void FingerTOYSkittycat(instructionPointer * ip)
 		}
 }
 
-// N - lightning bolt
+/// N - lightning bolt
 static void FingerTOYSlightningBolt(instructionPointer * ip)
 {
 	StackPush(ip->stack, -StackPop(ip->stack));
 }
 
-// O - boulder
+/// O - boulder
 static void FingerTOYSboulder(instructionPointer * ip)
 {
 	fungeRect bounds;
@@ -257,7 +257,7 @@ static void FingerTOYSboulder(instructionPointer * ip)
 	}
 }
 
-// P - mailbox
+/// P - mailbox
 static void FingerTOYSmailbox(instructionPointer * ip)
 {
 	FUNGEDATATYPE product = 1;
@@ -267,7 +267,7 @@ static void FingerTOYSmailbox(instructionPointer * ip)
 	StackPush(ip->stack, product);
 }
 
-// Q - necklace
+/// Q - necklace
 static void FingerTOYSnecklace(instructionPointer * ip)
 {
 	FUNGEDATATYPE v = StackPop(ip->stack);
@@ -277,7 +277,7 @@ static void FingerTOYSnecklace(instructionPointer * ip)
 	ipForward(ip, 1);
 }
 
-// R - can opener
+/// R - can opener
 static void FingerTOYScanOpener(instructionPointer * ip)
 {
 	ipTurnRight(ip);
@@ -287,7 +287,7 @@ static void FingerTOYScanOpener(instructionPointer * ip)
 	ipTurnLeft(ip);
 }
 
-// S - chicane
+/// S - chicane
 static void FingerTOYSchicane(instructionPointer * ip)
 {
 	fungeVector d, o;
@@ -309,7 +309,7 @@ static void FingerTOYSchicane(instructionPointer * ip)
 			FungeSpaceSet(c, VectorCreateRef(x, y));
 }
 
-// T - barstool
+/// T - barstool
 static void FingerTOYSbarstool(instructionPointer * ip)
 {
 	switch (StackPop(ip->stack)) {
@@ -319,7 +319,7 @@ static void FingerTOYSbarstool(instructionPointer * ip)
 	}
 }
 
-// U - tumbler
+/// U - tumbler
 static void FingerTOYStumbler(instructionPointer * ip)
 {
 	long int rnd = random() % 4;
@@ -332,7 +332,7 @@ static void FingerTOYStumbler(instructionPointer * ip)
 	}
 }
 
-// V - dixiecup
+/// V - dixiecup
 static void FingerTOYSdixiecup(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -356,7 +356,7 @@ static void FingerTOYSdixiecup(instructionPointer * ip)
 		}
 }
 
-// W - television antenna
+/// W - television antenna
 static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 {
 	fungeVector vect;
@@ -373,26 +373,24 @@ static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 		ipReverse(ip);
 }
 
-// X - buried treasure
+/// X - buried treasure
 static void FingerTOYSburiedTreasure(instructionPointer * ip)
 {
 	ip->position.x++;
 }
 
-// Y - slingshot
+/// Y - slingshot
 static void FingerTOYSslingshot(instructionPointer * ip)
 {
 	ip->position.y++;
 }
 
-// Z - barn door
+/// Z - barn door
 static void FingerTOYSbarnDoor(instructionPointer * ip)
 {
 	// As this needs trefunge to work.
 	ipReverse(ip);
 }
-
-
 
 bool FingerTOYSload(instructionPointer * ip)
 {

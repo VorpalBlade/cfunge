@@ -24,7 +24,7 @@
 
 #include <math.h>
 
-// A - add
+/// A - add
 static void FingerCPLIadd(instructionPointer * ip)
 {
 	FUNGEDATATYPE ar, ai, br, bi;
@@ -36,7 +36,7 @@ static void FingerCPLIadd(instructionPointer * ip)
 	StackPush(ip->stack, ai + bi);
 }
 
-// D - div
+/// D - div
 static void FingerCPLIdiv(instructionPointer * ip)
 {
 	FUNGEDATATYPE ar, ai, br, bi, denom;
@@ -54,7 +54,7 @@ static void FingerCPLIdiv(instructionPointer * ip)
 	}
 }
 
-// M - mul
+/// M - mul
 static void FingerCPLImul(instructionPointer * ip)
 {
 	FUNGEDATATYPE ar, ai, br, bi;
@@ -66,7 +66,7 @@ static void FingerCPLImul(instructionPointer * ip)
 	StackPush(ip->stack, ar*bi + ai*br);
 }
 
-// O - out
+/// O - out
 static void FingerCPLIout(instructionPointer * ip)
 {
 	FUNGEDATATYPE r, i;
@@ -78,7 +78,7 @@ static void FingerCPLIout(instructionPointer * ip)
 	printf("%" FUNGEDATAPRI "i ", i);
 }
 
-// S - sub
+/// S - sub
 static void FingerCPLIsub(instructionPointer * ip)
 {
 	FUNGEDATATYPE ar, ai, br, bi;
@@ -90,7 +90,7 @@ static void FingerCPLIsub(instructionPointer * ip)
 	StackPush(ip->stack, ai - bi);
 }
 
-// V - abs
+/// V - abs
 static void FingerCPLIabs(instructionPointer * ip)
 {
 	FUNGEDATATYPE r, i;
