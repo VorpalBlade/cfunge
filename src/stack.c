@@ -259,7 +259,7 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 
 FUNGE_ATTR_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
 {
-	char * x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
+	char * restrict x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
 
 	for (size_t i = 0; i < len; i++) {
 		x[i] = StackPop(stack);

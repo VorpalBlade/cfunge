@@ -412,7 +412,7 @@ static inline bool GeneratePaths(genxWriter gw)
 	genxElement g_path;
 	genxAttribute g_style, g_d;
 	genxStatus status;
-	Path *p, *prev;
+	Path *p, *prev = NULL;
 	StringBuffer * sb;
 	char * path_data;
 
@@ -506,7 +506,7 @@ static inline bool GenerateCircles(genxWriter gw)
 static void FingerTURTprintDrawing(instructionPointer * ip)
 {
 	FILE * file;
-	genxWriter gw;
+	genxWriter gw = NULL;
 
 	tryAddPoint();
 
