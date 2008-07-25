@@ -224,8 +224,7 @@ static void FingerFILEfopen(instructionPointer * ip)
 
 	h = AllocateHandle();
 	if (h == -1) {
-		ipReverse(ip);
-		goto end;
+		goto error;
 	}
 
 	switch (mode) {
@@ -237,20 +236,21 @@ static void FingerFILEfopen(instructionPointer * ip)
 		case 5: handles[h]->file = fopen(filename, "a+b"); break;
 		default:
 			FreeHandle(h);
-			ipReverse(ip);
-			goto end;
+			goto error;
 	}
 	if (!handles[h]->file) {
 		FreeHandle(h);
-		ipReverse(ip);
-		goto end;
+		goto error;
 	}
 	if ((mode == 2) || (mode == 5))
 		rewind(handles[h]->file);
 
 	handles[h]->buffvect = vect;
 	StackPush(ip->stack, h);
+	goto end;
 // Look... The alternatives to the goto were worse...
+error:
+	ipReverse(ip);
 end:
 	StackFreeString(filename);
 	return;
