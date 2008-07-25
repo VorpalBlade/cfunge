@@ -1,0 +1,7 @@
+v
+                  > 'W,a,@
+>221k;  ;  ;   * 4w 'C,a,@
+                  > 'W,a,@
+
+Note that Funge98 is undef here but Funge108 needs it to work in the
+way that produce C as output. Yes they are unmatched to also test wrapping around.

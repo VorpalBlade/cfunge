@@ -1,0 +1,15 @@
+32kk5 >:#._a,                        v
+v"Correct output is:"a"5 5 5 5 5 5 5 5"<
+>:#,_a,@
+
+This tests k on k...
+Output should be:
+5 5 5 5 5 5 5 5
+Correct output is:
+5 5 5 5 5 5 5 5
+
+Here is how the stack should look after the different steps, spaces for clarity:
+First iteration of inner k:             555
+Next itereation where inner k pops a 5: 55
+Now it pushed five 5s:                  55 55555
+Finally the code resumes at the 5:      55 55555 5
