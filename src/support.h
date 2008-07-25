@@ -183,4 +183,8 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is on your own risk!"
 #endif
 
+#ifndef __STDC_IEC_559__
+#  error "cfunge requires the floating point support to conform to the IEC 60559 floating-point standard in order to work."
+#endif
+
 #endif
