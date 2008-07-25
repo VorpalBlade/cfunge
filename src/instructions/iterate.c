@@ -45,6 +45,28 @@ static inline void PrintTrace(FUNGEDATATYPE iters, FUNGEDATATYPE kInstr)
 }
 #endif
 
+/// This moves IP to next instruction, with respect to ;, space and current delta.
+static inline FUNGEDATATYPE FindNextInstr(instructionPointer * restrict ip, FUNGEDATATYPE kInstr) {
+	bool injump = false;
+	if (kInstr == ';')
+		injump = true;
+	while (true) {
+		ipForward(ip, 1);
+		kInstr = FungeSpaceGet(&ip->position);
+		if (kInstr == ';') {
+			injump = !injump;
+			continue;
+		} else if (kInstr == ' ') {
+			continue;
+		} else {
+			if (injump)
+				continue;
+			else
+				break;
+		}
+	}
+	return kInstr;
+}
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
@@ -54,7 +76,13 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 {
 	FUNGEDATATYPE iters = StackPop(ip->stack);
 	if (iters == 0) {
+		FUNGEDATATYPE kInstr;
+		// Skip past next instruction.
 		ipForward(ip, 1);
+		kInstr = FungeSpaceGet(&ip->position);
+		if (kInstr == ' ' || kInstr == ';') {
+			kInstr = FindNextInstr(ip, kInstr);
+		}
 	} else if (iters < 0) {
 		ipReverse(ip);
 	} else {
@@ -74,28 +102,11 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 		kInstr = FungeSpaceGet(&ip->position);
 
 		// We should reach past any spaces and ;; pairs and execute first
-		// instruction we find. This is undef in 98 but defined in 108.
-
+		// instruction we find. This is unclear/undef in 98 but defined in 108.
 		if (kInstr == ' ' || kInstr == ';') {
-			bool injump = false;
-			if (kInstr == ';')
-				injump = true;
-			while (true) {
-				ipForward(ip, 1);
-				kInstr = FungeSpaceGet(&ip->position);
-				if (kInstr == ';') {
-					injump = !injump;
-					continue;
-				} else if (kInstr == ' ') {
-					continue;
-				} else {
-					if (injump)
-						continue;
-					else
-						break;
-				}
-			}
+			kInstr = FindNextInstr(ip, kInstr);
 		}
+
 		// First store pos where we got to restore to to "move past" instruction in Funge-108.
 		posinstr = ip->position;
 		// Then go back and execute it at k...
