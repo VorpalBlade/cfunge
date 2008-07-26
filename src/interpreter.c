@@ -127,7 +127,7 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 		} else {
 			int_fast8_t entry = (int_fast8_t)opcode - 'A';
 			if ((ip->fingerOpcodes[entry]->top > 0)
-				&& ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
+			    && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
 				// Call the fingerprint.
 				ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
 			} else {

@@ -391,9 +391,7 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 				x++;
 			} else {
 				switch (buf[i]) {
-					// Ignore Form Feed.
-					case '\f':
-						break;
+					// Don't ignore Form Feed here...
 					case '\r':
 						lastwascr = true;
 						break;
