@@ -105,14 +105,19 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
+			ip->stringLastWasSpace = false;
 			ip->mode = ipmCODE;
 		} else if (opcode != ' ') {
 			ip->stringLastWasSpace = false;
 			StackPush(ip->stack, opcode);
-		} else if (((opcode == ' ') && (!ip->stringLastWasSpace))
-		           || (SettingCurrentStandard == stdver93)) {
-			ip->stringLastWasSpace = true;
-			StackPush(ip->stack, opcode);
+		} else if (opcode == ' ') {
+			if ((!ip->stringLastWasSpace) || (SettingCurrentStandard == stdver93)) {
+				ip->stringLastWasSpace = true;
+				StackPush(ip->stack, opcode);
+			// More than one space takes no tick in concurrent Funge.
+			} else {
+				ReturnFromExecuteInstruction(true);
+			}
 		}
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {

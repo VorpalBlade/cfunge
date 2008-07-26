@@ -96,7 +96,7 @@ Short descriptions of implemented fingerprints:
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
- FILE File I/O functions
+ FILE File I/O functions (not available in sandbox mode)
  FIXP Some useful math functions
  FPDP Double precision floating point
  FPSP Single precision floating point
