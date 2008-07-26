@@ -97,11 +97,11 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * re
 }
 #endif
 
-
+/// Add an entry to an OP code stack.
 FUNGE_ATTR_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
-	// Do we need to realloc?
+	// Check if we need to realloc.
 	if (stack->top == stack->size) {
 		stack->entries = (fingerprintOpcode*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
 		if (!stack->entries)
@@ -135,6 +135,7 @@ static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack)
  * Opcode Manager functions *
  ****************************/
 
+/// Set up the fingerprint stacks for an IP.
 FUNGE_ATTR_FAST bool ManagerCreate(instructionPointer * restrict ip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
@@ -145,6 +146,7 @@ FUNGE_ATTR_FAST bool ManagerCreate(instructionPointer * restrict ip)
 	return true;
 }
 
+/// Clean up the fingerprint stacks for an IP.
 FUNGE_ATTR_FAST void ManagerFree(instructionPointer * restrict ip)
 {
 	if (!ip)
@@ -155,6 +157,7 @@ FUNGE_ATTR_FAST void ManagerFree(instructionPointer * restrict ip)
 }
 
 #ifdef CONCURRENT_FUNGE
+/// Duplicate the opcode stacks from one ip to another, for concurrent Funge.
 FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
                                  instructionPointer * restrict newip)
 {
