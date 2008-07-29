@@ -23,6 +23,9 @@
 #include "funge-space.h"
 #include "../../lib/libghthash/ght_hash_table.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,6 +34,11 @@
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
 #  include <fcntl.h>
 #endif
+
+#if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
+#  error "cfunge needs a working mmap(), which the system claims it doesn't support."
+#endif
+
 
 #define FUNGESPACEINITIALSIZE 150000
 
@@ -244,12 +252,63 @@ static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
 	}
 }
 
+// Returns fd, addr and length.
+FUNGE_ATTR_FAST
+static int DoMmap(const char * restrict filename, char **maddr, size_t * restrict length) {
+	char *addr = NULL;
+	struct stat sb;
+	int fd = -1;
+	size_t len;
+
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return -1;
+
+	if (fstat(fd, &sb) == -1) {
+		perror("fstat on file failed");
+		goto error;
+	}
+	if (sb.st_size == 0) {
+		fputs("Can't run on empty file.\n", stderr);
+		goto error;
+	}
+	len = sb.st_size;
+	// mmap() it.
+	addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (addr == MAP_FAILED) {
+		perror("mmap() on file failed");
+		goto error;
+	}
+	
+	*maddr = addr;
+	*length = len;
+	return fd;
+error:
+	if (addr != NULL) {
+		munmap(addr, len);
+	}
+	if (fd != -1) {
+		close(fd);
+	}
+	return -1;
+}
+
+static void DoMmapCleanup(int fd, char *addr, size_t length) {
+	if (addr != NULL) {
+		munmap(addr, length);
+	}
+	if (fd != -1) {
+		close(fd);
+	}
+}
+
 FUNGE_ATTR_FAST bool
 FungeSpaceLoad(const char * restrict filename)
 {
-	FILE * file;
-	char buf[1024];
-	size_t linelen = 0;
+	char *addr;
+	int fd;
+	size_t length;
+
 	bool lastwascr = false;
 	bool noendingnewline = true;
 	// Row in fungespace
@@ -257,42 +316,41 @@ FungeSpaceLoad(const char * restrict filename)
 	FUNGEVECTORTYPE x = 0;
 	assert(filename != NULL);
 
-	file = FungeSpaceOpenFile(filename);
-	if (!file)
+	fd = DoMmap(filename, &addr, &length);
+	if (fd == -1)
 		return false;
 
-	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
-		for (size_t i = 0; i < linelen; i++) {
-			switch (buf[i]) {
-				// Ignore Form Feed.
-				case '\f':
-					break;
-				case '\r':
-					lastwascr = true;
-					break;
-				case '\n':
+	for (size_t i = 0; i < length; i++) {
+		switch (addr[i]) {
+			// Ignore Form Feed.
+			case '\f':
+				break;
+			case '\r':
+				lastwascr = true;
+				break;
+			case '\n':
+				if (fspace->bottomRightCorner.x < x)
+					fspace->bottomRightCorner.x = x;
+				x = 0;
+				y++;
+				lastwascr = false;
+				noendingnewline = false;
+				break;
+			default:
+				if (lastwascr) {
 					if (fspace->bottomRightCorner.x < x)
 						fspace->bottomRightCorner.x = x;
+					lastwascr = false;
 					x = 0;
 					y++;
-					lastwascr = false;
-					noendingnewline = false;
-					break;
-				default:
-					if (lastwascr) {
-						if (fspace->bottomRightCorner.x < x)
-							fspace->bottomRightCorner.x = x;
-						lastwascr = false;
-						x = 0;
-						y++;
-					}
-					FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y));
-					x++;
-					noendingnewline = true;
-					break;
-			}
+				}
+				FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y));
+				x++;
+				noendingnewline = true;
+				break;
 		}
 	}
+
 	if (fspace->bottomRightCorner.x < x)
 		fspace->bottomRightCorner.x = x;
 	if (lastwascr) {
@@ -302,9 +360,12 @@ FungeSpaceLoad(const char * restrict filename)
 	if (noendingnewline) y++;
 	if (fspace->bottomRightCorner.y < y)
 		fspace->bottomRightCorner.y = y;
-	fclose(file);
+
+	// Cleanup
+	DoMmapCleanup(fd, addr, length);
 	return true;
 }
+
 
 #ifdef FUNGE_EXTERNAL_LIBRARY
 FUNGE_ATTR_FAST void
@@ -365,10 +426,11 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
                        fungeVector         * restrict size,
                        bool binary)
 {
-	FILE * file;
-	char buf[1024];
+	char *addr;
+	int fd;
+	size_t length;
+
 	bool lastwascr = false;
-	size_t linelen = 0;
 
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;
@@ -376,49 +438,48 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	assert(offset != NULL);
 	assert(size != NULL);
 
-	file = FungeSpaceOpenFile(filename);
-	if (!file)
+	fd = DoMmap(filename, &addr, &length);
+	if (fd == -1)
 		return false;
 
 	size->x = 0;
 	size->y = 0;
 
-	while ((linelen = fread(&buf, sizeof(char), sizeof(buf), file)) != 0) {
-		for (size_t i = 0; i < linelen; i++) {
-			if (binary) {
-				if (buf[i] != ' ')
-					FungeSpaceSetOff((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y), offset);
-				x++;
-			} else {
-				switch (buf[i]) {
-					// Don't ignore Form Feed here...
-					case '\r':
-						lastwascr = true;
-						break;
-					case '\n':
+	for (size_t i = 0; i < length; i++) {
+		if (binary) {
+			if (addr[i] != ' ')
+				FungeSpaceSetOff((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y), offset);
+			x++;
+		} else {
+			switch (addr[i]) {
+				// Don't ignore Form Feed here...
+				case '\r':
+					lastwascr = true;
+					break;
+				case '\n':
+					if (x > size->x) size->x = x;
+					x = 0;
+					y++;
+					lastwascr = false;
+					break;
+				default:
+					if (lastwascr) {
+						lastwascr = false;
 						if (x > size->x) size->x = x;
 						x = 0;
 						y++;
-						lastwascr = false;
-						break;
-					default:
-						if (lastwascr) {
-							lastwascr = false;
-							if (x > size->x) size->x = x;
-							x = 0;
-							y++;
-						}
-						if (buf[i] != ' ')
-							FungeSpaceSetOff((FUNGEDATATYPE)buf[i], VectorCreateRef(x, y), offset);
-						x++;
-						break;
-				}
+					}
+					if (addr[i] != ' ')
+						FungeSpaceSetOff((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y), offset);
+					x++;
+					break;
 			}
 		}
 	}
+
 	if (x > size->x) size->x = x;
 	if (y > size->y) size->y = y;
-	fclose(file);
+	DoMmapCleanup(fd, addr, length);
 	return true;
 }
 
