@@ -36,7 +36,7 @@
 #endif
 
 #if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
-#  error "cfunge needs a working mmap(), which the system claims it doesn't support."
+#  error "cfunge needs a working mmap(), which this system claims it doesn't have."
 #endif
 
 
@@ -231,28 +231,16 @@ void FungeSpaceDump(void)
 
 #endif
 
-FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline FILE * FungeSpaceOpenFile(const char * restrict filename)
-{
-	FILE * file;
-
-	assert(filename != NULL);
-
-	file = fopen(filename, "rb");
-	if (!file) {
-		return NULL;
-	} else {
-#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
-		// Microoptimising! Remove this if it bothers you.
-		int fd = fileno(file);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-#endif
-		return file;
-	}
-}
-
 // Returns fd, addr and length.
+/**
+ * mmap() a file.
+ * @param filename Filename to mmap().
+ * @param maddr Pointer to a char* where the mapping's address will be placed.
+ * @param length Pointer to a size_t where the size of the mapping will be placed.
+ * @return
+ * Returns the file descriptor, or -1 in case of error, o
+r -2 in case of empty file.
+ */
 FUNGE_ATTR_FAST
 static int DoMmap(const char * restrict filename, char **maddr, size_t * restrict length) {
 	char *addr = NULL;
@@ -268,20 +256,21 @@ static int DoMmap(const char * restrict filename, char **maddr, size_t * restric
 		perror("fstat on file failed");
 		goto error;
 	}
-	if (sb.st_size == 0) {
-		fputs("Can't run on empty file.\n", stderr);
-		goto error;
-	}
+
 	len = sb.st_size;
+	*length = len;
+	// An empty file isn't an error, but we can't mmap it.
+	if (len == 0) {
+		close(fd);
+		return -2;
+	}
 	// mmap() it.
 	addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (addr == MAP_FAILED) {
 		perror("mmap() on file failed");
 		goto error;
 	}
-	
 	*maddr = addr;
-	*length = len;
 	return fd;
 error:
 	if (addr != NULL) {
@@ -293,6 +282,12 @@ error:
 	return -1;
 }
 
+/**
+ * Clean up a mapping created with DoMmap().
+ * @param fd is the file descriptor to close.
+ * @param addr is the address to the mmap()ed area.
+ * @param length is the length of the mmap()ed area.
+ */
 static void DoMmapCleanup(int fd, char *addr, size_t length) {
 	if (addr != NULL) {
 		munmap(addr, length);
@@ -319,6 +314,9 @@ FungeSpaceLoad(const char * restrict filename)
 	fd = DoMmap(filename, &addr, &length);
 	if (fd == -1)
 		return false;
+	// Empty file?
+	if (fd == -2)
+		return true;
 
 	for (size_t i = 0; i < length; i++) {
 		switch (addr[i]) {
@@ -441,6 +439,9 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	fd = DoMmap(filename, &addr, &length);
 	if (fd == -1)
 		return false;
+	// Empty file?
+	if (fd == -2)
+		return true;
 
 	size->x = 0;
 	size->y = 0;
