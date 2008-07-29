@@ -184,7 +184,7 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #endif
 
 #ifndef __STDC_IEC_559__
-#  error "cfunge requires the floating point support to conform to the IEC 60559 floating-point standard in order to work."
+#  warning "cfunge requires the floating point support to conform to the IEC 60559 floating-point standard in order to work. Hoping this will work anyway...";
 #endif
 
 #endif
