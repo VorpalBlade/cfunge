@@ -31,9 +31,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <unistd.h>
-#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO != -1)
-#  include <fcntl.h>
-#endif
+#include <fcntl.h>
 
 #if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
 #  error "cfunge needs a working mmap(), which this system claims it doesn't have."

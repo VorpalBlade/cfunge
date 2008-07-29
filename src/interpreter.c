@@ -105,7 +105,6 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
 		if (opcode == '"') {
-			ip->stringLastWasSpace = false;
 			ip->mode = ipmCODE;
 		} else if (opcode != ' ') {
 			ip->stringLastWasSpace = false;
@@ -114,7 +113,7 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 			if ((!ip->stringLastWasSpace) || (SettingCurrentStandard == stdver93)) {
 				ip->stringLastWasSpace = true;
 				StackPush(ip->stack, opcode);
-			// More than one space takes no tick in concurrent Funge.
+			// More than one space in string mode take no tick in concurrent Funge.
 			} else {
 				ReturnFromExecuteInstruction(true);
 			}
