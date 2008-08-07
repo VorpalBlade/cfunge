@@ -117,6 +117,21 @@ static void FingerFILEfclose(instructionPointer * ip)
 	FreeHandle(h);
 }
 
+/// C - Delete specified file
+static void FingerFILEdelete(instructionPointer * ip)
+{
+	char * restrict filename;
+
+	filename = StackPopString(ip->stack);
+	if(!unlink(filename) != 0) {
+		ipReverse(ip);
+	}
+
+	StackFreeString(filename);
+	return;
+}
+
+
 /// G - Get string from file (like c fgets)
 static void FingerFILEfgets(instructionPointer * ip)
 {
@@ -410,6 +425,7 @@ bool FingerFILEload(instructionPointer * ip)
 			return false;
 
 	ManagerAddOpcode(FILE,  'C', fclose)
+	ManagerAddOpcode(FILE,  'D', delete)
 	ManagerAddOpcode(FILE,  'G', fgets)
 	ManagerAddOpcode(FILE,  'L', ftell)
 	ManagerAddOpcode(FILE,  'O', fopen)

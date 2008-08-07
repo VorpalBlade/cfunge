@@ -6,6 +6,7 @@
 %begin-instrs
 #I	name	desc
 C	fclose	Close a file
+D	delete	Delete specified file
 G	fgets	Get string from file (like c fgets)
 L	ftell	Get current location in file
 O	fopen	Open a file (Va = i/o buffer vector)

@@ -81,7 +81,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x44495246, .uri = NULL, .loader = &FingerDIRFload, .opcodes = "CMR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FILE - File I/O functions
-	{ .fprint = 0x46494c45, .uri = NULL, .loader = &FingerFILEload, .opcodes = "CGLOPRSW",
+	{ .fprint = 0x46494c45, .uri = NULL, .loader = &FingerFILEload, .opcodes = "CDGLOPRSW",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FIXP - Some useful math functions
 	{ .fprint = 0x46495850, .uri = NULL, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
