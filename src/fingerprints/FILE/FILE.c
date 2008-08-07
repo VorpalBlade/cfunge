@@ -123,7 +123,7 @@ static void FingerFILEdelete(instructionPointer * ip)
 	char * restrict filename;
 
 	filename = StackPopString(ip->stack);
-	if(!unlink(filename) != 0) {
+	if(unlink(filename) != 0) {
 		ipReverse(ip);
 	}
 
