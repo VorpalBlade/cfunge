@@ -86,8 +86,12 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 
 #ifdef CONCURRENT_FUNGE
 #  define ReturnFromExecuteInstruction(x) return (x)
+#  define ReturnIfCon(x) return (x)
+#  define CON_RETTYPE bool
 #else
 #  define ReturnFromExecuteInstruction(x) return
+#  define CON_RETTYPE void
+#  define ReturnIfCon(x) (x); return
 #endif
 
 
@@ -95,6 +99,25 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 	case (x): \
 		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 		break;
+
+FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+{
+	if (opcode == '"') {
+		ip->mode = ipmCODE;
+	} else if (opcode != ' ') {
+		ip->stringLastWasSpace = false;
+		StackPush(ip->stack, opcode);
+	} else if (opcode == ' ') {
+		if ((!ip->stringLastWasSpace) || (SettingCurrentStandard == stdver93)) {
+			ip->stringLastWasSpace = true;
+			StackPush(ip->stack, opcode);
+		// More than one space in string mode take no tick in concurrent Funge.
+		} else {
+			ReturnFromExecuteInstruction(true);
+		}
+	}
+	ReturnFromExecuteInstruction(false);
+}
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
@@ -104,20 +127,7 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 {
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
-		if (opcode == '"') {
-			ip->mode = ipmCODE;
-		} else if (opcode != ' ') {
-			ip->stringLastWasSpace = false;
-			StackPush(ip->stack, opcode);
-		} else if (opcode == ' ') {
-			if ((!ip->stringLastWasSpace) || (SettingCurrentStandard == stdver93)) {
-				ip->stringLastWasSpace = true;
-				StackPush(ip->stack, opcode);
-			// More than one space in string mode take no tick in concurrent Funge.
-			} else {
-				ReturnFromExecuteInstruction(true);
-			}
-		}
+		ReturnIfCon(HandleStringMode(opcode, ip));
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		if (SettingDisableFingerprints) {
