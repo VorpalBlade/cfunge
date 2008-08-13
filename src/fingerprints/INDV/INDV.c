@@ -78,8 +78,3 @@ bool FingerINDVload(instructionPointer * ip)
 	ManagerAddOpcode(INDV,  'W', putVec)
 	return true;
 }
-
-bool FingerPNTRload(instructionPointer * ip)
-{
-	return FingerINDVload(ip);
-}

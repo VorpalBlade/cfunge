@@ -26,7 +26,5 @@
 #include "../manager.h"
 
 bool FingerINDVload(instructionPointer * ip);
-// An alias...
-bool FingerPNTRload(instructionPointer * ip);
 
 #endif

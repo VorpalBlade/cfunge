@@ -116,9 +116,6 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// PERL - Generic Interface to the Perl Language
 	{ .fprint = 0x5045524c, .uri = NULL, .loader = &FingerPERLload, .opcodes = "EIS",
 	  .url = "http://catseye.tc/projects/funge98/library/PERL.html", .safe = false },
-	// PNTR - Alias for INDV - Pointer functions
-	{ .fprint = 0x504e5452, .uri = NULL, .loader = &FingerPNTRload, .opcodes = "GPVW",
-	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// REFC - Referenced Cells Extension
 	{ .fprint = 0x52454643, .uri = NULL, .loader = &FingerREFCload, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },

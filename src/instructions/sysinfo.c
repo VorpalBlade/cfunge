@@ -335,10 +335,11 @@ FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 			for (int i = sizeof(Funge98Requests)/sizeof(si_flags)-1; i >= 0; i--)
 				PushRequest(Funge98Requests[i], ip, tmp);
 		}
-		if (tmp->top > (size_t)request)
+		// Find out if we should act as pick or not...
+		if (tmp->top > (size_t)request) {
 			StackPush(ip->stack, tmp->entries[tmp->top - request]);
-		else {
-			StackPopNDiscard(ip->stack, request - tmp->top - 1);
+		} else {
+			StackPush(ip->stack, StackGetIndex(ip->stack, request - tmp->top));
 		}
 		StackFree(tmp);
 	}

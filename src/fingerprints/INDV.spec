@@ -1,6 +1,5 @@
 %fingerprint-spec 1.2
 %fprint:INDV
-%alias:PNTR
 %url:http://www.elf-emulation.com/funge/rcfunge_manual.html
 %desc:Pointer functions
 %safe:true
