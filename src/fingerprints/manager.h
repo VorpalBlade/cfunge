@@ -70,8 +70,16 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
  * @param opcode What opcode to add.
  * @param func Function pointer to routine implementing the instruction.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
+/**
+ * Pop an opcode from an stack returning it.
+ * @param ip IP to pop opcode for.
+ * @param opcode What opcode to pop.
+ * @return A function pointer.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode);
 
 /**
  * Initialise opcode stacks for IP

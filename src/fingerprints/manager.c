@@ -98,7 +98,8 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * re
 #endif
 
 /// Add an entry to an OP code stack.
-FUNGE_ATTR_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
+bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Check if we need to realloc.
@@ -116,11 +117,23 @@ FUNGE_ATTR_FAST bool OpcodeStackAdd(instructionPointer * restrict ip, char opcod
 	return true;
 }
 
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode) {
+	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
+	if (stack->top == 0) {
+		return NULL;
+	} else {
+		fingerprintOpcode tmp = stack->entries[stack->top - 1];
+		stack->top--;
+		return tmp;
+	}
+}
+
 /**
  * Pop a function pointer from an opcode stack, discarding it.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void OpcodeStackPop(fungeOpcodeStack * restrict stack)
+static inline void OpcodeStackDrop(fungeOpcodeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -223,7 +236,7 @@ FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATY
 	if (index == -1)
 		return false;
 	for (size_t i = 0; i < strlen(ImplementedFingerprints[index].opcodes); i++)
-		OpcodeStackPop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
+		OpcodeStackDrop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
 }
 
