@@ -95,7 +95,7 @@ static void StackOOM(void)
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void StackPreallocSpace(fungeStack * restrict stack, size_t minfree)
 {
-	if ((stack->top + minfree) < stack->size) {
+	if ((stack->top + minfree) > stack->size) {
 		size_t newsize = stack->size + ALLOCCHUNKSIZE;
 		if ((newsize - minfree) < stack->top)
 			// Round to whole ALLOCCHUNKSIZE upwards.
