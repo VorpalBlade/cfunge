@@ -100,6 +100,7 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 		break;
 
+// This code handles string mode.
 FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
 	if (opcode == '"') {
@@ -119,10 +120,29 @@ FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode,
 	ReturnFromExecuteInstruction(false);
 }
 
+// This code handles fingerprint instructions.
+FUNGE_ATTR_FAST static inline void HandleFPrint(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+{
+	if (SettingDisableFingerprints) {
+		PrintUnknownInstrWarn(opcode, ip);
+		ipReverse(ip);
+	} else {
+		int_fast8_t entry = (int_fast8_t)opcode - 'A';
+		if ((ip->fingerOpcodes[entry]->top > 0)
+			&& ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
+			// Call the fingerprint.
+			ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
+		} else {
+			PrintUnknownInstrWarn(opcode, ip);
+			ipReverse(ip);
+		}
+	}
+}
+
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST bool ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
+FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
 #else
-FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 #endif
 {
 	// First check if we are in string mode, and do special stuff then.
@@ -130,20 +150,7 @@ FUNGE_ATTR_FAST void ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer
 		ReturnIfCon(HandleStringMode(opcode, ip));
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
-		if (SettingDisableFingerprints) {
-			PrintUnknownInstrWarn(opcode, ip);
-			ipReverse(ip);
-		} else {
-			int_fast8_t entry = (int_fast8_t)opcode - 'A';
-			if ((ip->fingerOpcodes[entry]->top > 0)
-			    && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
-				// Call the fingerprint.
-				ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
-			} else {
-				PrintUnknownInstrWarn(opcode, ip);
-				ipReverse(ip);
-			}
-		}
+		HandleFPrint(opcode, ip);
 	// OK a core instruction.
 	// Find what one and execute it.
 	} else {
