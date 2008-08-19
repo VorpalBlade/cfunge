@@ -314,7 +314,7 @@ FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 	FUNGEDATATYPE request = StackPop(ip->stack);
 	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
-	// Negative: push all
+	// Negative or 0: push all
 	if (request <= 0) {
 		if (SettingCurrentStandard == stdver108) {
 			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
@@ -339,6 +339,7 @@ FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 		if (tmp->top > (size_t)request) {
 			StackPush(ip->stack, tmp->entries[tmp->top - request]);
 		} else {
+			// Act as pick
 			StackPush(ip->stack, StackGetIndex(ip->stack, request - tmp->top));
 		}
 		StackFree(tmp);
