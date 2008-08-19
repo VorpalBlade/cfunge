@@ -37,14 +37,17 @@ static void FingerSUBRcall(instructionPointer * ip)
 	fungeStack *tmpstack;
 
 	n = StackPop(ip->stack);
+	// Pop vector and handle storage offset.
 	pos = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 
 	tmpstack = StackCreate();
 
 	for (FUNGEDATATYPE i = 0; i < n; ++i)
 		StackPush(tmpstack, StackPop(ip->stack));
 
-	StackPushVector(ip->stack, &ip->position);
+	StackPushVector(ip->stack, VectorCreateRef(ip->position.x - ip->storageOffset.x, ip->position.y - ip->storageOffset.y));
 	StackPushVector(ip->stack, &ip->delta);
 	while (n--)
 		StackPush(ip->stack, StackPop(tmpstack));
@@ -60,6 +63,10 @@ static void FingerSUBRjump(instructionPointer * ip)
 	fungePosition pos;
 
 	pos = StackPopVector(ip->stack);
+	// Stupid storage offset.
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
+
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &SUBRnewDelta);
 }
@@ -80,6 +87,8 @@ static void FingerSUBRreturn(instructionPointer * ip)
 
 	vec = StackPopVector(ip->stack);
 	pos = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &vec);
 

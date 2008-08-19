@@ -31,6 +31,8 @@ static void FingerJSTRpushN(instructionPointer * ip)
 	n     = StackPop(ip->stack);
 	pos   = StackPopVector(ip->stack);
 	delta = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 
 	if (n <= 0) {
 		ipReverse(ip);
@@ -55,6 +57,8 @@ static void FingerJSTRpopN(instructionPointer * ip)
 	n     = StackPop(ip->stack);
 	pos   = StackPopVector(ip->stack);
 	delta = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 
 	if (n <= 0) {
 		ipReverse(ip);

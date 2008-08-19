@@ -91,6 +91,8 @@ static void FingerSTRNget(instructionPointer * ip)
 
 	FungeSpaceGetBoundRect(&bounds);
 	pos = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 	if (pos.y < bounds.y || pos.y > bounds.y + bounds.h) {
 		ipReverse(ip);
 		return;
@@ -200,6 +202,8 @@ static void FingerSTRNput(instructionPointer * ip)
 	size_t len;
 
 	pos = StackPopVector(ip->stack);
+	pos.x += ip->storageOffset.x;
+	pos.y += ip->storageOffset.y;
 	s   = StackPopString(ip->stack);
 	len = strlen(s);
 
