@@ -142,7 +142,7 @@ static const SysInfoRequests Funge108Requests[] = {
 	si_cell_size_in_unit
 };
 
-// We cache result here.
+// We cache the result here.
 static size_t environ_count = 0;
 
 // Push a single request value.
