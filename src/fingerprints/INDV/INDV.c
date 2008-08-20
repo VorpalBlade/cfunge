@@ -29,8 +29,14 @@ static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 	fungeVector a, b;
 
 	a = StackPopVector(ip->stack);
+	// Add first level of storage offset...
+	a.x += ip->storageOffset.x;
+	a.y += ip->storageOffset.y;
 	b.x = FungeSpaceGet(VectorCreateRef(a.x+1, a.y));
 	b.y = FungeSpaceGet(&a);
+	// Add in second level of storage offset...
+	b.x += ip->storageOffset.x;
+	b.y += ip->storageOffset.y;
 	return b;
 }
 
