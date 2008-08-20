@@ -97,6 +97,7 @@ Short descriptions of implemented fingerprints:
  CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
  FILE File I/O functions (not available in sandbox mode)
+ FING Operate on single fingerprint semantics
  FIXP Some useful math functions
  FPDP Double precision floating point
  FPSP Single precision floating point

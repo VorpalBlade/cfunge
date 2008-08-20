@@ -10,13 +10,12 @@ For more info:
 and
   bzr help revisionspec
 
-Development version (r330)
+Development version (r344)
 --------------------------
 These are important changes since last release:
  * Fixed a few bugs in loading code.
  * Added support for showing top 5 elements on the stack when tracing.
- * Fixed bug in StackPreallocSpace() that resulted in crash later on.
- * Fixed many bugs in TURT.
+ * Fixed several bugs in StackPreallocSpace() that resulted in crashes later on.
  * Added a man page.
  * Imported two new libraries into the code:
    genx - An XML output library (used by TURT).
@@ -38,11 +37,21 @@ These are important changes since last release:
  * Fixed "jump to next instruction" in Funge-108 in 0k.
  * Several Funge-108 fixes in y command.
  * Various typo fixes.
+ * Clean up the mess in loading code by using mmap() to read files.
+ * Mycology was wrong about "y as pick" behaviour, fixed cfunge to conform to
+   the standard.
 
 Added fingerprints:
+ * FING Operate on single fingerprint semantics
  * FRTH Some common forth commands
  * STRN String functions
  * TERM Terminal control functions
+
+Changes to fingerprints:
+ * Fixed many bugs in TURT.
+ * FILE got extended with the instruction D, added it.
+ * Removed PNTR, it was a deprecated alias for INDV.
+ * Certain JSTR and STRN instruction are now relative storage offset.
 
 
 0.2.1-pre2

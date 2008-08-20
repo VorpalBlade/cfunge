@@ -26,6 +26,9 @@ src/fingerprints/DIRF/DIRF.h
 src/fingerprints/FILE
 src/fingerprints/FILE/FILE.c
 src/fingerprints/FILE/FILE.h
+src/fingerprints/FING
+src/fingerprints/FING/FING.c
+src/fingerprints/FING/FING.h
 src/fingerprints/FIXP
 src/fingerprints/FIXP/FIXP.c
 src/fingerprints/FIXP/FIXP.h
