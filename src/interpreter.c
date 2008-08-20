@@ -86,6 +86,7 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 
 #ifdef CONCURRENT_FUNGE
 #  define ReturnFromExecuteInstruction(x) return (x)
+   /// Return with value if we are concurrent
 #  define ReturnIfCon(x) return (x)
 #  define CON_RETTYPE bool
 #else
@@ -100,7 +101,7 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 		StackPush(ip->stack, (FUNGEDATATYPE)y); \
 		break;
 
-// This code handles string mode.
+/// This function handles string mode.
 FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
 	if (opcode == '"') {
@@ -120,7 +121,7 @@ FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode,
 	ReturnFromExecuteInstruction(false);
 }
 
-// This code handles fingerprint instructions.
+/// This function handles fingerprint instructions.
 FUNGE_ATTR_FAST static inline void HandleFPrint(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
 {
 	if (SettingDisableFingerprints) {
