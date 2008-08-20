@@ -25,7 +25,8 @@
 /// Used to handle "0-25" and "A-Z"
 /// @return Returns 0 for invalid, otherwise A-Z
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-static inline char PopStackSpec(instructionPointer * ip) {
+static inline char PopStackSpec(instructionPointer * ip)
+{
 	FUNGEDATATYPE n = StackPop(ip->stack);
 	if (n < 0) return 0;
 	else if (n <= 25) return 'A' + n;
@@ -35,7 +36,8 @@ static inline char PopStackSpec(instructionPointer * ip) {
 }
 
 /// Used for pushing a reflect on stack.
-static void DoReflect(instructionPointer * ip) {
+static void DoReflect(instructionPointer * ip)
+{
 	ipReverse(ip);
 }
 
