@@ -130,7 +130,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x5354524e, .uri = NULL, .loader = &FingerSTRNload, .opcodes = "ACDFGILMNPRSV",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "CJR",
+	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "ACJOR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TERM - Terminal control functions
 	{ .fprint = 0x5445524d, .uri = NULL, .loader = &FingerTERMload, .opcodes = "CDGHLSU",

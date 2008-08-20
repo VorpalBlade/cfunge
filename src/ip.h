@@ -70,6 +70,7 @@ typedef struct s_instructionPointer {
 	// Here comes fingerprint per-ip data. Please avoid when possible.
 	// And make the data as small as possible.
 	struct timeval            * fingerHRTItimestamp; ///< Data for fingerprint HRTI.
+	bool                        fingerSUBRisRelative:1;
 } instructionPointer;
 #define ipDEFINED 1
 

@@ -52,7 +52,8 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 		if (!ManagerCreate(me))
 			return false;
 	}
-	me->fingerHRTItimestamp = NULL;
+	me->fingerHRTItimestamp  = NULL;
+	me->fingerSUBRisRelative = false;
 	return true;
 }
 
@@ -88,7 +89,8 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 		if (!ManagerDuplicate(old, new))
 			return false;
 	}
-	new->fingerHRTItimestamp = NULL;
+	new->fingerHRTItimestamp  = NULL;
+	new->fingerSUBRisRelative = old->fingerSUBRisRelative;
 	return true;
 }
 #endif

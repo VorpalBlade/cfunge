@@ -30,6 +30,13 @@
 
 static const ipDelta SUBRnewDelta = { .x = 1, .y = 0 };
 
+/// A - Change to absolute addressing
+static void FingerSUBRabsolute(instructionPointer * ip)
+{
+	ip->fingerSUBRisRelative = false;
+}
+
+/// C - Call
 static void FingerSUBRcall(instructionPointer * ip)
 {
 	FUNGEDATATYPE n;
@@ -37,17 +44,20 @@ static void FingerSUBRcall(instructionPointer * ip)
 	fungeStack *tmpstack;
 
 	n = StackPop(ip->stack);
-	// Pop vector and handle storage offset.
+	// Pop vector
 	pos = StackPopVector(ip->stack);
-	pos.x += ip->storageOffset.x;
-	pos.y += ip->storageOffset.y;
+	// Stupid to change a fingerprint after it is published.
+	if (ip->fingerSUBRisRelative) {
+		pos.x += ip->storageOffset.x;
+		pos.y += ip->storageOffset.y;
+	}
 
 	tmpstack = StackCreate();
 
 	for (FUNGEDATATYPE i = 0; i < n; ++i)
 		StackPush(tmpstack, StackPop(ip->stack));
 
-	StackPushVector(ip->stack, VectorCreateRef(ip->position.x - ip->storageOffset.x, ip->position.y - ip->storageOffset.y));
+	StackPushVector(ip->stack, &ip->position);
 	StackPushVector(ip->stack, &ip->delta);
 	while (n--)
 		StackPush(ip->stack, StackPop(tmpstack));
@@ -58,19 +68,29 @@ static void FingerSUBRcall(instructionPointer * ip)
 	ip->needMove = false;
 }
 
+/// J - Jump
 static void FingerSUBRjump(instructionPointer * ip)
 {
 	fungePosition pos;
 
 	pos = StackPopVector(ip->stack);
-	// Stupid storage offset.
-	pos.x += ip->storageOffset.x;
-	pos.y += ip->storageOffset.y;
+	// Stupid to change a fingerprint after it is published.
+	if (ip->fingerSUBRisRelative) {
+		pos.x += ip->storageOffset.x;
+		pos.y += ip->storageOffset.y;
+	}
 
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &SUBRnewDelta);
 }
 
+/// O - Change to relative addressing
+static void FingerSUBRrelative(instructionPointer * ip)
+{
+	ip->fingerSUBRisRelative = true;
+}
+
+/// R - Return from call
 static void FingerSUBRreturn(instructionPointer * ip)
 {
 	FUNGEDATATYPE n;
@@ -87,8 +107,6 @@ static void FingerSUBRreturn(instructionPointer * ip)
 
 	vec = StackPopVector(ip->stack);
 	pos = StackPopVector(ip->stack);
-	pos.x += ip->storageOffset.x;
-	pos.y += ip->storageOffset.y;
 	ipSetPosition(ip, &pos);
 	ipSetDelta(ip, &vec);
 
@@ -101,8 +119,10 @@ static void FingerSUBRreturn(instructionPointer * ip)
 
 bool FingerSUBRload(instructionPointer * ip)
 {
+	ManagerAddOpcode(SUBR,  'A', absolute)
 	ManagerAddOpcode(SUBR,  'C', call)
 	ManagerAddOpcode(SUBR,  'J', jump)
+	ManagerAddOpcode(SUBR,  'O', relative)
 	// No not a keyword in this case
 	ManagerAddOpcode(SUBR,  'R', return)
 	return true;
