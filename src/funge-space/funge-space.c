@@ -40,7 +40,7 @@
 
 #define FUNGESPACEINITIALSIZE 150000
 
-typedef struct _fungeSpace {
+typedef struct fungeSpace {
 	/// These two form a rectangle for the program size
 	fungePosition     topLeftCorner;
 	fungePosition     bottomRightCorner;
@@ -49,7 +49,11 @@ typedef struct _fungeSpace {
 } fungeSpace;
 
 /// Funge-space storage.
-static fungeSpace *fspace = NULL;
+static fungeSpace fspace = {
+	.topLeftCorner = {0, 0},
+	.bottomRightCorner = {0, 0},
+	.entries = NULL
+};
 
 /**
  * Check if position is in range.
@@ -57,9 +61,9 @@ static fungeSpace *fspace = NULL;
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 {
-	if ((position->x > fspace->bottomRightCorner.x) || (position->x < fspace->topLeftCorner.x))
+	if ((position->x > fspace.bottomRightCorner.x) || (position->x < fspace.topLeftCorner.x))
 		return false;
-	if ((position->y > fspace->bottomRightCorner.y) || (position->y < fspace->topLeftCorner.y))
+	if ((position->y > fspace.bottomRightCorner.y) || (position->y < fspace.topLeftCorner.y))
 		return false;
 	return true;
 }
@@ -67,18 +71,11 @@ static inline bool FungeSpaceInRange(const fungePosition * restrict position)
 FUNGE_ATTR_FAST bool
 FungeSpaceCreate(void)
 {
-	fspace = (fungeSpace*)cf_malloc(sizeof(fungeSpace));
-	if (!fspace)
+	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
+	if (!fspace.entries)
 		return false;
-	fspace->entries = ght_create(FUNGESPACEINITIALSIZE);
-	if (!fspace->entries)
-		return false;
-	ght_set_rehash(fspace->entries, true);
+	ght_set_rehash(fspace.entries, true);
 
-	fspace->topLeftCorner.x = 0;
-	fspace->topLeftCorner.y = 0;
-	fspace->bottomRightCorner.x = 0;
-	fspace->bottomRightCorner.y = 0;
 	return true;
 }
 
@@ -86,19 +83,17 @@ FungeSpaceCreate(void)
 FUNGE_ATTR_FAST void
 FungeSpaceFree(void)
 {
-	if (!fspace)
-		return;
-	ght_finalize(fspace->entries);
-	cf_free(fspace);
+	if (fspace.entries)
+		ght_finalize(fspace.entries);
 }
 
 FUNGE_ATTR_FAST void
 FungeSpaceGetBoundRect(fungeRect * restrict rect)
 {
-	rect->x = fspace->topLeftCorner.x;
-	rect->y = fspace->topLeftCorner.y;
-	rect->w = fspace->bottomRightCorner.x - fspace->topLeftCorner.x;
-	rect->h = fspace->bottomRightCorner.y - fspace->topLeftCorner.y;
+	rect->x = fspace.topLeftCorner.x;
+	rect->y = fspace.topLeftCorner.y;
+	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x;
+	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y;
 }
 
 
@@ -109,7 +104,7 @@ FungeSpaceGet(const fungePosition * restrict position)
 
 	assert(position != NULL);
 
-	tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, position);
+	tmp = (FUNGEDATATYPE*)ght_get(fspace.entries, position);
 	if (!tmp)
 		return (FUNGEDATATYPE)' ';
 	else
@@ -129,7 +124,7 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = (FUNGEDATATYPE*)ght_get(fspace->entries, &tmp);
+	result = (FUNGEDATATYPE*)ght_get(fspace.entries, &tmp);
 	if (!result)
 		return (FUNGEDATATYPE)' ';
 	else
@@ -141,15 +136,15 @@ FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 {
 	assert(position != NULL);
 	if (value == ' ') {
-		ght_remove(fspace->entries, position);
+		ght_remove(fspace.entries, position);
 	} else {
 		// Reuse cell if it exists
 		FUNGEDATATYPE *tmp;
-		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace->entries, position)) != NULL) {
+		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace.entries, position)) != NULL) {
 			*tmp = value;
 		} else {
-			if (ght_insert(fspace->entries, value, position) == -1) {
-				ght_replace(fspace->entries, value, position);
+			if (ght_insert(fspace.entries, value, position) == -1) {
+				ght_replace(fspace.entries, value, position);
 			}
 		}
 	}
@@ -160,14 +155,14 @@ FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
 	FungeSpaceSetNoBoundUpdate(value, position);
-	if (fspace->bottomRightCorner.y < position->y)
-		fspace->bottomRightCorner.y = position->y;
-	if (fspace->bottomRightCorner.x < position->x)
-		fspace->bottomRightCorner.x = position->x;
-	if (fspace->topLeftCorner.y > position->y)
-		fspace->topLeftCorner.y = position->y;
-	if (fspace->topLeftCorner.x > position->x)
-		fspace->topLeftCorner.x = position->x;
+	if (fspace.bottomRightCorner.y < position->y)
+		fspace.bottomRightCorner.y = position->y;
+	if (fspace.bottomRightCorner.x < position->x)
+		fspace.bottomRightCorner.x = position->x;
+	if (fspace.topLeftCorner.y > position->y)
+		fspace.topLeftCorner.y = position->y;
+	if (fspace.topLeftCorner.x > position->x)
+		fspace.topLeftCorner.x = position->x;
 }
 
 FUNGE_ATTR_FAST void
@@ -184,15 +179,15 @@ FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 {
 	// Quick and dirty if cardinal.
 	if (VectorIsCardinal(delta)) {
-		if (position->x < fspace->topLeftCorner.x)
-			position->x = fspace->bottomRightCorner.x;
-		else if (position->x >= fspace->bottomRightCorner.x)
-			position->x = fspace->topLeftCorner.x;
+		if (position->x < fspace.topLeftCorner.x)
+			position->x = fspace.bottomRightCorner.x;
+		else if (position->x >= fspace.bottomRightCorner.x)
+			position->x = fspace.topLeftCorner.x;
 
-		if (position->y < fspace->topLeftCorner.y)
-			position->y = fspace->bottomRightCorner.y;
-		else if (position->y >= fspace->bottomRightCorner.y)
-			position->y = fspace->topLeftCorner.y;
+		if (position->y < fspace.topLeftCorner.y)
+			position->y = fspace.bottomRightCorner.y;
+		else if (position->y >= fspace.bottomRightCorner.y)
+			position->y = fspace.topLeftCorner.y;
 	} else {
 		if (!FungeSpaceInRange(position)) {
 			do {
@@ -216,11 +211,11 @@ void FungeSpaceDump(void) FUNGE_ATTR_UNUSED;
 
 void FungeSpaceDump(void)
 {
-	if (!fspace)
+	if (!fspace.entries)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
-	for (FUNGEVECTORTYPE y = 0; y <= fspace->bottomRightCorner.y; y++) {
-		for (FUNGEVECTORTYPE x = 0; x <= fspace->bottomRightCorner.x; x++)
+	for (FUNGEVECTORTYPE y = 0; y <= fspace.bottomRightCorner.y; y++) {
+		for (FUNGEVECTORTYPE x = 0; x <= fspace.bottomRightCorner.x; x++)
 			fprintf(stderr, "%c", (char)FungeSpaceGet(VectorCreateRef(x, y)));
 		fprintf(stderr, "\n");
 	}
@@ -325,8 +320,8 @@ FungeSpaceLoad(const char * restrict filename)
 				lastwascr = true;
 				break;
 			case '\n':
-				if (fspace->bottomRightCorner.x < x)
-					fspace->bottomRightCorner.x = x;
+				if (fspace.bottomRightCorner.x < x)
+					fspace.bottomRightCorner.x = x;
 				x = 0;
 				y++;
 				lastwascr = false;
@@ -334,8 +329,8 @@ FungeSpaceLoad(const char * restrict filename)
 				break;
 			default:
 				if (lastwascr) {
-					if (fspace->bottomRightCorner.x < x)
-						fspace->bottomRightCorner.x = x;
+					if (fspace.bottomRightCorner.x < x)
+						fspace.bottomRightCorner.x = x;
 					lastwascr = false;
 					x = 0;
 					y++;
@@ -347,15 +342,15 @@ FungeSpaceLoad(const char * restrict filename)
 		}
 	}
 
-	if (fspace->bottomRightCorner.x < x)
-		fspace->bottomRightCorner.x = x;
+	if (fspace.bottomRightCorner.x < x)
+		fspace.bottomRightCorner.x = x;
 	if (lastwascr) {
 		noendingnewline = false;
 		y++;
 	}
 	if (noendingnewline) y++;
-	if (fspace->bottomRightCorner.y < y)
-		fspace->bottomRightCorner.y = y;
+	if (fspace.bottomRightCorner.y < y)
+		fspace.bottomRightCorner.y = y;
 
 	// Cleanup
 	DoMmapCleanup(fd, addr, length);
@@ -383,8 +378,8 @@ FungeSpaceLoadString(const char * restrict program)
 				lastwascr = true;
 				break;
 			case '\n':
-				if (fspace->bottomRightCorner.x < x)
-					fspace->bottomRightCorner.x = x;
+				if (fspace.bottomRightCorner.x < x)
+					fspace.bottomRightCorner.x = x;
 				x = 0;
 				y++;
 				lastwascr = false;
@@ -392,8 +387,8 @@ FungeSpaceLoadString(const char * restrict program)
 				break;
 			default:
 				if (lastwascr) {
-					if (fspace->bottomRightCorner.x < x)
-						fspace->bottomRightCorner.x = x;
+					if (fspace.bottomRightCorner.x < x)
+						fspace.bottomRightCorner.x = x;
 					lastwascr = false;
 					x = 0;
 					y++;
@@ -404,15 +399,15 @@ FungeSpaceLoadString(const char * restrict program)
 				break;
 		}
 	}
-	if (fspace->bottomRightCorner.x < x)
-		fspace->bottomRightCorner.x = x;
+	if (fspace.bottomRightCorner.x < x)
+		fspace.bottomRightCorner.x = x;
 	if (lastwascr) {
 		noendingnewline = false;
 		y++;
 	}
 	if (noendingnewline) y++;
-	if (fspace->bottomRightCorner.y < y)
-		fspace->bottomRightCorner.y = y;
+	if (fspace.bottomRightCorner.y < y)
+		fspace.bottomRightCorner.y = y;
 }
 #endif
 
