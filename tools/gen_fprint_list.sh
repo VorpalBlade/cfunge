@@ -302,13 +302,8 @@ cat > "fingerprints.h" << EOF
 #  error "This is for use in manager.c only"
 #endif
 
-EOF
-
-
-addtolist "#ifndef _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H"
-addtolist "#define _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H"
-
-cat >> "fingerprints.h" << EOF
+#ifndef _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
+#define _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
 
 #include "../global.h"
 
