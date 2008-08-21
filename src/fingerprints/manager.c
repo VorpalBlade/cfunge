@@ -35,6 +35,8 @@
 #define MANAGER_INTERNAL
 #include "fingerprints.h"
 
+/// To get size of the fingerprint array
+#define FPRINT_ARRAY_SIZE sizeof(ImplementedFingerprints) / sizeof(ImplementedFingerprintEntry)
 
 /**************************
  * Opcode Stack functions *
@@ -196,8 +198,7 @@ FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 {
-	size_t i = 0;
-	do {
+	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		if (fingerprint <= ImplementedFingerprints[i].fprint) {
 			// Then it is larger... as in "not found"
 			if (fingerprint != ImplementedFingerprints[i].fprint)
@@ -209,7 +210,7 @@ static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 				return FPRINT_NOTFOUND;
 			return i;
 		}
-	} while (ImplementedFingerprints[++i].fprint != 0);
+	}
 	return FPRINT_NOTFOUND;
 }
 
@@ -246,9 +247,8 @@ FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATY
 
 FUNGE_ATTR_FAST void ManagerList(void)
 {
-	size_t i = 0;
 	puts("Supported fingerprints in this binary:");
-	do {
+	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		// This hack is here to reconstruct the name from the fingerprint.
 		// It will probably break if char isn't 8 bits.
 		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
@@ -259,6 +259,6 @@ FUNGE_ATTR_FAST void ManagerList(void)
 		       fprintname,
 		       ImplementedFingerprints[i].safe ? "" : " (not available in sandbox mode)",
 		       ImplementedFingerprints[i].url ? ImplementedFingerprints[i].url : "");
-	} while (ImplementedFingerprints[++i].fprint != 0);
+	}
 	exit(0);
 }

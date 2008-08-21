@@ -68,7 +68,7 @@ typedef struct s_ImplementedFingerprintEntry {
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
-// NOTE: Keep sorted (apart from ending 0 entry).
+// NOTE: Keep sorted!
 // Also note that this table is processed by scripts, so keep the .loader and
 // .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
@@ -144,8 +144,6 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// TURT - Simple Turtle Graphics Library
 	{ .fprint = 0x54555254, .uri = NULL, .loader = &FingerTURTload, .opcodes = "ABCDEFHILNPQRTU",
 	  .url = "http://catseye.tc/projects/funge98/library/TURT.html", .safe = true },
-	// Last should be 0
-	{ .fprint = 0, .uri = NULL, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
 
 #endif

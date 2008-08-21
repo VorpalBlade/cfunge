@@ -328,7 +328,7 @@ typedef struct s_ImplementedFingerprintEntry {
 } ImplementedFingerprintEntry;
 
 // Implemented fingerprints
-// NOTE: Keep sorted (apart from ending 0 entry).
+// NOTE: Keep sorted!
 // Also note that this table is processed by scripts, so keep the .loader and
 // .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
@@ -347,8 +347,6 @@ done
 
 
 cat >> "fingerprints.h" << EOF
-	// Last should be 0
-	{ .fprint = 0, .uri = NULL, .loader = NULL, .opcodes = NULL, .url = NULL, .safe = true }
 };
 
 #endif
