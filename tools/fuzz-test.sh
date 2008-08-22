@@ -122,7 +122,8 @@ while true; do
 		createfingerprint "$FPRINT" >> fuzz.tmp
 	fi
 	echo " * Generating random program"
-	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|?:%$#!'\'"${FPRINTINSTRS}" | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
+	# We skip ? because that make things harder to debug, we also skip i, o and = for security reasons.
+	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|:%$#!'\'"${FPRINTINSTRS}" | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
 
 	echo " * Running free standing"
 	(./cfunge -S fuzz.tmp); checkerror "$?"
