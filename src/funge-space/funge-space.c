@@ -235,7 +235,7 @@ void FungeSpaceDump(void)
 r -2 in case of empty file.
  */
 FUNGE_ATTR_FAST
-static int DoMmap(const char * restrict filename, char **maddr, size_t * restrict length) {
+static inline int DoMmap(const char * restrict filename, char **maddr, size_t * restrict length) {
 	char *addr = NULL;
 	struct stat sb;
 	int fd = -1;
@@ -281,7 +281,8 @@ error:
  * @param addr is the address to the mmap()ed area.
  * @param length is the length of the mmap()ed area.
  */
-static void DoMmapCleanup(int fd, char *addr, size_t length) {
+FUNGE_ATTR_FAST
+static inline void DoMmapCleanup(int fd, char *addr, size_t length) {
 	if (addr != NULL) {
 		munmap(addr, length);
 	}
@@ -290,86 +291,21 @@ static void DoMmapCleanup(int fd, char *addr, size_t length) {
 	}
 }
 
-FUNGE_ATTR_FAST bool
-FungeSpaceLoad(const char * restrict filename)
-{
-	char *addr;
-	int fd;
-	size_t length;
-
+/**
+ * Load a string into Funge-Space at 0,0. Used for initial loading.
+ * Can handle null-bytes in the string without problems.
+ * @param program is the string to load.
+ * @param length is the length of the string.
+ */
+FUNGE_ATTR_FAST
+static inline void LoadString(const char * restrict program, size_t length) {
 	bool lastwascr = false;
 	bool noendingnewline = true;
 	// Row in fungespace
 	FUNGEVECTORTYPE y = 0;
 	FUNGEVECTORTYPE x = 0;
-	assert(filename != NULL);
-
-	fd = DoMmap(filename, &addr, &length);
-	if (fd == -1)
-		return false;
-	// Empty file?
-	if (fd == -2)
-		return true;
 
 	for (size_t i = 0; i < length; i++) {
-		switch (addr[i]) {
-			// Ignore Form Feed.
-			case '\f':
-				break;
-			case '\r':
-				lastwascr = true;
-				break;
-			case '\n':
-				if (fspace.bottomRightCorner.x < x)
-					fspace.bottomRightCorner.x = x;
-				x = 0;
-				y++;
-				lastwascr = false;
-				noendingnewline = false;
-				break;
-			default:
-				if (lastwascr) {
-					if (fspace.bottomRightCorner.x < x)
-						fspace.bottomRightCorner.x = x;
-					lastwascr = false;
-					x = 0;
-					y++;
-				}
-				FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y));
-				x++;
-				noendingnewline = true;
-				break;
-		}
-	}
-
-	if (fspace.bottomRightCorner.x < x)
-		fspace.bottomRightCorner.x = x;
-	if (lastwascr) {
-		noendingnewline = false;
-		y++;
-	}
-	if (noendingnewline) y++;
-	if (fspace.bottomRightCorner.y < y)
-		fspace.bottomRightCorner.y = y;
-
-	// Cleanup
-	DoMmapCleanup(fd, addr, length);
-	return true;
-}
-
-
-#ifdef FUNGE_EXTERNAL_LIBRARY
-FUNGE_ATTR_FAST void
-FungeSpaceLoadString(const char * restrict program)
-{
-	bool lastwascr = false;
-	bool noendingnewline = true;
-	// Row in fungespace
-	FUNGEVECTORTYPE y = 0;
-	FUNGEVECTORTYPE x = 0;
-	size_t linelen = strlen(program);
-
-	for (size_t i = 0; i < linelen; i++) {
 		switch (program[i]) {
 			// Ignore Form Feed.
 			case '\f':
@@ -399,6 +335,7 @@ FungeSpaceLoadString(const char * restrict program)
 				break;
 		}
 	}
+
 	if (fspace.bottomRightCorner.x < x)
 		fspace.bottomRightCorner.x = x;
 	if (lastwascr) {
@@ -408,6 +345,37 @@ FungeSpaceLoadString(const char * restrict program)
 	if (noendingnewline) y++;
 	if (fspace.bottomRightCorner.y < y)
 		fspace.bottomRightCorner.y = y;
+}
+
+FUNGE_ATTR_FAST bool
+FungeSpaceLoad(const char * restrict filename)
+{
+	char *addr;
+	int fd;
+	size_t length;
+
+	assert(filename != NULL);
+
+	fd = DoMmap(filename, &addr, &length);
+	if (fd == -1)
+		return false;
+	// Empty file?
+	if (fd == -2)
+		return true;
+
+	LoadString(addr, length);
+
+	// Cleanup
+	DoMmapCleanup(fd, addr, length);
+	return true;
+}
+
+
+#ifdef FUNGE_EXTERNAL_LIBRARY
+FUNGE_ATTR_FAST void
+FungeSpaceLoadString(const char * restrict program)
+{
+	LoadString(program, strlen(program));
 }
 #endif
 
