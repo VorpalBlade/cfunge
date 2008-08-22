@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:BASE
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcfunge_manual.html#BASE
 %desc:I/O for numbers in other bases
 %safe:true
 %begin-instrs

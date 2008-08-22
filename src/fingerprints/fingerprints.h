@@ -33,6 +33,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "3DSP/3DSP.h"
 #include "BASE/BASE.h"
 #include "CPLI/CPLI.h"
 #include "DIRF/DIRF.h"
@@ -72,9 +73,12 @@ typedef struct s_ImplementedFingerprintEntry {
 // Also note that this table is processed by scripts, so keep the .loader and
 // .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
+	// 3DSP - 3D space manipulation extension
+	{ .fprint = 0x33445350, .uri = NULL, .loader = &Finger3DSPload, .opcodes = "ABCDLMNPRSTUVXYZ",
+	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#3DSP", .safe = true },
 	// BASE - I/O for numbers in other bases
 	{ .fprint = 0x42415345, .uri = NULL, .loader = &FingerBASEload, .opcodes = "BHINO",
-	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
+	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#BASE", .safe = true },
 	// CPLI - Complex Integer extension
 	{ .fprint = 0x43504c49, .uri = NULL, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
@@ -86,7 +90,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FING - Operate on single fingerprint semantics
 	{ .fprint = 0x46494e47, .uri = NULL, .loader = &FingerFINGload, .opcodes = "XYZ",
-	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html#FING", .safe = true },
+	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#FING", .safe = true },
 	// FIXP - Some useful math functions
 	{ .fprint = 0x46495850, .uri = NULL, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },

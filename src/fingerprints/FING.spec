@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FING
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html#FING
+%url:http://www.rcfunge98.com/rcfunge_manual.html#FING
 %desc:Operate on single fingerprint semantics
 %safe:true
 %begin-instrs
