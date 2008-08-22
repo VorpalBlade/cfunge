@@ -46,13 +46,16 @@ typedef struct fungeSpace {
 	fungePosition     bottomRightCorner;
 	/// And this is the hash table.
 	ght_hash_table_t *entries;
+	/// Used during loading to handle 0,0 not being least point.
+	bool              boundsvalid:1;
 } fungeSpace;
 
 /// Funge-space storage.
 static fungeSpace fspace = {
 	.topLeftCorner = {0, 0},
 	.bottomRightCorner = {0, 0},
-	.entries = NULL
+	.entries = NULL,
+	.boundsvalid = false
 };
 
 /**
@@ -92,8 +95,9 @@ FungeSpaceGetBoundRect(fungeRect * restrict rect)
 {
 	rect->x = fspace.topLeftCorner.x;
 	rect->y = fspace.topLeftCorner.y;
-	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x;
-	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y;
+	// +1 because it is inclusive.
+	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x + 1;
+	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
 }
 
 
@@ -134,7 +138,6 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 FUNGE_ATTR_FAST static inline void
 FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
-	assert(position != NULL);
 	if (value == ' ') {
 		ght_remove(fspace.entries, position);
 	} else {
@@ -155,15 +158,36 @@ FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 {
 	assert(position != NULL);
 	FungeSpaceSetNoBoundUpdate(value, position);
-	if (fspace.bottomRightCorner.y < position->y)
-		fspace.bottomRightCorner.y = position->y;
-	if (fspace.bottomRightCorner.x < position->x)
-		fspace.bottomRightCorner.x = position->x;
-	if (fspace.topLeftCorner.y > position->y)
-		fspace.topLeftCorner.y = position->y;
-	if (fspace.topLeftCorner.x > position->x)
-		fspace.topLeftCorner.x = position->x;
+	if (value != ' ') {
+		if (fspace.bottomRightCorner.y < position->y)
+			fspace.bottomRightCorner.y = position->y;
+		if (fspace.bottomRightCorner.x < position->x)
+			fspace.bottomRightCorner.x = position->x;
+		if (fspace.topLeftCorner.y > position->y)
+			fspace.topLeftCorner.y = position->y;
+		if (fspace.topLeftCorner.x > position->x)
+			fspace.topLeftCorner.x = position->x;
+	}
 }
+
+FUNGE_ATTR_FAST static inline void
+FungeSpaceSetInitial(FUNGEDATATYPE value, const fungePosition * restrict position)
+{
+	assert(position != NULL);
+	FungeSpaceSetNoBoundUpdate(value, position);
+	if (value != ' ') {
+		if (!fspace.boundsvalid || fspace.bottomRightCorner.y < position->y)
+			fspace.bottomRightCorner.y = position->y;
+		if (!fspace.boundsvalid || fspace.bottomRightCorner.x < position->x)
+			fspace.bottomRightCorner.x = position->x;
+		if (!fspace.boundsvalid || fspace.topLeftCorner.y > position->y)
+			fspace.topLeftCorner.y = position->y;
+		if (!fspace.boundsvalid || fspace.topLeftCorner.x > position->x)
+			fspace.topLeftCorner.x = position->x;
+		fspace.boundsvalid = true;
+	}
+}
+
 
 FUNGE_ATTR_FAST void
 FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
@@ -179,15 +203,16 @@ FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict d
 {
 	// Quick and dirty if cardinal.
 	if (VectorIsCardinal(delta)) {
+		// FIXME, HACK: Why are the +1/-1 needed?
 		if (position->x < fspace.topLeftCorner.x)
-			position->x = fspace.bottomRightCorner.x;
-		else if (position->x >= fspace.bottomRightCorner.x)
-			position->x = fspace.topLeftCorner.x;
+			position->x = fspace.bottomRightCorner.x+1;
+		else if (position->x > fspace.bottomRightCorner.x)
+			position->x = fspace.topLeftCorner.x-1;
 
 		if (position->y < fspace.topLeftCorner.y)
-			position->y = fspace.bottomRightCorner.y;
-		else if (position->y >= fspace.bottomRightCorner.y)
-			position->y = fspace.topLeftCorner.y;
+			position->y = fspace.bottomRightCorner.y+1;
+		else if (position->y > fspace.bottomRightCorner.y)
+			position->y = fspace.topLeftCorner.y-1;
 	} else {
 		if (!FungeSpaceInRange(position)) {
 			do {
@@ -314,8 +339,6 @@ static inline void LoadString(const char * restrict program, size_t length) {
 				lastwascr = true;
 				break;
 			case '\n':
-				if (fspace.bottomRightCorner.x < x)
-					fspace.bottomRightCorner.x = x;
 				x = 0;
 				y++;
 				lastwascr = false;
@@ -323,28 +346,16 @@ static inline void LoadString(const char * restrict program, size_t length) {
 				break;
 			default:
 				if (lastwascr) {
-					if (fspace.bottomRightCorner.x < x)
-						fspace.bottomRightCorner.x = x;
 					lastwascr = false;
 					x = 0;
 					y++;
 				}
-				FungeSpaceSetNoBoundUpdate((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
+				FungeSpaceSetInitial((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
 				x++;
 				noendingnewline = true;
 				break;
 		}
 	}
-
-	if (fspace.bottomRightCorner.x < x)
-		fspace.bottomRightCorner.x = x;
-	if (lastwascr) {
-		noendingnewline = false;
-		y++;
-	}
-	if (noendingnewline) y++;
-	if (fspace.bottomRightCorner.y < y)
-		fspace.bottomRightCorner.y = y;
 }
 
 FUNGE_ATTR_FAST bool
