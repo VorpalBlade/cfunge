@@ -27,7 +27,7 @@
 /// A - add
 static void FingerCPLIadd(instructionPointer * ip)
 {
-	FUNGEDATATYPE ar, ai, br, bi;
+	fungeCell ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
 	ai = StackPop(ip->stack);
@@ -39,7 +39,7 @@ static void FingerCPLIadd(instructionPointer * ip)
 /// D - div
 static void FingerCPLIdiv(instructionPointer * ip)
 {
-	FUNGEDATATYPE ar, ai, br, bi, denom;
+	fungeCell ar, ai, br, bi, denom;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
 	ai = StackPop(ip->stack);
@@ -57,7 +57,7 @@ static void FingerCPLIdiv(instructionPointer * ip)
 /// M - mul
 static void FingerCPLImul(instructionPointer * ip)
 {
-	FUNGEDATATYPE ar, ai, br, bi;
+	fungeCell ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
 	ai = StackPop(ip->stack);
@@ -69,19 +69,19 @@ static void FingerCPLImul(instructionPointer * ip)
 /// O - out
 static void FingerCPLIout(instructionPointer * ip)
 {
-	FUNGEDATATYPE r, i;
+	fungeCell r, i;
 	i = StackPop(ip->stack);
 	r = StackPop(ip->stack);
-	printf("%" FUNGEDATAPRI, r);
+	printf("%" FUNGECELLPRI, r);
 	if (i > 0)
 		cf_putchar_maybe_locked('+');
-	printf("%" FUNGEDATAPRI "i ", i);
+	printf("%" FUNGECELLPRI "i ", i);
 }
 
 /// S - sub
 static void FingerCPLIsub(instructionPointer * ip)
 {
-	FUNGEDATATYPE ar, ai, br, bi;
+	fungeCell ar, ai, br, bi;
 	bi = StackPop(ip->stack);
 	br = StackPop(ip->stack);
 	ai = StackPop(ip->stack);
@@ -93,12 +93,12 @@ static void FingerCPLIsub(instructionPointer * ip)
 /// V - abs
 static void FingerCPLIabs(instructionPointer * ip)
 {
-	FUNGEDATATYPE r, i;
+	fungeCell r, i;
 	double tmp;
 	i = StackPop(ip->stack);
 	r = StackPop(ip->stack);
 	tmp = sqrt((double)(r * r + i * i));
-	StackPush(ip->stack, (FUNGEDATATYPE)tmp);
+	StackPush(ip->stack, (fungeCell)tmp);
 }
 
 bool FingerCPLIload(instructionPointer * ip)

@@ -37,16 +37,16 @@
 #endif
 
 #ifndef DISABLE_TRACE
-static inline void PrintTrace(FUNGEDATATYPE iters, FUNGEDATATYPE kInstr)
+static inline void PrintTrace(fungeCell iters, fungeCell kInstr)
 {
 	if (SettingTraceLevel > 5)
-		fprintf(stderr, "  * In k: iteration: %" FUNGEDATAPRI " instruction: %c (%" FUNGEDATAPRI ")\n",
+		fprintf(stderr, "  * In k: iteration: %" FUNGECELLPRI " instruction: %c (%" FUNGECELLPRI ")\n",
 				iters, (char)kInstr, kInstr);
 }
 #endif
 
 /// This moves IP to next instruction, with respect to ;, space and current delta.
-static inline FUNGEDATATYPE FindNextInstr(instructionPointer * restrict ip, FUNGEDATATYPE kInstr) {
+static inline fungeCell FindNextInstr(instructionPointer * restrict ip, fungeCell kInstr) {
 	bool injump = false;
 	if (kInstr == ';')
 		injump = true;
@@ -74,9 +74,9 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPLi
 FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursive)
 #endif
 {
-	FUNGEDATATYPE iters = StackPop(ip->stack);
+	fungeCell iters = StackPop(ip->stack);
 	if (iters == 0) {
-		FUNGEDATATYPE kInstr;
+		fungeCell kInstr;
 		// Skip past next instruction.
 		ipForward(ip, 1);
 		kInstr = FungeSpaceGet(&ip->position);
@@ -86,7 +86,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 	} else if (iters < 0) {
 		ipReverse(ip);
 	} else {
-		FUNGEDATATYPE kInstr;
+		fungeCell kInstr;
 		// Note that:
 		//   * Instruction executes *at* k
 		//   * In Funge-108 we skip over the cell we executed
@@ -94,9 +94,9 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 		//   * In Funge-98 we don't do that.
 
 		// This is used in case of spaces and with Funge-108
-		fungePosition oldpos = ip->position;
+		fungeVector oldpos = ip->position;
 		// And this is for knowing where to move past (in 108)
-		fungePosition posinstr;
+		fungeVector posinstr;
 		// Fetch instruction
 		ipForward(ip, 1);
 		kInstr = FungeSpaceGet(&ip->position);

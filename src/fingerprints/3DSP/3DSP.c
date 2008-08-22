@@ -102,8 +102,8 @@ FUNGE_ATTR_FAST
 static inline void writeMatrix(const instructionPointer * restrict ip,
                                const fungeVector * restrict fV, const double m[16])
 {
-	for (FUNGEDATATYPE i = 0; i < 4; ++i) {
-		for (FUNGEDATATYPE j = 0; j < 4; ++j) {
+	for (fungeCell i = 0; i < 4; ++i) {
+		for (fungeCell j = 0; j < 4; ++j) {
 			floatint u;
 			u.f = m[4*j + i];
 			FungeSpaceSetOff(u.i, VectorCreateRef(fV->x+i, fV->y+j), &ip->storageOffset);
@@ -115,8 +115,8 @@ FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
                               const fungeVector * restrict fV, double m[16])
 {
-	for (FUNGEDATATYPE x = 0; x < 4; ++x) {
-		for (FUNGEDATATYPE y = 0; y < 4; ++y) {
+	for (fungeCell x = 0; x < 4; ++x) {
+		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
 			u.i = FungeSpaceGetOff(VectorCreateRef(fV->x+x, fV->y+y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
@@ -258,8 +258,8 @@ static void Finger3DSPmatrixCopy(instructionPointer * ip)
 	ft.y += ip->storageOffset.y;
 
 
-	for (FUNGEDATATYPE x = 0; x < 4; ++x)
-		for (FUNGEDATATYPE y = 0; y < 4; ++y) {
+	for (fungeCell x = 0; x < 4; ++x)
+		for (fungeCell y = 0; y < 4; ++y) {
 			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(fs.x+x, fs.y+y)),
 			              VectorCreateRef(ft.x+x, ft.y+y));
 		}
@@ -270,7 +270,7 @@ static void Finger3DSPmatrixRotate(instructionPointer * ip)
 {
 	double s, c;
 	double angle = PopFloat(ip);
-	FUNGEDATATYPE axis = StackPop(ip->stack);
+	fungeCell axis = StackPop(ip->stack);
 	fungeVector fV = StackPopVector(ip->stack);
 
 	if (!(axis >= 1 && axis <= 3)) {
@@ -404,8 +404,8 @@ static void Finger3DSPmatrixMul(instructionPointer * ip)
 
 	mulMatrices(b, a, r);
 
-	for (FUNGEDATATYPE x = 0; x < 4; ++x)
-		for (FUNGEDATATYPE y = 0; y < 4; ++y) {
+	for (fungeCell x = 0; x < 4; ++x)
+		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
 			u.f = r[y*4 + x];
 			FungeSpaceSetOff(u.i, VectorCreateRef(ft.x+x, ft.y+y), &ip->storageOffset);

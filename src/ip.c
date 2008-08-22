@@ -132,7 +132,7 @@ FUNGE_ATTR_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t st
 
 FUNGE_ATTR_FAST void ipTurnRight(instructionPointer * restrict ip)
 {
-	FUNGEVECTORTYPE tmpX;
+	fungeCell tmpX;
 
 	assert(ip != NULL);
 
@@ -143,7 +143,7 @@ FUNGE_ATTR_FAST void ipTurnRight(instructionPointer * restrict ip)
 
 FUNGE_ATTR_FAST void ipTurnLeft(instructionPointer * restrict ip)
 {
-	FUNGEVECTORTYPE tmpX;
+	fungeCell tmpX;
 
 	assert(ip != NULL);
 
@@ -160,7 +160,7 @@ FUNGE_ATTR_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta 
 	ip->delta.y = delta->y;
 }
 
-FUNGE_ATTR_FAST void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position)
+FUNGE_ATTR_FAST void ipSetPosition(instructionPointer * restrict ip, const fungeVector * restrict position)
 {
 	assert(ip != NULL);
 	assert(position != NULL);

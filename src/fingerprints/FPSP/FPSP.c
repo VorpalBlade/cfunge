@@ -193,7 +193,7 @@ static void FingerFPSPpow(instructionPointer * ip)
 static void FingerFPSPfromint(instructionPointer * ip)
 {
 	floatint a;
-	FUNGEDATATYPE i;
+	fungeCell i;
 	i = StackPop(ip->stack);
 	a.f = (float)i;
 	StackPush(ip->stack, a.i);
@@ -203,7 +203,7 @@ static void FingerFPSPtoint(instructionPointer * ip)
 {
 	floatint a;
 	a.i = StackPop(ip->stack);
-	StackPush(ip->stack, (FUNGEDATATYPE)a.f);
+	StackPush(ip->stack, (fungeCell)a.f);
 }
 
 static void FingerFPSPfromascii(instructionPointer * ip)

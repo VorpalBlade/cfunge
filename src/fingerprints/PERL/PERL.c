@@ -209,7 +209,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 			if (errno == ERANGE)
 				StackPush(ip->stack, -1);
 		} else {
-			StackPush(ip->stack, (FUNGEDATATYPE)i);
+			StackPush(ip->stack, (fungeCell)i);
 		}
 	}
 	StackFreeString(perlcode);

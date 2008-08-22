@@ -35,13 +35,13 @@ typedef struct sFungeFileHandle {
 #define ALLOCCHUNK 2
 // Array of pointers
 static FungeFileHandle** handles = NULL;
-static FUNGEDATATYPE maxHandle = 0;
+static fungeCell maxHandle = 0;
 
 /// Used by AllocateHandle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline FUNGEDATATYPE findNextFreeHandle(void)
+static inline fungeCell findNextFreeHandle(void)
 {
-	for (FUNGEDATATYPE i = 0; i < maxHandle; i++) {
+	for (fungeCell i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
 			return i;
 	}
@@ -51,7 +51,7 @@ static inline FUNGEDATATYPE findNextFreeHandle(void)
 		if (!newlist)
 			return -1;
 		handles = newlist;
-		for (FUNGEDATATYPE i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
+		for (fungeCell i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			handles[i] = NULL;
 		maxHandle += ALLOCCHUNK;
 		return (maxHandle - ALLOCCHUNK);
@@ -61,9 +61,9 @@ static inline FUNGEDATATYPE findNextFreeHandle(void)
 /// Get a new handle to use for a file, also allocates buffer for it.
 /// @return Handle, or -1 on failure
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline FUNGEDATATYPE AllocateHandle(void)
+static inline fungeCell AllocateHandle(void)
 {
-	FUNGEDATATYPE h;
+	fungeCell h;
 
 	h = findNextFreeHandle();
 	if (h < 0)
@@ -77,7 +77,7 @@ static inline FUNGEDATATYPE AllocateHandle(void)
 
 /// Free a handle. fclose() the file before calling this.
 FUNGE_ATTR_FAST
-static inline void FreeHandle(FUNGEDATATYPE h)
+static inline void FreeHandle(fungeCell h)
 {
 	if (!handles[h])
 		return;
@@ -91,7 +91,7 @@ static inline void FreeHandle(FUNGEDATATYPE h)
 
 /// Checks if handle is valid.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool ValidHandle(FUNGEDATATYPE h)
+static inline bool ValidHandle(fungeCell h)
 {
 	if ((h < 0) || (h > maxHandle) || (!handles[h])) {
 		return false;
@@ -103,7 +103,7 @@ static inline bool ValidHandle(FUNGEDATATYPE h)
 /// C - Close a file
 static void FingerFILEfclose(instructionPointer * ip)
 {
-	FUNGEDATATYPE h;
+	fungeCell h;
 
 	h = StackPop(ip->stack);
 	if(!ValidHandle(h)) {
@@ -135,7 +135,7 @@ static void FingerFILEdelete(instructionPointer * ip)
 /// G - Get string from file (like c fgets)
 static void FingerFILEfgets(instructionPointer * ip)
 {
-	FUNGEDATATYPE h;
+	fungeCell h;
 	FILE * fp;
 
 	h = StackPop(ip->stack);
@@ -194,7 +194,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 			str = stringbuffer_finish(sb);
 			len = strlen(str);
 			StackPushString(ip->stack, str, len);
-			StackPush(ip->stack, (FUNGEDATATYPE)len);
+			StackPush(ip->stack, (fungeCell)len);
 			free_nogc(str);
 			return;
 		}
@@ -204,7 +204,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 /// L - Get current location in file
 static void FingerFILEftell(instructionPointer * ip)
 {
-	FUNGEDATATYPE h;
+	fungeCell h;
 	long pos;
 
 	h = StackPop(ip->stack);
@@ -222,16 +222,16 @@ static void FingerFILEftell(instructionPointer * ip)
 		return;
 	}
 
-	StackPush(ip->stack, (FUNGEDATATYPE)pos);
+	StackPush(ip->stack, (fungeCell)pos);
 }
 
 /// O - Open a file (Va = i/o buffer vector)
 static void FingerFILEfopen(instructionPointer * ip)
 {
 	char * restrict filename;
-	FUNGEDATATYPE mode;
+	fungeCell mode;
 	fungeVector vect;
-	FUNGEDATATYPE h;
+	fungeCell h;
 
 	filename = StackPopString(ip->stack);
 	mode = StackPop(ip->stack);
@@ -275,7 +275,7 @@ end:
 static void FingerFILEfputs(instructionPointer * ip)
 {
 	char * restrict str;
-	FUNGEDATATYPE h;
+	fungeCell h;
 
 	str = StackPopString(ip->stack);
 	h = StackPop(ip->stack);
@@ -295,7 +295,7 @@ static void FingerFILEfputs(instructionPointer * ip)
 /// R - Read n bytes from file to i/o buffer
 static void FingerFILEfread(instructionPointer * ip)
 {
-	FUNGEDATATYPE n, h;
+	fungeCell n, h;
 
 	n = StackPop(ip->stack);
 	h = StackPop(ip->stack);
@@ -328,7 +328,7 @@ static void FingerFILEfread(instructionPointer * ip)
 			}
 		}
 
-		for (FUNGEDATATYPE i = 0; i < n; i++) {
+		for (fungeCell i = 0; i < n; i++) {
 			FungeSpaceSet(buf[i], VectorCreateRef(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		cf_free(buf);
@@ -338,7 +338,7 @@ static void FingerFILEfread(instructionPointer * ip)
 /// S - Seek to position in file
 static void FingerFILEfseek(instructionPointer * ip)
 {
-	FUNGEDATATYPE n, m, h;
+	fungeCell n, m, h;
 
 	n = StackPop(ip->stack);
 	m = StackPop(ip->stack);
@@ -377,7 +377,7 @@ static void FingerFILEfseek(instructionPointer * ip)
 /// W - Write n bytes from i/o buffer to file
 static void FingerFILEfwrite(instructionPointer * ip)
 {
-	FUNGEDATATYPE n, h;
+	fungeCell n, h;
 
 	n = StackPop(ip->stack);
 	h = StackPop(ip->stack);
@@ -395,7 +395,7 @@ static void FingerFILEfwrite(instructionPointer * ip)
 		FILE * fp = handles[h]->file;
 		unsigned char * restrict buf = cf_malloc_noptr(n * sizeof(char));
 
-		for (FUNGEDATATYPE i = 0; i < n; i++) {
+		for (fungeCell i = 0; i < n; i++) {
 			buf[i] = FungeSpaceGet(VectorCreateRef(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		if (fwrite(buf, sizeof(unsigned char), n, fp) != (size_t)n) {

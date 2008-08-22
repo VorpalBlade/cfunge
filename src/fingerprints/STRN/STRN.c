@@ -100,7 +100,7 @@ static void FingerSTRNget(instructionPointer * ip)
 	sb = stringbuffer_new();
 
 	while (true) {
-		FUNGEDATATYPE val;
+		fungeCell val;
 		val = FungeSpaceGet(&pos);
 		stringbuffer_append_char(sb, val);
 		if (pos.x < bounds.x || pos.x > bounds.x + bounds.w) {
@@ -143,7 +143,7 @@ static void FingerSTRNinput(instructionPointer * ip)
 /// L - Leftmost n characters of string
 static void FingerSTRNleft(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
+	fungeCell n;
 	size_t len;
 	char *s;
 	n = StackPop(ip->stack);
@@ -162,7 +162,7 @@ static void FingerSTRNleft(instructionPointer * ip)
 /// M - n characters starting at position p
 static void FingerSTRNslice(instructionPointer * ip)
 {
-	FUNGEDATATYPE n, p;
+	fungeCell n, p;
 	char *s;
 	n = StackPop(ip->stack);
 	p = StackPop(ip->stack);
@@ -217,7 +217,7 @@ static void FingerSTRNput(instructionPointer * ip)
 /// R - Rightmost n characters of string
 static void FingerSTRNright(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
+	fungeCell n;
 	size_t len;
 	char *s;
 	n = StackPop(ip->stack);
@@ -236,10 +236,10 @@ static void FingerSTRNright(instructionPointer * ip)
 static void FingerSTRNitoa(instructionPointer * ip)
 {
 	char *s;
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 	StringBuffer *sb = stringbuffer_new();
 
-	stringbuffer_append_printf(sb, "%" FUNGEDATAPRI, n);
+	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb);
 	StackPushString(ip->stack, s, strlen(s));
 	free_nogc(s);

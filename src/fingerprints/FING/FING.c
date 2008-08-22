@@ -27,7 +27,7 @@
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 static inline char PopStackSpec(instructionPointer * ip)
 {
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 	if (n < 0) return 0;
 	else if (n <= 25) return 'A' + n;
 	else if (n < 'A') return 0;

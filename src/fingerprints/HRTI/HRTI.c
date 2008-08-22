@@ -30,11 +30,11 @@
 static suseconds_t resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline FUNGEDATATYPE GetDifference(const struct timeval * before,
+static inline fungeCell GetDifference(const struct timeval * before,
                                           const struct timeval * after)
 {
-	return 1000000 * ((FUNGEDATATYPE)after->tv_sec - (FUNGEDATATYPE)before->tv_sec)
-	       + (FUNGEDATATYPE)after->tv_usec - (FUNGEDATATYPE)before->tv_usec;
+	return 1000000 * ((fungeCell)after->tv_sec - (fungeCell)before->tv_sec)
+	       + (fungeCell)after->tv_usec - (fungeCell)before->tv_usec;
 }
 
 /// This function checks that the IP got a non-null HRTI data pointer.
@@ -66,7 +66,7 @@ static void FingerHRTIeraseMark(instructionPointer * ip)
 /// G - Granularity
 static void FingerHRTIgranularity(instructionPointer * ip)
 {
-	StackPush(ip->stack, (FUNGEDATATYPE)resolution);
+	StackPush(ip->stack, (fungeCell)resolution);
 }
 
 /// M - Mark
@@ -97,7 +97,7 @@ static void FingerHRTIsecond(instructionPointer * ip)
 {
 	struct timeval curTime;
 	gettimeofday(&curTime, NULL);
-	StackPush(ip->stack, (FUNGEDATATYPE)curTime.tv_usec);
+	StackPush(ip->stack, (fungeCell)curTime.tv_usec);
 }
 
 FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)

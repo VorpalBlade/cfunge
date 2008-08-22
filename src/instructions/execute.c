@@ -61,9 +61,9 @@ FUNGE_ATTR_FAST void RunSystemExecute(instructionPointer * restrict ip)
 		retval = system(command);
 		// POSIX says we may only use WEXITSTATUS if WIFEXITED returns true...
 		if (WIFEXITED(retval)) {
-			StackPush(ip->stack, (FUNGEDATATYPE)WEXITSTATUS(retval));
+			StackPush(ip->stack, (fungeCell)WEXITSTATUS(retval));
 		} else {
-			StackPush(ip->stack, (FUNGEDATATYPE)retval);
+			StackPush(ip->stack, (fungeCell)retval);
 		}
 #ifdef DISABLE_GC
 		cf_free(command);

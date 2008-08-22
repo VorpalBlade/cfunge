@@ -119,7 +119,7 @@ bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPoin
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
+bool ManagerLoad(instructionPointer * restrict ip, fungeCell fingerprint);
 
 /**
  * Try to unload a fingerprint.
@@ -129,7 +129,7 @@ bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint);
+bool ManagerUnload(instructionPointer * restrict ip, fungeCell fingerprint);
 
 /**
  * Print out list of supported fingerprints

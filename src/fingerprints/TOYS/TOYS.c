@@ -36,7 +36,7 @@
 /// A - gable
 static void FingerTOYSgable(instructionPointer * ip)
 {
-	FUNGEDATATYPE n, c;
+	fungeCell n, c;
 
 	n = StackPop(ip->stack);
 	c = StackPop(ip->stack);
@@ -54,7 +54,7 @@ static void FingerTOYSgable(instructionPointer * ip)
 static void FingerTOYSpairOfShoes(instructionPointer * ip)
 {
 	// Got no idea if this is correct.
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
@@ -80,8 +80,8 @@ static void FingerTOYSbracelet(instructionPointer * ip)
 		return;
 	}
 
-	for (FUNGEDATATYPE x = 0; x < d.x; ++x)
-		for (FUNGEDATATYPE y = 0; y < d.y; ++y)
+	for (fungeCell x = 0; x < d.x; ++x)
+		for (fungeCell y = 0; y < d.y; ++y)
 			FungeSpaceSetOff(FungeSpaceGetOff(VectorCreateRef(x, y), &o),
 			                 VectorCreateRef(x, y), &t);
 }
@@ -95,7 +95,7 @@ static void FingerTOYStoiletSeat(instructionPointer * ip)
 /// E - pitchfork head
 static void FingerTOYSpitchforkHead(instructionPointer * ip)
 {
-	FUNGEDATATYPE sum = 0;
+	fungeCell sum = 0;
 	for (size_t i = ip->stack->top; i-- > 0;)
 		sum += ip->stack->entries[i];
 	StackClear(ip->stack);
@@ -106,7 +106,7 @@ static void FingerTOYSpitchforkHead(instructionPointer * ip)
 static void FingerTOYScalipers(instructionPointer * ip)
 {
 	fungeVector t;
-	FUNGEDATATYPE i, j;
+	fungeCell i, j;
 
 	t = StackPopVector(ip->stack);
 
@@ -114,8 +114,8 @@ static void FingerTOYScalipers(instructionPointer * ip)
 	j = StackPop(ip->stack);
 	i = StackPop(ip->stack);
 
-	for (FUNGEDATATYPE y = t.y; y < t.y + j; ++y)
-		for (FUNGEDATATYPE x = t.x; x < t.x + i; ++x)
+	for (fungeCell y = t.y; y < t.y + j; ++y)
+		for (fungeCell x = t.x; x < t.x + i; ++x)
 			FungeSpaceSet(StackPop(ip->stack), VectorCreateRef(x, y));
 }
 
@@ -123,7 +123,7 @@ static void FingerTOYScalipers(instructionPointer * ip)
 static void FingerTOYScounterclockwise(instructionPointer * ip)
 {
 	fungeVector o;
-	FUNGEDATATYPE i, j;
+	fungeCell i, j;
 
 	o = StackPopVector(ip->stack);
 
@@ -131,15 +131,15 @@ static void FingerTOYScounterclockwise(instructionPointer * ip)
 	j = StackPop(ip->stack);
 	i = StackPop(ip->stack);
 
-	for (FUNGEDATATYPE y = o.y + j; y-- > o.y;)
-		for (FUNGEDATATYPE x = o.x + i; x-- > o.x;)
+	for (fungeCell y = o.y + j; y-- > o.y;)
+		for (fungeCell x = o.x + i; x-- > o.x;)
 			StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(x, y)));
 }
 
 /// H - pair of stilts
 static void FingerTOYSpairOfStilts(instructionPointer * ip)
 {
-	FUNGEDATATYPE a, b;
+	fungeCell a, b;
 
 	b = StackPop(ip->stack);
 	a = StackPop(ip->stack);
@@ -160,18 +160,18 @@ static void FingerTOYSdoricColumn(instructionPointer * ip)
 static void FingerTOYSfishhook(instructionPointer * ip)
 {
 	fungeRect bounds;
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 
 	FungeSpaceGetBoundRect(&bounds);
 
 	if (!n)
 		return;
 	else if (n < 0) {
-		for (FUNGEDATATYPE y = bounds.y; y <= (bounds.y + bounds.h); ++y)
+		for (fungeCell y = bounds.y; y <= (bounds.y + bounds.h); ++y)
 			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y + n));
 
 	} else if (n > 0) {
-		for (FUNGEDATATYPE y = (bounds.y + bounds.h); y >= bounds.y; --y)
+		for (fungeCell y = (bounds.y + bounds.h); y >= bounds.y; --y)
 			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(ip->position.x, y)), VectorCreateRef(ip->position.x, y + n));
 	}
 }
@@ -192,8 +192,8 @@ static void FingerTOYSscissors(instructionPointer * ip)
 		return;
 	}
 
-	for (FUNGEDATATYPE x = d.x; x-- > 0;)
-		for (FUNGEDATATYPE y = d.y; y-- > 0;)
+	for (fungeCell x = d.x; x-- > 0;)
+		for (fungeCell y = d.y; y-- > 0;)
 			FungeSpaceSetOff(FungeSpaceGetOff(VectorCreateRef(x, y), &o),
 			                 VectorCreateRef(x, y), &t);
 }
@@ -224,8 +224,8 @@ static void FingerTOYSkittycat(instructionPointer * ip)
 		return;
 	}
 
-	for (FUNGEDATATYPE x = 0; x < d.x; ++x)
-		for (FUNGEDATATYPE y = 0; y < d.y; ++y) {
+	for (fungeCell x = 0; x < d.x; ++x)
+		for (fungeCell y = 0; y < d.y; ++y) {
 			FungeSpaceSetOff(FungeSpaceGetOff(VectorCreateRef(x, y), &o),
 			                 VectorCreateRef(x, y), &t);
 			FungeSpaceSetOff(' ', VectorCreateRef(x, y), &o);
@@ -242,17 +242,17 @@ static void FingerTOYSlightningBolt(instructionPointer * ip)
 static void FingerTOYSboulder(instructionPointer * ip)
 {
 	fungeRect bounds;
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 
 	FungeSpaceGetBoundRect(&bounds);
 
 	if (!n)
 		return;
 	else if (n < 0) {
-		for (FUNGEDATATYPE x = bounds.x; x <= (bounds.x + bounds.w); ++x)
+		for (fungeCell x = bounds.x; x <= (bounds.x + bounds.w); ++x)
 			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x + n, ip->position.y));
 	} else if (n > 0) {
-		for (FUNGEDATATYPE x = (bounds.x + bounds.w); x >= bounds.x; --x)
+		for (fungeCell x = (bounds.x + bounds.w); x >= bounds.x; --x)
 			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(x, ip->position.y)), VectorCreateRef(x + n, ip->position.y));
 	}
 }
@@ -260,7 +260,7 @@ static void FingerTOYSboulder(instructionPointer * ip)
 /// P - mailbox
 static void FingerTOYSmailbox(instructionPointer * ip)
 {
-	FUNGEDATATYPE product = 1;
+	fungeCell product = 1;
 	for (size_t i = ip->stack->top; i-- > 0;)
 		product *= ip->stack->entries[i];
 	StackClear(ip->stack);
@@ -270,7 +270,7 @@ static void FingerTOYSmailbox(instructionPointer * ip)
 /// Q - necklace
 static void FingerTOYSnecklace(instructionPointer * ip)
 {
-	FUNGEDATATYPE v = StackPop(ip->stack);
+	fungeCell v = StackPop(ip->stack);
 
 	ipForward(ip, -1);
 	FungeSpaceSet(v, &ip->position);
@@ -291,7 +291,7 @@ static void FingerTOYScanOpener(instructionPointer * ip)
 static void FingerTOYSchicane(instructionPointer * ip)
 {
 	fungeVector d, o;
-	FUNGEDATATYPE c;
+	fungeCell c;
 	o = StackPopVector(ip->stack);
 	d = StackPopVector(ip->stack);
 	c = StackPop(ip->stack);
@@ -304,8 +304,8 @@ static void FingerTOYSchicane(instructionPointer * ip)
 		return;
 	}
 
-	for (FUNGEDATATYPE x = o.x; x < o.x + d.x; ++x)
-		for (FUNGEDATATYPE y = o.y; y < o.y + d.y; ++y)
+	for (fungeCell x = o.x; x < o.x + d.x; ++x)
+		for (fungeCell y = o.y; y < o.y + d.y; ++y)
 			FungeSpaceSet(c, VectorCreateRef(x, y));
 }
 
@@ -348,8 +348,8 @@ static void FingerTOYSdixiecup(instructionPointer * ip)
 		return;
 	}
 
-	for (FUNGEDATATYPE x = d.x; x-- > 0;)
-		for (FUNGEDATATYPE y = d.y; y-- > 0;) {
+	for (fungeCell x = d.x; x-- > 0;)
+		for (fungeCell y = d.y; y-- > 0;) {
 			FungeSpaceSetOff(FungeSpaceGetOff(VectorCreateRef(x, y), &o),
 			                 VectorCreateRef(x, y), &t);
 			FungeSpaceSetOff(' ', VectorCreateRef(x, y), &o);
@@ -360,7 +360,7 @@ static void FingerTOYSdixiecup(instructionPointer * ip)
 static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 {
 	fungeVector vect;
-	FUNGEDATATYPE v, c;
+	fungeCell v, c;
 	vect = StackPopVector(ip->stack);
 	v = StackPop(ip->stack);
 	c = FungeSpaceGet(&vect);

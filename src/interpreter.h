@@ -79,12 +79,12 @@ void IfNorthSouth(instructionPointer * restrict ip);
  */
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-bool ExecuteInstruction(FUNGEDATATYPE opcode,
+bool ExecuteInstruction(fungeCell opcode,
                         instructionPointer * restrict ip,
                         ssize_t * threadindex);
 #else
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ExecuteInstruction(FUNGEDATATYPE opcode,
+void ExecuteInstruction(fungeCell opcode,
                         instructionPointer * restrict ip);
 #endif
 

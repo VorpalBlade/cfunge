@@ -58,11 +58,11 @@ static instructionPointer *IP = NULL;
  * Print warning on unknown instruction if such warnings are enabled.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintUnknownInstrWarn(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+static inline void PrintUnknownInstrWarn(fungeCell opcode, instructionPointer * restrict ip)
 {
 	if (SettingWarnings)
 		fprintf(stderr,
-		        "WARN: Unknown instruction at x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+		        "WARN: Unknown instruction at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 		        ip->position.x, ip->position.y, (char)opcode, opcode);
 }
 
@@ -98,11 +98,11 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 
 #define PUSHVAL(x, y) \
 	case (x): \
-		StackPush(ip->stack, (FUNGEDATATYPE)y); \
+		StackPush(ip->stack, (fungeCell)y); \
 		break;
 
 /// This function handles string mode.
-FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(fungeCell opcode, instructionPointer * restrict ip)
 {
 	if (opcode == '"') {
 		ip->mode = ipmCODE;
@@ -122,7 +122,7 @@ FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(FUNGEDATATYPE opcode,
 }
 
 /// This function handles fingerprint instructions.
-FUNGE_ATTR_FAST static inline void HandleFPrint(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST static inline void HandleFPrint(fungeCell opcode, instructionPointer * restrict ip)
 {
 	if (SettingDisableFingerprints) {
 		PrintUnknownInstrWarn(opcode, ip);
@@ -141,9 +141,9 @@ FUNGE_ATTR_FAST static inline void HandleFPrint(FUNGEDATATYPE opcode, instructio
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip, ssize_t * threadindex)
+FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPointer * restrict ip, ssize_t * threadindex)
 #else
-FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPointer * restrict ip)
 #endif
 {
 	// First check if we are in string mode, and do special stuff then.
@@ -186,7 +186,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 			case 'j': {
 				// Currently need to do it like this or wrapping
 				// won't work for j.
-				FUNGEDATATYPE jumps = StackPop(ip->stack);
+				fungeCell jumps = StackPop(ip->stack);
 				if (jumps != 0) {
 					fungeVector tmp;
 					tmp.x = ip->delta.x;
@@ -221,7 +221,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				ipTurnRight(ip);
 				break;
 			case 'x': {
-				fungePosition pos;
+				fungeVector pos;
 				pos = StackPopVector(ip->stack);
 				ipSetDelta(ip, & pos);
 				break;
@@ -263,7 +263,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				IfNorthSouth(ip);
 				break;
 			case 'w': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				if (a < b)
@@ -281,28 +281,28 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				break;
 
 			case '-': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				StackPush(ip->stack, a - b);
 				break;
 			}
 			case '+': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				StackPush(ip->stack, a + b);
 				break;
 			}
 			case '*': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				StackPush(ip->stack, a * b);
 				break;
 			}
 			case '/': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				if (b == 0)
@@ -312,7 +312,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				break;
 			}
 			case '%': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				if (b == 0)
@@ -326,7 +326,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				StackPush(ip->stack, !StackPop(ip->stack));
 				break;
 			case '`': {
-				FUNGEDATATYPE a, b;
+				fungeCell a, b;
 				b = StackPop(ip->stack);
 				a = StackPop(ip->stack);
 				StackPush(ip->stack, a > b);
@@ -334,16 +334,16 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 			}
 
 			case 'p': {
-				fungePosition pos;
-				FUNGEDATATYPE a;
+				fungeVector pos;
+				fungeCell a;
 				pos = StackPopVector(ip->stack);
 				a = StackPop(ip->stack);
 				FungeSpaceSetOff(a, &pos, &ip->storageOffset);
 				break;
 			}
 			case 'g': {
-				fungePosition pos;
-				FUNGEDATATYPE a;
+				fungeVector pos;
+				fungeCell a;
 				pos = StackPopVector(ip->stack);
 				a = FungeSpaceGetOff(&pos, &ip->storageOffset);
 				StackPush(ip->stack, a);
@@ -370,7 +370,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				break;
 
 			case ',': {
-				FUNGEDATATYPE a = StackPop(ip->stack);
+				fungeCell a = StackPop(ip->stack);
 				// Reverse on failed output/input
 				if (cf_putchar_maybe_locked(a) != (char)a)
 					ipReverse(ip);
@@ -381,12 +381,12 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 			}
 			case '.':
 				// Reverse on failed output/input
-				if (printf("%" FUNGEDATAPRI " ", StackPop(ip->stack)) < 0)
+				if (printf("%" FUNGECELLPRI " ", StackPop(ip->stack)) < 0)
 					ipReverse(ip);
 				break;
 
 			case '~': {
-				FUNGEDATATYPE a;
+				fungeCell a;
 				fflush(stdout);
 				if (input_getchar(&a)) {
 					StackPush(ip->stack, a);
@@ -396,7 +396,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				break;
 			}
 			case '&': {
-				FUNGEDATATYPE a;
+				fungeCell a;
 				ret_getint gotint = rgi_noint;
 				fflush(stdout);
 				while (gotint == rgi_noint)
@@ -414,8 +414,8 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				break;
 
 			case '{': {
-				FUNGEDATATYPE count;
-				fungePosition pos;
+				fungeCell count;
+				fungeVector pos;
 				count = StackPop(ip->stack);
 				ipForward(ip, 1);
 				pos.x = ip->position.x;
@@ -429,7 +429,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				if (ip->stackstack->size == 1) {
 					ipReverse(ip);
 				} else {
-					FUNGEDATATYPE count;
+					fungeCell count;
 					count = StackPop(ip->stack);
 					if (!StackStackEnd(ip, &ip->stackstack, count))
 						ipReverse(ip);
@@ -439,7 +439,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 				if (ip->stackstack->size == 1) {
 					ipReverse(ip);
 				} else {
-					FUNGEDATATYPE count;
+					fungeCell count;
 					count = StackPop(ip->stack);
 					StackStackTransfer(count,
 					                   ip->stackstack->stacks[ip->stackstack->current],
@@ -460,7 +460,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 
 			case '(':
 			case ')': {
-				FUNGEDATATYPE fpsize = StackPop(ip->stack);
+				fungeCell fpsize = StackPop(ip->stack);
 				// Check for sanity (because we won't have any fingerprints
 				// outside such a range. This prevents long lockups here.
 				if (fpsize < 1) {
@@ -469,10 +469,10 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(FUNGEDATATYPE opcode, instruction
 					StackPopNDiscard(ip->stack, fpsize);
 					ipReverse(ip);
 				} else {
-					FUNGEDATATYPE fprint = 0;
+					fungeCell fprint = 0;
 					if (SettingWarnings && (fpsize > 8)) {
 						fprintf(stderr,
-						        "WARN: %c (x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI "): count is very large(%" FUNGEDATAPRI "), probably a bug.\n",
+						        "WARN: %c (x=%" FUNGECELLPRI " y=%" FUNGECELLPRI "): count is very large(%" FUNGECELLPRI "), probably a bug.\n",
 						        (char)opcode, ip->position.x, ip->position.y, fpsize);
 					}
 					while (fpsize--) {
@@ -554,17 +554,17 @@ static inline void interpreterMainLoop(void)
 		ssize_t i = IPList->top;
 		while (i >= 0) {
 			bool retval;
-			FUNGEDATATYPE opcode;
+			fungeCell opcode;
 
 			opcode = FungeSpaceGet(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
 			if (SettingTraceLevel > 8) {
-				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+				fprintf(stderr, "tix=%zu tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
 				PrintStackTop(IPList->ips[i].stack);
 			} else if (SettingTraceLevel > 3) {
-				fprintf(stderr, "tix=%zu tid=%" FUNGEDATAPRI " x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+				fprintf(stderr, "tix=%zu tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
 			} else if (SettingTraceLevel > 2)
@@ -579,16 +579,16 @@ static inline void interpreterMainLoop(void)
 	}
 #else /* CONCURRENT_FUNGE */
 	while (true) {
-		FUNGEDATATYPE opcode;
+		fungeCell opcode;
 
 		opcode = FungeSpaceGet(&IP->position);
 #    ifndef DISABLE_TRACE
 		if (SettingTraceLevel > 8) {
-			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
 			PrintStackTop(IP->stack);
 		} else if (SettingTraceLevel > 3) {
-			fprintf(stderr, "x=%" FUNGEVECTORPRI " y=%" FUNGEVECTORPRI ": %c (%" FUNGEDATAPRI ")\n",
+			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
 		} else if (SettingTraceLevel > 2)
 			fprintf(stderr, "%c", (char)opcode);

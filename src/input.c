@@ -55,7 +55,7 @@ FUNGE_ATTR_FAST static inline void discardTheLine(void)
 }
 
 
-FUNGE_ATTR_FAST bool input_getchar(FUNGEDATATYPE * chr)
+FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
 {
 	char tmp;
 	if (!getTheLine())
@@ -64,7 +64,7 @@ FUNGE_ATTR_FAST bool input_getchar(FUNGEDATATYPE * chr)
 	lastlineCurrent++;
 	if (lastlineCurrent && (*lastlineCurrent == '\0'))
 		discardTheLine();
-	*chr = (FUNGEDATATYPE)tmp;
+	*chr = (fungeCell)tmp;
 	return true;
 }
 
@@ -77,9 +77,9 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // Return value is last index used in string.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline ptrdiff_t parseInt(const char * restrict s,
-                                 FUNGEDATATYPE * value, FUNGEDATATYPE base)
+                                 fungeCell * value, fungeCell base)
 {
-	FUNGEDATATYPE result = 0;
+	fungeCell result = 0;
 	size_t i;
 
 	assert(s != NULL);
@@ -87,10 +87,10 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 
 	for (i = 0; i <= strlen(s); i++) {
 		// Will it overflow?
-		if (result > (FUNGEDATA_MAX / base)) {
+		if (result > (FUNGECELL_MAX / base)) {
 			break;
 		} else {
-			FUNGEDATATYPE tmp;
+			fungeCell tmp;
 			char c = s[i];
 			// Pointer into digits.
 			const char * p = strchr(digits, c);
@@ -98,9 +98,9 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 			if (!p || ((p - digits) >= (ptrdiff_t)base))
 				break;
 
-			tmp = (FUNGEDATATYPE)(p - digits);
+			tmp = (fungeCell)(p - digits);
 			// Break if it will overflow!
-			if ((result * base) > (FUNGEDATA_MAX  - tmp))
+			if ((result * base) > (FUNGECELL_MAX  - tmp))
 				break;
 			result = (result * base) + tmp;
 		}
@@ -111,7 +111,7 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 
 // Note, no need to optimise really, this is user input
 // bound anyway.
-FUNGE_ATTR_FAST ret_getint input_getint(FUNGEDATATYPE * value, int base)
+FUNGE_ATTR_FAST ret_getint input_getint(fungeCell * value, int base)
 {
 	bool found = false;
 	char * endptr = NULL;
@@ -135,7 +135,7 @@ FUNGE_ATTR_FAST ret_getint input_getint(FUNGEDATATYPE * value, int base)
 		found = true;
 		// Ok, we found it, lets convert it.
 		endptr = lastlineCurrent + parseInt(lastlineCurrent, value,
-		                                    (FUNGEDATATYPE)base);
+		                                    (fungeCell)base);
 		break;
 	} while (*(lastlineCurrent++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.

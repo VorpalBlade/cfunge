@@ -147,11 +147,11 @@ static size_t environ_count = 0;
 
 // Push a single request value.
 // pushStack is stack to push on.
-FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
+FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
 {
 	switch (request) {
 		case si_flags: { // Flags
-			FUNGEDATATYPE tmp = 0x0;
+			fungeCell tmp = 0x0;
 #ifdef CONCURRENT_FUNGE
 			tmp |= FUNGE_FLAGS_CONCURRENT;
 #endif
@@ -165,7 +165,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			break;
 		}
 		case si_cell_size: // Cell size
-			StackPush(pushStack, sizeof(FUNGEDATATYPE));
+			StackPush(pushStack, sizeof(fungeCell));
 			break;
 		case si_handprint98: // Handprint
 			StackPush(pushStack, FUNGE_OLD_HANDPRINT);
@@ -183,9 +183,9 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			break;
 		case si_path_separator: // Path separator
 #ifdef __WIN32__
-			StackPush(pushStack, (FUNGEDATATYPE)'\\');
+			StackPush(pushStack, (fungeCell)'\\');
 #else
-			StackPush(pushStack, (FUNGEDATATYPE)'/');
+			StackPush(pushStack, (fungeCell)'/');
 #endif
 			break;
 		case si_vector_size: // Scalars / vector
@@ -223,7 +223,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
+			StackPush(pushStack, (fungeCell)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
 			break;
 		}
 		case si_hour_minute_second: { // Time (hour * 256 * 256) + (minute * 256) + (second)
@@ -231,7 +231,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			StackPush(pushStack, (FUNGEDATATYPE)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
+			StackPush(pushStack, (fungeCell)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
 			break;
 		}
 		case si_stack_count: // Number of stacks on stack stack
@@ -246,8 +246,8 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			StackPush(pushStack, fungeargc);
 			break;
 		case si_argv: // Command line arguments
-			StackPush(pushStack, (FUNGEDATATYPE)'\0');
-			StackPush(pushStack, (FUNGEDATATYPE)'\0');
+			StackPush(pushStack, (fungeCell)'\0');
+			StackPush(pushStack, (fungeCell)'\0');
 			for (int i = fungeargc - 1; i >= 0; i--) {
 				StackPushString(pushStack, fungeargv[i], strlen(fungeargv[i]));
 			}
@@ -257,7 +257,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			if (environ_count == 0) {
 				size_t i = 0;
 				while (true) {
-					if (!environ[i] || *environ[i] == (FUNGEDATATYPE)'\0')
+					if (!environ[i] || *environ[i] == (fungeCell)'\0')
 						break;
 					if (SettingSandbox) {
 						if (!CheckEnvIsSafe(environ[i])) {
@@ -273,10 +273,10 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			break;
 		case si_env: { // Environment variables
 			size_t i = 0;
-			StackPush(pushStack, (FUNGEDATATYPE)'\0');
+			StackPush(pushStack, (fungeCell)'\0');
 
 			while (true) {
-				if (!environ[i] || *environ[i] == (FUNGEDATATYPE)'\0')
+				if (!environ[i] || *environ[i] == (fungeCell)'\0')
 					break;
 				if (SettingSandbox) {
 					if (!CheckEnvIsSafe(environ[i])) {
@@ -299,11 +299,11 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 			StackPush(pushStack, 2);
 			break;
 		case si_cell_size_in_unit: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
-			StackPush(pushStack, sizeof(FUNGEDATATYPE) * CHAR_BIT);
+			StackPush(pushStack, sizeof(fungeCell) * CHAR_BIT);
 			break;
 #ifndef NDEBUG
 		default:
-			fprintf(stderr, "request was %" FUNGEDATAPRI "\nThis should not happen!\n", request);
+			fprintf(stderr, "request was %" FUNGECELLPRI "\nThis should not happen!\n", request);
 			abort();
 #endif
 	}
@@ -311,7 +311,7 @@ FUNGE_ATTR_FAST static void PushRequest(FUNGEDATATYPE request, instructionPointe
 
 FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 {
-	FUNGEDATATYPE request = StackPop(ip->stack);
+	fungeCell request = StackPop(ip->stack);
 	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
 	// Negative or 0: push all

@@ -27,30 +27,30 @@
 /// D - Push depth of stack to tos
 static void FingerFRTHstackSize(instructionPointer * ip)
 {
-	StackPush(ip->stack, (FUNGEDATATYPE)ip->stack->top);
+	StackPush(ip->stack, (fungeCell)ip->stack->top);
 }
 
 /// L - Forth Roll command
 static void FingerFRTHforthRoll(instructionPointer * ip)
 {
 	// FIXME: Move most of this functionality into stack.c
-	FUNGEDATATYPE u;
+	fungeCell u;
 	size_t s;
 	u = StackPop(ip->stack);
 	s = ip->stack->top;
 
-	if (u >= (FUNGEDATATYPE)s) {
+	if (u >= (fungeCell)s) {
 		StackPush(ip->stack, 0);
 	} else {
-		FUNGEDATATYPE * elems;
-		FUNGEDATATYPE xu;
+		fungeCell * elems;
+		fungeCell xu;
 
-		elems = cf_malloc_noptr(sizeof(FUNGEDATATYPE) * ip->stack->top);
+		elems = cf_malloc_noptr(sizeof(fungeCell) * ip->stack->top);
 		if (!elems) {
 			ipReverse(ip);
 			return;
 		}
-		memcpy(elems, ip->stack->entries, sizeof(FUNGEDATATYPE) * ip->stack->top);
+		memcpy(elems, ip->stack->entries, sizeof(fungeCell) * ip->stack->top);
 		xu = elems[s - (u+1)];
 
 		StackPopNDiscard(ip->stack, u + 1);
@@ -65,7 +65,7 @@ static void FingerFRTHforthRoll(instructionPointer * ip)
 /// O - Forth Over command
 static void FingerFRTHforthOver(instructionPointer * ip)
 {
-	FUNGEDATATYPE a, b;
+	fungeCell a, b;
 	b = StackPop(ip->stack);
 	a = StackPop(ip->stack);
 
@@ -77,15 +77,15 @@ static void FingerFRTHforthOver(instructionPointer * ip)
 /// P - Forth Pick command
 static void FingerFRTHforthPick(instructionPointer * ip)
 {
-	FUNGEDATATYPE u;
-	FUNGEDATATYPE s;
+	fungeCell u;
+	fungeCell s;
 	u = StackPop(ip->stack);
-	s = (FUNGEDATATYPE)ip->stack->top;
+	s = (fungeCell)ip->stack->top;
 
 	if (u >= s) {
 		StackPush(ip->stack, 0);
 	} else {
-		FUNGEDATATYPE i = StackGetIndex(ip->stack, s - u);
+		fungeCell i = StackGetIndex(ip->stack, s - u);
 		StackPush(ip->stack, i);
 	}
 }
@@ -93,7 +93,7 @@ static void FingerFRTHforthPick(instructionPointer * ip)
 /// R - Forth Rot command
 static void FingerFRTHforthRot(instructionPointer * ip)
 {
-	FUNGEDATATYPE a, b, c;
+	fungeCell a, b, c;
 	c = StackPop(ip->stack);
 	b = StackPop(ip->stack);
 	a = StackPop(ip->stack);

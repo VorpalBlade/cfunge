@@ -196,7 +196,7 @@ FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
  * -1 means not found.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
+static inline ssize_t FindFingerPrint(const fungeCell fingerprint)
 {
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		if (fingerprint <= ImplementedFingerprints[i].fprint) {
@@ -214,7 +214,7 @@ static inline ssize_t FindFingerPrint(const FUNGEDATATYPE fingerprint)
 	return FPRINT_NOTFOUND;
 }
 
-FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, fungeCell fingerprint)
 {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == FPRINT_NOTFOUND) {
@@ -231,7 +231,7 @@ FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, FUNGEDATATYPE
 	}
 }
 
-FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, FUNGEDATATYPE fingerprint)
+FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, fungeCell fingerprint)
 {
 	ssize_t index = FindFingerPrint(fingerprint);
 	if (index == -1)
@@ -251,7 +251,7 @@ FUNGE_ATTR_FAST void ManagerList(void)
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		// This hack is here to reconstruct the name from the fingerprint.
 		// It will probably break if char isn't 8 bits.
-		FUNGEDATATYPE fprint = ImplementedFingerprints[i].fprint;
+		fungeCell fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[5] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint, '\0'};
 
 		printf("0x%x %s%s %s\n",

@@ -35,7 +35,7 @@
 
 /// DO NOT CHANGE unless you are 100 sure of what you are doing!
 /// Yes I mean you!
-typedef fungePosition fungeSpaceHashKey;
+typedef fungeVector fungeSpaceHashKey;
 
 /**
  * Create a Funge-space.
@@ -56,7 +56,7 @@ void FungeSpaceFree(void);
  * @return The value for that position.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-FUNGEDATATYPE FungeSpaceGet(const fungePosition * restrict position);
+fungeCell FungeSpaceGet(const fungeVector * restrict position);
 /**
  * Get a cell, with an offset. Mostly used to handle storage offset.
  * @param position The place in Funge-Space to get the value for.
@@ -64,16 +64,16 @@ FUNGEDATATYPE FungeSpaceGet(const fungePosition * restrict position);
  * @return The value for that position after adding offset.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-FUNGEDATATYPE FungeSpaceGetOff(const fungePosition * restrict position,
-                               const fungePosition * restrict offset);
+fungeCell FungeSpaceGetOff(const fungeVector * restrict position,
+                               const fungeVector * restrict offset);
 /**
  * Set a cell.
  * @param value The value to set.
  * @param position The place in Funge-Space to set the value for.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void FungeSpaceSet(FUNGEDATATYPE value,
-                   const fungePosition * restrict position);
+void FungeSpaceSet(fungeCell value,
+                   const fungeVector * restrict position);
 /**
  * Set a cell, with an offset. Mostly used to handle storage offset.
  * @param value The value to set.
@@ -81,9 +81,9 @@ void FungeSpaceSet(FUNGEDATATYPE value,
  * @param offset An additional offset to add to the position.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void FungeSpaceSetOff(FUNGEDATATYPE value,
-                      const fungePosition * restrict position,
-                      const fungePosition * restrict offset);
+void FungeSpaceSetOff(fungeCell value,
+                      const fungeVector * restrict position,
+                      const fungeVector * restrict offset);
 /**
  * Calculate the new position after adding a delta to a position, considering
  * any needed wrapping. Used for IP wrapping.
@@ -93,7 +93,7 @@ void FungeSpaceSetOff(FUNGEDATATYPE value,
  * This code modifies the position vector in place!
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void FungeSpaceWrap(fungePosition * restrict position,
+void FungeSpaceWrap(fungeVector * restrict position,
                     const fungeVector * restrict delta);
 /**
  * Load a file into Funge-Space at 0,0. Optimised compared to
@@ -127,7 +127,7 @@ void FungeSpaceLoadString(const char * restrict program);
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool FungeSpaceLoadAtOffset(const char * restrict filename,
-                            const fungePosition * restrict offset,
+                            const fungeVector * restrict offset,
                             fungeVector * restrict size,
                             bool binary);
 /**
@@ -142,7 +142,7 @@ bool FungeSpaceLoadAtOffset(const char * restrict filename,
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool FungeSpaceSaveToFile(const char          * restrict filename,
-                          const fungePosition * restrict offset,
+                          const fungeVector * restrict offset,
                           const fungeVector   * restrict size,
                           bool textfile);
 

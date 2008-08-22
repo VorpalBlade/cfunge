@@ -98,25 +98,20 @@
 /*@{*/
 #if defined(USE64)
 /// The type of the data cells (64-bit version).
-typedef int64_t  FUNGEDATATYPE;
-/// As FUNGEDATATYPE, but unsigned (64-bit version).
-typedef uint64_t FUNGEunsignedDATATYPE;
+typedef int64_t  fungeCell;
+/// As fungeCell, but unsigned (64-bit version).
+typedef uint64_t fungeUnsignedCell;
 /// Generic printf code to use.
-#  define FUNGEDATAPRI PRId64
+#  define FUNGECELLPRI PRId64
 /// Printf code for octal output.
-#  define FUNGEDATAoctPRI PRIo64
+#  define FUNGECELLoctPRI PRIo64
 /// Printf code for hexdecimal output.
-#  define FUNGEDATAhexPRI PRIx64
-/// Max value for FUNGEDATATYPE
-#  define FUNGEDATA_MIN INT64_MIN
-/// Min value for FUNGEDATATYPE
-#  define FUNGEDATA_MAX INT64_MAX
+#  define FUNGECELLhexPRI PRIx64
+/// Max value for fungeCell
+#  define FUNGECELL_MIN INT64_MIN
+/// Min value for fungeCell
+#  define FUNGECELL_MAX INT64_MAX
 
-/// Type of vector values (64-bit version).
-typedef int64_t FUNGEVECTORTYPE;
-/// Generic printf code to use for vector value.
-#  define FUNGEVECTORPRI PRId64
-// FIXME: Will long long always be 64-bit?
 /**
  * Define the abs() function to use for the set data size.
  * This one is 64-bit.
@@ -126,24 +121,20 @@ typedef int64_t FUNGEVECTORTYPE;
 
 #elif defined(USE32)
 /// The type of the data cells (32-bit version).
-typedef int32_t FUNGEDATATYPE;
-/// As FUNGEDATATYPE, but unsigned (32-bit version).
-typedef uint32_t FUNGEunsignedDATATYPE;
+typedef int32_t fungeCell;
+/// As fungeCell, but unsigned (32-bit version).
+typedef uint32_t fungeUnsignedCell;
 /// Generic printf code to use.
-#  define FUNGEDATAPRI PRId32
+#  define FUNGECELLPRI PRId32
 /// Printf code for octal output.
-#  define FUNGEDATAoctPRI PRIo32
+#  define FUNGECELLoctPRI PRIo32
 /// Printf code for hexdecimal output.
-#  define FUNGEDATAhexPRI PRIx32
-/// Max value for FUNGEDATATYPE
-#  define FUNGEDATA_MIN INT32_MIN
-/// Min value for FUNGEDATATYPE
-#  define FUNGEDATA_MAX INT32_MAX
+#  define FUNGECELLhexPRI PRIx32
+/// Max value for fungeCell
+#  define FUNGECELL_MIN INT32_MIN
+/// Min value for fungeCell
+#  define FUNGECELL_MAX INT32_MAX
 
-/// Type of vector values (32-bit version).
-typedef int32_t FUNGEVECTORTYPE;
-/// Generic printf code to use for vector value.
-#  define FUNGEVECTORPRI PRId32
 /**
  * Define the abs() function to use for the set data size.
  * This one is 32-bit.

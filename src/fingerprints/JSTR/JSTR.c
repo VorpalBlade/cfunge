@@ -25,7 +25,7 @@
 /// G - Read with delta
 static void FingerJSTRpushN(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
+	fungeCell n;
 	fungeVector pos, delta;
 
 	n     = StackPop(ip->stack);
@@ -51,7 +51,7 @@ static void FingerJSTRpushN(instructionPointer * ip)
 /// P - Write with delta
 static void FingerJSTRpopN(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
+	fungeCell n;
 	fungeVector pos, delta;
 
 	n     = StackPop(ip->stack);

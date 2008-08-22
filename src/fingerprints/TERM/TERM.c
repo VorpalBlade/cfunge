@@ -45,7 +45,7 @@ static void FingerTERMclearScreen(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// D - Move cursor down n lines
 static void FingerTERMgoDown(instructionPointer * ip)
 {
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 	if (n == 0) {
 		return;
 	} else if (n < 0) {
@@ -61,7 +61,7 @@ static void FingerTERMgoDown(instructionPointer * ip)
 static void FingerTERMgotoXY(instructionPointer * ip)
 {
 	char *s;
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	s = tparm(cursor_address, (int)x, (int)y, 0, 0, 0, 0, 0, 0, 0);
@@ -93,7 +93,7 @@ static void FingerTERMclearToEOS(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// U - Move cursor up n lines
 static void FingerTERMgoUp(instructionPointer * ip)
 {
-	FUNGEDATATYPE n = StackPop(ip->stack);
+	fungeCell n = StackPop(ip->stack);
 	if (n == 0) {
 		return;
 	} else if (n < 0) {

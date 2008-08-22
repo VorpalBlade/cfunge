@@ -30,14 +30,9 @@
 
 /// A vector in Funge-Space
 typedef struct s_fungeVector {
-	FUNGEVECTORTYPE x; ///< You should be able to guess what this is.
-	FUNGEVECTORTYPE y; ///< You should be able to guess what this is.
+	fungeCell x; ///< You should be able to guess what this is.
+	fungeCell y; ///< You should be able to guess what this is.
 } fungeVector;
-
-/// A synonym for fungeVector.
-/// @note
-/// This should probably be deprecated.
-typedef fungeVector fungePosition;
 
 /// Useful to create a vector in a list of parameter for example.
 /// The vector is created on the stack.

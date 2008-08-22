@@ -43,7 +43,7 @@ FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
 	{
 		char * restrict filename;
 		bool binary;
-		fungePosition offset;
+		fungeVector offset;
 		fungeVector size;
 
 		// Pop stuff.
@@ -83,7 +83,7 @@ FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
 	{
 		char * restrict filename;
 		bool textfile;
-		fungePosition offset;
+		fungeVector offset;
 		fungeVector size;
 
 		// Pop stuff.

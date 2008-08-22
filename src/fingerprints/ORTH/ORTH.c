@@ -30,7 +30,7 @@
 
 static void FingerORTHbitAnd(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	StackPush(ip->stack, x & y);
@@ -38,7 +38,7 @@ static void FingerORTHbitAnd(instructionPointer * ip)
 
 static void FingerORTHbitOr(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	StackPush(ip->stack, x | y);
@@ -46,7 +46,7 @@ static void FingerORTHbitOr(instructionPointer * ip)
 
 static void FingerORTHbitXor(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	x = StackPop(ip->stack);
 	y = StackPop(ip->stack);
 	StackPush(ip->stack, x ^ y);
@@ -63,7 +63,7 @@ static void FingerORTHget(instructionPointer * ip)
 static void FingerORTHput(instructionPointer * ip)
 {
 	fungeVector v;
-	FUNGEDATATYPE c;
+	fungeCell c;
 
 	v = StackPopVector(ip->stack);
 	c = StackPop(ip->stack);

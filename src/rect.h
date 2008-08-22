@@ -31,10 +31,10 @@
 
 /// A rectangle in Funge-Space.
 typedef struct s_fungeRect {
-	FUNGEVECTORTYPE x; ///< Upper left corner.
-	FUNGEVECTORTYPE y; ///< Upper left corner.
-	FUNGEVECTORTYPE w; ///< Width.
-	FUNGEVECTORTYPE h; ///< Height.
+	fungeCell x; ///< Upper left corner.
+	fungeCell y; ///< Upper left corner.
+	fungeCell w; ///< Width.
+	fungeCell h; ///< Height.
 } fungeRect;
 
 #endif

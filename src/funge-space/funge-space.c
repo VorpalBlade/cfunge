@@ -42,8 +42,8 @@
 
 typedef struct fungeSpace {
 	/// These two form a rectangle for the program size
-	fungePosition     topLeftCorner;
-	fungePosition     bottomRightCorner;
+	fungeVector       topLeftCorner;
+	fungeVector       bottomRightCorner;
 	/// And this is the hash table.
 	ght_hash_table_t *entries;
 	/// Used during loading to handle 0,0 not being least point.
@@ -62,7 +62,7 @@ static fungeSpace fspace = {
  * Check if position is in range.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline bool FungeSpaceInRange(const fungePosition * restrict position)
+static inline bool FungeSpaceInRange(const fungeVector * restrict position)
 {
 	if ((position->x > fspace.bottomRightCorner.x) || (position->x < fspace.topLeftCorner.x))
 		return false;
@@ -101,26 +101,26 @@ FungeSpaceGetBoundRect(fungeRect * restrict rect)
 }
 
 
-FUNGE_ATTR_FAST FUNGEDATATYPE
-FungeSpaceGet(const fungePosition * restrict position)
+FUNGE_ATTR_FAST fungeCell
+FungeSpaceGet(const fungeVector * restrict position)
 {
-	FUNGEDATATYPE *tmp;
+	fungeCell *tmp;
 
 	assert(position != NULL);
 
-	tmp = (FUNGEDATATYPE*)ght_get(fspace.entries, position);
+	tmp = (fungeCell*)ght_get(fspace.entries, position);
 	if (!tmp)
-		return (FUNGEDATATYPE)' ';
+		return (fungeCell)' ';
 	else
 		return *tmp;
 }
 
 
-FUNGE_ATTR_FAST FUNGEDATATYPE
-FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * restrict offset)
+FUNGE_ATTR_FAST fungeCell
+FungeSpaceGetOff(const fungeVector * restrict position, const fungeVector * restrict offset)
 {
-	fungePosition tmp;
-	FUNGEDATATYPE *result;
+	fungeVector tmp;
+	fungeCell *result;
 
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -128,22 +128,22 @@ FungeSpaceGetOff(const fungePosition * restrict position, const fungePosition * 
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = (FUNGEDATATYPE*)ght_get(fspace.entries, &tmp);
+	result = (fungeCell*)ght_get(fspace.entries, &tmp);
 	if (!result)
-		return (FUNGEDATATYPE)' ';
+		return (fungeCell)' ';
 	else
 		return *result;
 }
 
 FUNGE_ATTR_FAST static inline void
-FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict position)
+FungeSpaceSetNoBoundUpdate(fungeCell value, const fungeVector * restrict position)
 {
 	if (value == ' ') {
 		ght_remove(fspace.entries, position);
 	} else {
 		// Reuse cell if it exists
-		FUNGEDATATYPE *tmp;
-		if ((tmp = (FUNGEDATATYPE*)ght_get(fspace.entries, position)) != NULL) {
+		fungeCell *tmp;
+		if ((tmp = (fungeCell*)ght_get(fspace.entries, position)) != NULL) {
 			*tmp = value;
 		} else {
 			if (ght_insert(fspace.entries, value, position) == -1) {
@@ -154,7 +154,7 @@ FungeSpaceSetNoBoundUpdate(FUNGEDATATYPE value, const fungePosition * restrict p
 }
 
 FUNGE_ATTR_FAST void
-FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
+FungeSpaceSet(fungeCell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
 	FungeSpaceSetNoBoundUpdate(value, position);
@@ -171,7 +171,7 @@ FungeSpaceSet(FUNGEDATATYPE value, const fungePosition * restrict position)
 }
 
 FUNGE_ATTR_FAST static inline void
-FungeSpaceSetInitial(FUNGEDATATYPE value, const fungePosition * restrict position)
+FungeSpaceSetInitial(fungeCell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
 	FungeSpaceSetNoBoundUpdate(value, position);
@@ -190,7 +190,7 @@ FungeSpaceSetInitial(FUNGEDATATYPE value, const fungePosition * restrict positio
 
 
 FUNGE_ATTR_FAST void
-FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, const fungePosition * restrict offset)
+FungeSpaceSetOff(fungeCell value, const fungeVector * restrict position, const fungeVector * restrict offset)
 {
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -199,7 +199,7 @@ FungeSpaceSetOff(FUNGEDATATYPE value, const fungePosition * restrict position, c
 }
 
 FUNGE_ATTR_FAST void
-FungeSpaceWrap(fungePosition * restrict position, const fungeVector * restrict delta)
+FungeSpaceWrap(fungeVector * restrict position, const fungeVector * restrict delta)
 {
 	// Quick and dirty if cardinal.
 	if (VectorIsCardinal(delta)) {
@@ -239,8 +239,8 @@ void FungeSpaceDump(void)
 	if (!fspace.entries)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
-	for (FUNGEVECTORTYPE y = 0; y <= fspace.bottomRightCorner.y; y++) {
-		for (FUNGEVECTORTYPE x = 0; x <= fspace.bottomRightCorner.x; x++)
+	for (fungeCell y = 0; y <= fspace.bottomRightCorner.y; y++) {
+		for (fungeCell x = 0; x <= fspace.bottomRightCorner.x; x++)
 			fprintf(stderr, "%c", (char)FungeSpaceGet(VectorCreateRef(x, y)));
 		fprintf(stderr, "\n");
 	}
@@ -327,8 +327,8 @@ static inline void LoadString(const char * restrict program, size_t length) {
 	bool lastwascr = false;
 	bool noendingnewline = true;
 	// Row in fungespace
-	FUNGEVECTORTYPE y = 0;
-	FUNGEVECTORTYPE x = 0;
+	fungeCell y = 0;
+	fungeCell x = 0;
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
@@ -350,7 +350,7 @@ static inline void LoadString(const char * restrict program, size_t length) {
 					x = 0;
 					y++;
 				}
-				FungeSpaceSetInitial((FUNGEDATATYPE)program[i], VectorCreateRef(x, y));
+				FungeSpaceSetInitial((fungeCell)program[i], VectorCreateRef(x, y));
 				x++;
 				noendingnewline = true;
 				break;
@@ -392,7 +392,7 @@ FungeSpaceLoadString(const char * restrict program)
 
 FUNGE_ATTR_FAST bool
 FungeSpaceLoadAtOffset(const char          * restrict filename,
-                       const fungePosition * restrict offset,
+                       const fungeVector * restrict offset,
                        fungeVector         * restrict size,
                        bool binary)
 {
@@ -402,8 +402,8 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 
 	bool lastwascr = false;
 
-	FUNGEVECTORTYPE y = 0;
-	FUNGEVECTORTYPE x = 0;
+	fungeCell y = 0;
+	fungeCell x = 0;
 	assert(filename != NULL);
 	assert(offset != NULL);
 	assert(size != NULL);
@@ -421,7 +421,7 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 	for (size_t i = 0; i < length; i++) {
 		if (binary) {
 			if (addr[i] != ' ')
-				FungeSpaceSetOff((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y), offset);
+				FungeSpaceSetOff((fungeCell)addr[i], VectorCreateRef(x, y), offset);
 			x++;
 		} else {
 			switch (addr[i]) {
@@ -443,7 +443,7 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 						y++;
 					}
 					if (addr[i] != ' ')
-						FungeSpaceSetOff((FUNGEDATATYPE)addr[i], VectorCreateRef(x, y), offset);
+						FungeSpaceSetOff((fungeCell)addr[i], VectorCreateRef(x, y), offset);
 					x++;
 					break;
 			}
@@ -458,14 +458,14 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 
 FUNGE_ATTR_FAST bool
 FungeSpaceSaveToFile(const char          * restrict filename,
-                     const fungePosition * restrict offset,
+                     const fungeVector * restrict offset,
                      const fungeVector   * restrict size,
                      bool textfile)
 {
 	FILE * file;
 
-	FUNGEVECTORTYPE maxy = offset->y + size->y;
-	FUNGEVECTORTYPE maxx = offset->x + size->x;
+	fungeCell maxy = offset->y + size->y;
+	fungeCell maxx = offset->x + size->x;
 
 	assert(filename != NULL);
 	assert(offset != NULL);
@@ -476,7 +476,7 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 		return false;
 
 	if (!textfile) {
-		FUNGEDATATYPE value;
+		fungeCell value;
 		// Microoptimising! Remove this if it bothers you.
 		// However it also makes it possible to error out early.
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
@@ -486,8 +486,8 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 		}
 #endif
 		cf_flockfile(file);
-		for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
-			for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
+		for (fungeCell y = offset->y; y < maxy; y++) {
+			for (fungeCell x = offset->x; x < maxx; x++) {
 				value = FungeSpaceGet(VectorCreateRef(x, y));
 				cf_putc_unlocked(value, file);
 			}
@@ -498,20 +498,20 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		FUNGEDATATYPE * towrite = cf_malloc((size->x * size->y + size->y) * sizeof(FUNGEDATATYPE));
+		fungeCell * towrite = cf_malloc((size->x * size->y + size->y) * sizeof(fungeCell));
 		if (!towrite) {
 			fclose(file);
 			return false;
 		}
 		// Construct each line.
-		for (FUNGEVECTORTYPE y = offset->y; y < maxy; y++) {
+		for (fungeCell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = size->x;
-			FUNGEDATATYPE * string = cf_malloc(size->x * sizeof(FUNGEDATATYPE));
+			fungeCell * string = cf_malloc(size->x * sizeof(fungeCell));
 			if (!string) {
 				fclose(file);
 				return false;
 			}
-			for (FUNGEVECTORTYPE x = offset->x; x < maxx; x++) {
+			for (fungeCell x = offset->x; x < maxx; x++) {
 				string[x-offset->x] = FungeSpaceGet(VectorCreateRef(x, y));
 			}
 
@@ -526,7 +526,7 @@ FungeSpaceSaveToFile(const char          * restrict filename,
 				}
 			}
 			cf_free(string);
-			towrite[index]=(FUNGEDATATYPE)'\n';
+			towrite[index]=(fungeCell)'\n';
 			index++;
 		}
 		// Remove trailing newlines.

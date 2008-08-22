@@ -39,8 +39,8 @@ static void FingerSUBRabsolute(instructionPointer * ip)
 /// C - Call
 static void FingerSUBRcall(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
-	fungePosition pos;
+	fungeCell n;
+	fungeVector pos;
 	fungeStack *tmpstack;
 
 	n = StackPop(ip->stack);
@@ -54,7 +54,7 @@ static void FingerSUBRcall(instructionPointer * ip)
 
 	tmpstack = StackCreate();
 
-	for (FUNGEDATATYPE i = 0; i < n; ++i)
+	for (fungeCell i = 0; i < n; ++i)
 		StackPush(tmpstack, StackPop(ip->stack));
 
 	StackPushVector(ip->stack, &ip->position);
@@ -71,7 +71,7 @@ static void FingerSUBRcall(instructionPointer * ip)
 /// J - Jump
 static void FingerSUBRjump(instructionPointer * ip)
 {
-	fungePosition pos;
+	fungeVector pos;
 
 	pos = StackPopVector(ip->stack);
 	// Stupid to change a fingerprint after it is published.
@@ -93,8 +93,8 @@ static void FingerSUBRrelative(instructionPointer * ip)
 /// R - Return from call
 static void FingerSUBRreturn(instructionPointer * ip)
 {
-	FUNGEDATATYPE n;
-	fungePosition pos;
+	fungeCell n;
+	fungeVector pos;
 	fungeVector vec;
 	fungeStack *tmpstack;
 
@@ -102,7 +102,7 @@ static void FingerSUBRreturn(instructionPointer * ip)
 
 	tmpstack = StackCreate();
 
-	for (FUNGEDATATYPE i = 0; i < n; ++i)
+	for (fungeCell i = 0; i < n; ++i)
 		StackPush(tmpstack, StackPop(ip->stack));
 
 	vec = StackPopVector(ip->stack);

@@ -58,13 +58,13 @@ struct s_fungeOpcodeStack;
 /// Instruction pointer.
 typedef struct s_instructionPointer {
 	fungeStack                * stack;    ///< Pointer to top stack.
-	fungePosition               position; ///< Current position.
+	fungeVector                 position; ///< Current position.
 	ipDelta                     delta;    ///< Current delta.
-	fungePosition               storageOffset; ///< The storage offset for current IP.
+	fungeVector                 storageOffset; ///< The storage offset for current IP.
 	ipMode                      mode;          ///< String or code mode.
 	bool                        needMove:1;    ///< Should ipForward be called at end of main loop. Is reset to true each time.
 	bool                        stringLastWasSpace:1; ///< Used in string mode for SGML style spaces.
-	FUNGEDATATYPE               ID;                   ///< The ID of this IP.
+	fungeCell                   ID;                   ///< The ID of this IP.
 	fungeStackStack           * stackstack;           ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	// Here comes fingerprint per-ip data. Please avoid when possible.
@@ -130,7 +130,7 @@ FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta);
 /// Set position of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipSetPosition(instructionPointer * restrict ip, const fungePosition * restrict position);
+void ipSetPosition(instructionPointer * restrict ip, const fungeVector * restrict position);
 
 // To make things simpler.
 /// Set IP delta to west.

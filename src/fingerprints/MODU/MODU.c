@@ -24,7 +24,7 @@
 
 // This was more or less taken from CCBI
 FUNGE_ATTR_CONST FUNGE_ATTR_FAST
-static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
+static inline fungeCell floordiv(fungeCell x, fungeCell y)
 {
 	x /= y;
 	if (x < 0)
@@ -35,7 +35,7 @@ static inline FUNGEDATATYPE floordiv(FUNGEDATATYPE x, FUNGEDATATYPE y)
 
 static void FingerMODUsignedResult(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {
@@ -47,7 +47,7 @@ static void FingerMODUsignedResult(instructionPointer * ip)
 
 static void FingerMODUunsignedResult(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {
@@ -60,7 +60,7 @@ static void FingerMODUunsignedResult(instructionPointer * ip)
 // C style reminder.
 static void FingerMODUremainder(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (y) {

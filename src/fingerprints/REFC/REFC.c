@@ -28,7 +28,7 @@
 
 #define ALLOCCHUNK 5
 // Array holding references.
-static fungePosition *references = NULL;
+static fungeVector *references = NULL;
 // Top index used in array.
 static size_t referencesTop = 0;
 // Size of array (including allocated but not yet used elements).
@@ -36,11 +36,11 @@ static size_t referencesSize = 0;
 
 static void FingerREFCreference(instructionPointer * ip)
 {
-	FUNGEDATATYPE x, y;
+	fungeCell x, y;
 	y = StackPop(ip->stack);
 	x = StackPop(ip->stack);
 	if (referencesSize == referencesTop + 1) {
-		fungePosition * newrefs = (fungePosition*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungePosition));
+		fungeVector * newrefs = (fungeVector*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungeVector));
 		if (newrefs == NULL) {
 			ipReverse(ip);
 			return;
@@ -60,7 +60,7 @@ static void FingerREFCreference(instructionPointer * ip)
 
 static void FingerREFCdereference(instructionPointer * ip)
 {
-	FUNGEDATATYPE ref;
+	fungeCell ref;
 	ref = StackPop(ip->stack);
 	if ((ref <= 0) || ((size_t)ref > referencesTop)) {
 		ipReverse(ip);
@@ -72,7 +72,7 @@ static void FingerREFCdereference(instructionPointer * ip)
 FUNGE_ATTR_FAST static inline bool InitReferences(void)
 {
 	assert(!references);
-	references = (fungePosition*)cf_malloc_noptr(ALLOCCHUNK * sizeof(fungePosition));
+	references = (fungeVector*)cf_malloc_noptr(ALLOCCHUNK * sizeof(fungeVector));
 	if (!references)
 		return false;
 	referencesSize = ALLOCCHUNK;
