@@ -56,6 +56,9 @@ struct s_fungeOpcodeStack;
 #define FINGEROPCODECOUNT 26
 
 /// Instruction pointer.
+/// @note
+/// Fields of the style fingerXXXX* are for fingerprint per-IP data.
+/// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
 	fungeStack                * stack;    ///< Pointer to top stack.
 	fungeVector                 position; ///< Current position.
@@ -64,21 +67,19 @@ typedef struct s_instructionPointer {
 	ipMode                      mode;          ///< String or code mode.
 	bool                        needMove:1;    ///< Should ipForward be called at end of main loop. Is reset to true each time.
 	bool                        stringLastWasSpace:1; ///< Used in string mode for SGML style spaces.
+	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
 	fungeCell                   ID;                   ///< The ID of this IP.
 	fungeStackStack           * stackstack;           ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
-	// Here comes fingerprint per-ip data. Please avoid when possible.
-	// And make the data as small as possible.
 	struct timeval            * fingerHRTItimestamp; ///< Data for fingerprint HRTI.
-	bool                        fingerSUBRisRelative:1;
 } instructionPointer;
 #define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
 /// Instruction pointer list. For concurrent Funge.
 typedef struct s_ipList {
-	size_t              size; /**< Total size */
-	size_t              top; /**< Top running one */
+	size_t              size;      /**< Total size */
+	size_t              top;       /**< Top running one */
 	size_t              highestID; /**< Currently highest ID, they are unique. */
 	/**
 	 * This array is slightly complex for speed reasons.

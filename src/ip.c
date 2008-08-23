@@ -34,26 +34,26 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool ipCreateInPlace(instructionPointer *me)
 {
 	assert(me != NULL);
-	me->position.x         = 0;
-	me->position.y         = 0;
-	me->delta.x            = 1;
-	me->delta.y            = 0;
-	me->storageOffset.x    = 0;
-	me->storageOffset.y    = 0;
-	me->mode               = ipmCODE;
-	me->needMove           = true;
-	me->stringLastWasSpace = false;
-	me->stackstack         = StackStackCreate();
+	me->position.x           = 0;
+	me->position.y           = 0;
+	me->delta.x              = 1;
+	me->delta.y              = 0;
+	me->storageOffset.x      = 0;
+	me->storageOffset.y      = 0;
+	me->mode                 = ipmCODE;
+	me->needMove             = true;
+	me->stringLastWasSpace   = false;
+	me->fingerSUBRisRelative = false;
+	me->stackstack           = StackStackCreate();
 	if (!me->stackstack)
 		return false;
-	me->stack              = me->stackstack->stacks[me->stackstack->current];
-	me->ID                 = 0;
+	me->stack                = me->stackstack->stacks[me->stackstack->current];
+	me->ID                   = 0;
 	if (!SettingDisableFingerprints) {
 		if (!ManagerCreate(me))
 			return false;
 	}
 	me->fingerHRTItimestamp  = NULL;
-	me->fingerSUBRisRelative = false;
 	return true;
 }
 
@@ -71,26 +71,26 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 {
 	assert(old != NULL);
 	assert(new != NULL);
-	new->position.x         = old->position.x;
-	new->position.y         = old->position.y;
-	new->delta.x            = old->delta.x;
-	new->delta.y            = old->delta.y;
-	new->storageOffset.x    = old->storageOffset.x;
-	new->storageOffset.y    = old->storageOffset.y;
-	new->mode               = old->mode;
-	new->needMove           = old->needMove;
-	new->stringLastWasSpace = old->stringLastWasSpace;
-	new->stackstack         = StackStackDuplicate(old->stackstack);
+	new->position.x           = old->position.x;
+	new->position.y           = old->position.y;
+	new->delta.x              = old->delta.x;
+	new->delta.y              = old->delta.y;
+	new->storageOffset.x      = old->storageOffset.x;
+	new->storageOffset.y      = old->storageOffset.y;
+	new->mode                 = old->mode;
+	new->needMove             = old->needMove;
+	new->stringLastWasSpace   = old->stringLastWasSpace;
+	new->fingerSUBRisRelative = old->fingerSUBRisRelative;
+	new->stackstack           = StackStackDuplicate(old->stackstack);
 	if (!new->stackstack)
 		return false;
 
-	new->stack              = new->stackstack->stacks[new->stackstack->current];
+	new->stack                = new->stackstack->stacks[new->stackstack->current];
 	if (!SettingDisableFingerprints) {
 		if (!ManagerDuplicate(old, new))
 			return false;
 	}
 	new->fingerHRTItimestamp  = NULL;
-	new->fingerSUBRisRelative = old->fingerSUBRisRelative;
 	return true;
 }
 #endif
