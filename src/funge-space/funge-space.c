@@ -391,9 +391,9 @@ FungeSpaceLoadString(const char * restrict program)
 #endif
 
 FUNGE_ATTR_FAST bool
-FungeSpaceLoadAtOffset(const char          * restrict filename,
+FungeSpaceLoadAtOffset(const char        * restrict filename,
                        const fungeVector * restrict offset,
-                       fungeVector         * restrict size,
+                       fungeVector       * restrict size,
                        bool binary)
 {
 	char *addr;
@@ -457,9 +457,9 @@ FungeSpaceLoadAtOffset(const char          * restrict filename,
 }
 
 FUNGE_ATTR_FAST bool
-FungeSpaceSaveToFile(const char          * restrict filename,
+FungeSpaceSaveToFile(const char        * restrict filename,
                      const fungeVector * restrict offset,
-                     const fungeVector   * restrict size,
+                     const fungeVector * restrict size,
                      bool textfile)
 {
 	FILE * file;
