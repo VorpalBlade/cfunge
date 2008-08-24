@@ -33,13 +33,13 @@ static void FingerSTRNappend(instructionPointer * ip)
 	char * restrict c;
 	top = StackPopString(ip->stack);
 	bottom = StackPopString(ip->stack);
-	c = cf_calloc_noptr(strlen(top) + strlen(bottom) + 1, sizeof(char));
+	c = calloc_nogc(strlen(top) + strlen(bottom) + 1, sizeof(char));
 	strcat(c, top);
 	strcat(c, bottom);
 	StackPushString(ip->stack, c, strlen(c));
 	StackFreeString(top);
 	StackFreeString(bottom);
-	cf_free(c);
+	free_nogc(c);
 }
 
 /// C - Compare strings

@@ -311,7 +311,7 @@ static void FingerFILEfread(instructionPointer * ip)
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = cf_calloc_noptr(n, sizeof(char));
+		unsigned char * restrict buf = calloc_nogc(n, sizeof(char));
 		if (!buf) {
 			ipReverse(ip);
 			return;
@@ -331,7 +331,7 @@ static void FingerFILEfread(instructionPointer * ip)
 		for (fungeCell i = 0; i < n; i++) {
 			FungeSpaceSet(buf[i], VectorCreateRef(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
-		cf_free(buf);
+		free_nogc(buf);
 	}
 }
 
