@@ -51,6 +51,7 @@
 #include "ORTH/ORTH.h"
 #include "PERL/PERL.h"
 #include "REFC/REFC.h"
+#include "REXP/REXP.h"
 #include "ROMA/ROMA.h"
 #include "STRN/STRN.h"
 #include "SUBR/SUBR.h"
@@ -127,6 +128,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// REFC - Referenced Cells Extension
 	{ .fprint = 0x52454643, .uri = NULL, .loader = &FingerREFCload, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
+	// REXP - Regular Expression Matching
+	{ .fprint = 0x52455850, .uri = NULL, .loader = &FingerREXPload, .opcodes = "CEF",
+	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#REXP", .safe = true },
 	// ROMA - Roman Numerals
 	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &FingerROMAload, .opcodes = "CDILMVX",
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
