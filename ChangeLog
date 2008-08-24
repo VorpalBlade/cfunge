@@ -10,10 +10,15 @@ For more info:
 and
   bzr help revisionspec
 
-Development version
--------------------
+
+Development version (r369)
+--------------------------
 These are important changes since last release:
- * None so far.
+ * Use memcpy() to copy IP for t, Then deep copy of the remaining elements.
+
+Added fingerprints:
+ * SOCK TCP/IP socket extension
+
 
 0.3.0
 -----

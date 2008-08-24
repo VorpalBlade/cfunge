@@ -116,6 +116,7 @@ Short descriptions of implemented fingerprints:
  REXP Regular Expression Matching
  ROMA Funge-98 Roman Numerals
  STRN String functions
+ SOCK TCP/IP socket extension
  SUBR Subroutine extension
  TERM Terminal control functions
  TIME Time and Date functions
