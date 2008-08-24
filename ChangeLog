@@ -10,7 +10,7 @@ For more info:
 and
   bzr help revisionspec
 
-Development version (r344)
+Development version (r362)
 --------------------------
 These are important changes since last release:
  * Fixed a few bugs in loading code.
@@ -40,10 +40,19 @@ These are important changes since last release:
  * Clean up the mess in loading code by using mmap() to read files.
  * Mycology was wrong about "y as pick" behaviour, fixed cfunge to conform to
    the standard.
+ * Refactor Funge-Space loading code.
+ * Fix bug with setting initial least point at loading.
+ * Major renaming of types:
+   * Renamed FUNGEDATATYPE to fungeCell.
+   * Dropped FUNGEVECTORTYPE (use fungeCell instead).
+   * Dropped fungePosition (use fungeVector instead).
+   * FUNGEDATA*PRI for printf renamed to FUNGECELL*PRI.
 
 Added fingerprints:
+ * 3DSP 3D space manipulation extension
  * FING Operate on single fingerprint semantics
  * FRTH Some common forth commands
+ * REXP Regular Expression Matching
  * STRN String functions
  * TERM Terminal control functions
 
@@ -51,6 +60,7 @@ Changes to fingerprints:
  * Fixed many bugs in TURT.
  * FILE got extended with the instruction D, added it.
  * Removed PNTR, it was a deprecated alias for INDV.
+ * INDV instructions are now relative storage offset.
  * Certain JSTR and STRN instruction are now relative storage offset.
 
 

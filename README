@@ -93,6 +93,7 @@ with some exceptions:
  * WIND - Too complex to implement and not portable.
 
 Short descriptions of implemented fingerprints:
+ 3DSP 3D space manipulation extension
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
  DIRF Directory functions extension (not available in sandbox mode)
@@ -111,6 +112,7 @@ Short descriptions of implemented fingerprints:
  PERL Generic Interface to the Perl Language (not available in sandbox mode)
  PNTR Alias for INDV
  REFC Referenced Cells Extension
+ REXP Regular Expression Matching
  ROMA Funge-98 Roman Numerals
  STRN String functions
  SUBR Subroutine extension
