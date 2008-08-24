@@ -11,7 +11,6 @@ Future
 ------
  * Several more fingerprints
  * Better hash library.
- * Change TURT to use some XML library to generate the file.
 
 Ideas for future
 ----------------

@@ -10,8 +10,8 @@ For more info:
 and
   bzr help revisionspec
 
-Development version (r362)
---------------------------
+0.3.0
+-----
 These are important changes since last release:
  * Fixed a few bugs in loading code.
  * Added support for showing top 5 elements on the stack when tracing.
@@ -62,6 +62,8 @@ Changes to fingerprints:
  * Removed PNTR, it was a deprecated alias for INDV.
  * INDV instructions are now relative storage offset.
  * Certain JSTR and STRN instruction are now relative storage offset.
+
+There was no 0.2.1, it got turned into 0.3.0.
 
 
 0.2.1-pre2
