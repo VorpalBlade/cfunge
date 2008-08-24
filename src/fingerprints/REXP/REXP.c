@@ -52,11 +52,9 @@ static regmatch_t matches[MATCHSIZE];
 #define FUNGE_REG_EBRACK   5
 #define FUNGE_REG_ECOLLATE 6
 #define FUNGE_REG_ECTYPE   7
-#define FUNGE_REG_EEND     8
 #define FUNGE_REG_EESCAPE  9
 #define FUNGE_REG_EPAREN   10
 #define FUNGE_REG_ERANGE   11
-#define FUNGE_REG_ESIZE    12
 #define FUNGE_REG_ESPACE   13
 #define FUNGE_REG_ESUBREG  14
 // E
@@ -99,11 +97,9 @@ static inline int TranslateReturnC(int error)
 		GenErrorCase(REG_EBRACK);
 		GenErrorCase(REG_ECOLLATE);
 		GenErrorCase(REG_ECTYPE);
-		GenErrorCase(REG_EEND);
 		GenErrorCase(REG_EESCAPE);
 		GenErrorCase(REG_EPAREN);
 		GenErrorCase(REG_ERANGE);
-		GenErrorCase(REG_ESIZE);
 		GenErrorCase(REG_ESPACE);
 		GenErrorCase(REG_ESUBREG);
 	}
