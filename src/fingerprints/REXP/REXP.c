@@ -61,6 +61,7 @@ static regmatch_t matches[MATCHSIZE];
 #define FUNGE_REG_NOTBOL 1
 #define FUNGE_REG_NOTEOL 2
 
+FUNGE_ATTR_FAST
 static inline int TranslateFlagsC(fungeCell flags)
 {
 	int ret = 0;
@@ -75,6 +76,7 @@ static inline int TranslateFlagsC(fungeCell flags)
 	return ret;
 }
 
+FUNGE_ATTR_FAST
 static inline int TranslateFlagsE(fungeCell flags)
 {
 	int ret = 0;
@@ -87,6 +89,7 @@ static inline int TranslateFlagsE(fungeCell flags)
 
 #define GenErrorCase(name) case name: return FUNGE_ ## name
 
+FUNGE_ATTR_FAST
 static inline int TranslateReturnC(int error)
 {
 	switch (error) {
@@ -107,6 +110,7 @@ static inline int TranslateReturnC(int error)
 	return -1;
 }
 
+FUNGE_ATTR_FAST
 static inline void PushResults(instructionPointer * restrict ip,
                                char * restrict str)
 {
