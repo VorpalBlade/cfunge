@@ -71,16 +71,8 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 {
 	assert(old != NULL);
 	assert(new != NULL);
-	new->position.x           = old->position.x;
-	new->position.y           = old->position.y;
-	new->delta.x              = old->delta.x;
-	new->delta.y              = old->delta.y;
-	new->storageOffset.x      = old->storageOffset.x;
-	new->storageOffset.y      = old->storageOffset.y;
-	new->mode                 = old->mode;
-	new->needMove             = old->needMove;
-	new->stringLastWasSpace   = old->stringLastWasSpace;
-	new->fingerSUBRisRelative = old->fingerSUBRisRelative;
+	memcpy(new, old, sizeof(instructionPointer));
+
 	new->stackstack           = StackStackDuplicate(old->stackstack);
 	if (!new->stackstack)
 		return false;
