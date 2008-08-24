@@ -403,8 +403,21 @@ end:
 		cf_free(buffer);
 }
 
+FUNGE_ATTR_FAST static inline bool InitHandleList(void)
+{
+	sockets = (FungeSocketHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeSocketHandle*));
+	if (!sockets)
+		return false;
+	maxHandle = ALLOCCHUNK;
+	return true;
+}
+
 bool FingerSOCKload(instructionPointer * ip)
 {
+	if (!sockets)
+		if (!InitHandleList())
+			return false;
+
 	ManagerAddOpcode(SOCK,  'A', accept)
 	ManagerAddOpcode(SOCK,  'B', bind)
 	ManagerAddOpcode(SOCK,  'C', open)
