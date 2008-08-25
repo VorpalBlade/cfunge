@@ -130,5 +130,5 @@ while true; do
 
 	echo " * Running under valgrind"
 	(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
-	grep -Fq "ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 5 from 1)" valgnd.output || die "Valgrind issues!"
+	grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from 1\)" valgnd.output || die "Valgrind issues!"
 done
