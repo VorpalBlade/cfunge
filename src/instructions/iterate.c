@@ -148,6 +148,10 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 							// I HATE this one...
 							ip->position = posinstr;
 							RUNSELF();
+							// Cludge for realloc again...
+#ifdef CONCURRENT_FUNGE
+							ip = &((*IPList)->ips[oldindex]);
+#endif
 							// Check position here.
 							if (posinstr.x == ip->position.x
 							    && posinstr.y == ip->position.y)
