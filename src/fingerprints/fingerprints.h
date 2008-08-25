@@ -53,6 +53,7 @@
 #include "REFC/REFC.h"
 #include "REXP/REXP.h"
 #include "ROMA/ROMA.h"
+#include "SCKE/SCKE.h"
 #include "SOCK/SOCK.h"
 #include "STRN/STRN.h"
 #include "SUBR/SUBR.h"
@@ -135,6 +136,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// ROMA - Roman Numerals
 	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &FingerROMAload, .opcodes = "CDILMVX",
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
+	// SCKE - TCP/IP async socket and dns resolving extension
+	{ .fprint = 0x53434b45, .uri = NULL, .loader = &FingerSCKEload, .opcodes = "HP",
+	  .url = "http://glfunge98.sourceforge.net/", .safe = false },
 	// SOCK - TCP/IP socket extension
 	{ .fprint = 0x534f434b, .uri = NULL, .loader = &FingerSOCKload, .opcodes = "ABCIKLORSW",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#SOCK", .safe = false },
