@@ -184,7 +184,6 @@ static void FingerSOCKbind(instructionPointer * ip)
 	}
 	return;
 error:
-	perror("DEBUG perror");
 	ipReverse(ip);
 }
 
@@ -243,7 +242,10 @@ static void FingerSOCKkill(instructionPointer * ip)
 	fungeCell s       = StackPop(ip->stack);
 	if (!ValidHandle(s))
 		goto error;
-	close(sockets[s]->fd);
+	if (close(sockets[s]->fd) == -1) {
+		FreeHandle(s);
+		goto error;
+	}
 	FreeHandle(s);
 	return;
 error:
