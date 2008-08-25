@@ -93,7 +93,7 @@ static inline void FreeHandle(fungeCell h)
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline bool ValidHandle(fungeCell h)
 {
-	if ((h < 0) || (h > maxHandle) || (!handles[h])) {
+	if ((h < 0) || (h >= maxHandle) || (!handles[h])) {
 		return false;
 	} else {
 		return true;

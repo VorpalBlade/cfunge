@@ -19,6 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// It need to get it's own typedefs from the header.
+#define FUNGE_EXTENDS_SOCK
+
 #include "SOCK.h"
 #include "../../stack.h"
 
@@ -30,11 +33,6 @@
 #include <netinet/tcp.h>
 
 // Based on how CCBI does it.
-
-typedef struct FungeSocketHandle {
-	int family;
-	int fd;
-} FungeSocketHandle;
 
 typedef union {
 	struct sockaddr_in in;
@@ -98,11 +96,19 @@ static inline void FreeHandle(fungeCell h)
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline bool ValidHandle(fungeCell h)
 {
-	if ((h < 0) || (h > maxHandle) || (!sockets[h])) {
+	if ((h < 0) || (h >= maxHandle) || (!sockets[h])) {
 		return false;
 	} else {
 		return true;
 	}
+}
+
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FungeSocketHandle* FingerSOCKLookupHandle(fungeCell h)
+{
+	if (!ValidHandle(h))
+		return NULL;
+	return sockets[h];
 }
 
 
@@ -178,6 +184,7 @@ static void FingerSOCKbind(instructionPointer * ip)
 	}
 	return;
 error:
+	perror("DEBUG perror");
 	ipReverse(ip);
 }
 
@@ -256,7 +263,6 @@ static void FingerSOCKlisten(instructionPointer * ip)
 		goto error;
 	return;
 error:
-	perror("DEBUG perror");
 	ipReverse(ip);
 }
 
@@ -298,7 +304,7 @@ error:
 /// R - Receive from a socket
 static void FingerSOCKreceive(instructionPointer * ip)
 {
-	unsigned char *buffer;
+	unsigned char *buffer = NULL;
 	ssize_t got;
 	fungeCell s   = StackPop(ip->stack);
 	size_t    len = StackPop(ip->stack);

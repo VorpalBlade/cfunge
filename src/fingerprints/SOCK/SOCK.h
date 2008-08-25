@@ -27,4 +27,16 @@
 
 bool FingerSOCKload(instructionPointer * ip);
 
+// Used by other fingerprints wanting to mess in SOCK, like SCKE
+#ifdef FUNGE_EXTENDS_SOCK
+typedef struct FungeSocketHandle {
+	int family;
+	int fd;
+} FungeSocketHandle;
+
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FungeSocketHandle* FingerSOCKLookupHandle(fungeCell h);
+
+#endif
+
 #endif
