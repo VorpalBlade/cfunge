@@ -138,12 +138,11 @@ static void FingerFILEfgets(instructionPointer * ip)
 	fungeCell h;
 	FILE * fp;
 
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 	if(!ValidHandle(h)) {
 		ipReverse(ip);
 		return;
 	}
-	StackPush(ip->stack, h);
 
 	fp = handles[h]->file;
 
@@ -207,12 +206,11 @@ static void FingerFILEftell(instructionPointer * ip)
 	fungeCell h;
 	long pos;
 
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 	if(!ValidHandle(h)) {
 		ipReverse(ip);
 		return;
 	}
-	StackPush(ip->stack, h);
 
 	pos = ftell(handles[h]->file);
 
@@ -268,7 +266,6 @@ error:
 	ipReverse(ip);
 end:
 	StackFreeString(filename);
-	return;
 }
 
 /// P - Put string to file (like c fputs)
@@ -278,12 +275,10 @@ static void FingerFILEfputs(instructionPointer * ip)
 	fungeCell h;
 
 	str = StackPopString(ip->stack);
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 	if (!ValidHandle(h)) {
 		ipReverse(ip);
 	} else {
-		StackPush(ip->stack, h);
-
 		if (fputs(str, handles[h]->file) == EOF) {
 			clearerr(handles[h]->file);
 			ipReverse(ip);
@@ -298,13 +293,12 @@ static void FingerFILEfread(instructionPointer * ip)
 	fungeCell n, h;
 
 	n = StackPop(ip->stack);
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 
 	if(!ValidHandle(h)) {
 		ipReverse(ip);
 		return;
 	}
-	StackPush(ip->stack, h);
 
 	if (n <= 0) {
 		ipReverse(ip);
@@ -342,13 +336,12 @@ static void FingerFILEfseek(instructionPointer * ip)
 
 	n = StackPop(ip->stack);
 	m = StackPop(ip->stack);
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 
 	if(!ValidHandle(h)) {
 		ipReverse(ip);
 		return;
 	}
-	StackPush(ip->stack, h);
 
 	switch (m) {
 		case 0:
@@ -380,13 +373,12 @@ static void FingerFILEfwrite(instructionPointer * ip)
 	fungeCell n, h;
 
 	n = StackPop(ip->stack);
-	h = StackPop(ip->stack);
+	h = StackPeek(ip->stack);
 
 	if(!ValidHandle(h)) {
 		ipReverse(ip);
 		return;
 	}
-	StackPush(ip->stack, h);
 
 	if (n <= 0) {
 		ipReverse(ip);
