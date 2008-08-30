@@ -29,9 +29,6 @@
 #include <sys/socket.h>
 #include <poll.h>
 
-
-// TODO: Add code to template functions
-
 /// H - Get address by hostname
 static void FingerSCKEgetHostByName(instructionPointer * ip)
 {
@@ -78,9 +75,16 @@ static void FingerSCKEPeek(instructionPointer * ip)
 
 		retval = poll(&fds, 1, 0);
 
-		if (retval == -1)
+		if (retval == -1) {
 			goto error;
-		StackPush(ip->stack, retval);
+		} else if (retval == 0) {
+			StackPush(ip->stack, 0);
+		} else {
+			if ((fds.revents & POLLIN) != 0)
+				StackPush(ip->stack, 1);
+			else
+				goto error;
+		}
 	}
 
 	return;
