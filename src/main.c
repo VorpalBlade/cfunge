@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 #include "interpreter.h"
 #include "settings.h"
 #include "fingerprints/manager.h"
@@ -120,6 +121,8 @@ int main(int argc, char *argv[])
 #ifdef FUZZ_TESTING
 	alarm(3);
 #endif
+	// We detect socket issues in other ways.
+	signal(SIGPIPE, SIG_IGN);
 
 	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
 		switch (opt) {
