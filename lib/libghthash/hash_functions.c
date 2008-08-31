@@ -62,6 +62,7 @@ static const ght_uint32_t crc32_table[256] = {
 	0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
+#if 0
 /* One-at-a-time hash (found in a web article from ddj), this is the
  * standard hash function.
  *
@@ -86,7 +87,7 @@ FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
 
 	return i_hash;
 }
-
+#endif
 
 /* CRC32 hash based on code from comp.compression FAQ.
  * Added by Dru Lemley <spambait@lemley.net>
@@ -107,6 +108,9 @@ FUNGE_ATTR_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
 
+#if 0
+#ifdef USE64
+FUNGE_ATTR_FAST
 static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 {
 	// 'm' and 'r' are mixing constants generated offline.
@@ -160,7 +164,7 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 
 	return h;
 }
-
+#endif
 
 /* CRC32 hash based on code from comp.compression FAQ.
  * Added by Dru Lemley <spambait@lemley.net>
@@ -182,5 +186,5 @@ FUNGE_ATTR_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
 #else
 	return MurmurHash2(&p_key->p_key);
 #endif
-
 }
+#endif
