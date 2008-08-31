@@ -158,8 +158,8 @@ error:
 /// B - Bind a socket
 static void FingerSOCKbind(instructionPointer * ip)
 {
-	uint32_t  address = StackPop(ip->stack);
-	uint16_t  port    = StackPop(ip->stack);
+	uint32_t  address = (uint32_t)StackPop(ip->stack);
+	uint16_t  port    = (uint16_t)StackPop(ip->stack);
 	int       fam     = popFam(ip);
 	fungeCell s       = StackPop(ip->stack);
 	FungeSockAddr addr;
@@ -190,8 +190,8 @@ error:
 /// C - Open a connection
 static void FingerSOCKopen(instructionPointer * ip)
 {
-	uint32_t  address = StackPop(ip->stack);
-	uint16_t  port    = StackPop(ip->stack);
+	uint32_t  address = (uint32_t)StackPop(ip->stack);
+	uint16_t  port    = (uint16_t)StackPop(ip->stack);
 	int       fam     = popFam(ip);
 	fungeCell s       = StackPop(ip->stack);
 	FungeSockAddr addr;
