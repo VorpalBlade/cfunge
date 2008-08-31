@@ -559,12 +559,12 @@ static inline void interpreterMainLoop(void)
 			opcode = FungeSpaceGet(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
 			if (SettingTraceLevel > 8) {
-				fprintf(stderr, "tix=%zu tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
 				PrintStackTop(IPList->ips[i].stack);
 			} else if (SettingTraceLevel > 3) {
-				fprintf(stderr, "tix=%zu tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
 			} else if (SettingTraceLevel > 2)
