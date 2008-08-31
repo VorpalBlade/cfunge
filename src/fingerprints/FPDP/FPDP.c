@@ -174,7 +174,7 @@ static void FingerFPDPneg(instructionPointer * ip)
 static void FingerFPDPabs(instructionPointer * ip)
 {
 	popDbl(ip);
-	u.d = abs(u.d);
+	u.d = fabs(u.d);
 	pushDbl(ip);
 }
 
