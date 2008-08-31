@@ -258,8 +258,7 @@ FUNGE_ATTR_FAST
 static inline const char* toCSSColour(uint32_t c)
 {
 	static char s[8];
-	size_t i;
-	i = snprintf(s, sizeof(s), "#%02x%02x%02x", c >> 16 & 0xff, c >> 8 & 0xff, c & 0xff);
+	snprintf(s, sizeof(s), "#%02x%02x%02x", c >> 16 & 0xff, c >> 8 & 0xff, c & 0xff);
 	return s;
 }
 
@@ -513,7 +512,6 @@ static void FingerTURTprintDrawing(instructionPointer * ip)
 	file = fopen(filename, "wb");
 	if (!file) {
 		goto error;
-		return;
 	}
 
 	gw = genxNew();

@@ -325,7 +325,6 @@ static inline void DoMmapCleanup(int fd, char *addr, size_t length) {
 FUNGE_ATTR_FAST
 static inline void LoadString(const char * restrict program, size_t length) {
 	bool lastwascr = false;
-	bool noendingnewline = true;
 	// Row in fungespace
 	fungeCell y = 0;
 	fungeCell x = 0;
@@ -342,7 +341,6 @@ static inline void LoadString(const char * restrict program, size_t length) {
 				x = 0;
 				y++;
 				lastwascr = false;
-				noendingnewline = false;
 				break;
 			default:
 				if (lastwascr) {
@@ -352,7 +350,6 @@ static inline void LoadString(const char * restrict program, size_t length) {
 				}
 				FungeSpaceSetInitial((fungeCell)program[i], VectorCreateRef(x, y));
 				x++;
-				noendingnewline = true;
 				break;
 		}
 	}

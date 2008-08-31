@@ -174,7 +174,6 @@ static char * RunPerl(const char * restrict perlcode)
 				close(outfds[0]);
 				return NULL;
 			}
-			break;
 		} // default
 	} // switch
 	// This is never reached, just avoid ICC warnings.
