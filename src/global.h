@@ -36,7 +36,8 @@
  * Compatibility stuff to support systems lacking some functions of features.
  */
 /*@{*/
-#ifndef __GNUC__
+#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
+#  undef __attribute__
 /// Make non-GCC compilers happy.
 #  define  __attribute__(x)  /* NO-OP */
 #endif
@@ -48,7 +49,7 @@
  * Contains attribute specifications.
  */
 /*@{*/
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  ifdef __i386__
 /// Used to select fast calling convention on platforms that need it.
 #    define  FUNGE_ATTR_FAST __attribute__((regparm(3)))
@@ -61,7 +62,7 @@
 #  define  FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  define FUNGE_ATTR_CONST         __attribute__((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE __attribute__((always_inline))
 #  define FUNGE_ATTR_MALLOC        __attribute__((malloc))
