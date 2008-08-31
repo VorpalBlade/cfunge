@@ -87,9 +87,9 @@ static inline void PopVec(instructionPointer * restrict ip, double vec[3])
 FUNGE_ATTR_FAST
 static inline void PushVec(instructionPointer * restrict ip, const double vec[3])
 {
-	PushFloat(ip, vec[0]);
-	PushFloat(ip, vec[1]);
-	PushFloat(ip, vec[2]);
+	PushFloat(ip, (float)vec[0]);
+	PushFloat(ip, (float)vec[1]);
+	PushFloat(ip, (float)vec[2]);
 }
 
 FUNGE_ATTR_FAST
@@ -105,7 +105,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 	for (fungeCell i = 0; i < 4; ++i) {
 		for (fungeCell j = 0; j < 4; ++j) {
 			floatint u;
-			u.f = m[4*j + i];
+			u.f = (float)m[4*j + i];
 			FungeSpaceSetOff(u.i, VectorCreateRef(fV->x+i, fV->y+j), &ip->storageOffset);
 		}
 	}
@@ -203,7 +203,7 @@ static void Finger3DSPdot(instructionPointer * ip)
 	a[1] *= b[1];
 	a[2] *= b[2];
 
-	PushFloat(ip, a[0] + a[1] + a[2]);
+	PushFloat(ip, (float)(a[0] + a[1] + a[2]));
 }
 
 /// L - Length of vector
@@ -211,7 +211,7 @@ static void Finger3DSPlength(instructionPointer * ip)
 {
 	double a[3];
 	PopVec(ip, a);
-	PushFloat(ip, VectorLength(a));
+	PushFloat(ip, (float)VectorLength(a));
 }
 
 /// M - Multiply two 3d vectors
@@ -366,8 +366,8 @@ static void Finger3DSPmap(instructionPointer * ip)
 		v[1] /= v[2];
 		v[2] /= v[2];
 	}
-	PushFloat(ip, v[0]);
-	PushFloat(ip, v[1]);
+	PushFloat(ip, (float)v[0]);
+	PushFloat(ip, (float)v[1]);
 }
 
 /// X - Transform a vector using transformation matrix
@@ -407,7 +407,7 @@ static void Finger3DSPmatrixMul(instructionPointer * ip)
 	for (fungeCell x = 0; x < 4; ++x)
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
-			u.f = r[y*4 + x];
+			u.f = (float)r[y*4 + x];
 			FungeSpaceSetOff(u.i, VectorCreateRef(ft.x+x, ft.y+y), &ip->storageOffset);
 		}
 }
