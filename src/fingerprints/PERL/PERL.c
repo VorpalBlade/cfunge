@@ -177,6 +177,9 @@ static char * RunPerl(const char * restrict perlcode)
 			break;
 		} // default
 	} // switch
+	// This is never reached, just avoid ICC warnings.
+	// GCC can detect this is not reached.
+	return NULL;
 }
 
 /// E - Evaluate 0gnirts
