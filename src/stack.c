@@ -243,8 +243,7 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 	return CORD_to_char_star(CORD_ec_to_cord(x));
 #else
 	size_t index = 0;
-	// This may very likely be more than is needed. But this is only used in
-	// case GC is disabled, and that is unsupported anyway.
+	// FIXME: This may very likely be more than is needed.
 	char * x = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
 
 	while ((c = StackPop(stack)) != '\0') {
