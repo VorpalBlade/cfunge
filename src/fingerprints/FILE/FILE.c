@@ -159,7 +159,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 			ch = fgetc(fp);
 			switch (ch) {
 				case '\r':
-					stringbuffer_append_char(sb, ch);
+					stringbuffer_append_char(sb, (char)ch);
 					ch = fgetc(fp);
 					if (ch != '\n') {
 						ungetc(ch, fp);
@@ -167,7 +167,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 					}
 				// Fallthrough intentional.
 				case '\n':
-					stringbuffer_append_char(sb, ch);
+					stringbuffer_append_char(sb, (char)ch);
 					goto endofloop;
 
 				case EOF:
@@ -181,7 +181,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 					}
 
 				default:
-					stringbuffer_append_char(sb, ch);
+					stringbuffer_append_char(sb, (char)ch);
 					break;
 			}
 		}

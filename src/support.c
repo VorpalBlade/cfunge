@@ -121,7 +121,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 			*n = needed;
 		}
 
-		(*lineptr)[cur_len] = i;
+		(*lineptr)[cur_len] = (char)i;
 		cur_len++;
 
 		if (i == delimiter)
