@@ -409,7 +409,7 @@ FUNGE_ATTR_FAST bool StackStackBegin(instructionPointer * restrict ip, fungeStac
 {
 	fungeStackStack *stackStack;
 	fungeStack      *TOSS, *SOSS;
-	fungeCell * entriesCopy = NULL;
+	fungeCell       * restrict entriesCopy = NULL;
 
 	assert(ip != NULL);
 	assert(me != NULL);
@@ -473,8 +473,8 @@ FUNGE_ATTR_FAST bool StackStackEnd(instructionPointer * restrict ip, fungeStackS
 {
 	fungeStack      *TOSS, *SOSS;
 	fungeStackStack *stackStack;
-	fungeVector    storageOffset;
-	fungeCell * entriesCopy = NULL;
+	fungeVector      storageOffset;
+	fungeCell       * restrict entriesCopy = NULL;
 
 	assert(ip != NULL);
 	assert(me != NULL);

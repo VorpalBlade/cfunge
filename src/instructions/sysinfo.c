@@ -327,7 +327,7 @@ FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
 	} else if (request < 10) {
 		PushRequest(request, ip, ip->stack);
 	} else {
-		fungeStack * tmp = StackCreate();
+		fungeStack * restrict tmp = StackCreate();
 		if (SettingCurrentStandard == stdver108) {
 			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
 				PushRequest(Funge108Requests[i], ip, tmp);

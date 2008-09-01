@@ -21,7 +21,7 @@ REQUIRED:
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    GCC 4.1.2 and GCC 4.3.1 are known to work, GCC 3.4.6 will work with
    some minor changes to CMakeLists.txt (see comments in that file for
-   details).
+   details). ICC 10.1 works too.
 
  * cfunge requires IEC 60559 floating-point arithmetic (please see Annex F in
    ISO/IEC 9899 for more details.)
