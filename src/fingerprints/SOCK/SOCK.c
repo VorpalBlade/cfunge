@@ -25,12 +25,12 @@
 #include "SOCK.h"
 #include "../../stack.h"
 
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
 // Based on how CCBI does it.
 
@@ -223,14 +223,13 @@ error:
 static void FingerSOCKfromascii(instructionPointer * ip)
 {
 	char * restrict str;
-	in_addr_t addr;
+	struct in_addr addr;
+
 	str = StackPopString(ip->stack);
-	// FIXME: Replace with getaddrinfo or similar.
-	addr = inet_addr(str);
-	if (addr == INADDR_NONE) {
+	if (inet_pton(AF_INET, str, &addr) != 1) {
 		ipReverse(ip);
 	} else {
-		StackPush(ip->stack, addr);
+		StackPush(ip->stack, addr.s_addr);
 	}
 	StackFreeString(str);
 
