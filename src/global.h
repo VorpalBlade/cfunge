@@ -36,7 +36,7 @@
  * Compatibility stuff to support systems lacking some functions of features.
  */
 /*@{*/
-#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
+#if !defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  undef __attribute__
 /// Make non-GCC compilers happy.
 #  define  __attribute__(x)  /* NO-OP */
