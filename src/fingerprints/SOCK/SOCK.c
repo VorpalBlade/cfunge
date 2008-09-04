@@ -42,13 +42,13 @@ typedef union {
 #define ALLOCCHUNK 2
 // Array of pointers
 static FungeSocketHandle** sockets = NULL;
-static fungeCell maxHandle = 0;
+static size_t maxHandle = 0;
 
 /// Used by AllocateHandle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline fungeCell findNextFreeHandle(void)
 {
-	for (fungeCell i = 0; i < maxHandle; i++) {
+	for (size_t i = 0; i < maxHandle; i++) {
 		if (sockets[i] == NULL)
 			return i;
 	}
@@ -58,7 +58,7 @@ static inline fungeCell findNextFreeHandle(void)
 		if (!newlist)
 			return -1;
 		sockets = newlist;
-		for (fungeCell i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
+		for (size_t i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			sockets[i] = NULL;
 		maxHandle += ALLOCCHUNK;
 		return (maxHandle - ALLOCCHUNK);
@@ -96,7 +96,7 @@ static inline void FreeHandle(fungeCell h)
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline bool ValidHandle(fungeCell h)
 {
-	if ((h < 0) || (h >= maxHandle) || (!sockets[h])) {
+	if ((h < 0) || ((size_t)h >= maxHandle) || (!sockets[h])) {
 		return false;
 	} else {
 		return true;

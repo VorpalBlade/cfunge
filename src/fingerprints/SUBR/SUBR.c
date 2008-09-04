@@ -44,6 +44,10 @@ static void FingerSUBRcall(instructionPointer * ip)
 	fungeStack *tmpstack;
 
 	n = StackPop(ip->stack);
+	if (n < 0) {
+		ipReverse(ip);
+		return;
+	}
 	// Pop vector
 	pos = StackPopVector(ip->stack);
 	// Stupid to change a fingerprint after it is published.
@@ -99,6 +103,10 @@ static void FingerSUBRreturn(instructionPointer * ip)
 	fungeStack *tmpstack;
 
 	n = StackPop(ip->stack);
+	if (n < 0) {
+		ipReverse(ip);
+		return;
+	}
 
 	tmpstack = StackCreate();
 
