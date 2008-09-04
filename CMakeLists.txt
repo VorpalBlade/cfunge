@@ -151,6 +151,7 @@ ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EX
 ################################################################################
 # Warnings
 IF (CMAKE_COMPILER_IS_GNUCC)
+	# Not all GCC versions support all of these flags.
 	CFUNGE_CHECK_CFLAG(Wall                         -Wall)
 	CFUNGE_CHECK_CFLAG(Wextra                       -Wextra)
 	CFUNGE_CHECK_CFLAG(pedantic                     -pedantic)
@@ -172,7 +173,8 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(Wstrict-aliasing_2           -Wstrict-aliasing=2)
 	CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
 	CFUNGE_CHECK_CFLAG(Wdisabled-optimization       -Wdisabled-optimization)
-	CFUNGE_CHECK_CFLAG(Winline                      -Winline)
+	# This is not very useful really.
+	#CFUNGE_CHECK_CFLAG(Winline                      -Winline)
 	CFUNGE_CHECK_CFLAG(Wmissing-noreturn            -Wmissing-noreturn)
 	CFUNGE_CHECK_CFLAG(Wmissing-format-attribute    -Wmissing-format-attribute)
 	CFUNGE_CHECK_CFLAG(Wdeclaration-after-statement -Wdeclaration-after-statement)
@@ -181,6 +183,8 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(Wunused-value                -Wunused-value)
 	CFUNGE_CHECK_CFLAG(Wunused-variable             -Wunused-variable)
 	CFUNGE_CHECK_CFLAG(Wwrite-strings               -Wwrite-strings)
+	CFUNGE_CHECK_CFLAG(Winit-self                   -Winit-self)
+	# GCC 4.1(?) or later
 	CFUNGE_CHECK_CFLAG(Wunsafe-loop-optimizations   -Wunsafe-loop-optimizations)
 	CFUNGE_CHECK_CFLAG(Wmissing-include-dirs        -Wmissing-include-dirs)
 
