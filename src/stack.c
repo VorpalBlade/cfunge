@@ -81,7 +81,7 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 }
 #endif
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_NORET
 static void StackOOM(void)
 {
 	perror("Emergency! Failed to allocate enough memory for new stack items");
