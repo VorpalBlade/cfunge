@@ -19,9 +19,11 @@ REQUIRED:
  * cmake (http://www.cmake.org/) to generate Makefile for cfunge.
 
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
-   GCC 4.1.2 and GCC 4.3.1 are known to work, GCC 3.4.6 will work with
-   some minor changes to CMakeLists.txt (see comments in that file for
-   details). ICC 10.1 works too.
+   + GCC 3.4.6, 4.1.2, 4.2.1 and 4.3.2 are known to work, other versions may or
+     may not work.
+   + ICC 10.1 is known to work too.
+   - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
+   Other compilers may or may not work.
 
  * cfunge requires IEC 60559 floating-point arithmetic (please see Annex F in
    ISO/IEC 9899 for more details.)
@@ -37,8 +39,6 @@ REQUIRED:
 
 OPTIONAL:
   Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later.
-  If you lack it you could try building without garbage collector. To do so
-  disable the USE_GC option in cmake.
 
 
 Configuring
@@ -115,6 +115,7 @@ Short descriptions of implemented fingerprints:
  REFC Referenced Cells Extension
  REXP Regular Expression Matching
  ROMA Funge-98 Roman Numerals
+ SCKE TCP/IP async socket and dns resolving extension
  STRN String functions
  SOCK TCP/IP socket extension
  SUBR Subroutine extension
