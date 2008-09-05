@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PROJECT(CFUNGE)
+PROJECT(CFUNGE C)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
@@ -125,7 +125,7 @@ ENDIF(USE_MUDFLAP)
 OPTION(USE_WERROR "Should we build with -Werror" OFF)
 IF(USE_WERROR)
 	IF (CMAKE_COMPILER_IS_GNUCC)
-		ADD_DEFINITIONS(-Werror)
+		CFUNGE_CHECK_CFLAG(Werror -Werror)
 	ENDIF (CMAKE_COMPILER_IS_GNUCC)
 ENDIF(USE_WERROR)
 
@@ -264,8 +264,9 @@ ENDIF(USE_MUDFLAP)
 ################################################################################
 # Generate man page
 ADD_CUSTOM_TARGET(build-man
-	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V ./cfunge > doc/cfunge.1
+	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
 	DEPENDS cfunge
+	WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
 	COMMENT "Generating man page..."
 	VERBATIM
 )
