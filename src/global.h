@@ -162,9 +162,9 @@ typedef uint32_t fungeUnsignedCell;
 #  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"
 #endif
 /// Version, for -V.
-#define APPVERSION  "0.3.0"
+#define APPVERSION  "0.3.1"
 /// For y instruction.
-#define FUNGEVERSION 30
+#define FUNGEVERSION 31
 
 // Define if you use fuzz testing script.
 //#define FUZZ_TESTING

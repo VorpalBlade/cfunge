@@ -11,10 +11,10 @@ and
   bzr help revisionspec
 
 
-Development version (r397)
---------------------------
+0.3.1
+-----
 These are important changes since last release:
- * Code now use  memcpy() to copy IP for t, then deep copy of the remaining
+ * Code now use memcpy() to copy IP for t, then deep copy of the remaining
    elements.
  * Fixed crash with nested k instructions on t.
  * Fixed build system to work with other compilers than GCC (the C code already
@@ -25,6 +25,8 @@ These are important changes since last release:
    precision variant in FPDP.
  * Fixed off by one error in validation of handles in SOCK and FILE.
  * Made tools/fuzz-test.sh work on other systems.
+ * Make build-man work for out of tree builds.
+ * When using GC do not use ec (extensible cords). It caused segfault...
 
 Added fingerprints:
  * SCKE TCP/IP async socket and dns resolving extension
