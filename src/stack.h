@@ -125,19 +125,11 @@ void StackPushString(fungeStack * restrict stack, const char * restrict str, siz
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 char * StackPopString(fungeStack * restrict stack);
 
-#ifdef DISABLE_GC
 /**
  * Free a 0"gnirts" that was popped with StackPopString().
  * Do NOT use for StackPopSizedString().
  */
-#  define StackFreeString(string) cf_free(string)
-#else
-/**
- * Free a 0"gnirts" that was popped with StackPopString().
- * Do NOT use for StackPopSizedString().
- */
-#  define StackFreeString(string) /* NO-OP */
-#endif
+#define StackFreeString(string) cf_free(string)
 
 /**
  * Pop a fixed number of chars from a stack.

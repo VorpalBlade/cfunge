@@ -26,10 +26,6 @@
 #include "settings.h"
 #include <assert.h>
 #include <string.h>
-#ifndef DISABLE_GC
-#  include <gc/cord.h>
-#  include <gc/ec.h>
-#endif
 
 /// How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 4096
@@ -232,16 +228,6 @@ FUNGE_ATTR_FAST void StackPushString(fungeStack * restrict stack, const char * r
 FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 {
 	fungeCell c;
-#ifndef DISABLE_GC
-	CORD_ec x;
-
-	CORD_ec_init(x);
-	while ((c = StackPop(stack)) != '\0')
-		CORD_ec_append(x, (char)c);
-	CORD_ec_append(x, '\0');
-
-	return CORD_to_char_star(CORD_ec_to_cord(x));
-#else
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
 	char * x = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
@@ -252,7 +238,6 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 	}
 	x[index] = '\0';
 	return x;
-#endif
 }
 
 FUNGE_ATTR_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
