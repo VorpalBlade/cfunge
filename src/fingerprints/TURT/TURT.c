@@ -31,6 +31,12 @@
 #include <math.h>
 #include <assert.h>
 
+// Yeah, some systems are *really* crap.
+// This includes Mingw on windows when I tried.
+#ifndef M_PI
+#  define M_PI 3.14159265358979323846
+#endif
+
 // This fingerprint is basically a translation from D to C of the TURT
 // fingerprint of CCBI, but with a lot of bug fixes.
 
