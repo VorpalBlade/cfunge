@@ -135,7 +135,7 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
  * These are useful in case of a lot of IO operations.
  */
 /*@{*/
-#if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
+#if !defined(__CYGWIN__) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (_POSIX_THREAD_SAFE_FUNCTIONS > 0)
 #  define cf_getc_unlocked(x)              getc_unlocked((x))
 #  define cf_putc_unlocked(x, y)           putc_unlocked((x), (y))
 #  define cf_putchar_unlocked(x)           putchar_unlocked((x))
@@ -181,10 +181,6 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 
 #ifdef __WIN32__
 #  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is on your own risk!"
-#endif
-
-#ifndef __STDC_IEC_559__
-#  warning "cfunge requires the floating point support to conform to the IEC 60559 floating-point standard in order to work. Hoping this will work anyway...";
 #endif
 
 #endif
