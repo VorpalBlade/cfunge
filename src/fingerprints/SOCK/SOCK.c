@@ -241,9 +241,7 @@ static void FingerSOCKkill(instructionPointer * ip)
 	fungeCell s       = StackPop(ip->stack);
 	if (!ValidHandle(s))
 		goto invalid;
-	if (shutdown(sockets[s]->fd, SHUT_RDWR) == -1) {
-		goto error;
-	}
+	shutdown(sockets[s]->fd, SHUT_RDWR);
 	if (close(sockets[s]->fd) == -1) {
 		goto error;
 	}
