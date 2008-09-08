@@ -361,7 +361,12 @@ static void Finger3DSPmap(instructionPointer * ip)
 	PopVec(ip, v);
 	// Use fpclassify() to avoid:
 	// "warning: comparing floating point with == or != is unsafe".
-	if (fpclassify(v[2]) != FP_ZERO) {
+#ifdef FP_ZERO
+	if (fpclassify(v[2]) != FP_ZERO)
+#else
+	if (v[2] != 0)
+#endif
+	{
 		v[0] /= v[2];
 		v[1] /= v[2];
 		v[2] /= v[2];
