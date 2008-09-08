@@ -31,6 +31,34 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
+#ifndef HAVE_acosl
+#  define acosl acos
+#endif
+#ifndef HAVE_asinl
+#  define asinl asin
+#endif
+#ifndef HAVE_atanl
+#  define atanl atan
+#endif
+#ifndef HAVE_cosl
+#  define cosl cos
+#endif
+#ifndef HAVE_powl
+#  define powl pow
+#endif
+#ifndef HAVE_roundl
+#  define roundl round
+#endif
+#ifndef HAVE_sinl
+#  define sinl sin
+#endif
+#ifndef HAVE_sqrtl
+#  define sqrtl sqrt
+#endif
+#ifndef HAVE_tanl
+#  define tanl tan
+#endif
+
 // For converting between degrees and radians.
 #define FUNGE_PI_180 (M_PI / 180.0)
 #define FUNGE_180_PI (180.0 / M_PI)

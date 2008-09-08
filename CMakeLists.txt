@@ -46,7 +46,7 @@ SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 INCLUDE(UsePkgConfig)
 INCLUDE(CheckCCompilerFlag)
-
+INCLUDE(CheckFunctionExists)
 
 SET(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
@@ -55,11 +55,19 @@ SET(MAN_INSTALL_PREFIX
 
 # Macro to check if a CFLAG is supported, and then add it
 MACRO(CFUNGE_CHECK_CFLAG name flag)
-	CHECK_C_COMPILER_FLAG (${flag} _CHECKFLAG_${name})
+	CHECK_C_COMPILER_FLAG(${flag} _CHECKFLAG_${name})
 	IF (_CHECKFLAG_${name})
 		ADD_DEFINITIONS(${flag})
 	ENDIF (_CHECKFLAG_${name})
 ENDMACRO(CFUNGE_CHECK_CFLAG)
+# Macro to check if a function is supported
+MACRO(CFUNGE_CHECK_FUNC name)
+	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
+	IF (_CHECKFUNC_${name})
+		ADD_DEFINITIONS(-DHAVE_${name})
+	ENDIF (_CHECKFUNC_${name})
+ENDMACRO(CFUNGE_CHECK_FUNC)
+
 
 
 ################################################################################
@@ -94,6 +102,8 @@ IF(USE_GC)
 ELSE(USE_GC)
 	ADD_DEFINITIONS(-DDISABLE_GC)
 ENDIF(USE_GC)
+
+
 
 ################################################################################
 # Other options
@@ -139,6 +149,7 @@ IF (HARDENED)
 ENDIF (HARDENED)
 
 
+
 ################################################################################
 # Compiler defines.
 CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
@@ -146,6 +157,20 @@ CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
 # Shouldn't hurt other systems.
 ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
 
+
+
+################################################################################
+# Existance of functions
+SET(CMAKE_REQUIRED_LIBRARIES "-lm")
+CFUNGE_CHECK_FUNC(acosl)
+CFUNGE_CHECK_FUNC(asinl)
+CFUNGE_CHECK_FUNC(atanl)
+CFUNGE_CHECK_FUNC(cosl)
+CFUNGE_CHECK_FUNC(powl)
+CFUNGE_CHECK_FUNC(roundl)
+CFUNGE_CHECK_FUNC(sinl)
+CFUNGE_CHECK_FUNC(sqrtl)
+CFUNGE_CHECK_FUNC(tanl)
 
 
 ################################################################################
@@ -261,6 +286,7 @@ IF(USE_MUDFLAP)
 ENDIF(USE_MUDFLAP)
 
 
+
 ################################################################################
 # Generate man page
 ADD_CUSTOM_TARGET(build-man
@@ -270,6 +296,8 @@ ADD_CUSTOM_TARGET(build-man
 	COMMENT "Generating man page..."
 	VERBATIM
 )
+
+
 
 ################################################################################
 # Installation
