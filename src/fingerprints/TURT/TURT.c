@@ -37,6 +37,16 @@
 #  define M_PI 3.14159265358979323846
 #endif
 
+#ifndef HAVE_cosl
+#  define cosl cos
+#endif
+#ifndef HAVE_roundl
+#  define roundl round
+#endif
+#ifndef HAVE_sinl
+#  define sinl sin
+#endif
+
 // This fingerprint is basically a translation from D to C of the TURT
 // fingerprint of CCBI, but with a lot of bug fixes.
 
@@ -83,7 +93,7 @@ typedef struct Point {
 
 typedef struct Turtle {
 	/// We use radians here.
-	double heading, sin, cos;
+	long double heading, sin, cos;
 	Point p;
 	Point min;
 	Point max;
@@ -151,8 +161,8 @@ static inline void normalise(void)
 		turt.heading -= 2 * M_PI;
 	while (turt.heading < 0)
 		turt.heading += 2 * M_PI;
-	turt.sin = sin(turt.heading);
-	turt.cos = cos(turt.heading);
+	turt.sin = sinl(turt.heading);
+	turt.cos = cosl(turt.heading);
 }
 
 FUNGE_ATTR_FAST
@@ -174,14 +184,14 @@ static inline void move(tc distance)
 {
 	tc dx, dy;
 	int64_t nx, ny;
-	double tmp;
+	long double tmp;
 
 	if (turt.penDown && turt.movedWithoutDraw)
 		addPath(turt.p, false, 0);
 
-	tmp = round(turt.cos * distance);
+	tmp = roundl(turt.cos * distance);
 	dx = (tc)tmp;
-	tmp = round(turt.sin * distance);
+	tmp = roundl(turt.sin * distance);
 	dy = (tc)tmp;
 
 	// have to check for under-/overflow...
@@ -211,14 +221,14 @@ static inline void move(tc distance)
 
 // helpers...
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline double toRad(fungeCell c)
+static inline long double toRad(fungeCell c)
 {
 	return (M_PI / 180.0) * c;
 }
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell toDeg(double r)
+static inline fungeCell toDeg(long double r)
 {
-	double d = round((180.0 / M_PI) * r);
+	long double d = roundl((180.0 / M_PI) * r);
 	return (fungeCell)d;
 }
 
