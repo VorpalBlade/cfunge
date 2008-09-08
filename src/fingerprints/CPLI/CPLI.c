@@ -24,6 +24,10 @@
 
 #include <math.h>
 
+#ifndef HAVE_sqrtl
+#  define sqrtl sqrt
+#endif
+
 /// A - add
 static void FingerCPLIadd(instructionPointer * ip)
 {
@@ -94,10 +98,10 @@ static void FingerCPLIsub(instructionPointer * ip)
 static void FingerCPLIabs(instructionPointer * ip)
 {
 	fungeCell r, i;
-	double tmp;
+	long double tmp;
 	i = StackPop(ip->stack);
 	r = StackPop(ip->stack);
-	tmp = sqrt((double)(r * r + i * i));
+	tmp = sqrtl((long double)(r * r + i * i));
 	StackPush(ip->stack, (fungeCell)tmp);
 }
 
