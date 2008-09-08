@@ -53,6 +53,11 @@ SET(MAN_INSTALL_PREFIX
 	CACHE PATH "Where to install man page."
 )
 
+
+
+################################################################################
+# Macros
+
 # Macro to check if a CFLAG is supported, and then add it
 MACRO(CFUNGE_CHECK_CFLAG name flag)
 	CHECK_C_COMPILER_FLAG(${flag} _CHECKFLAG_${name})
@@ -60,6 +65,7 @@ MACRO(CFUNGE_CHECK_CFLAG name flag)
 		ADD_DEFINITIONS(${flag})
 	ENDIF (_CHECKFLAG_${name})
 ENDMACRO(CFUNGE_CHECK_CFLAG)
+
 # Macro to check if a function is supported
 MACRO(CFUNGE_CHECK_FUNC name)
 	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
@@ -124,7 +130,7 @@ IF(NOT ENABLE_TRACE)
 	ADD_DEFINITIONS(-DDISABLE_TRACE)
 ENDIF(NOT ENABLE_TRACE)
 
-OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with GC)." OFF)
+OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
 IF(USE_MUDFLAP)
 	if (USE_GC)
 		MESSAGE(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
@@ -171,6 +177,7 @@ CFUNGE_CHECK_FUNC(roundl)
 CFUNGE_CHECK_FUNC(sinl)
 CFUNGE_CHECK_FUNC(sqrtl)
 CFUNGE_CHECK_FUNC(tanl)
+
 
 
 ################################################################################

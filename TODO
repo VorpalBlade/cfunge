@@ -3,14 +3,13 @@ This file details current status of the Befunge93/98/108 interpreter cfunge.
 Before next release
 -------------------
  * Test
-   * TURT:
-     * Test adding dots after lines in all cases. Some may not work correctly.
-   * For i: Check that binary mode works
+   * For i: Check that binary mode works.
 
 Future
 ------
  * Several more fingerprints
  * Better hash library.
+ * Rewrite TURT to use events, to handle lines on top of dots.
 
 Ideas for future
 ----------------
