@@ -51,16 +51,12 @@ static void FingerFINGswap(instructionPointer * ip)
 	} else {
 		fingerprintOpcode op1 = OpcodeStackPop(ip, first);
 		fingerprintOpcode op2 = OpcodeStackPop(ip, second);
-
-		if (!op1 || !op2) {
-			// Add them back
-			if (op1) OpcodeStackAdd(ip, first, op1);
-			if (op2) OpcodeStackAdd(ip, second, op2);
-			ipReverse(ip);
-		} else {
-			OpcodeStackAdd(ip, second, op1);
-			OpcodeStackAdd(ip, first, op2);
-		}
+		if (!op1)
+			op1 = &DoReflect;
+		if (!op2)
+			op2 = &DoReflect;
+		OpcodeStackAdd(ip, second, op1);
+		OpcodeStackAdd(ip, first, op2);
 	}
 }
 
@@ -71,9 +67,7 @@ static void FingerFINGdrop(instructionPointer * ip)
 	if (opcode == 0) {
 		ipReverse(ip);
 	} else {
-		if (OpcodeStackPop(ip, opcode) == NULL) {
-			ipReverse(ip);
-		}
+		OpcodeStackPop(ip, opcode);
 	}
 }
 
