@@ -51,6 +51,7 @@ static void FingerFINGswap(instructionPointer * ip)
 	} else {
 		fingerprintOpcode op1 = OpcodeStackPop(ip, first);
 		fingerprintOpcode op2 = OpcodeStackPop(ip, second);
+		// Push reflect if there wasn't anything on the stack.
 		if (!op1)
 			op1 = &DoReflect;
 		if (!op2)
