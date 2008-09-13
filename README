@@ -28,7 +28,7 @@ REQUIRED:
  * cfunge requires IEC 60559 floating-point arithmetic (please see Annex F in
    ISO/IEC 9899 for more details.)
 
- * A POSIX system. Linux 2.6.24 is known to work, so is FreeBSD 7.0. Windows may
+ * A POSIX system. Linux 2.6.25 is known to work, so is FreeBSD 7.0. Windows may
    or may not work, but I won't fix any bugs that can't be reproduced on a POSIX
    system, except if someone else provides a patch. Patches for Windows are
    welcome only if they don't mess up source too much (anything using Win32/64

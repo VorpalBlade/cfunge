@@ -11,14 +11,15 @@ and
   bzr help revisionspec
 
 
-Development version (r411)
---------------------------
+0.3.2
+-----
 These are important changes since last release:
  * Fix small bug in K in SOCK causing the instruction to fail if the socket
    wasn't connected.
  * Add checks for some long double math.h functions that didn't exist on
    FreeBSD. Fall back on double versions.
  * Support cygwin a bit better.
+ * Update FING to match updated specs.
 
 
 0.3.1
