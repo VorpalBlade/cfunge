@@ -21,6 +21,7 @@
 
 #include "STRN.h"
 #include "../../stack.h"
+#include "../../input.h"
 
 #include <string.h>
 #include "../../../lib/stringbuffer/stringbuffer.h"
@@ -126,9 +127,8 @@ static void FingerSTRNinput(instructionPointer * ip)
 {
 	char * line = NULL;
 	char * newline;
-	size_t len = 0;
-	ssize_t retval = cf_getline(&line, &len, stdin);
-	if (retval == -1 || line == NULL) {
+	bool retval = input_getline(&line);
+	if (retval == false || line == NULL) {
 		ipReverse(ip);
 		return;
 	}

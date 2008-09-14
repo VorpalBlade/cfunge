@@ -68,6 +68,18 @@ FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
 	return true;
 }
 
+FUNGE_ATTR_FAST bool input_getline(char ** str)
+{
+	char * tmp;
+	if (!getTheLine())
+		return false;
+	tmp = cf_strdup(lastlineCurrent);
+	*str = tmp;
+	discardTheLine();
+	return true;
+}
+
+
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 // Start of s as if it is in base.

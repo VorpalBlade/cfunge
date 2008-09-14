@@ -62,4 +62,13 @@ ret_getint input_getint(fungeCell * value, int base);
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool input_getchar(fungeCell * chr);
 
+/**
+ * For use in input some fingerprints.
+ * This will return the whole buffer.
+ * @param str Pointer to a string pointer to fill in.
+ * @return True if we got a string, false if we got EOF and should reflect.
+ */
+FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+bool input_getline(char ** str);
+
 #endif
