@@ -47,7 +47,7 @@ static void FingerTIMEday(instructionPointer * ip)
 static void FingerTIMEdayOfYear(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_yday + 1);
+	StackPush(ip->stack, curTime->tm_yday);
 }
 
 /// G - Set to use UTC.
