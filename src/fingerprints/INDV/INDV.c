@@ -60,8 +60,8 @@ static void FingerINDVgetVec(instructionPointer * ip)
 	fungeVector v = GetSecondVector(ip);
 	StackPushVector(ip->stack,
 		VectorCreateRef(
-			FungeSpaceGet(&v),
-			FungeSpaceGet(VectorCreateRef(v.x+1, v.y))
+			FungeSpaceGet(VectorCreateRef(v.x+1, v.y)),
+			FungeSpaceGet(&v)
 		)
 	);
 }
