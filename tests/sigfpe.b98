@@ -3,12 +3,12 @@ v       ; This file test for potential floating point exceptions.             ;
 
 > 00/ 00% v             ; Core instructions ;
 v         <
-   >a"PXIF oN">:#,_v    ; Just tells it couldn't test FIXP ;
+   >na"PXIF oN">:#,_v   ; Just tells it couldn't test FIXP ;
 > #^  "PXIF"4( 0D 0U 0T 01 0J v
-v                             <
+v                   <         <
 
-   >a"ILPC oN">:#,_v    ; Just tells it couldn't test CPLI ;
-> #^  "ILPC"4( nD  v
-v                  <
+   >na"ILPC oN">:#,_v   ; Just tells it couldn't test CPLI ;
+> #^  "ILPC"4( nD   v
+v                   <
 
-> a"dehsiniF">:#,_@
+> na"dehsiniF">:#,_@
