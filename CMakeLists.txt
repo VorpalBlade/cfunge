@@ -270,9 +270,10 @@ FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 
 ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 
-SET_TARGET_PROPERTIES(cfunge PROPERTIES
-	LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common"
-)
+# This is disabled until I figure out how to detect if the flags are supported.
+#SET_TARGET_PROPERTIES(cfunge PROPERTIES
+#	LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common"
+#)
 
 
 
