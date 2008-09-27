@@ -132,7 +132,7 @@ while read -ru 4 line; do
 		case $type in
 			"%fprint")
 				if [[ "$FPRINT" != "$data" ]]; then
-					die "fprint is spec file doesn't match."
+					die "fprint field doesn't match spec file name."
 				fi
 				;;
 			"%url")
