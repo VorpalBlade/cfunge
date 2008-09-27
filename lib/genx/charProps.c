@@ -12,6 +12,7 @@
 #include "../../src/global.h"
 #define GENX_INTERNAL
 #include "genx.h"
+#include <string.h>
 
 FUNGE_ATTR_FAST static inline void charProp(char * p, int c, int prop)
 {
@@ -27,10 +28,8 @@ FUNGE_ATTR_FAST static inline void rangeProp(char * p, int start, int end, int p
 
 FUNGE_ATTR_FAST void genxSetCharProps(char * p)
 {
-	int i;
 
-	for (i = 0; i <= 0xffff; i++)
-		p[i] = 0;
+	memset(p, 0, 0xffff);
 
 	/* per XML 1.0 */
 	charProp(p, 0x9, GENX_XML_CHAR);

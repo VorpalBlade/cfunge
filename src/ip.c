@@ -60,8 +60,12 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 FUNGE_ATTR_FAST instructionPointer * ipCreate(void)
 {
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
-	if (!ipCreateInPlace(tmp))
+	if (!tmp)
 		return NULL;
+	if (!ipCreateInPlace(tmp)) {
+		cf_free(tmp);
+		return NULL;
+	}
 	return tmp;
 }
 

@@ -212,7 +212,7 @@ FUNGE_ATTR_FAST static inline ght_hash_entry_t *he_create(fungeCell p_data, cons
 	 * some fragmentation. Thanks to Dru Lemley for this idea.
 	 */
 	if (!(p_he = (ght_hash_entry_t*)cf_malloc(sizeof(ght_hash_entry_t) + sizeof(fungeSpaceHashKey)))) {
-		fprintf(stderr, "fn_alloc failed!\n");
+		fprintf(stderr, "cf_malloc failed in ght_hash!\n");
 		return NULL;
 	}
 

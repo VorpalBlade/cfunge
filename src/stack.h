@@ -44,7 +44,7 @@ typedef struct s_fungeStack {
 	size_t         size; ///< This is current size of the array entries.
 	size_t         top;  /**< This is current top item in stack (may not be last item).
 	                          Note: One-indexed, as 0 = empty stack. */
-	fungeCell *entries; ///< Pointer to entries.
+	fungeCell *entries;  ///< Pointer to entries.
 } fungeStack;
 
 /// A Funge stack-stack.

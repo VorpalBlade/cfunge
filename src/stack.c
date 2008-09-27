@@ -40,8 +40,10 @@ FUNGE_ATTR_FAST fungeStack * StackCreate(void)
 	if (tmp == NULL)
 		return NULL;
 	tmp->entries = (fungeCell*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(fungeCell));
-	if (tmp->entries == NULL)
+	if (tmp->entries == NULL) {
+		cf_free(tmp);
 		return NULL;
+	}
 	tmp->size = ALLOCCHUNKSIZE;
 	tmp->top = 0;
 	return tmp;
@@ -67,8 +69,10 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 	if (tmp == NULL)
 		return NULL;
 	tmp->entries = (fungeCell*)cf_malloc_noptr((old->top + 1) * sizeof(fungeCell));
-	if (tmp->entries == NULL)
+	if (tmp->entries == NULL) {
+		cf_free(tmp);
 		return NULL;
+	}
 	tmp->size = old->top + 1;
 	tmp->top = old->top;
 	for (size_t i = 0; i < tmp->top; i++)
@@ -231,6 +235,8 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
 	char * x = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	if (!x)
+		return NULL;
 
 	while ((c = StackPop(stack)) != '\0') {
 		x[index] = (char)c;
@@ -243,6 +249,8 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 FUNGE_ATTR_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
 {
 	char * restrict x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
+	if (!x)
+		return NULL;
 
 	for (size_t i = 0; i < len; i++) {
 		x[i] = StackPop(stack);
@@ -332,8 +340,10 @@ FUNGE_ATTR_FAST fungeStackStack * StackStackCreate(void)
 		return NULL;
 
 	stack = StackCreate();
-	if (!stack)
+	if (!stack) {
+		cf_free(stackStack);
 		return NULL;
+	}
 
 	stackStack->size = 1;
 	stackStack->current = 0;

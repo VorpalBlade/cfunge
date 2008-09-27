@@ -173,6 +173,10 @@ int main(int argc, char *argv[])
 		if (argc > 1) {
 			fungeargc = argc - optind;
 			fungeargv = (char**)cf_malloc(fungeargc * sizeof(char*));
+			if (!fungeargv) {
+				perror("Couldn't allocate space for command line arguments");
+				abort();
+			}
 			for (int i = optind; i < argc; i++) {
 				fungeargv[i - optind] = cf_strdup(argv[i]);
 				if (fungeargv[i - optind] == NULL) {
