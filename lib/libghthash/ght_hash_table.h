@@ -104,10 +104,8 @@ extern "C"
 		fungeSpaceHashKey p_key;    /**< The key. */
 	} ght_hash_key_t;
 
-	/*
+	/**
 	 * The structure for hash entries.
-	 *
-	 * LOCK: Should be possible to do somewhat atomically
 	 */
 	typedef struct s_hash_entry {
 		fungeCell p_data;
@@ -120,7 +118,7 @@ extern "C"
 
 	} ght_hash_entry_t;
 
-	/*
+	/**
 	 * The structure used in iterations. You should not care about the
 	 * contents of this, it will be filled and updated by ght_first() and
 	 * ght_next().
@@ -152,7 +150,7 @@ extern "C"
 	typedef struct s_ght_hash_table {
 		size_t i_items;                    /**< The current number of items in the table */
 		size_t i_size;                     /**< The number of buckets */
-		bool i_automatic_rehash:1;         /**< TRUE if automatic rehashing is used */
+		bool i_automatic_rehash;           /**< TRUE if automatic rehashing is used */
 
 		/* private: */
 		int i_size_mask;                   /* The number of bits used in the size */
@@ -278,8 +276,8 @@ extern "C"
 	 * @return a pointer to the <I>old</I> value or NULL if the operation failed.
 	 */
 	fungeCell ght_replace(ght_hash_table_t * restrict p_ht,
-	                          fungeCell p_entry_data,
-	                          const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
+	                      fungeCell p_entry_data,
+	                      const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 
 	/**
@@ -293,7 +291,7 @@ extern "C"
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
 	fungeCell *ght_get(ght_hash_table_t * restrict p_ht,
-	                       const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
+	                   const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
 	 * Remove an entry from the hash table. The entry is removed from the
@@ -306,7 +304,7 @@ extern "C"
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
 	fungeCell ght_remove(ght_hash_table_t * restrict p_ht,
-	                         const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
+	                     const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
 	 * Return the first entry in the hash table. This function should be

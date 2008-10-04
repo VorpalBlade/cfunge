@@ -197,7 +197,7 @@ FUNGE_ATTR_FAST static inline ght_hash_entry_t *he_create(fungeCell p_data, cons
 {
 	ght_hash_entry_t *p_he;
 
-	/*
+	/* -- COMMENT OUTDATED --
 	 * An element like the following is allocated:
 	 *        elem->p_key
 	 *       /   elem->p_key->p_key_data
@@ -211,7 +211,7 @@ FUNGE_ATTR_FAST static inline ght_hash_entry_t *he_create(fungeCell p_data, cons
 	 * This saves space since malloc only is called once and thus avoids
 	 * some fragmentation. Thanks to Dru Lemley for this idea.
 	 */
-	if (!(p_he = (ght_hash_entry_t*)cf_malloc(sizeof(ght_hash_entry_t) + sizeof(fungeSpaceHashKey)))) {
+	if (!(p_he = (ght_hash_entry_t*)cf_malloc(sizeof(ght_hash_entry_t)))) {
 		fprintf(stderr, "cf_malloc failed in ght_hash!\n");
 		return NULL;
 	}
