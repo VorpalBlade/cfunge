@@ -60,18 +60,20 @@ struct s_fungeOpcodeStack;
 /// Fields of the style fingerXXXX* are for fingerprint per-IP data.
 /// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
-	fungeStack                * stack;    ///< Pointer to top stack.
-	fungeVector                 position; ///< Current position.
-	ipDelta                     delta;    ///< Current delta.
+	fungeStack                * stack;         ///< Pointer to top stack.
+	fungeVector                 position;      ///< Current position.
+	ipDelta                     delta;         ///< Current delta.
 	fungeVector                 storageOffset; ///< The storage offset for current IP.
 	ipMode                      mode;          ///< String or code mode.
-	bool                        needMove:1;    ///< Should ipForward be called at end of main loop. Is reset to true each time.
-	bool                        stringLastWasSpace:1; ///< Used in string mode for SGML style spaces.
+	// "Full" bool for very often checked flags.
+	bool                        needMove;      ///< Should ipForward be called at end of main loop. Is reset to true each time.
+	bool                        stringLastWasSpace;     ///< Used in string mode for SGML style spaces.
+	// Bitfield for uncommon flags
 	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
-	fungeCell                   ID;                   ///< The ID of this IP.
-	fungeStackStack           * stackstack;           ///< The stack stack.
+	fungeCell                   ID;                     ///< The ID of this IP.
+	fungeStackStack           * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
-	struct timeval            * fingerHRTItimestamp; ///< Data for fingerprint HRTI.
+	struct timeval            * fingerHRTItimestamp;               ///< Data for fingerprint HRTI.
 } instructionPointer;
 #define ipDEFINED 1
 
