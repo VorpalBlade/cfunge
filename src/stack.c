@@ -75,8 +75,9 @@ static inline fungeStack * StackDuplicate(const fungeStack * old)
 	}
 	tmp->size = old->top + 1;
 	tmp->top = old->top;
-	for (size_t i = 0; i < tmp->top; i++)
-		tmp->entries[i] = old->entries[i];
+	// Not sure if memcpy() on 0 is well defined, so lets be careful.
+	if (tmp->top != 0)
+		memcpy(tmp->entries, old->entries, sizeof(fungeCell) * tmp->top);
 	return tmp;
 }
 #endif
@@ -234,16 +235,16 @@ FUNGE_ATTR_FAST char *StackPopString(fungeStack * restrict stack)
 	fungeCell c;
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
-	char * x = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
-	if (!x)
+	char * buf = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	if (!buf)
 		return NULL;
 
 	while ((c = StackPop(stack)) != '\0') {
-		x[index] = (char)c;
+		buf[index] = (char)c;
 		index++;
 	}
-	x[index] = '\0';
-	return x;
+	buf[index] = '\0';
+	return buf;
 }
 
 FUNGE_ATTR_FAST char *StackPopSizedString(fungeStack * restrict stack, size_t len)
