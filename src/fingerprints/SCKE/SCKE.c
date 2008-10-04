@@ -25,38 +25,46 @@
 #define FUNGE_EXTENDS_SOCK
 #include "../SOCK/SOCK.h"
 
-#include <netdb.h>
+#include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <poll.h>
 
 /// H - Get address by hostname
 static void FingerSCKEgetHostByName(instructionPointer * ip)
 {
-	char * restrict str;
-	union {
-		char bytes[4];
-		int i;
-	} resCell;
-	struct hostent *result;
+	char * restrict str = NULL;
+	struct addrinfo hints;
+	struct addrinfo *result = NULL;
+	int retval;
+
 	str = StackPopString(ip->stack);
 
-	result = gethostbyname(str);
-	if (!result)
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = 0;
+	hints.ai_protocol = 0;
+	hints.ai_flags = AI_ADDRCONFIG;
+
+	retval = getaddrinfo(str, NULL, &hints, &result);
+
+	if (retval != 0)
 		goto error;
 	// We can't handle IPv6 here...
-	if (result->h_addrtype != AF_INET)
+	if (result->ai_addr->sa_family != AF_INET)
 		goto error;
-	// Should we use result->h_length here? Not sure...
-	for (size_t i = 0; i < 4; i++)
-		resCell.bytes[i] = result->h_addr_list[0][i];
 
-	StackPush(ip->stack, resCell.i);
-
+	{
+		struct sockaddr_in *addr = (struct sockaddr_in*)result->ai_addr;
+		StackPush(ip->stack, addr->sin_addr.s_addr);
+	}
 	goto end;
 error:
 	ipReverse(ip);
 end:
 	StackFreeString(str);
+	if (result)
+		freeaddrinfo(result);
 }
 
 /// P - Peek for incoming data
