@@ -52,8 +52,10 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void)
 	if (tmp == NULL)
 		return NULL;
 	tmp->entries = (fingerprintOpcode*)cf_malloc(ALLOCCHUNKSIZE * sizeof(fingerprintOpcode));
-	if (tmp->entries == NULL)
+	if (tmp->entries == NULL) {
+		cf_free(tmp);
 		return NULL;
+	}
 	tmp->size = ALLOCCHUNKSIZE;
 	tmp->top = 0;
 	tmp->entries[0] = NULL;
