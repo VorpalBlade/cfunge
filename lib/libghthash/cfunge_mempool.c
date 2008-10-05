@@ -54,10 +54,10 @@ Notes:
 #else
 #  define VALGRIND_MAKE_MEM_NOACCESS(x, y) /* NO-OP */
 #  define VALGRIND_CREATE_MEMPOOL(x, y, z) /* NO-OP */
-#  define VALGRIND_DESTROY_MEMPOOL(x) /* NO-OP */
-#  define VALGRIND_MEMPOOL_ALLOC(x, y, z) /* NO-OP */
-#  define VALGRIND_MEMPOOL_FREE(x, y) /* NO-OP */
-#  define VALGRIND_MOVE_MEMPOOL(x, y) /* NO-OP */
+#  define VALGRIND_DESTROY_MEMPOOL(x)      /* NO-OP */
+#  define VALGRIND_MEMPOOL_ALLOC(x, y, z)  /* NO-OP */
+#  define VALGRIND_MEMPOOL_FREE(x, y)      /* NO-OP */
+#  define VALGRIND_MOVE_MEMPOOL(x, y)      /* NO-OP */
 #endif
 
 // This is either a memory block, or a pointer in the free list.
@@ -71,7 +71,7 @@ typedef union memory_block {
 
 typedef struct pool_header {
 	memory_block  *base;
-	// If non-null it will be used to malloc.
+	// Pointer to first free block for mallocing.
 	memory_block  *first_free;
 } pool_header;
 

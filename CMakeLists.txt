@@ -31,6 +31,7 @@ MARK_AS_ADVANCED(
 	LEAK_MODE
 	USE_MUDFLAP
 	USE_WERROR
+	USE_VALGRIND
 )
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
