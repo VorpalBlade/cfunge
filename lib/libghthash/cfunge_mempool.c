@@ -46,7 +46,7 @@ Notes:
 // Number of items in a pool.
 #define POOL_ARRAY_COUNT 4096
 
-#ifdef USE_VALGRIND
+#ifdef ENABLE_VALGRIND
 #  include <valgrind/valgrind.h>
 #  include <valgrind/memcheck.h>
 #else
@@ -81,12 +81,23 @@ static size_t       pools_size = 0;
 static memory_block *free_list = NULL;
 
 // Forward decls:
-FUNGE_ATTR_FAST static inline bool initialise_mempool(pool_header *pool);
-FUNGE_ATTR_FAST static inline void clear_mempool(pool_header *pool);
-FUNGE_ATTR_FAST static inline bool add_mempool(void);
-FUNGE_ATTR_FAST static inline void freelist_add(memory_block *memblock);
-FUNGE_ATTR_FAST static inline memory_block *freelist_get(void);
-FUNGE_ATTR_FAST static inline memory_block *mempool_get_next_free(void);
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline bool initialise_mempool(pool_header *pool);
+
+FUNGE_ATTR_FAST
+static inline void clear_mempool(pool_header *pool);
+
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline bool add_mempool(void);
+
+FUNGE_ATTR_FAST
+static inline void freelist_add(memory_block *memblock);
+
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
+static inline memory_block *freelist_get(void);
+
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
+static inline memory_block *mempool_get_next_free(void);
 
 
 FUNGE_ATTR_FAST

@@ -138,6 +138,15 @@ IF(USE_MUDFLAP)
 	ADD_DEFINITIONS(-fmudflap)
 ENDIF(USE_MUDFLAP)
 
+OPTION(USE_VALGRIND "Add special source annotations for the memory debugger valgrind (does not work with Boehm-GC)." OFF)
+IF(USE_VALGRIND)
+	if (USE_GC)
+		MESSAGE(FATAL_ERROR "You can't use valgrind and Boehm GC at the same time")
+	ENDIF (USE_GC)
+	ADD_DEFINITIONS(-DENABLE_VALGRIND)
+ENDIF(USE_VALGRIND)
+
+
 OPTION(USE_WERROR "Should we build with -Werror" OFF)
 IF(USE_WERROR)
 	IF (CMAKE_COMPILER_IS_GNUCC)

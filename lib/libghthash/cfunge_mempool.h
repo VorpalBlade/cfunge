@@ -48,7 +48,7 @@ bool mempool_setup(void);
 FUNGE_ATTR_FAST
 void mempool_teardown(void);
 
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
 memorypool_data *mempool_alloc(void);
 
 FUNGE_ATTR_FAST
