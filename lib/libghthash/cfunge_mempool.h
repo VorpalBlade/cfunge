@@ -24,7 +24,7 @@
 
 
 /**
- * Mempools are used for allocating funge-space s_hash_entry.
+ * Mempools are used for allocating Funge-space s_hash_entry.
  * Since cfunge is single-threaded they are static, and have no locking.
  *
  * For implementation details see comments in cfunge_mempool.c.
@@ -42,15 +42,30 @@
 
 typedef struct s_hash_entry memorypool_data;
 
+/**
+ * Set up the memory pools. Used at program start.
+ * @return True if successful, otherwise false.
+ */
 FUNGE_ATTR_FAST
 bool mempool_setup(void);
 
+/**
+ * Tear down the memory pools. Used at program exit.
+ */
 FUNGE_ATTR_FAST
 void mempool_teardown(void);
 
+/**
+ * Get a memorypool_data block from the memory pool.
+ * @return A pointer to a memorypool_data, or NULL if allocation failed.
+ */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
 memorypool_data *mempool_alloc(void);
 
+/**
+ * Free a block, returning it to the memory pool.
+ * @param ptr Pointer to memory block allocated with mempool_alloc.
+ */
 FUNGE_ATTR_FAST
 void mempool_free(memorypool_data *ptr);
 

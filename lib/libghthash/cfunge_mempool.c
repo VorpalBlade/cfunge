@@ -43,6 +43,8 @@ Notes:
 
 #include "cfunge_mempool.h"
 
+#include <assert.h>
+
 // Number of items in a pool.
 #define POOL_ARRAY_COUNT 4096
 
@@ -102,6 +104,7 @@ static inline memory_block *mempool_get_next_free(void);
 
 FUNGE_ATTR_FAST
 bool mempool_setup(void) {
+	assert(pools == NULL);
 	pools = calloc_nogc(1, sizeof(pool_header));
 	if (!pools)
 		return false;
@@ -144,7 +147,7 @@ void mempool_free(memorypool_data *ptr) {
 
 // Private functions
 
-/// Setup a mempool, allocating it's block
+/// Setup a mempool, allocating it's block.
 FUNGE_ATTR_FAST
 static inline bool initialise_mempool(pool_header *pool) {
 	pool->base = malloc_nogc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
@@ -155,6 +158,7 @@ static inline bool initialise_mempool(pool_header *pool) {
 	return true;
 }
 
+/// Tear down a mempool, freeing it's block.
 FUNGE_ATTR_FAST
 static inline void clear_mempool(pool_header *pool) {
 	if (!pool)
@@ -181,6 +185,7 @@ static inline bool add_mempool(void) {
 	return true;
 }
 
+/// Add a block to the list of free blocks.
 FUNGE_ATTR_FAST
 static inline void freelist_add(memory_block *memblock) {
 	memblock->next_free = free_list;
@@ -188,6 +193,7 @@ static inline void freelist_add(memory_block *memblock) {
 	VALGRIND_MEMPOOL_FREE(pools, memblock);
 }
 
+/// Try to get a block from the free block list.
 FUNGE_ATTR_FAST
 static inline memory_block *freelist_get(void) {
 	if (!free_list) {
@@ -200,7 +206,8 @@ static inline memory_block *freelist_get(void) {
 	}
 }
 
-/// Get memory from the first mempool.
+/// Get memory from the first mempool with blocks free at the end.
+/// Will call add_mempool() if no blocks are free in the last mempool.
 FUNGE_ATTR_FAST
 static inline memory_block *mempool_get_next_free(void) {
 	pool_header* pool = &pools[pools_size-1];
