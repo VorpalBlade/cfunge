@@ -35,6 +35,8 @@
 
 #include "../../src/global.h"
 
+#include "cfunge_mempool.h"
+
 /* Flags for the elements. This is currently unused. */
 #define FLAGS_NONE     0 /* No flags */
 #define FLAGS_NORMAL   0 /* Normal item. All user-inserted stuff is normal */
@@ -211,8 +213,8 @@ FUNGE_ATTR_FAST static inline ght_hash_entry_t *he_create(fungeCell p_data, cons
 	 * This saves space since malloc only is called once and thus avoids
 	 * some fragmentation. Thanks to Dru Lemley for this idea.
 	 */
-	if (!(p_he = (ght_hash_entry_t*)cf_malloc(sizeof(ght_hash_entry_t)))) {
-		fprintf(stderr, "cf_malloc failed in ght_hash!\n");
+	if (!(p_he = mempool_alloc())) {
+		fprintf(stderr, "cf_malloc failed in mempool_alloc!\n");
 		return NULL;
 	}
 
@@ -242,7 +244,7 @@ FUNGE_ATTR_FAST static inline void he_finalize(ght_hash_entry_t *p_he)
 #endif /* NDEBUG */
 
 	/* Free the entry */
-	cf_free(p_he);
+	mempool_free(p_he);
 }
 
 #if 0

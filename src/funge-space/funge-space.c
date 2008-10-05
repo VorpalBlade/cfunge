@@ -22,6 +22,7 @@
 #include "../global.h"
 #include "funge-space.h"
 #include "../../lib/libghthash/ght_hash_table.h"
+#include "../../lib/libghthash/cfunge_mempool.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -79,7 +80,7 @@ FungeSpaceCreate(void)
 		return false;
 	ght_set_rehash(fspace.entries, true);
 
-	return true;
+	return mempool_setup();
 }
 
 
@@ -88,6 +89,7 @@ FungeSpaceFree(void)
 {
 	if (fspace.entries)
 		ght_finalize(fspace.entries);
+	mempool_teardown();
 }
 
 FUNGE_ATTR_FAST void
