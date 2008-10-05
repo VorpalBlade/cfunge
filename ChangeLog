@@ -10,6 +10,27 @@ For more info:
 and
   bzr help revisionspec
 
+Changes since last release (r432)
+---------------------------------
+These are important changes since last release:
+ * Fixed off by one in TIME.
+ * Made STRN use the global input buffer.
+ * Fixed alignment bugs in several of the test programs.
+ * Handle some cases of failed malloc() better.
+ * Reduced memory usage by fixing an over-allocation in hash library code.
+ * Removed some GNU LD specific linker flags to make the code link with other
+   linkers.
+ * Changed to use memcpy() to duplicate stack.
+ * Added missing free() on some error code paths.
+ * SCKE now use getaddrinfo() instead of the obsolete gethostbyname().
+ * Changed some often accessed bitfields to full bools.
+ * Funge-Space now use memory pools for allocation. This reduces memory
+   fragmentation and also malloc bookkeeping overhead. It is also slightly
+   faster.
+ * Add valgrind annotations for the memory pools as a compile time option.
+   If enabled this slows down the code by several orders of magnitude, but is
+   useful for debugging.
+
 
 0.3.2
 -----
@@ -36,7 +57,7 @@ These are important changes since last release:
    precision variant in FPDP.
  * Fixed off by one error in validation of handles in SOCK and FILE.
  * Made tools/fuzz-test.sh work on other systems.
- * Make build-man work for out of tree builds.
+ * Made build-man work for out of tree builds.
  * When using GC do not use ec (extensible cords). It caused segfault...
 
 Added fingerprints:
