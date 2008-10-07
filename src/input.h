@@ -50,7 +50,7 @@ typedef enum ret_getint {
  * @note The read integer is returned in the value parameter.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-ret_getint input_getint(fungeCell * value, int base);
+ret_getint input_getint(fungeCell * restrict value, int base);
 
 /**
  * For use in input instruction ~ and in some fingerprints.

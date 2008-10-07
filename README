@@ -44,17 +44,20 @@ OPTIONAL:
 Configuring
 -----------
 To build using cmake, you can run these commands in the top source directory:
-  cmake .
+  mkdir build && cd build
+  cmake ..
 
 If you are on a 32-bit system you may want to use 32-bit integers (instead of
 64-bit integers) for speed. To do that you could use this command instead of
-the above one:
-  cmake -DUSE_64BIT=OFF .
+the above ones:
+  mkdir build && cd build
+  cmake -DUSE_64BIT=OFF ..
 
 If you want to see a list of available options use ccmake. It will allow you to
 select options in a ncurses based user interface. Help is always shown at the
 bottom of the screen.
-  ccmake .
+  mkdir build && cd build
+  ccmake ..
     (press c)
     (change options - use t to show advanced options)
     (press c again)
@@ -165,6 +168,6 @@ Sandbox mode
 Sandbox mode prevents Funge programs from doing "harmful" things, this includes,
 but is not limited to:
  * Any file or filesystem IO is forbidden.
- * The environment variables it can see are restricted.
+ * The list of environment variables the program can see in y are restricted.
  * Non-safe fingerprints can not be loaded (this includes network and file
    system access as well as other things).

@@ -89,15 +89,16 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // Return value is last index used in string.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline ptrdiff_t parseInt(const char * restrict s,
-                                 fungeCell * value, fungeCell base)
+                                 fungeCell * restrict value, fungeCell base)
 {
 	fungeCell result = 0;
 	size_t i;
+	size_t length = strlen(s);
 
 	assert(s != NULL);
 	assert(value != NULL);
 
-	for (i = 0; i <= strlen(s); i++) {
+	for (i = 0; i <= length; i++) {
 		// Will it overflow?
 		if (result > (FUNGECELL_MAX / base)) {
 			break;
@@ -123,7 +124,7 @@ static inline ptrdiff_t parseInt(const char * restrict s,
 
 // Note, no need to optimise really, this is user input
 // bound anyway.
-FUNGE_ATTR_FAST ret_getint input_getint(fungeCell * value, int base)
+FUNGE_ATTR_FAST ret_getint input_getint(fungeCell * restrict value, int base)
 {
 	bool found = false;
 	char * endptr = NULL;
