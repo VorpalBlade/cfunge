@@ -25,13 +25,13 @@
 // This was partly based on how CCBI does it.
 
 /// D - Push depth of stack to tos
-static void finger_FRTH_stackSize(instructionPointer * ip)
+static void finger_FRTH_stack_size(instructionPointer * ip)
 {
 	stack_push(ip->stack, (fungeCell)ip->stack->top);
 }
 
 /// L - Forth Roll command
-static void finger_FRTH_forthRoll(instructionPointer * ip)
+static void finger_FRTH_forth_roll(instructionPointer * ip)
 {
 	// FIXME: Move most of this functionality into stack.c
 	fungeCell u;
@@ -63,7 +63,7 @@ static void finger_FRTH_forthRoll(instructionPointer * ip)
 }
 
 /// O - Forth Over command
-static void finger_FRTH_forthOver(instructionPointer * ip)
+static void finger_FRTH_forth_over(instructionPointer * ip)
 {
 	fungeCell a, b;
 	b = stack_pop(ip->stack);
@@ -75,7 +75,7 @@ static void finger_FRTH_forthOver(instructionPointer * ip)
 }
 
 /// P - Forth Pick command
-static void finger_FRTH_forthPick(instructionPointer * ip)
+static void finger_FRTH_forth_pick(instructionPointer * ip)
 {
 	fungeCell u;
 	fungeCell s;
@@ -91,7 +91,7 @@ static void finger_FRTH_forthPick(instructionPointer * ip)
 }
 
 /// R - Forth Rot command
-static void finger_FRTH_forthRot(instructionPointer * ip)
+static void finger_FRTH_forth_rot(instructionPointer * ip)
 {
 	fungeCell a, b, c;
 	c = stack_pop(ip->stack);
@@ -105,10 +105,10 @@ static void finger_FRTH_forthRot(instructionPointer * ip)
 
 bool finger_FRTH_load(instructionPointer * ip)
 {
-	manager_add_opcode(FRTH,  'D', stackSize)
-	manager_add_opcode(FRTH,  'L', forthRoll)
-	manager_add_opcode(FRTH,  'O', forthOver)
-	manager_add_opcode(FRTH,  'P', forthPick)
-	manager_add_opcode(FRTH,  'R', forthRot)
+	manager_add_opcode(FRTH,  'D', stack_size)
+	manager_add_opcode(FRTH,  'L', forth_roll)
+	manager_add_opcode(FRTH,  'O', forth_over)
+	manager_add_opcode(FRTH,  'P', forth_pick)
+	manager_add_opcode(FRTH,  'R', forth_rot)
 	return true;
 }

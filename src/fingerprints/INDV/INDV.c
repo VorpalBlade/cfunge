@@ -41,21 +41,21 @@ static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 }
 
 /// G - Get value using indirect vector
-static void finger_INDV_getNum(instructionPointer * ip)
+static void finger_INDV_get_num(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
 	stack_push(ip->stack, fungespace_get(&v));
 }
 
 /// P - Put value using indirect vector
-static void finger_INDV_putNum(instructionPointer * ip)
+static void finger_INDV_put_num(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
 	fungespace_set(stack_pop(ip->stack), &v);
 }
 
 /// V - Get vector using indirect vector
-static void finger_INDV_getVec(instructionPointer * ip)
+static void finger_INDV_get_vec(instructionPointer * ip)
 {
 	fungeVector v = GetSecondVector(ip);
 	stack_push_vector(ip->stack,
@@ -67,7 +67,7 @@ static void finger_INDV_getVec(instructionPointer * ip)
 }
 
 /// W - Write vector using indirect vector
-static void finger_INDV_putVec(instructionPointer * ip)
+static void finger_INDV_put_vec(instructionPointer * ip)
 {
 	fungeVector a, b;
 	a = GetSecondVector(ip);
@@ -78,9 +78,9 @@ static void finger_INDV_putVec(instructionPointer * ip)
 
 bool finger_INDV_load(instructionPointer * ip)
 {
-	manager_add_opcode(INDV,  'G', getNum)
-	manager_add_opcode(INDV,  'P', putNum)
-	manager_add_opcode(INDV,  'V', getVec)
-	manager_add_opcode(INDV,  'W', putVec)
+	manager_add_opcode(INDV,  'G', get_num)
+	manager_add_opcode(INDV,  'P', put_num)
+	manager_add_opcode(INDV,  'V', get_vec)
+	manager_add_opcode(INDV,  'W', put_vec)
 	return true;
 }

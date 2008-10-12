@@ -33,7 +33,7 @@ static inline fungeCell floordiv(fungeCell x, fungeCell y)
 		return x;
 }
 
-static void finger_MODU_signedResult(instructionPointer * ip)
+static void finger_MODU_signed_result(instructionPointer * ip)
 {
 	fungeCell x, y;
 	y = stack_pop(ip->stack);
@@ -45,7 +45,7 @@ static void finger_MODU_signedResult(instructionPointer * ip)
 	}
 }
 
-static void finger_MODU_unsignedResult(instructionPointer * ip)
+static void finger_MODU_unsigned_result(instructionPointer * ip)
 {
 	fungeCell x, y;
 	y = stack_pop(ip->stack);
@@ -74,8 +74,8 @@ static void finger_MODU_remainder(instructionPointer * ip)
 
 bool finger_MODU_load(instructionPointer * ip)
 {
-	manager_add_opcode(MODU,  'M', signedResult)
+	manager_add_opcode(MODU,  'M', signed_result)
 	manager_add_opcode(MODU,  'R', remainder)
-	manager_add_opcode(MODU,  'U', unsignedResult)
+	manager_add_opcode(MODU,  'U', unsigned_result)
 	return true;
 }

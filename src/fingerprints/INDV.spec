@@ -5,8 +5,8 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-G	getNum	Get value using indirect vector
-P	putNum	Put value using indirect vector
-V	getVec	Get vector using indirect vector
-W	putVec	Write vector using indirect vector
+G	get_num	Get value using indirect vector
+P	put_num	Put value using indirect vector
+V	get_vec	Get vector using indirect vector
+W	put_vec	Write vector using indirect vector
 %end

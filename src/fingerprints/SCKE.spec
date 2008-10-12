@@ -5,6 +5,6 @@
 %safe:false
 %begin-instrs
 #I	name	desc
-H	getHostByName	Get address by hostname
-P	Peek	Peek for incoming data
+H	gethostbyname	Get address by hostname
+P	peek	Peek for incoming data
 %end

@@ -5,9 +5,9 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-D	stackSize	Push depth of stack to tos
-L	forthRoll	Forth Roll command
-O	forthOver	Forth Over command
-P	forthPick	Forth Pick command
-R	forthRot	Forth Rot command
+D	stack_size	Push depth of stack to tos
+L	forth_roll	Forth Roll command
+O	forth_over	Forth Over command
+P	forth_pick	Forth Pick command
+R	forth_rot	Forth Rot command
 %end

@@ -5,7 +5,7 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-E	eraseMark	Erase Mark
+E	erase_mark	Erase Mark
 G	granularity	Granularity
 M	mark	Mark
 S	second	Second

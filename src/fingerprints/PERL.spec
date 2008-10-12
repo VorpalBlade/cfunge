@@ -6,6 +6,6 @@
 %begin-instrs
 #I	name	desc
 E	eval	Evaluate 0gnirts
-I	intEval	As E but cast to integer.
+I	int_eval	As E but cast to integer.
 S	shelled	Is Perl loaded? Or will it be shelled?
 %end

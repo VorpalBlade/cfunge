@@ -37,13 +37,13 @@ static bool initialised = false;
 #define valid(s) ((s != 0) && s != (char *)-1)
 
 /// C - Clear screen
-static void finger_TERM_clearScreen(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clear_screen(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clear_screen);
 }
 
 /// D - Move cursor down n lines
-static void finger_TERM_goDown(instructionPointer * ip)
+static void finger_TERM_go_down(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
@@ -58,7 +58,7 @@ static void finger_TERM_goDown(instructionPointer * ip)
 }
 
 /// G - Goto cursor position x,y (home is 0,0)
-static void finger_TERM_gotoXY(instructionPointer * ip)
+static void finger_TERM_goto_xy(instructionPointer * ip)
 {
 	char *s;
 	fungeCell x, y;
@@ -73,25 +73,25 @@ static void finger_TERM_gotoXY(instructionPointer * ip)
 }
 
 /// H - Move cursor to home
-static void finger_TERM_goHome(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_go_home(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(cursor_home);
 }
 
 /// L - Clear from cursor to end of line
-static void finger_TERM_clearToEOL(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clear_to_eol(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clr_eol);
 }
 
 /// S - Clear from cursor to end of screen
-static void finger_TERM_clearToEOS(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clear_to_eos(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clr_eos);
 }
 
 /// U - Move cursor up n lines
-static void finger_TERM_goUp(instructionPointer * ip)
+static void finger_TERM_go_up(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
@@ -136,12 +136,12 @@ bool finger_TERM_load(instructionPointer * ip)
 {
 	if (!initialise())
 		return false;
-	manager_add_opcode(TERM,  'C', clearScreen)
-	manager_add_opcode(TERM,  'D', goDown)
-	manager_add_opcode(TERM,  'G', gotoXY)
-	manager_add_opcode(TERM,  'H', goHome)
-	manager_add_opcode(TERM,  'L', clearToEOL)
-	manager_add_opcode(TERM,  'S', clearToEOS)
-	manager_add_opcode(TERM,  'U', goUp)
+	manager_add_opcode(TERM,  'C', clear_screen)
+	manager_add_opcode(TERM,  'D', go_down)
+	manager_add_opcode(TERM,  'G', goto_xy)
+	manager_add_opcode(TERM,  'H', go_home)
+	manager_add_opcode(TERM,  'L', clear_to_eol)
+	manager_add_opcode(TERM,  'S', clear_to_eos)
+	manager_add_opcode(TERM,  'U', go_up)
 	return true;
 }

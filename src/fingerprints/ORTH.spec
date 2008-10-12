@@ -5,15 +5,15 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-A	bitAnd	bitwise and
-E	bitXor	bitwise xor
+A	bit_and	bitwise and
+E	bit_xor	bitwise xor
 G	get	Get cell (ortho style)
-O	bitOr	bitwise or
+O	bit_or	bitwise or
 P	put	Put cell (ortho style)
-S	outputString	Output string
-V	changeDx	Change delta x
-W	changeDy	Change delta y
-X	changeX	Change x position
-Y	changeY	Change y position
-Z	rampIfZero	Act like trampoline if 0
+S	output_string	Output string
+V	change_dx	Change delta x
+W	change_dy	Change delta y
+X	change_x	Change x position
+Y	change_y	Change y position
+Z	ramp_if_zero	Act like trampoline if 0
 %end

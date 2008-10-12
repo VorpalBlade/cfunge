@@ -34,7 +34,7 @@ FUNGE_ATTR_FAST static void binary(fungeCell number)
 	}
 }
 
-static void finger_BASE_outputBinary(instructionPointer * ip)
+static void finger_BASE_output_binary(instructionPointer * ip)
 {
 	fungeCell x;
 	x = stack_pop(ip->stack);
@@ -44,14 +44,14 @@ static void finger_BASE_outputBinary(instructionPointer * ip)
 	cf_funlockfile(stdout);
 }
 
-static void finger_BASE_outputOctal(instructionPointer * ip)
+static void finger_BASE_output_octal(instructionPointer * ip)
 {
 	fungeCell x;
 	x = stack_pop(ip->stack);
 	printf("%" FUNGECELLoctPRI " ", (fungeUnsignedCell)x);
 }
 
-static void finger_BASE_outputHex(instructionPointer * ip)
+static void finger_BASE_output_hex(instructionPointer * ip)
 {
 	fungeCell x;
 	x = stack_pop(ip->stack);
@@ -62,7 +62,7 @@ static void finger_BASE_outputHex(instructionPointer * ip)
 
 static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-static void finger_BASE_outputBase(instructionPointer * ip)
+static void finger_BASE_output_base(instructionPointer * ip)
 {
 	fungeCell base, val;
 
@@ -94,7 +94,7 @@ static void finger_BASE_outputBase(instructionPointer * ip)
 	cf_funlockfile(stdout);
 }
 
-static void finger_BASE_inputBase(instructionPointer * ip)
+static void finger_BASE_input_base(instructionPointer * ip)
 {
 	fungeCell base;
 	ret_getint gotint = rgi_noint;
@@ -121,10 +121,10 @@ static void finger_BASE_inputBase(instructionPointer * ip)
 
 bool finger_BASE_load(instructionPointer * ip)
 {
-	manager_add_opcode(BASE,  'B', outputBinary)
-	manager_add_opcode(BASE,  'H', outputHex)
-	manager_add_opcode(BASE,  'I', inputBase)
-	manager_add_opcode(BASE,  'N', outputBase)
-	manager_add_opcode(BASE,  'O', outputOctal)
+	manager_add_opcode(BASE,  'B', output_binary)
+	manager_add_opcode(BASE,  'H', output_hex)
+	manager_add_opcode(BASE,  'I', input_base)
+	manager_add_opcode(BASE,  'N', output_base)
+	manager_add_opcode(BASE,  'O', output_octal)
 	return true;
 }

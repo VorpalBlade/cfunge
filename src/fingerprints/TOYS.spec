@@ -6,29 +6,29 @@
 %begin-instrs
 #I	name	desc
 A	gable	gable
-B	pairOfShoes	pair of shoes
+B	pair_of_shoes	pair of shoes
 C	bracelet	bracelet
-D	toiletSeat	toilet seat
-E	pitchforkHead	pitchfork head
+D	toilet_seat	toilet seat
+E	pitchfork_head	pitchfork head
 F	calipers	calipers
 G	counterclockwise	counterclockwise
-H	pairOfStilts	pair of stilts
-I	doricColumn	doric column
+H	pair_of_stilts	pair of stilts
+I	doric_column	doric column
 J	fishhook	fishhook
 K	scissors	scissors
 L	corner	corner
 M	kittycat	kittycat
-N	lightningBolt	lightning bolt
+N	lightning_bolt	lightning bolt
 O	boulder	boulder
 P	mailbox	mailbox
 Q	necklace	necklace
-R	canOpener	can opener
+R	can_opener	can opener
 S	chicane	chicane
 T	barstool	barstool
 U	tumbler	tumbler
 V	dixiecup	dixiecup
-W	televisionAntenna	television antenna
-X	buriedTreasure	buried treasure
+W	television_antenna	television antenna
+X	buried_treasure	buried treasure
 Y	slingshot	slingshot
-Z	barnDoor	barn door
+Z	barn_door	barn door
 %end

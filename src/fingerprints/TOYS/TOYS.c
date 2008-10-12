@@ -51,7 +51,7 @@ static void finger_TOYS_gable(instructionPointer * ip)
 }
 
 /// B - pair of shoes
-static void finger_TOYS_pairOfShoes(instructionPointer * ip)
+static void finger_TOYS_pair_of_shoes(instructionPointer * ip)
 {
 	// Got no idea if this is correct.
 	fungeCell x, y;
@@ -87,13 +87,13 @@ static void finger_TOYS_bracelet(instructionPointer * ip)
 }
 
 /// D - toilet seat
-static void finger_TOYS_toiletSeat(instructionPointer * ip)
+static void finger_TOYS_toilet_seat(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) - 1);
 }
 
 /// E - pitchfork head
-static void finger_TOYS_pitchforkHead(instructionPointer * ip)
+static void finger_TOYS_pitchfork_head(instructionPointer * ip)
 {
 	fungeCell sum = 0;
 	for (size_t i = ip->stack->top; i-- > 0;)
@@ -137,7 +137,7 @@ static void finger_TOYS_counterclockwise(instructionPointer * ip)
 }
 
 /// H - pair of stilts
-static void finger_TOYS_pairOfStilts(instructionPointer * ip)
+static void finger_TOYS_pair_of_stilts(instructionPointer * ip)
 {
 	fungeCell a, b;
 
@@ -151,7 +151,7 @@ static void finger_TOYS_pairOfStilts(instructionPointer * ip)
 }
 
 /// I - doric column
-static void finger_TOYS_doricColumn(instructionPointer * ip)
+static void finger_TOYS_doric_column(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) + 1);
 }
@@ -233,7 +233,7 @@ static void finger_TOYS_kittycat(instructionPointer * ip)
 }
 
 /// N - lightning bolt
-static void finger_TOYS_lightningBolt(instructionPointer * ip)
+static void finger_TOYS_lightning_bolt(instructionPointer * ip)
 {
 	stack_push(ip->stack, -stack_pop(ip->stack));
 }
@@ -278,7 +278,7 @@ static void finger_TOYS_necklace(instructionPointer * ip)
 }
 
 /// R - can opener
-static void finger_TOYS_canOpener(instructionPointer * ip)
+static void finger_TOYS_can_opener(instructionPointer * ip)
 {
 	ip_turn_right(ip);
 	ip_forward(ip, 1);
@@ -357,7 +357,7 @@ static void finger_TOYS_dixiecup(instructionPointer * ip)
 }
 
 /// W - television antenna
-static void finger_TOYS_televisionAntenna(instructionPointer * ip)
+static void finger_TOYS_television_antenna(instructionPointer * ip)
 {
 	fungeVector vect;
 	fungeCell v, c;
@@ -374,7 +374,7 @@ static void finger_TOYS_televisionAntenna(instructionPointer * ip)
 }
 
 /// X - buried treasure
-static void finger_TOYS_buriedTreasure(instructionPointer * ip)
+static void finger_TOYS_buried_treasure(instructionPointer * ip)
 {
 	ip->position.x++;
 }
@@ -386,7 +386,7 @@ static void finger_TOYS_slingshot(instructionPointer * ip)
 }
 
 /// Z - barn door
-static void finger_TOYS_barnDoor(instructionPointer * ip)
+static void finger_TOYS_barn_door(instructionPointer * ip)
 {
 	// As this needs trefunge to work.
 	ip_reverse(ip);
@@ -395,30 +395,30 @@ static void finger_TOYS_barnDoor(instructionPointer * ip)
 bool finger_TOYS_load(instructionPointer * ip)
 {
 	manager_add_opcode(TOYS, 'A', gable)
-	manager_add_opcode(TOYS, 'B', pairOfShoes)
+	manager_add_opcode(TOYS, 'B', pair_of_shoes)
 	manager_add_opcode(TOYS, 'C', bracelet)
-	manager_add_opcode(TOYS, 'D', toiletSeat)
-	manager_add_opcode(TOYS, 'E', pitchforkHead)
+	manager_add_opcode(TOYS, 'D', toilet_seat)
+	manager_add_opcode(TOYS, 'E', pitchfork_head)
 	manager_add_opcode(TOYS, 'F', calipers)
 	manager_add_opcode(TOYS, 'G', counterclockwise)
-	manager_add_opcode(TOYS, 'H', pairOfStilts)
-	manager_add_opcode(TOYS, 'I', doricColumn)
+	manager_add_opcode(TOYS, 'H', pair_of_stilts)
+	manager_add_opcode(TOYS, 'I', doric_column)
 	manager_add_opcode(TOYS, 'J', fishhook)
 	manager_add_opcode(TOYS, 'K', scissors)
 	manager_add_opcode(TOYS, 'L', corner)
 	manager_add_opcode(TOYS, 'M', kittycat)
-	manager_add_opcode(TOYS, 'N', lightningBolt)
+	manager_add_opcode(TOYS, 'N', lightning_bolt)
 	manager_add_opcode(TOYS, 'O', boulder)
 	manager_add_opcode(TOYS, 'P', mailbox)
 	manager_add_opcode(TOYS, 'Q', necklace)
-	manager_add_opcode(TOYS, 'R', canOpener)
+	manager_add_opcode(TOYS, 'R', can_opener)
 	manager_add_opcode(TOYS, 'S', chicane)
 	manager_add_opcode(TOYS, 'T', barstool)
 	manager_add_opcode(TOYS, 'U', tumbler)
 	manager_add_opcode(TOYS, 'V', dixiecup)
-	manager_add_opcode(TOYS, 'W', televisionAntenna)
-	manager_add_opcode(TOYS, 'X', buriedTreasure)
+	manager_add_opcode(TOYS, 'W', television_antenna)
+	manager_add_opcode(TOYS, 'X', buried_treasure)
 	manager_add_opcode(TOYS, 'Y', slingshot)
-	manager_add_opcode(TOYS, 'Z', barnDoor)
+	manager_add_opcode(TOYS, 'Z', barn_door)
 	return true;
 }

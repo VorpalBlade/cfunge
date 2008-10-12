@@ -44,14 +44,14 @@ static void finger_TIME_day(instructionPointer * ip)
 }
 
 /// F - Get day of year.
-static void finger_TIME_dayOfYear(instructionPointer * ip)
+static void finger_TIME_day_of_year(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_yday);
 }
 
 /// G - Set to use UTC.
-static void finger_TIME_useGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TIME_use_gmt(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = true;
 }
@@ -64,7 +64,7 @@ static void finger_TIME_hour(instructionPointer * ip)
 }
 
 /// L - Set to use local time.
-static void finger_TIME_useLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TIME_use_local(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = false;
 }
@@ -91,7 +91,7 @@ static void finger_TIME_second(instructionPointer * ip)
 }
 
 /// W - Get day of week.
-static void finger_TIME_dayOfWeek(instructionPointer * ip)
+static void finger_TIME_day_of_week(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_wday + 1);
@@ -107,14 +107,14 @@ static void finger_TIME_year(instructionPointer * ip)
 bool finger_TIME_load(instructionPointer * ip)
 {
 	manager_add_opcode(TIME,  'D', day)
-	manager_add_opcode(TIME,  'F', dayOfYear)
-	manager_add_opcode(TIME,  'G', useGMT)
+	manager_add_opcode(TIME,  'F', day_of_year)
+	manager_add_opcode(TIME,  'G', use_gmt)
 	manager_add_opcode(TIME,  'H', hour)
-	manager_add_opcode(TIME,  'L', useLocal)
+	manager_add_opcode(TIME,  'L', use_local)
 	manager_add_opcode(TIME,  'M', minute)
 	manager_add_opcode(TIME,  'O', month)
 	manager_add_opcode(TIME,  'S', second)
-	manager_add_opcode(TIME,  'W', dayOfWeek)
+	manager_add_opcode(TIME,  'W', day_of_week)
 	manager_add_opcode(TIME,  'Y', year)
 	return true;
 }

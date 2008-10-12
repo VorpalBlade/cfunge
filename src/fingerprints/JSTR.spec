@@ -5,6 +5,6 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-G	pushN	Read with delta
-P	popN	Write with delta
+G	push_n	Read with delta
+P	pop_n	Write with delta
 %end

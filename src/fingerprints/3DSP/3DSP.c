@@ -245,7 +245,7 @@ static void finger_3DSP_normalise(instructionPointer * ip)
 }
 
 /// P - Copy a matrix
-static void finger_3DSP_matrixCopy(instructionPointer * ip)
+static void finger_3DSP_matrix_copy(instructionPointer * ip)
 {
 	fungeVector fs, ft;
 
@@ -266,7 +266,7 @@ static void finger_3DSP_matrixCopy(instructionPointer * ip)
 }
 
 /// R - Generate a rotation matrix
-static void finger_3DSP_matrixRotate(instructionPointer * ip)
+static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 {
 	double s, c;
 	double angle = PopFloat(ip);
@@ -312,7 +312,7 @@ static void finger_3DSP_matrixRotate(instructionPointer * ip)
 }
 
 /// S - Generate a scale matrix
-static void finger_3DSP_matrixScale(instructionPointer * ip)
+static void finger_3DSP_matrix_scale(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
@@ -328,7 +328,7 @@ static void finger_3DSP_matrixScale(instructionPointer * ip)
 }
 
 /// T - Generate a translation matrix
-static void finger_3DSP_matrixTranslate(instructionPointer * ip)
+static void finger_3DSP_matrix_translate(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
@@ -395,7 +395,7 @@ static void finger_3DSP_transform(instructionPointer * ip)
 }
 
 /// Y - Multiply two matrices
-static void finger_3DSP_matrixMul(instructionPointer * ip)
+static void finger_3DSP_matrix_mul(instructionPointer * ip)
 {
 	fungeVector ft, fa, fb;
 	double a[16], b[16], r[16];
@@ -442,14 +442,14 @@ bool finger_3DSP_load(instructionPointer * ip)
 	manager_add_opcode(3DSP,  'L', length)
 	manager_add_opcode(3DSP,  'M', mul)
 	manager_add_opcode(3DSP,  'N', normalise)
-	manager_add_opcode(3DSP,  'P', matrixCopy)
-	manager_add_opcode(3DSP,  'R', matrixRotate)
-	manager_add_opcode(3DSP,  'S', matrixScale)
-	manager_add_opcode(3DSP,  'T', matrixTranslate)
+	manager_add_opcode(3DSP,  'P', matrix_copy)
+	manager_add_opcode(3DSP,  'R', matrix_rotate)
+	manager_add_opcode(3DSP,  'S', matrix_scale)
+	manager_add_opcode(3DSP,  'T', matrix_translate)
 	manager_add_opcode(3DSP,  'U', duplicate)
 	manager_add_opcode(3DSP,  'V', map)
 	manager_add_opcode(3DSP,  'X', transform)
-	manager_add_opcode(3DSP,  'Y', matrixMul)
+	manager_add_opcode(3DSP,  'Y', matrix_mul)
 	manager_add_opcode(3DSP,  'Z', scale)
 	return true;
 }

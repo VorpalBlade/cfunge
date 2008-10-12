@@ -5,11 +5,11 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-C	PushC	Push 100
-D	PushD	Push 500
-I	PushI	Push 1
-L	PushL	Push 50
-M	PushM	Push 1000
-V	PushV	Push 5
-X	PushX	Push 10
+C	pushC	Push 100
+D	pushD	Push 500
+I	pushI	Push 1
+L	pushL	Push 50
+M	pushM	Push 1000
+V	pushV	Push 5
+X	pushX	Push 10
 %end

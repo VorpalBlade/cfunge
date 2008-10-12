@@ -5,9 +5,9 @@
 %safe:true
 %begin-instrs
 #I	name	desc
-B	outputBinary	Output in binary
-H	outputHex	Output in hex
-I	inputBase	Input in base
-N	outputBase	Output in base
-O	outputOctal	Output in octal
+B	output_binary	Output in binary
+H	output_hex	Output in hex
+I	input_base	Input in base
+N	output_base	Output in base
+O	output_octal	Output in octal
 %end

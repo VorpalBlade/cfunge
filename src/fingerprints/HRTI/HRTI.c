@@ -52,7 +52,7 @@ static inline bool CheckIPgotHRTI(instructionPointer * ip)
 }
 
 /// E - Erase Mark
-static void finger_HRTI_eraseMark(instructionPointer * ip)
+static void finger_HRTI_erase_mark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
 		ip_reverse(ip);
@@ -121,7 +121,7 @@ bool finger_HRTI_load(instructionPointer * ip)
 {
 	if (!SetupHRTI(ip))
 		return false;
-	manager_add_opcode(HRTI, 'E', eraseMark)
+	manager_add_opcode(HRTI, 'E', erase_mark)
 	manager_add_opcode(HRTI, 'G', granularity)
 	manager_add_opcode(HRTI, 'M', mark)
 	manager_add_opcode(HRTI, 'T', timer)

@@ -359,7 +359,7 @@ static inline void PrintPoint(StringBuffer * sb, char prefix, tc x, tc y)
  */
 
 /// A - Query Position (x, y coordinates)
-static void finger_TURT_queryHeading(instructionPointer * ip)
+static void finger_TURT_query_heading(instructionPointer * ip)
 {
 	stack_push(ip->stack, toDeg(turt.heading));
 }
@@ -371,14 +371,14 @@ static void finger_TURT_back(instructionPointer * ip)
 }
 
 /// C - Pen Colour (24-bit RGB)
-static void finger_TURT_penColour(instructionPointer * ip)
+static void finger_TURT_pen_colour(instructionPointer * ip)
 {
 	tryAddPoint();
 	turt.colour = toRGB(stack_pop(ip->stack));
 }
 
 /// D - Show Display (0 = no, 1 = yes)
-static void finger_TURT_showDisplay(instructionPointer * ip)
+static void finger_TURT_show_display(instructionPointer * ip)
 {
 	// What display? We don't have one as far as I know?
 	fungeCell a;
@@ -391,7 +391,7 @@ static void finger_TURT_showDisplay(instructionPointer * ip)
 }
 
 /// E - Query Pen (0 = up, 1 = down)
-static void finger_TURT_queryPen(instructionPointer * ip)
+static void finger_TURT_query_pen(instructionPointer * ip)
 {
 	stack_push(ip->stack, turt.penDown);
 }
@@ -403,7 +403,7 @@ static void finger_TURT_forward(instructionPointer * ip)
 }
 
 /// H - Set Heading (angle in degrees, relative to 0deg, east)
-static void finger_TURT_setHeading(instructionPointer * ip)
+static void finger_TURT_set_heading(instructionPointer * ip)
 {
 	turt.heading = toRad(stack_pop(ip->stack)); normalise();
 }
@@ -518,7 +518,7 @@ static inline bool GenerateCircles(genxWriter gw)
 }
 
 /// I - Print current Drawing (if possible)
-static void finger_TURT_printDrawing(instructionPointer * ip)
+static void finger_TURT_print_drawing(instructionPointer * ip)
 {
 	FILE * file;
 	genxWriter gw = NULL;
@@ -564,13 +564,13 @@ exit:
 }
 
 /// L - Turn Left (angle in degrees)
-static void finger_TURT_turnLeft(instructionPointer * ip)
+static void finger_TURT_turn_left(instructionPointer * ip)
 {
 	turt.heading -= toRad(stack_pop(ip->stack)); normalise();
 }
 
 /// N - Clear Paper with Colour (24-bit RGB)
-static void finger_TURT_clearPaper(instructionPointer * ip)
+static void finger_TURT_clear_paper(instructionPointer * ip)
 {
 	pic.bgColour = toRGB(stack_pop(ip->stack));
 	pic.bgSet = true;
@@ -582,7 +582,7 @@ static void finger_TURT_clearPaper(instructionPointer * ip)
 }
 
 /// P - Pen Position (0 = up, 1 = down)
-static void finger_TURT_penPosition(instructionPointer * ip)
+static void finger_TURT_pen_position(instructionPointer * ip)
 {
 	fungeCell a;
 	a = stack_pop(ip->stack);
@@ -597,14 +597,14 @@ static void finger_TURT_penPosition(instructionPointer * ip)
 }
 
 /// Q - Query Position (x, y coordinates)
-static void finger_TURT_queryPosition(instructionPointer * ip)
+static void finger_TURT_query_position(instructionPointer * ip)
 {
 	stack_push(ip->stack, turt.p.x);
 	stack_push(ip->stack, turt.p.y);
 }
 
 /// R - Turn Right (angle in degrees)
-static void finger_TURT_turnRight(instructionPointer * ip)
+static void finger_TURT_turn_right(instructionPointer * ip)
 {
 	turt.heading += toRad(stack_pop(ip->stack)); normalise();
 }
@@ -621,7 +621,7 @@ static void finger_TURT_teleport(instructionPointer * ip)
 }
 
 /// U - Query Bounds (two pairs of x, y coordinates)
-static void finger_TURT_queryBounds(instructionPointer * ip)
+static void finger_TURT_query_bounds(instructionPointer * ip)
 {
 	stack_push(ip->stack, TURT_MIN);
 	stack_push(ip->stack, TURT_MIN);
@@ -648,20 +648,20 @@ bool finger_TURT_load(instructionPointer * ip)
 #ifndef NDEBUG
 	atexit(&freeResources);
 #endif
-	manager_add_opcode(TURT,  'A', queryHeading)
+	manager_add_opcode(TURT,  'A', query_heading)
 	manager_add_opcode(TURT,  'B', back)
-	manager_add_opcode(TURT,  'C', penColour)
-	manager_add_opcode(TURT,  'D', showDisplay)
-	manager_add_opcode(TURT,  'E', queryPen)
+	manager_add_opcode(TURT,  'C', pen_colour)
+	manager_add_opcode(TURT,  'D', show_display)
+	manager_add_opcode(TURT,  'E', query_pen)
 	manager_add_opcode(TURT,  'F', forward)
-	manager_add_opcode(TURT,  'H', setHeading)
-	manager_add_opcode(TURT,  'I', printDrawing)
-	manager_add_opcode(TURT,  'L', turnLeft)
-	manager_add_opcode(TURT,  'N', clearPaper)
-	manager_add_opcode(TURT,  'P', penPosition)
-	manager_add_opcode(TURT,  'Q', queryPosition)
-	manager_add_opcode(TURT,  'R', turnRight)
+	manager_add_opcode(TURT,  'H', set_heading)
+	manager_add_opcode(TURT,  'I', print_drawing)
+	manager_add_opcode(TURT,  'L', turn_left)
+	manager_add_opcode(TURT,  'N', clear_paper)
+	manager_add_opcode(TURT,  'P', pen_position)
+	manager_add_opcode(TURT,  'Q', query_position)
+	manager_add_opcode(TURT,  'R', turn_right)
 	manager_add_opcode(TURT,  'T', teleport)
-	manager_add_opcode(TURT,  'U', queryBounds)
+	manager_add_opcode(TURT,  'U', query_bounds)
 	return true;
 }

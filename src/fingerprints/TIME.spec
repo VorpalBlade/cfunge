@@ -6,13 +6,13 @@
 %begin-instrs
 #I	name	desc
 D	day	Get day of month.
-F	dayOfYear	Get day of year.
-G	useGMT	Set to use UTC.
+F	day_of_year	Get day of year.
+G	use_gmt	Set to use UTC.
 H	hour	Get hour.
-L	useLocal	Set to use local time.
+L	use_local	Set to use local time.
 M	minute	Get minute.
 O	month	Get month.
 S	second	Get second.
-W	dayOfWeek	Get day of week.
+W	day_of_week	Get day of week.
 Y	year	Get year.
 %end

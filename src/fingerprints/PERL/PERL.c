@@ -198,7 +198,7 @@ static void finger_PERL_eval(instructionPointer * ip)
 }
 
 /// I - As E but cast to integer.
-static void finger_PERL_intEval(instructionPointer * ip)
+static void finger_PERL_int_eval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = stack_pop_string(ip->stack);
@@ -221,7 +221,7 @@ static void finger_PERL_intEval(instructionPointer * ip)
 bool finger_PERL_load(instructionPointer * ip)
 {
 	manager_add_opcode(PERL,  'E', eval)
-	manager_add_opcode(PERL,  'I', intEval)
+	manager_add_opcode(PERL,  'I', int_eval)
 	manager_add_opcode(PERL,  'S', shelled)
 	return true;
 }
