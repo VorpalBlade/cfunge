@@ -59,7 +59,7 @@ typedef enum {
 #define GENX_NAMECHAR 4
 
 /**
- * @defgroup genx-types Genx's types
+ * @defgroup genx_types Genx's types
  */
 /*@{*/
 /** An UTF-8 string */
