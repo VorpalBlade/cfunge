@@ -39,7 +39,7 @@
 #endif
 
 
-#define FUNGESPACEINITIALSIZE 150000
+#define FUNGESPACEINITIALSIZE 0x40000
 
 typedef struct fungeSpace {
 	/// These two form a rectangle for the program size

@@ -27,6 +27,35 @@
 
 #include "ght_hash_table.h"
 
+#if 0
+/* One-at-a-time hash (found in a web article from ddj), this is the
+ * standard hash function.
+ *
+ * See http://burtleburtle.net/bob/hash/doobs.html
+ * for the hash functions used here.
+ */
+FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
+{
+	ght_uint32_t i_hash = 0;
+	size_t i;
+
+	assert(p_key != NULL);
+
+	for (i = 0; i < sizeof(fungeSpaceHashKey); ++i) {
+		i_hash += ((const unsigned char*)&(p_key->p_key))[i];
+		i_hash += (i_hash << 10);
+		i_hash ^= (i_hash >> 6);
+	}
+	i_hash += (i_hash << 3);
+	i_hash ^= (i_hash >> 11);
+	i_hash += (i_hash << 15);
+
+	return i_hash;
+}
+#endif
+
+#if 1
+
 static const ght_uint32_t crc32_table[256] = {
 	0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
 	0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61, 0x350c9b64, 0x31cd86d3, 0x3c8ea00a, 0x384fbdbd,
@@ -62,33 +91,6 @@ static const ght_uint32_t crc32_table[256] = {
 	0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-#if 0
-/* One-at-a-time hash (found in a web article from ddj), this is the
- * standard hash function.
- *
- * See http://burtleburtle.net/bob/hash/doobs.html
- * for the hash functions used here.
- */
-FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
-{
-	ght_uint32_t i_hash = 0;
-	size_t i;
-
-	assert(p_key != NULL);
-
-	for (i = 0; i < sizeof(fungeSpaceHashKey); ++i) {
-		i_hash += ((const unsigned char*)&(p_key->p_key))[i];
-		i_hash += (i_hash << 10);
-		i_hash ^= (i_hash >> 6);
-	}
-	i_hash += (i_hash << 3);
-	i_hash ^= (i_hash >> 11);
-	i_hash += (i_hash << 15);
-
-	return i_hash;
-}
-#endif
-
 /* CRC32 hash based on code from comp.compression FAQ.
  * Added by Dru Lemley <spambait@lemley.net>
  */
@@ -107,6 +109,7 @@ FUNGE_ATTR_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ *(p++)];
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
+#endif
 
 #if 0
 #ifdef USE64

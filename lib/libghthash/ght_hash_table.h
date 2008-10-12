@@ -86,8 +86,10 @@ extern "C"
 // Use macros for some stuff.
 #define GHT_USE_MACROS
 // What checksum to use, one of:
-// ght_one_at_a_time_hash
-// ght_crc_hash
+//  ght_one_at_a_time_hash
+//  ght_crc_hash
+//  murmur_hash
+// Be sure to change to #if 1 for the relevant function in hash_functions.c
 #define GHT_HASH_NAME ght_crc_hash
 // Define to one of the GHT_HEURISTICS_* above
 #define GHT_HEURISTICS GHT_HEURISTICS_NONE
