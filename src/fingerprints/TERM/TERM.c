@@ -37,13 +37,13 @@ static bool initialised = false;
 #define valid(s) ((s != 0) && s != (char *)-1)
 
 /// C - Clear screen
-static void FingerTERMclearScreen(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clearScreen(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clear_screen);
 }
 
 /// D - Move cursor down n lines
-static void FingerTERMgoDown(instructionPointer * ip)
+static void finger_TERM_goDown(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
@@ -58,7 +58,7 @@ static void FingerTERMgoDown(instructionPointer * ip)
 }
 
 /// G - Goto cursor position x,y (home is 0,0)
-static void FingerTERMgotoXY(instructionPointer * ip)
+static void finger_TERM_gotoXY(instructionPointer * ip)
 {
 	char *s;
 	fungeCell x, y;
@@ -73,25 +73,25 @@ static void FingerTERMgotoXY(instructionPointer * ip)
 }
 
 /// H - Move cursor to home
-static void FingerTERMgoHome(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_goHome(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(cursor_home);
 }
 
 /// L - Clear from cursor to end of line
-static void FingerTERMclearToEOL(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clearToEOL(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clr_eol);
 }
 
 /// S - Clear from cursor to end of screen
-static void FingerTERMclearToEOS(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TERM_clearToEOS(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	putp(clr_eos);
 }
 
 /// U - Move cursor up n lines
-static void FingerTERMgoUp(instructionPointer * ip)
+static void finger_TERM_goUp(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
@@ -132,7 +132,7 @@ static inline bool initialise(void)
 	return true;
 }
 
-bool FingerTERMload(instructionPointer * ip)
+bool finger_TERM_load(instructionPointer * ip)
 {
 	if (!initialise())
 		return false;

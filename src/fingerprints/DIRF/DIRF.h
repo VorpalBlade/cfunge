@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerDIRFload(instructionPointer * ip);
+bool finger_DIRF_load(instructionPointer * ip);
 
 #endif

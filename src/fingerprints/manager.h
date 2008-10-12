@@ -142,12 +142,12 @@ void manager_list(void);
 /// @code
 /// manager_add_opcode(CPLI, 'V', abs)
 /// @endcode
-/// This will "bind" the function named FingerCPLIabs to the instruction V.
+/// This will "bind" the function named finger_CPLI_abs to the instruction V.
 /// @param fprint Fingerprint name
 /// @param opcode Instruction char (range A-Z)
 /// @param name Function name. Real function name constructed from fprint and this.
 #define manager_add_opcode(fprint, opcode, name) \
-	if (!opcode_stack_push(ip, (opcode), &Finger ## fprint ## name)) \
+	if (!opcode_stack_push(ip, (opcode), &finger_ ## fprint ## _ ## name)) \
 		return false;
 
 #endif

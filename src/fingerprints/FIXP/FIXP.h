@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerFIXPload(instructionPointer * ip);
+bool finger_FIXP_load(instructionPointer * ip);
 
 #endif

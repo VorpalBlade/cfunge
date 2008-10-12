@@ -24,7 +24,7 @@
 
 
 #define ROMAPUSH(x, y) \
-	static void FingerROMApush ## x (instructionPointer * ip) \
+	static void finger_ROMA_push ## x (instructionPointer * ip) \
 	{ \
 		stack_push(ip->stack, (fungeCell)y); \
 	}
@@ -39,7 +39,7 @@ ROMAPUSH(M, 1000)
 
 
 
-bool FingerROMAload(instructionPointer * ip)
+bool finger_ROMA_load(instructionPointer * ip)
 {
 	manager_add_opcode(ROMA,  'C', pushC)
 	manager_add_opcode(ROMA,  'D', pushD)

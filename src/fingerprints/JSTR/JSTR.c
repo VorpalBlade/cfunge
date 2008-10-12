@@ -23,7 +23,7 @@
 #include "../../stack.h"
 
 /// G - Read with delta
-static void FingerJSTRpushN(instructionPointer * ip)
+static void finger_JSTR_pushN(instructionPointer * ip)
 {
 	fungeCell n;
 	fungeVector pos, delta;
@@ -49,7 +49,7 @@ static void FingerJSTRpushN(instructionPointer * ip)
 }
 
 /// P - Write with delta
-static void FingerJSTRpopN(instructionPointer * ip)
+static void finger_JSTR_popN(instructionPointer * ip)
 {
 	fungeCell n;
 	fungeVector pos, delta;
@@ -72,7 +72,7 @@ static void FingerJSTRpopN(instructionPointer * ip)
 	}
 }
 
-bool FingerJSTRload(instructionPointer * ip)
+bool finger_JSTR_load(instructionPointer * ip)
 {
 	manager_add_opcode(JSTR,  'G', pushN)
 	manager_add_opcode(JSTR,  'P', popN)

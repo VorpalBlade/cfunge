@@ -49,7 +49,7 @@ FUNGE_ATTR_FAST static inline void pushDbl(instructionPointer * restrict ip)
 
 // Basic arithmetics
 
-static void FingerFPDPadd(instructionPointer * ip)
+static void finger_FPDP_add(instructionPointer * ip)
 {
 	popDbl(ip);
 	d = u.d;
@@ -58,7 +58,7 @@ static void FingerFPDPadd(instructionPointer * ip)
 	pushDbl(ip);
 }
 
-static void FingerFPDPsub(instructionPointer * ip)
+static void finger_FPDP_sub(instructionPointer * ip)
 {
 	popDbl(ip);
 	d = u.d;
@@ -67,7 +67,7 @@ static void FingerFPDPsub(instructionPointer * ip)
 	pushDbl(ip);
 }
 
-static void FingerFPDPmul(instructionPointer * ip)
+static void finger_FPDP_mul(instructionPointer * ip)
 {
 	popDbl(ip);
 	d = u.d;
@@ -76,7 +76,7 @@ static void FingerFPDPmul(instructionPointer * ip)
 	pushDbl(ip);
 }
 
-static void FingerFPDPdiv(instructionPointer * ip)
+static void finger_FPDP_div(instructionPointer * ip)
 {
 	popDbl(ip);
 	d = u.d;
@@ -85,7 +85,7 @@ static void FingerFPDPdiv(instructionPointer * ip)
 	pushDbl(ip);
 }
 
-static void FingerFPDPsqrt(instructionPointer * ip)
+static void finger_FPDP_sqrt(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = sqrt(u.d);
@@ -95,42 +95,42 @@ static void FingerFPDPsqrt(instructionPointer * ip)
 
 // Trigonometry
 
-static void FingerFPDPsin(instructionPointer * ip)
+static void finger_FPDP_sin(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = sin(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPcos(instructionPointer * ip)
+static void finger_FPDP_cos(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = cos(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPtan(instructionPointer * ip)
+static void finger_FPDP_tan(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = tan(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPasin(instructionPointer * ip)
+static void finger_FPDP_asin(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = asin(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPacos(instructionPointer * ip)
+static void finger_FPDP_acos(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = acos(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPatan(instructionPointer * ip)
+static void finger_FPDP_atan(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = atan(u.d);
@@ -140,21 +140,21 @@ static void FingerFPDPatan(instructionPointer * ip)
 
 // Logarithms and exponents
 
-static void FingerFPDPln(instructionPointer * ip)
+static void finger_FPDP_ln(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = log(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPlog10(instructionPointer * ip)
+static void finger_FPDP_log10(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = log10(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPexp(instructionPointer * ip)
+static void finger_FPDP_exp(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = exp(u.d);
@@ -164,21 +164,21 @@ static void FingerFPDPexp(instructionPointer * ip)
 
 // Misc stuff
 
-static void FingerFPDPneg(instructionPointer * ip)
+static void finger_FPDP_neg(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d *= -1;
 	pushDbl(ip);
 }
 
-static void FingerFPDPabs(instructionPointer * ip)
+static void finger_FPDP_abs(instructionPointer * ip)
 {
 	popDbl(ip);
 	u.d = fabs(u.d);
 	pushDbl(ip);
 }
 
-static void FingerFPDPpow(instructionPointer * ip)
+static void finger_FPDP_pow(instructionPointer * ip)
 {
 	popDbl(ip);
 	d = u.d;
@@ -190,7 +190,7 @@ static void FingerFPDPpow(instructionPointer * ip)
 
 // Conversion and standard IO
 
-static void FingerFPDPfromint(instructionPointer * ip)
+static void finger_FPDP_fromint(instructionPointer * ip)
 {
 	fungeCell i;
 	i = stack_pop(ip->stack);
@@ -198,13 +198,13 @@ static void FingerFPDPfromint(instructionPointer * ip)
 	pushDbl(ip);
 }
 
-static void FingerFPDPtoint(instructionPointer * ip)
+static void finger_FPDP_toint(instructionPointer * ip)
 {
 	popDbl(ip);
 	stack_push(ip->stack, (fungeCell)u.d);
 }
 
-static void FingerFPDPfromascii(instructionPointer * ip)
+static void finger_FPDP_fromascii(instructionPointer * ip)
 {
 	char * restrict str;
 	str = stack_pop_string(ip->stack);
@@ -213,13 +213,13 @@ static void FingerFPDPfromascii(instructionPointer * ip)
 	stack_freeString(str);
 }
 
-static void FingerFPDPprint(instructionPointer * ip)
+static void finger_FPDP_print(instructionPointer * ip)
 {
 	popDbl(ip);
 	printf("%f ", u.d);
 }
 
-bool FingerFPDPload(instructionPointer * ip)
+bool finger_FPDP_load(instructionPointer * ip)
 {
 	manager_add_opcode(FPDP,  'A', add)
 	manager_add_opcode(FPDP,  'B', sin)

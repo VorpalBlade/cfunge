@@ -359,26 +359,26 @@ static inline void PrintPoint(StringBuffer * sb, char prefix, tc x, tc y)
  */
 
 /// A - Query Position (x, y coordinates)
-static void FingerTURTqueryHeading(instructionPointer * ip)
+static void finger_TURT_queryHeading(instructionPointer * ip)
 {
 	stack_push(ip->stack, toDeg(turt.heading));
 }
 
 /// B - Back (distance in pixels)
-static void FingerTURTback(instructionPointer * ip)
+static void finger_TURT_back(instructionPointer * ip)
 {
 	move(-stack_pop(ip->stack));
 }
 
 /// C - Pen Colour (24-bit RGB)
-static void FingerTURTpenColour(instructionPointer * ip)
+static void finger_TURT_penColour(instructionPointer * ip)
 {
 	tryAddPoint();
 	turt.colour = toRGB(stack_pop(ip->stack));
 }
 
 /// D - Show Display (0 = no, 1 = yes)
-static void FingerTURTshowDisplay(instructionPointer * ip)
+static void finger_TURT_showDisplay(instructionPointer * ip)
 {
 	// What display? We don't have one as far as I know?
 	fungeCell a;
@@ -391,19 +391,19 @@ static void FingerTURTshowDisplay(instructionPointer * ip)
 }
 
 /// E - Query Pen (0 = up, 1 = down)
-static void FingerTURTqueryPen(instructionPointer * ip)
+static void finger_TURT_queryPen(instructionPointer * ip)
 {
 	stack_push(ip->stack, turt.penDown);
 }
 
 /// F - Forward (distance in pixels)
-static void FingerTURTforward(instructionPointer * ip)
+static void finger_TURT_forward(instructionPointer * ip)
 {
 	move(stack_pop(ip->stack));
 }
 
 /// H - Set Heading (angle in degrees, relative to 0deg, east)
-static void FingerTURTsetHeading(instructionPointer * ip)
+static void finger_TURT_setHeading(instructionPointer * ip)
 {
 	turt.heading = toRad(stack_pop(ip->stack)); normalise();
 }
@@ -518,7 +518,7 @@ static inline bool GenerateCircles(genxWriter gw)
 }
 
 /// I - Print current Drawing (if possible)
-static void FingerTURTprintDrawing(instructionPointer * ip)
+static void finger_TURT_printDrawing(instructionPointer * ip)
 {
 	FILE * file;
 	genxWriter gw = NULL;
@@ -564,13 +564,13 @@ exit:
 }
 
 /// L - Turn Left (angle in degrees)
-static void FingerTURTturnLeft(instructionPointer * ip)
+static void finger_TURT_turnLeft(instructionPointer * ip)
 {
 	turt.heading -= toRad(stack_pop(ip->stack)); normalise();
 }
 
 /// N - Clear Paper with Colour (24-bit RGB)
-static void FingerTURTclearPaper(instructionPointer * ip)
+static void finger_TURT_clearPaper(instructionPointer * ip)
 {
 	pic.bgColour = toRGB(stack_pop(ip->stack));
 	pic.bgSet = true;
@@ -582,7 +582,7 @@ static void FingerTURTclearPaper(instructionPointer * ip)
 }
 
 /// P - Pen Position (0 = up, 1 = down)
-static void FingerTURTpenPosition(instructionPointer * ip)
+static void finger_TURT_penPosition(instructionPointer * ip)
 {
 	fungeCell a;
 	a = stack_pop(ip->stack);
@@ -597,20 +597,20 @@ static void FingerTURTpenPosition(instructionPointer * ip)
 }
 
 /// Q - Query Position (x, y coordinates)
-static void FingerTURTqueryPosition(instructionPointer * ip)
+static void finger_TURT_queryPosition(instructionPointer * ip)
 {
 	stack_push(ip->stack, turt.p.x);
 	stack_push(ip->stack, turt.p.y);
 }
 
 /// R - Turn Right (angle in degrees)
-static void FingerTURTturnRight(instructionPointer * ip)
+static void finger_TURT_turnRight(instructionPointer * ip)
 {
 	turt.heading += toRad(stack_pop(ip->stack)); normalise();
 }
 
 /// T - Teleport (x, y coords relative to origin; 00T = home)
-static void FingerTURTteleport(instructionPointer * ip)
+static void finger_TURT_teleport(instructionPointer * ip)
 {
 	tryAddPoint();
 
@@ -621,7 +621,7 @@ static void FingerTURTteleport(instructionPointer * ip)
 }
 
 /// U - Query Bounds (two pairs of x, y coordinates)
-static void FingerTURTqueryBounds(instructionPointer * ip)
+static void finger_TURT_queryBounds(instructionPointer * ip)
 {
 	stack_push(ip->stack, TURT_MIN);
 	stack_push(ip->stack, TURT_MIN);
@@ -642,7 +642,7 @@ static void initialise(void)
 	}
 }
 
-bool FingerTURTload(instructionPointer * ip)
+bool finger_TURT_load(instructionPointer * ip)
 {
 	initialise();
 #ifndef NDEBUG

@@ -77,88 +77,88 @@ typedef struct s_ImplementedFingerprintEntry {
 // .opcodes entries on the same line! As well as in current format.
 static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// 3DSP - 3D space manipulation extension
-	{ .fprint = 0x33445350, .uri = NULL, .loader = &Finger3DSPload, .opcodes = "ABCDLMNPRSTUVXYZ",
+	{ .fprint = 0x33445350, .uri = NULL, .loader = &finger_3DSP_load, .opcodes = "ABCDLMNPRSTUVXYZ",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#3DSP", .safe = true },
 	// BASE - I/O for numbers in other bases
-	{ .fprint = 0x42415345, .uri = NULL, .loader = &FingerBASEload, .opcodes = "BHINO",
+	{ .fprint = 0x42415345, .uri = NULL, .loader = &finger_BASE_load, .opcodes = "BHINO",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#BASE", .safe = true },
 	// CPLI - Complex Integer extension
-	{ .fprint = 0x43504c49, .uri = NULL, .loader = &FingerCPLIload, .opcodes = "ADMOSV",
+	{ .fprint = 0x43504c49, .uri = NULL, .loader = &finger_CPLI_load, .opcodes = "ADMOSV",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// DIRF - Directory functions extension
-	{ .fprint = 0x44495246, .uri = NULL, .loader = &FingerDIRFload, .opcodes = "CMR",
+	{ .fprint = 0x44495246, .uri = NULL, .loader = &finger_DIRF_load, .opcodes = "CMR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FILE - File I/O functions
-	{ .fprint = 0x46494c45, .uri = NULL, .loader = &FingerFILEload, .opcodes = "CDGLOPRSW",
+	{ .fprint = 0x46494c45, .uri = NULL, .loader = &finger_FILE_load, .opcodes = "CDGLOPRSW",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = false },
 	// FING - Operate on single fingerprint semantics
-	{ .fprint = 0x46494e47, .uri = NULL, .loader = &FingerFINGload, .opcodes = "XYZ",
+	{ .fprint = 0x46494e47, .uri = NULL, .loader = &finger_FING_load, .opcodes = "XYZ",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#FING", .safe = true },
 	// FIXP - Some useful math functions
-	{ .fprint = 0x46495850, .uri = NULL, .loader = &FingerFIXPload, .opcodes = "ABCDIJNOPQRSTUVX",
+	{ .fprint = 0x46495850, .uri = NULL, .loader = &finger_FIXP_load, .opcodes = "ABCDIJNOPQRSTUVX",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FPDP - Double precision floating point
-	{ .fprint = 0x46504450, .uri = NULL, .loader = &FingerFPDPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	{ .fprint = 0x46504450, .uri = NULL, .loader = &finger_FPDP_load, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FPSP - Single precision floating point
-	{ .fprint = 0x46505350, .uri = NULL, .loader = &FingerFPSPload, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
+	{ .fprint = 0x46505350, .uri = NULL, .loader = &finger_FPSP_load, .opcodes = "ABCDEFGHIKLMNPQRSTVXY",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// FRTH - Some common forth commands
-	{ .fprint = 0x46525448, .uri = NULL, .loader = &FingerFRTHload, .opcodes = "DLOPR",
+	{ .fprint = 0x46525448, .uri = NULL, .loader = &finger_FRTH_load, .opcodes = "DLOPR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// HRTI - High-Resolution Timer Interface
-	{ .fprint = 0x48525449, .uri = NULL, .loader = &FingerHRTIload, .opcodes = "EGMST",
+	{ .fprint = 0x48525449, .uri = NULL, .loader = &finger_HRTI_load, .opcodes = "EGMST",
 	  .url = "http://catseye.tc/projects/funge98/library/HRTI.html", .safe = true },
 	// INDV - Pointer functions
-	{ .fprint = 0x494e4456, .uri = NULL, .loader = &FingerINDVload, .opcodes = "GPVW",
+	{ .fprint = 0x494e4456, .uri = NULL, .loader = &finger_INDV_load, .opcodes = "GPVW",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// JSTR - Read and write strings in Funge-Space.
-	{ .fprint = 0x4a535452, .uri = NULL, .loader = &FingerJSTRload, .opcodes = "GP",
+	{ .fprint = 0x4a535452, .uri = NULL, .loader = &finger_JSTR_load, .opcodes = "GP",
 	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
 	// MODU - Modulo Arithmetic
-	{ .fprint = 0x4d4f4455, .uri = NULL, .loader = &FingerMODUload, .opcodes = "MRU",
+	{ .fprint = 0x4d4f4455, .uri = NULL, .loader = &finger_MODU_load, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
 	// NULL - Null
-	{ .fprint = 0x4e554c4c, .uri = NULL, .loader = &FingerNULLload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	{ .fprint = 0x4e554c4c, .uri = NULL, .loader = &finger_NULL_load, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library
-	{ .fprint = 0x4f525448, .uri = NULL, .loader = &FingerORTHload, .opcodes = "AEGOPSVWXYZ",
+	{ .fprint = 0x4f525448, .uri = NULL, .loader = &finger_ORTH_load, .opcodes = "AEGOPSVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/ORTH.html", .safe = true },
 	// PERL - Generic Interface to the Perl Language
-	{ .fprint = 0x5045524c, .uri = NULL, .loader = &FingerPERLload, .opcodes = "EIS",
+	{ .fprint = 0x5045524c, .uri = NULL, .loader = &finger_PERL_load, .opcodes = "EIS",
 	  .url = "http://catseye.tc/projects/funge98/library/PERL.html", .safe = false },
 	// REFC - Referenced Cells Extension
-	{ .fprint = 0x52454643, .uri = NULL, .loader = &FingerREFCload, .opcodes = "DR",
+	{ .fprint = 0x52454643, .uri = NULL, .loader = &finger_REFC_load, .opcodes = "DR",
 	  .url = "http://catseye.tc/projects/funge98/library/REFC.html", .safe = true },
 	// REXP - Regular Expression Matching
-	{ .fprint = 0x52455850, .uri = NULL, .loader = &FingerREXPload, .opcodes = "CEF",
+	{ .fprint = 0x52455850, .uri = NULL, .loader = &finger_REXP_load, .opcodes = "CEF",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#REXP", .safe = true },
 	// ROMA - Roman Numerals
-	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &FingerROMAload, .opcodes = "CDILMVX",
+	{ .fprint = 0x524f4d41, .uri = NULL, .loader = &finger_ROMA_load, .opcodes = "CDILMVX",
 	  .url = "http://catseye.tc/projects/funge98/library/ROMA.html", .safe = true },
 	// SCKE - TCP/IP async socket and dns resolving extension
-	{ .fprint = 0x53434b45, .uri = NULL, .loader = &FingerSCKEload, .opcodes = "HP",
+	{ .fprint = 0x53434b45, .uri = NULL, .loader = &finger_SCKE_load, .opcodes = "HP",
 	  .url = "http://glfunge98.sourceforge.net/", .safe = false },
 	// SOCK - TCP/IP socket extension
-	{ .fprint = 0x534f434b, .uri = NULL, .loader = &FingerSOCKload, .opcodes = "ABCIKLORSW",
+	{ .fprint = 0x534f434b, .uri = NULL, .loader = &finger_SOCK_load, .opcodes = "ABCIKLORSW",
 	  .url = "http://www.rcfunge98.com/rcfunge_manual.html#SOCK", .safe = false },
 	// STRN - String functions
-	{ .fprint = 0x5354524e, .uri = NULL, .loader = &FingerSTRNload, .opcodes = "ACDFGILMNPRSV",
+	{ .fprint = 0x5354524e, .uri = NULL, .loader = &finger_STRN_load, .opcodes = "ACDFGILMNPRSV",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// SUBR - Subroutine extension
-	{ .fprint = 0x53554252, .uri = NULL, .loader = &FingerSUBRload, .opcodes = "ACJOR",
+	{ .fprint = 0x53554252, .uri = NULL, .loader = &finger_SUBR_load, .opcodes = "ACJOR",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TERM - Terminal control functions
-	{ .fprint = 0x5445524d, .uri = NULL, .loader = &FingerTERMload, .opcodes = "CDGHLSU",
+	{ .fprint = 0x5445524d, .uri = NULL, .loader = &finger_TERM_load, .opcodes = "CDGHLSU",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TIME - Time and Date functions
-	{ .fprint = 0x54494d45, .uri = NULL, .loader = &FingerTIMEload, .opcodes = "DFGHLMOSWY",
+	{ .fprint = 0x54494d45, .uri = NULL, .loader = &finger_TIME_load, .opcodes = "DFGHLMOSWY",
 	  .url = "http://www.elf-emulation.com/funge/rcfunge_manual.html", .safe = true },
 	// TOYS - Funge-98 Standard Toys
-	{ .fprint = 0x544f5953, .uri = NULL, .loader = &FingerTOYSload, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	{ .fprint = 0x544f5953, .uri = NULL, .loader = &finger_TOYS_load, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
 	// TURT - Simple Turtle Graphics Library
-	{ .fprint = 0x54555254, .uri = NULL, .loader = &FingerTURTload, .opcodes = "ABCDEFHILNPQRTU",
+	{ .fprint = 0x54555254, .uri = NULL, .loader = &finger_TURT_load, .opcodes = "ABCDEFHILNPQRTU",
 	  .url = "http://catseye.tc/projects/funge98/library/TURT.html", .safe = true },
 };
 

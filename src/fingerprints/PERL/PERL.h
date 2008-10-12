@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerPERLload(instructionPointer * ip);
+bool finger_PERL_load(instructionPointer * ip);
 
 #endif

@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerCPLIload(instructionPointer * ip);
+bool finger_CPLI_load(instructionPointer * ip);
 
 #endif

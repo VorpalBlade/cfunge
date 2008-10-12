@@ -31,13 +31,13 @@
 static const ipDelta SUBRnewDelta = { .x = 1, .y = 0 };
 
 /// A - Change to absolute addressing
-static void FingerSUBRabsolute(instructionPointer * ip)
+static void finger_SUBR_absolute(instructionPointer * ip)
 {
 	ip->fingerSUBRisRelative = false;
 }
 
 /// C - Call
-static void FingerSUBRcall(instructionPointer * ip)
+static void finger_SUBR_call(instructionPointer * ip)
 {
 	fungeCell n;
 	fungeVector pos;
@@ -73,7 +73,7 @@ static void FingerSUBRcall(instructionPointer * ip)
 }
 
 /// J - Jump
-static void FingerSUBRjump(instructionPointer * ip)
+static void finger_SUBR_jump(instructionPointer * ip)
 {
 	fungeVector pos;
 
@@ -89,13 +89,13 @@ static void FingerSUBRjump(instructionPointer * ip)
 }
 
 /// O - Change to relative addressing
-static void FingerSUBRrelative(instructionPointer * ip)
+static void finger_SUBR_relative(instructionPointer * ip)
 {
 	ip->fingerSUBRisRelative = true;
 }
 
 /// R - Return from call
-static void FingerSUBRreturn(instructionPointer * ip)
+static void finger_SUBR_return(instructionPointer * ip)
 {
 	fungeCell n;
 	fungeVector pos;
@@ -125,7 +125,7 @@ static void FingerSUBRreturn(instructionPointer * ip)
 }
 
 
-bool FingerSUBRload(instructionPointer * ip)
+bool finger_SUBR_load(instructionPointer * ip)
 {
 	manager_add_opcode(SUBR,  'A', absolute)
 	manager_add_opcode(SUBR,  'C', call)

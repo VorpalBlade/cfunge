@@ -42,7 +42,7 @@ static void DoReflect(instructionPointer * ip)
 }
 
 /// X - Swap two semantics
-static void FingerFINGswap(instructionPointer * ip)
+static void finger_FING_swap(instructionPointer * ip)
 {
 	char first = PopStackSpec(ip);
 	char second = PopStackSpec(ip);
@@ -62,7 +62,7 @@ static void FingerFINGswap(instructionPointer * ip)
 }
 
 /// Y - Drop semantic
-static void FingerFINGdrop(instructionPointer * ip)
+static void finger_FING_drop(instructionPointer * ip)
 {
 	char opcode = PopStackSpec(ip);
 	if (opcode == 0) {
@@ -73,7 +73,7 @@ static void FingerFINGdrop(instructionPointer * ip)
 }
 
 /// Z - Push source semantic onto dst
-static void FingerFINGpush(instructionPointer * ip)
+static void finger_FING_push(instructionPointer * ip)
 {
 	char dst = PopStackSpec(ip);
 	char src = PopStackSpec(ip);
@@ -94,7 +94,7 @@ static void FingerFINGpush(instructionPointer * ip)
 	}
 }
 
-bool FingerFINGload(instructionPointer * ip)
+bool finger_FING_load(instructionPointer * ip)
 {
 	manager_add_opcode(FING,  'X', swap)
 	manager_add_opcode(FING,  'Y', drop)

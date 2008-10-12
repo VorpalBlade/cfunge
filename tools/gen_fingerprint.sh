@@ -309,7 +309,7 @@ EOF
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	ord number "${OPCODES:$i:1}"
 	addtoc "/// ${OPCODES:$i:1} - ${OPCODE_DESC[$number]}"
-	addtoc "static void Finger${FPRINT}${OPCODE_NAMES[$number]}(instructionPointer * ip)"
+	addtoc "static void finger_${FPRINT}_${OPCODE_NAMES[$number]}(instructionPointer * ip)"
 	addtoc '{'
 	addtoc '}'
 	addtoc ''
@@ -317,7 +317,7 @@ done
 
 
 
-addtoc "bool Finger${FPRINT}load(instructionPointer * ip)"
+addtoc "bool finger_${FPRINT}_load(instructionPointer * ip)"
 addtoc '{'
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	ord number "${OPCODES:$i:1}"

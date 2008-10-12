@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerHRTIload(instructionPointer * ip);
+bool finger_HRTI_load(instructionPointer * ip);
 
 #endif

@@ -153,7 +153,7 @@ static inline void mulMatrices(const double a[16], const double b[16], double r[
  ****************************/
 
 /// A - Add two 3d vectors
-static void Finger3DSPadd(instructionPointer * ip)
+static void finger_3DSP_add(instructionPointer * ip)
 {
 	double a[3], b[3];
 	PopVec(ip, b);
@@ -166,7 +166,7 @@ static void Finger3DSPadd(instructionPointer * ip)
 }
 
 /// B - Subtract two 3d vectors
-static void Finger3DSPsub(instructionPointer * ip)
+static void finger_3DSP_sub(instructionPointer * ip)
 {
 	double a[3], b[3];
 	PopVec(ip, b);
@@ -179,7 +179,7 @@ static void Finger3DSPsub(instructionPointer * ip)
 }
 
 /// C - Cross porduct of two vectors
-static void Finger3DSPcross(instructionPointer * ip)
+static void finger_3DSP_cross(instructionPointer * ip)
 {
 	double a[3], b[3], c[3];
 	PopVec(ip, b);
@@ -193,7 +193,7 @@ static void Finger3DSPcross(instructionPointer * ip)
 }
 
 /// D - Dot product of two vector
-static void Finger3DSPdot(instructionPointer * ip)
+static void finger_3DSP_dot(instructionPointer * ip)
 {
 	double a[3], b[3];
 	PopVec(ip, b);
@@ -207,7 +207,7 @@ static void Finger3DSPdot(instructionPointer * ip)
 }
 
 /// L - Length of vector
-static void Finger3DSPlength(instructionPointer * ip)
+static void finger_3DSP_length(instructionPointer * ip)
 {
 	double a[3];
 	PopVec(ip, a);
@@ -215,7 +215,7 @@ static void Finger3DSPlength(instructionPointer * ip)
 }
 
 /// M - Multiply two 3d vectors
-static void Finger3DSPmul(instructionPointer * ip)
+static void finger_3DSP_mul(instructionPointer * ip)
 {
 	double a[3], b[3];
 	PopVec(ip, b);
@@ -229,7 +229,7 @@ static void Finger3DSPmul(instructionPointer * ip)
 }
 
 /// N - Normalize vector (sets length to 1)
-static void Finger3DSPnormalise(instructionPointer * ip)
+static void finger_3DSP_normalise(instructionPointer * ip)
 {
 	double a[3];
 	double len;
@@ -245,7 +245,7 @@ static void Finger3DSPnormalise(instructionPointer * ip)
 }
 
 /// P - Copy a matrix
-static void Finger3DSPmatrixCopy(instructionPointer * ip)
+static void finger_3DSP_matrixCopy(instructionPointer * ip)
 {
 	fungeVector fs, ft;
 
@@ -266,7 +266,7 @@ static void Finger3DSPmatrixCopy(instructionPointer * ip)
 }
 
 /// R - Generate a rotation matrix
-static void Finger3DSPmatrixRotate(instructionPointer * ip)
+static void finger_3DSP_matrixRotate(instructionPointer * ip)
 {
 	double s, c;
 	double angle = PopFloat(ip);
@@ -312,7 +312,7 @@ static void Finger3DSPmatrixRotate(instructionPointer * ip)
 }
 
 /// S - Generate a scale matrix
-static void Finger3DSPmatrixScale(instructionPointer * ip)
+static void finger_3DSP_matrixScale(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
@@ -328,7 +328,7 @@ static void Finger3DSPmatrixScale(instructionPointer * ip)
 }
 
 /// T - Generate a translation matrix
-static void Finger3DSPmatrixTranslate(instructionPointer * ip)
+static void finger_3DSP_matrixTranslate(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
@@ -345,7 +345,7 @@ static void Finger3DSPmatrixTranslate(instructionPointer * ip)
 }
 
 /// U - Duplicate vector on top of stack
-static void Finger3DSPduplicate(instructionPointer * ip)
+static void finger_3DSP_duplicate(instructionPointer * ip)
 {
 	float a[3];
 	PopVecF(ip, a);
@@ -354,7 +354,7 @@ static void Finger3DSPduplicate(instructionPointer * ip)
 }
 
 /// V - Map 3d point to 2d view
-static void Finger3DSPmap(instructionPointer * ip)
+static void finger_3DSP_map(instructionPointer * ip)
 {
 	double v[3];
 
@@ -376,7 +376,7 @@ static void Finger3DSPmap(instructionPointer * ip)
 }
 
 /// X - Transform a vector using transformation matrix
-static void Finger3DSPtransform(instructionPointer * ip)
+static void finger_3DSP_transform(instructionPointer * ip)
 {
 	fungeVector fm;
 	double v[4];
@@ -395,7 +395,7 @@ static void Finger3DSPtransform(instructionPointer * ip)
 }
 
 /// Y - Multiply two matrices
-static void Finger3DSPmatrixMul(instructionPointer * ip)
+static void finger_3DSP_matrixMul(instructionPointer * ip)
 {
 	fungeVector ft, fa, fb;
 	double a[16], b[16], r[16];
@@ -418,7 +418,7 @@ static void Finger3DSPmatrixMul(instructionPointer * ip)
 }
 
 /// Z - Scale a vector
-static void Finger3DSPscale(instructionPointer * ip)
+static void finger_3DSP_scale(instructionPointer * ip)
 {
 	double a[3];
 	double n;
@@ -433,7 +433,7 @@ static void Finger3DSPscale(instructionPointer * ip)
 	PushVec(ip, a);
 }
 
-bool Finger3DSPload(instructionPointer * ip)
+bool finger_3DSP_load(instructionPointer * ip)
 {
 	manager_add_opcode(3DSP,  'A', add)
 	manager_add_opcode(3DSP,  'B', sub)

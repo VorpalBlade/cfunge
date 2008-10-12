@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerROMAload(instructionPointer * ip);
+bool finger_ROMA_load(instructionPointer * ip);
 
 #endif

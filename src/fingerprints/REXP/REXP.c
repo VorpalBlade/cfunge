@@ -127,7 +127,7 @@ static inline void PushResults(instructionPointer * restrict ip,
 }
 
 /// C - Compile a regular expression
-static void FingerREXPcompile(instructionPointer * ip)
+static void finger_REXP_compile(instructionPointer * ip)
 {
 	char * restrict str;
 	int flags;
@@ -154,7 +154,7 @@ static void FingerREXPcompile(instructionPointer * ip)
 }
 
 /// E - Execute regular expression on string
-static void FingerREXPexecute(instructionPointer * ip)
+static void finger_REXP_execute(instructionPointer * ip)
 {
 	char * str;
 	int flags;
@@ -178,7 +178,7 @@ static void FingerREXPexecute(instructionPointer * ip)
 }
 
 /// F - Free compiled regex buffer
-static void FingerREXPfree(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_REXP_free(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	if (compiled_valid) {
 		regfree(&compiled_regex);
@@ -186,7 +186,7 @@ static void FingerREXPfree(FUNGE_ATTR_UNUSED instructionPointer * ip)
 	}
 }
 
-bool FingerREXPload(instructionPointer * ip)
+bool finger_REXP_load(instructionPointer * ip)
 {
 	manager_add_opcode(REXP,  'C', compile)
 	manager_add_opcode(REXP,  'E', execute)

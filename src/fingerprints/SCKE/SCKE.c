@@ -31,7 +31,7 @@
 #include <poll.h>
 
 /// H - Get address by hostname
-static void FingerSCKEgetHostByName(instructionPointer * ip)
+static void finger_SCKE_getHostByName(instructionPointer * ip)
 {
 	char * restrict str = NULL;
 	struct addrinfo hints;
@@ -68,10 +68,10 @@ end:
 }
 
 /// P - Peek for incoming data
-static void FingerSCKEPeek(instructionPointer * ip)
+static void finger_SCKE_Peek(instructionPointer * ip)
 {
 	fungeCell s = stack_pop(ip->stack);
-	FungeSocketHandle* handle = FingerSOCKLookupHandle(s);
+	FungeSocketHandle* handle = finger_SOCK_LookupHandle(s);
 	if (!handle)
 		goto error;
 
@@ -100,7 +100,7 @@ error:
 	ip_reverse(ip);
 }
 
-bool FingerSCKEload(instructionPointer * ip)
+bool finger_SCKE_load(instructionPointer * ip)
 {
 	manager_add_opcode(SCKE,  'H', getHostByName)
 	manager_add_opcode(SCKE,  'P', Peek)

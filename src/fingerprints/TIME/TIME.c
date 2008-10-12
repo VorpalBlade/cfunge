@@ -37,74 +37,74 @@ static bool TIMEuseUTC = false;
 		curTime = localtime(&now);
 
 /// D - Get day of month.
-static void FingerTIMEday(instructionPointer * ip)
+static void finger_TIME_day(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_mday);
 }
 
 /// F - Get day of year.
-static void FingerTIMEdayOfYear(instructionPointer * ip)
+static void finger_TIME_dayOfYear(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_yday);
 }
 
 /// G - Set to use UTC.
-static void FingerTIMEuseGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TIME_useGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = true;
 }
 
 /// H - Get hour.
-static void FingerTIMEhour(instructionPointer * ip)
+static void finger_TIME_hour(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_hour);
 }
 
 /// L - Set to use local time.
-static void FingerTIMEuseLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
+static void finger_TIME_useLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
 {
 	TIMEuseUTC = false;
 }
 
 /// M - Get minute.
-static void FingerTIMEminute(instructionPointer * ip)
+static void finger_TIME_minute(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_min);
 }
 
 /// O - Get month.
-static void FingerTIMEmonth(instructionPointer * ip)
+static void finger_TIME_month(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_mon + 1);
 }
 
 /// S - Get second.
-static void FingerTIMEsecond(instructionPointer * ip)
+static void finger_TIME_second(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_sec);
 }
 
 /// W - Get day of week.
-static void FingerTIMEdayOfWeek(instructionPointer * ip)
+static void finger_TIME_dayOfWeek(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, curTime->tm_wday + 1);
 }
 
 /// Y - Get year.
-static void FingerTIMEyear(instructionPointer * ip)
+static void finger_TIME_year(instructionPointer * ip)
 {
 	GetTheTime
 	stack_push(ip->stack, 1900 + curTime->tm_year);
 }
 
-bool FingerTIMEload(instructionPointer * ip)
+bool finger_TIME_load(instructionPointer * ip)
 {
 	manager_add_opcode(TIME,  'D', day)
 	manager_add_opcode(TIME,  'F', dayOfYear)

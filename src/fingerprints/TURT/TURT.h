@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerTURTload(instructionPointer * ip);
+bool finger_TURT_load(instructionPointer * ip);
 
 #endif

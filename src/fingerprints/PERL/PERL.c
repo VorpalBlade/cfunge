@@ -46,7 +46,7 @@
 #define STRINGALLOCCHUNK 1024
 
 /// S - Is Perl loaded? Or will it be shelled?
-static void FingerPERLshelled(instructionPointer * ip)
+static void finger_PERL_shelled(instructionPointer * ip)
 {
 	stack_push(ip->stack, 1); // Not Perl, at least last I checked this was C.
 }
@@ -182,7 +182,7 @@ static char * RunPerl(const char * restrict perlcode)
 }
 
 /// E - Evaluate 0gnirts
-static void FingerPERLeval(instructionPointer * ip)
+static void finger_PERL_eval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = stack_pop_string(ip->stack);
@@ -198,7 +198,7 @@ static void FingerPERLeval(instructionPointer * ip)
 }
 
 /// I - As E but cast to integer.
-static void FingerPERLintEval(instructionPointer * ip)
+static void finger_PERL_intEval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = stack_pop_string(ip->stack);
@@ -218,7 +218,7 @@ static void FingerPERLintEval(instructionPointer * ip)
 	free_nogc(result);
 }
 
-bool FingerPERLload(instructionPointer * ip)
+bool finger_PERL_load(instructionPointer * ip)
 {
 	manager_add_opcode(PERL,  'E', eval)
 	manager_add_opcode(PERL,  'I', intEval)

@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerREFCload(instructionPointer * ip);
+bool finger_REFC_load(instructionPointer * ip);
 
 #endif

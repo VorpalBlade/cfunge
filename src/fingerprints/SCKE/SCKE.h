@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerSCKEload(instructionPointer * ip);
+bool finger_SCKE_load(instructionPointer * ip);
 
 #endif

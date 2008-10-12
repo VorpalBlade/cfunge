@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerTOYSload(instructionPointer * ip);
+bool finger_TOYS_load(instructionPointer * ip);
 
 #endif

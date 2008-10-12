@@ -27,7 +27,7 @@
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
 /// A - Append bottom string to upper string
-static void FingerSTRNappend(instructionPointer * ip)
+static void finger_STRN_append(instructionPointer * ip)
 {
 	char * restrict top;
 	char * restrict bottom;
@@ -44,7 +44,7 @@ static void FingerSTRNappend(instructionPointer * ip)
 }
 
 /// C - Compare strings
-static void FingerSTRNcompare(instructionPointer * ip)
+static void finger_STRN_compare(instructionPointer * ip)
 {
 	char * restrict a;
 	char * restrict b;
@@ -56,7 +56,7 @@ static void FingerSTRNcompare(instructionPointer * ip)
 }
 
 /// D - Display a string
-static void FingerSTRNdisplay(instructionPointer * ip)
+static void finger_STRN_display(instructionPointer * ip)
 {
 	char * restrict s;
 	s = stack_pop_string(ip->stack);
@@ -65,7 +65,7 @@ static void FingerSTRNdisplay(instructionPointer * ip)
 }
 
 /// F - Search for bottom string in upper string
-static void FingerSTRNsearch(instructionPointer * ip)
+static void finger_STRN_search(instructionPointer * ip)
 {
 	char * top;
 	char * restrict bottom;
@@ -83,7 +83,7 @@ static void FingerSTRNsearch(instructionPointer * ip)
 }
 
 /// G - Get string from specified position
-static void FingerSTRNget(instructionPointer * ip)
+static void finger_STRN_get(instructionPointer * ip)
 {
 	fungeRect bounds;
 	StringBuffer *sb;
@@ -123,7 +123,7 @@ static void FingerSTRNget(instructionPointer * ip)
 }
 
 /// I - Input a string
-static void FingerSTRNinput(instructionPointer * ip)
+static void finger_STRN_input(instructionPointer * ip)
 {
 	char * line = NULL;
 	char * newline;
@@ -141,7 +141,7 @@ static void FingerSTRNinput(instructionPointer * ip)
 }
 
 /// L - Leftmost n characters of string
-static void FingerSTRNleft(instructionPointer * ip)
+static void finger_STRN_left(instructionPointer * ip)
 {
 	fungeCell n;
 	size_t len;
@@ -160,7 +160,7 @@ static void FingerSTRNleft(instructionPointer * ip)
 }
 
 /// M - n characters starting at position p
-static void FingerSTRNslice(instructionPointer * ip)
+static void finger_STRN_slice(instructionPointer * ip)
 {
 	fungeCell n, p;
 	char *s;
@@ -183,7 +183,7 @@ static void FingerSTRNslice(instructionPointer * ip)
 }
 
 /// N - Get length of string
-static void FingerSTRNlength(instructionPointer * ip)
+static void finger_STRN_length(instructionPointer * ip)
 {
 	char * restrict s;
 	size_t len;
@@ -195,7 +195,7 @@ static void FingerSTRNlength(instructionPointer * ip)
 }
 
 /// P - Put string at specified position
-static void FingerSTRNput(instructionPointer * ip)
+static void finger_STRN_put(instructionPointer * ip)
 {
 	char *s;
 	fungeVector pos;
@@ -215,7 +215,7 @@ static void FingerSTRNput(instructionPointer * ip)
 }
 
 /// R - Rightmost n characters of string
-static void FingerSTRNright(instructionPointer * ip)
+static void finger_STRN_right(instructionPointer * ip)
 {
 	fungeCell n;
 	size_t len;
@@ -233,7 +233,7 @@ static void FingerSTRNright(instructionPointer * ip)
 }
 
 /// S - String representation of a number
-static void FingerSTRNitoa(instructionPointer * ip)
+static void finger_STRN_itoa(instructionPointer * ip)
 {
 	char *s;
 	fungeCell n = stack_pop(ip->stack);
@@ -246,7 +246,7 @@ static void FingerSTRNitoa(instructionPointer * ip)
 }
 
 /// V - Retrieve value from string
-static void FingerSTRNatoi(instructionPointer * ip)
+static void finger_STRN_atoi(instructionPointer * ip)
 {
 	char *s;
 	s = stack_pop_string(ip->stack);
@@ -254,7 +254,7 @@ static void FingerSTRNatoi(instructionPointer * ip)
 	stack_freeString(s);
 }
 
-bool FingerSTRNload(instructionPointer * ip)
+bool finger_STRN_load(instructionPointer * ip)
 {
 	manager_add_opcode(STRN,  'A', append)
 	manager_add_opcode(STRN,  'C', compare)

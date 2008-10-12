@@ -27,7 +27,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-static void FingerDIRFchdir(instructionPointer * ip)
+static void finger_DIRF_chdir(instructionPointer * ip)
 {
 	char * restrict str;
 	str = stack_pop_string(ip->stack);
@@ -40,7 +40,7 @@ static void FingerDIRFchdir(instructionPointer * ip)
 	stack_freeString(str);
 }
 
-static void FingerDIRFmkdir(instructionPointer * ip)
+static void finger_DIRF_mkdir(instructionPointer * ip)
 {
 	char * restrict str;
 	str = stack_pop_string(ip->stack);
@@ -53,7 +53,7 @@ static void FingerDIRFmkdir(instructionPointer * ip)
 	stack_freeString(str);
 }
 
-static void FingerDIRFrmdir(instructionPointer * ip)
+static void finger_DIRF_rmdir(instructionPointer * ip)
 {
 	char * restrict str;
 	str = stack_pop_string(ip->stack);
@@ -67,7 +67,7 @@ static void FingerDIRFrmdir(instructionPointer * ip)
 }
 
 
-bool FingerDIRFload(instructionPointer * ip)
+bool finger_DIRF_load(instructionPointer * ip)
 {
 	manager_add_opcode(DIRF, 'C', chdir)
 	manager_add_opcode(DIRF, 'M', mkdir)

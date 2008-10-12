@@ -52,7 +52,7 @@ static inline bool CheckIPgotHRTI(instructionPointer * ip)
 }
 
 /// E - Erase Mark
-static void FingerHRTIeraseMark(instructionPointer * ip)
+static void finger_HRTI_eraseMark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
 		ip_reverse(ip);
@@ -64,13 +64,13 @@ static void FingerHRTIeraseMark(instructionPointer * ip)
 }
 
 /// G - Granularity
-static void FingerHRTIgranularity(instructionPointer * ip)
+static void finger_HRTI_granularity(instructionPointer * ip)
 {
 	stack_push(ip->stack, (fungeCell)resolution);
 }
 
 /// M - Mark
-static void FingerHRTImark(instructionPointer * ip)
+static void finger_HRTI_mark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
 		ip_reverse(ip);
@@ -81,7 +81,7 @@ static void FingerHRTImark(instructionPointer * ip)
 }
 
 /// T - Timer
-static void FingerHRTItimer(instructionPointer * ip)
+static void finger_HRTI_timer(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp || (ip->fingerHRTItimestamp->tv_sec == 0)) {
 		ip_reverse(ip);
@@ -93,7 +93,7 @@ static void FingerHRTItimer(instructionPointer * ip)
 }
 
 /// S - Second
-static void FingerHRTIsecond(instructionPointer * ip)
+static void finger_HRTI_second(instructionPointer * ip)
 {
 	struct timeval curTime;
 	gettimeofday(&curTime, NULL);
@@ -117,7 +117,7 @@ FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
 	return CheckIPgotHRTI(ip);
 }
 
-bool FingerHRTIload(instructionPointer * ip)
+bool finger_HRTI_load(instructionPointer * ip)
 {
 	if (!SetupHRTI(ip))
 		return false;

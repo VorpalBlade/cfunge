@@ -101,7 +101,7 @@ static inline bool ValidHandle(fungeCell h)
 }
 
 /// C - Close a file
-static void FingerFILEfclose(instructionPointer * ip)
+static void finger_FILE_fclose(instructionPointer * ip)
 {
 	fungeCell h;
 
@@ -118,7 +118,7 @@ static void FingerFILEfclose(instructionPointer * ip)
 }
 
 /// C - Delete specified file
-static void FingerFILEdelete(instructionPointer * ip)
+static void finger_FILE_delete(instructionPointer * ip)
 {
 	char * restrict filename;
 
@@ -133,7 +133,7 @@ static void FingerFILEdelete(instructionPointer * ip)
 
 
 /// G - Get string from file (like c fgets)
-static void FingerFILEfgets(instructionPointer * ip)
+static void finger_FILE_fgets(instructionPointer * ip)
 {
 	fungeCell h;
 	FILE * fp;
@@ -201,7 +201,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 }
 
 /// L - Get current location in file
-static void FingerFILEftell(instructionPointer * ip)
+static void finger_FILE_ftell(instructionPointer * ip)
 {
 	fungeCell h;
 	long pos;
@@ -224,7 +224,7 @@ static void FingerFILEftell(instructionPointer * ip)
 }
 
 /// O - Open a file (Va = i/o buffer vector)
-static void FingerFILEfopen(instructionPointer * ip)
+static void finger_FILE_fopen(instructionPointer * ip)
 {
 	char * restrict filename;
 	fungeCell mode;
@@ -269,7 +269,7 @@ end:
 }
 
 /// P - Put string to file (like c fputs)
-static void FingerFILEfputs(instructionPointer * ip)
+static void finger_FILE_fputs(instructionPointer * ip)
 {
 	char * restrict str;
 	fungeCell h;
@@ -288,7 +288,7 @@ static void FingerFILEfputs(instructionPointer * ip)
 }
 
 /// R - Read n bytes from file to i/o buffer
-static void FingerFILEfread(instructionPointer * ip)
+static void finger_FILE_fread(instructionPointer * ip)
 {
 	fungeCell n, h;
 
@@ -330,7 +330,7 @@ static void FingerFILEfread(instructionPointer * ip)
 }
 
 /// S - Seek to position in file
-static void FingerFILEfseek(instructionPointer * ip)
+static void finger_FILE_fseek(instructionPointer * ip)
 {
 	fungeCell n, m, h;
 
@@ -368,7 +368,7 @@ static void FingerFILEfseek(instructionPointer * ip)
 }
 
 /// W - Write n bytes from i/o buffer to file
-static void FingerFILEfwrite(instructionPointer * ip)
+static void finger_FILE_fwrite(instructionPointer * ip)
 {
 	fungeCell n, h;
 
@@ -410,7 +410,7 @@ FUNGE_ATTR_FAST static inline bool InitHandleList(void)
 	return true;
 }
 
-bool FingerFILEload(instructionPointer * ip)
+bool finger_FILE_load(instructionPointer * ip)
 {
 	if (!handles)
 		if (!InitHandleList())

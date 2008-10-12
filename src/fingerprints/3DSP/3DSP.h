@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool Finger3DSPload(instructionPointer * ip);
+bool finger_3DSP_load(instructionPointer * ip);
 
 #endif

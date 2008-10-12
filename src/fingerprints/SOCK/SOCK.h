@@ -25,7 +25,7 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerSOCKload(instructionPointer * ip);
+bool finger_SOCK_load(instructionPointer * ip);
 
 // Used by other fingerprints wanting to mess in SOCK, like SCKE
 #ifdef FUNGE_EXTENDS_SOCK
@@ -35,7 +35,7 @@ typedef struct FungeSocketHandle {
 } FungeSocketHandle;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-FungeSocketHandle* FingerSOCKLookupHandle(fungeCell h);
+FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h);
 
 #endif
 

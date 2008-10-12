@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerFPSPload(instructionPointer * ip);
+bool finger_FPSP_load(instructionPointer * ip);
 
 #endif

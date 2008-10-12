@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerORTHload(instructionPointer * ip);
+bool finger_ORTH_load(instructionPointer * ip);
 
 #endif

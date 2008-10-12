@@ -455,7 +455,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				run_file_output(ip);
 				break;
 			case '=':
-				RunSystemExecute(ip);
+				run_system_execute(ip);
 				break;
 
 			case '(':

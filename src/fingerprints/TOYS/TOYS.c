@@ -34,7 +34,7 @@
 // Also: code based on CCBI.
 
 /// A - gable
-static void FingerTOYSgable(instructionPointer * ip)
+static void finger_TOYS_gable(instructionPointer * ip)
 {
 	fungeCell n, c;
 
@@ -51,7 +51,7 @@ static void FingerTOYSgable(instructionPointer * ip)
 }
 
 /// B - pair of shoes
-static void FingerTOYSpairOfShoes(instructionPointer * ip)
+static void finger_TOYS_pairOfShoes(instructionPointer * ip)
 {
 	// Got no idea if this is correct.
 	fungeCell x, y;
@@ -65,7 +65,7 @@ static void FingerTOYSpairOfShoes(instructionPointer * ip)
 }
 
 /// C - bracelet
-static void FingerTOYSbracelet(instructionPointer * ip)
+static void finger_TOYS_bracelet(instructionPointer * ip)
 {
 	fungeVector t, d, o;
 	t = stack_pop_vector(ip->stack);
@@ -87,13 +87,13 @@ static void FingerTOYSbracelet(instructionPointer * ip)
 }
 
 /// D - toilet seat
-static void FingerTOYStoiletSeat(instructionPointer * ip)
+static void finger_TOYS_toiletSeat(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) - 1);
 }
 
 /// E - pitchfork head
-static void FingerTOYSpitchforkHead(instructionPointer * ip)
+static void finger_TOYS_pitchforkHead(instructionPointer * ip)
 {
 	fungeCell sum = 0;
 	for (size_t i = ip->stack->top; i-- > 0;)
@@ -103,7 +103,7 @@ static void FingerTOYSpitchforkHead(instructionPointer * ip)
 }
 
 /// F - calipers
-static void FingerTOYScalipers(instructionPointer * ip)
+static void finger_TOYS_calipers(instructionPointer * ip)
 {
 	fungeVector t;
 	fungeCell i, j;
@@ -120,7 +120,7 @@ static void FingerTOYScalipers(instructionPointer * ip)
 }
 
 /// G - counterclockwise
-static void FingerTOYScounterclockwise(instructionPointer * ip)
+static void finger_TOYS_counterclockwise(instructionPointer * ip)
 {
 	fungeVector o;
 	fungeCell i, j;
@@ -137,7 +137,7 @@ static void FingerTOYScounterclockwise(instructionPointer * ip)
 }
 
 /// H - pair of stilts
-static void FingerTOYSpairOfStilts(instructionPointer * ip)
+static void finger_TOYS_pairOfStilts(instructionPointer * ip)
 {
 	fungeCell a, b;
 
@@ -151,13 +151,13 @@ static void FingerTOYSpairOfStilts(instructionPointer * ip)
 }
 
 /// I - doric column
-static void FingerTOYSdoricColumn(instructionPointer * ip)
+static void finger_TOYS_doricColumn(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) + 1);
 }
 
 /// J - fishhook
-static void FingerTOYSfishhook(instructionPointer * ip)
+static void finger_TOYS_fishhook(instructionPointer * ip)
 {
 	fungeRect bounds;
 	fungeCell n = stack_pop(ip->stack);
@@ -177,7 +177,7 @@ static void FingerTOYSfishhook(instructionPointer * ip)
 }
 
 /// K - scissors
-static void FingerTOYSscissors(instructionPointer * ip)
+static void finger_TOYS_scissors(instructionPointer * ip)
 {
 	fungeVector t, d, o;
 	t = stack_pop_vector(ip->stack);
@@ -199,7 +199,7 @@ static void FingerTOYSscissors(instructionPointer * ip)
 }
 
 /// L - corner
-static void FingerTOYScorner(instructionPointer * ip)
+static void finger_TOYS_corner(instructionPointer * ip)
 {
 	ip_turn_left(ip);
 	ip_forward(ip, 1);
@@ -209,7 +209,7 @@ static void FingerTOYScorner(instructionPointer * ip)
 }
 
 /// M - kittycat
-static void FingerTOYSkittycat(instructionPointer * ip)
+static void finger_TOYS_kittycat(instructionPointer * ip)
 {
 	fungeVector t, d, o;
 	t = stack_pop_vector(ip->stack);
@@ -233,13 +233,13 @@ static void FingerTOYSkittycat(instructionPointer * ip)
 }
 
 /// N - lightning bolt
-static void FingerTOYSlightningBolt(instructionPointer * ip)
+static void finger_TOYS_lightningBolt(instructionPointer * ip)
 {
 	stack_push(ip->stack, -stack_pop(ip->stack));
 }
 
 /// O - boulder
-static void FingerTOYSboulder(instructionPointer * ip)
+static void finger_TOYS_boulder(instructionPointer * ip)
 {
 	fungeRect bounds;
 	fungeCell n = stack_pop(ip->stack);
@@ -258,7 +258,7 @@ static void FingerTOYSboulder(instructionPointer * ip)
 }
 
 /// P - mailbox
-static void FingerTOYSmailbox(instructionPointer * ip)
+static void finger_TOYS_mailbox(instructionPointer * ip)
 {
 	fungeCell product = 1;
 	for (size_t i = ip->stack->top; i-- > 0;)
@@ -268,7 +268,7 @@ static void FingerTOYSmailbox(instructionPointer * ip)
 }
 
 /// Q - necklace
-static void FingerTOYSnecklace(instructionPointer * ip)
+static void finger_TOYS_necklace(instructionPointer * ip)
 {
 	fungeCell v = stack_pop(ip->stack);
 
@@ -278,7 +278,7 @@ static void FingerTOYSnecklace(instructionPointer * ip)
 }
 
 /// R - can opener
-static void FingerTOYScanOpener(instructionPointer * ip)
+static void finger_TOYS_canOpener(instructionPointer * ip)
 {
 	ip_turn_right(ip);
 	ip_forward(ip, 1);
@@ -288,7 +288,7 @@ static void FingerTOYScanOpener(instructionPointer * ip)
 }
 
 /// S - chicane
-static void FingerTOYSchicane(instructionPointer * ip)
+static void finger_TOYS_chicane(instructionPointer * ip)
 {
 	fungeVector d, o;
 	fungeCell c;
@@ -310,7 +310,7 @@ static void FingerTOYSchicane(instructionPointer * ip)
 }
 
 /// T - barstool
-static void FingerTOYSbarstool(instructionPointer * ip)
+static void finger_TOYS_barstool(instructionPointer * ip)
 {
 	switch (stack_pop(ip->stack)) {
 		case 0: if_east_west(ip); break;
@@ -320,7 +320,7 @@ static void FingerTOYSbarstool(instructionPointer * ip)
 }
 
 /// U - tumbler
-static void FingerTOYStumbler(instructionPointer * ip)
+static void finger_TOYS_tumbler(instructionPointer * ip)
 {
 	long int rnd = random() % 4;
 	assert((rnd >= 0) && (rnd <= 3));
@@ -333,7 +333,7 @@ static void FingerTOYStumbler(instructionPointer * ip)
 }
 
 /// V - dixiecup
-static void FingerTOYSdixiecup(instructionPointer * ip)
+static void finger_TOYS_dixiecup(instructionPointer * ip)
 {
 	fungeVector t, d, o;
 	t = stack_pop_vector(ip->stack);
@@ -357,7 +357,7 @@ static void FingerTOYSdixiecup(instructionPointer * ip)
 }
 
 /// W - television antenna
-static void FingerTOYStelevisionAntenna(instructionPointer * ip)
+static void finger_TOYS_televisionAntenna(instructionPointer * ip)
 {
 	fungeVector vect;
 	fungeCell v, c;
@@ -374,25 +374,25 @@ static void FingerTOYStelevisionAntenna(instructionPointer * ip)
 }
 
 /// X - buried treasure
-static void FingerTOYSburiedTreasure(instructionPointer * ip)
+static void finger_TOYS_buriedTreasure(instructionPointer * ip)
 {
 	ip->position.x++;
 }
 
 /// Y - slingshot
-static void FingerTOYSslingshot(instructionPointer * ip)
+static void finger_TOYS_slingshot(instructionPointer * ip)
 {
 	ip->position.y++;
 }
 
 /// Z - barn door
-static void FingerTOYSbarnDoor(instructionPointer * ip)
+static void finger_TOYS_barnDoor(instructionPointer * ip)
 {
 	// As this needs trefunge to work.
 	ip_reverse(ip);
 }
 
-bool FingerTOYSload(instructionPointer * ip)
+bool finger_TOYS_load(instructionPointer * ip)
 {
 	manager_add_opcode(TOYS, 'A', gable)
 	manager_add_opcode(TOYS, 'B', pairOfShoes)

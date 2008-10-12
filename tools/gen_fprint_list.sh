@@ -241,7 +241,7 @@ genfprintinfo() {
 	done
 	ENTRIES+=( "$FPRINTHEX" )
 	ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
-	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &Finger${FPRINT}load, .opcodes = \"${OPCODES}\","
+	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
 	ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 	statuslvl2 "Done"
 	if [[ ${!MYALIASES[*]} ]]; then
@@ -256,7 +256,7 @@ genfprintinfo() {
 			done
 			ENTRIES+=("$ALIASHEX")
 			ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
-			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &Finger${myalias}load, .opcodes = \"${OPCODES}\","
+			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
 			ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 		done
 	fi

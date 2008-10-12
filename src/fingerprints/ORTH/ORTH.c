@@ -28,7 +28,7 @@
 #include <stdio.h>
 
 
-static void FingerORTHbitAnd(instructionPointer * ip)
+static void finger_ORTH_bitAnd(instructionPointer * ip)
 {
 	fungeCell x, y;
 	x = stack_pop(ip->stack);
@@ -36,7 +36,7 @@ static void FingerORTHbitAnd(instructionPointer * ip)
 	stack_push(ip->stack, x & y);
 }
 
-static void FingerORTHbitOr(instructionPointer * ip)
+static void finger_ORTH_bitOr(instructionPointer * ip)
 {
 	fungeCell x, y;
 	x = stack_pop(ip->stack);
@@ -44,7 +44,7 @@ static void FingerORTHbitOr(instructionPointer * ip)
 	stack_push(ip->stack, x | y);
 }
 
-static void FingerORTHbitXor(instructionPointer * ip)
+static void finger_ORTH_bitXor(instructionPointer * ip)
 {
 	fungeCell x, y;
 	x = stack_pop(ip->stack);
@@ -53,14 +53,14 @@ static void FingerORTHbitXor(instructionPointer * ip)
 }
 
 // ortho get
-static void FingerORTHget(instructionPointer * ip)
+static void finger_ORTH_get(instructionPointer * ip)
 {
 	fungeVector v = stack_pop_vector(ip->stack);
 	stack_push(ip->stack, fungespace_get(vector_create_ref(v.y, v.x)));
 }
 
 // ortho put
-static void FingerORTHput(instructionPointer * ip)
+static void finger_ORTH_put(instructionPointer * ip)
 {
 	fungeVector v;
 	fungeCell c;
@@ -72,7 +72,7 @@ static void FingerORTHput(instructionPointer * ip)
 }
 
 // output string
-static void FingerORTHoutputString(instructionPointer * ip)
+static void finger_ORTH_outputString(instructionPointer * ip)
 {
 	char * restrict str = stack_pop_string(ip->stack);
 	// puts add newline, we therefore do fputs on stdout
@@ -81,37 +81,37 @@ static void FingerORTHoutputString(instructionPointer * ip)
 }
 
 // change dx
-static void FingerORTHchangeDx(instructionPointer * ip)
+static void finger_ORTH_changeDx(instructionPointer * ip)
 {
 	ip->delta.x = stack_pop(ip->stack);
 }
 
 // change dy
-static void FingerORTHchangeDy(instructionPointer * ip)
+static void finger_ORTH_changeDy(instructionPointer * ip)
 {
 	ip->delta.y = stack_pop(ip->stack);
 }
 
 // change x
-static void FingerORTHchangeX(instructionPointer * ip)
+static void finger_ORTH_changeX(instructionPointer * ip)
 {
 	ip_set_position(ip, vector_create_ref(stack_pop(ip->stack), ip->position.y));
 }
 
 // change y
-static void FingerORTHchangeY(instructionPointer * ip)
+static void finger_ORTH_changeY(instructionPointer * ip)
 {
 	ip_set_position(ip, vector_create_ref(ip->position.x, stack_pop(ip->stack)));
 }
 
 // ramp if zero
-static void FingerORTHrampIfZero(instructionPointer * ip)
+static void finger_ORTH_rampIfZero(instructionPointer * ip)
 {
 	if (!stack_pop(ip->stack))
 		ip_forward(ip, 1);
 }
 
-bool FingerORTHload(instructionPointer * ip)
+bool finger_ORTH_load(instructionPointer * ip)
 {
 	manager_add_opcode(ORTH,  'A', bitAnd)
 	manager_add_opcode(ORTH,  'O', bitOr)

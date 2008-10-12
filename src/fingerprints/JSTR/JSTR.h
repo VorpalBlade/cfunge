@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerJSTRload(instructionPointer * ip);
+bool finger_JSTR_load(instructionPointer * ip);
 
 #endif

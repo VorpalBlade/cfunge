@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerFINGload(instructionPointer * ip);
+bool finger_FING_load(instructionPointer * ip);
 
 #endif

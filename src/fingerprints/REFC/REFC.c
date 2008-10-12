@@ -34,7 +34,7 @@ static size_t referencesTop = 0;
 // Size of array (including allocated but not yet used elements).
 static size_t referencesSize = 0;
 
-static void FingerREFCreference(instructionPointer * ip)
+static void finger_REFC_reference(instructionPointer * ip)
 {
 	fungeCell x, y;
 	y = stack_pop(ip->stack);
@@ -58,7 +58,7 @@ static void FingerREFCreference(instructionPointer * ip)
 	stack_push(ip->stack, referencesTop);
 }
 
-static void FingerREFCdereference(instructionPointer * ip)
+static void finger_REFC_dereference(instructionPointer * ip)
 {
 	fungeCell ref;
 	ref = stack_pop(ip->stack);
@@ -80,7 +80,7 @@ FUNGE_ATTR_FAST static inline bool InitReferences(void)
 }
 
 
-bool FingerREFCload(instructionPointer * ip)
+bool finger_REFC_load(instructionPointer * ip)
 {
 	if (!references)
 		if (!InitReferences())

@@ -21,15 +21,15 @@
 
 #include "NULL.h"
 
-static void FingerNULLreverse(instructionPointer * ip)
+static void finger_NULL_reverse(instructionPointer * ip)
 {
 	ip_reverse(ip);
 }
 
-bool FingerNULLload(instructionPointer * ip)
+bool finger_NULL_load(instructionPointer * ip)
 {
 	for (char c = 'A'; c < 'Z'; c++)
-		if (!opcode_stack_push(ip, c, &FingerNULLreverse))
+		if (!opcode_stack_push(ip, c, &finger_NULL_reverse))
 			return false;
 	return true;
 }

@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerBASEload(instructionPointer * ip);
+bool finger_BASE_load(instructionPointer * ip);
 
 #endif

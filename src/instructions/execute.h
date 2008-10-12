@@ -34,6 +34,6 @@
 
 /// This is the = instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunSystemExecute(instructionPointer * restrict ip);
+void run_system_execute(instructionPointer * restrict ip);
 
 #endif

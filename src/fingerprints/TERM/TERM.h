@@ -25,6 +25,6 @@
 #include "../../global.h"
 #include "../manager.h"
 
-bool FingerTERMload(instructionPointer * ip);
+bool finger_TERM_load(instructionPointer * ip);
 
 #endif

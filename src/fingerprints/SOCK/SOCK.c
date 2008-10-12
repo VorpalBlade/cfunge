@@ -104,7 +104,7 @@ static inline bool ValidHandle(fungeCell h)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-FungeSocketHandle* FingerSOCKLookupHandle(fungeCell h)
+FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h)
 {
 	if (!ValidHandle(h))
 		return NULL;
@@ -122,7 +122,7 @@ static inline int popFam(instructionPointer * ip) {
 
 
 /// A - Accept a connection
-static void FingerSOCKaccept(instructionPointer * ip)
+static void finger_SOCK_accept(instructionPointer * ip)
 {
 	fungeCell s = stack_pop(ip->stack);
 
@@ -156,7 +156,7 @@ error:
 }
 
 /// B - Bind a socket
-static void FingerSOCKbind(instructionPointer * ip)
+static void finger_SOCK_bind(instructionPointer * ip)
 {
 	uint32_t  address = (uint32_t)stack_pop(ip->stack);
 	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
@@ -188,7 +188,7 @@ error:
 }
 
 /// C - Open a connection
-static void FingerSOCKopen(instructionPointer * ip)
+static void finger_SOCK_open(instructionPointer * ip)
 {
 	uint32_t  address = (uint32_t)stack_pop(ip->stack);
 	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
@@ -220,7 +220,7 @@ error:
 }
 
 /// I - Convert an ASCII IP address to a 32 bit address
-static void FingerSOCKfromascii(instructionPointer * ip)
+static void finger_SOCK_fromascii(instructionPointer * ip)
 {
 	char * restrict str;
 	struct in_addr addr;
@@ -236,7 +236,7 @@ static void FingerSOCKfromascii(instructionPointer * ip)
 }
 
 /// K - Kill a connection
-static void FingerSOCKkill(instructionPointer * ip)
+static void finger_SOCK_kill(instructionPointer * ip)
 {
 	fungeCell s       = stack_pop(ip->stack);
 	if (!ValidHandle(s))
@@ -254,7 +254,7 @@ invalid:
 }
 
 /// L - Set a socket to listening mode (n=backlog size)
-static void FingerSOCKlisten(instructionPointer * ip)
+static void finger_SOCK_listen(instructionPointer * ip)
 {
 	fungeCell s = stack_pop(ip->stack);
 	int n = stack_pop(ip->stack);
@@ -270,7 +270,7 @@ error:
 }
 
 /// O - Set socket option
-static void FingerSOCKsetopt(instructionPointer * ip)
+static void finger_SOCK_setopt(instructionPointer * ip)
 {
 	int val;
 	int o;
@@ -305,7 +305,7 @@ error:
 }
 
 /// R - Receive from a socket
-static void FingerSOCKreceive(instructionPointer * ip)
+static void finger_SOCK_receive(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t got;
@@ -340,7 +340,7 @@ end:
 }
 
 /// S - Create a socket
-static void FingerSOCKcreate(instructionPointer * ip)
+static void finger_SOCK_create(instructionPointer * ip)
 {
 	int type;
 	int fam;
@@ -378,7 +378,7 @@ error:
 }
 
 /// W - Write to a socket
-static void FingerSOCKwrite(instructionPointer * ip)
+static void finger_SOCK_write(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t sent;
@@ -421,7 +421,7 @@ FUNGE_ATTR_FAST static inline bool InitHandleList(void)
 	return true;
 }
 
-bool FingerSOCKload(instructionPointer * ip)
+bool finger_SOCK_load(instructionPointer * ip)
 {
 	if (!sockets)
 		if (!InitHandleList())
