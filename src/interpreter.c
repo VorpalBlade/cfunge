@@ -58,9 +58,9 @@ static instructionPointer *IP = NULL;
  * Print warning on unknown instruction if such warnings are enabled.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintUnknownInstrWarn(fungeCell opcode, instructionPointer * restrict ip)
+static inline void warn_unknown_instr(fungeCell opcode, instructionPointer * restrict ip)
 {
-	if (SettingWarnings)
+	if (setting_enable_warnings)
 		fprintf(stderr,
 		        "WARN: Unknown instruction at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 		        ip->position.x, ip->position.y, (char)opcode, opcode);
@@ -68,29 +68,29 @@ static inline void PrintUnknownInstrWarn(fungeCell opcode, instructionPointer * 
 
 // These two are called from elsewhere. Avoid code duplication.
 
-FUNGE_ATTR_FAST inline void IfEastWest(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST inline void if_east_west(instructionPointer * restrict ip)
 {
-	if (StackPop(ip->stack) == 0)
-		ipGoEast(ip);
+	if (stack_pop(ip->stack) == 0)
+		ip_go_east(ip);
 	else
-		ipGoWest(ip);
+		ip_go_west(ip);
 }
 
-FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST inline void if_north_south(instructionPointer * restrict ip)
 {
-	if (StackPop(ip->stack) == 0)
-		ipGoSouth(ip);
+	if (stack_pop(ip->stack) == 0)
+		ip_go_south(ip);
 	else
-		ipGoNorth(ip);
+		ip_go_north(ip);
 }
 
 #ifdef CONCURRENT_FUNGE
-#  define ReturnFromExecuteInstruction(x) return (x)
+#  define ReturnFromexecute_instruction(x) return (x)
    /// Return with value if we are concurrent
 #  define ReturnIfCon(x) return (x)
 #  define CON_RETTYPE bool
 #else
-#  define ReturnFromExecuteInstruction(x) return
+#  define ReturnFromexecute_instruction(x) return
 #  define CON_RETTYPE void
 #  define ReturnIfCon(x) (x); return
 #endif
@@ -98,35 +98,35 @@ FUNGE_ATTR_FAST inline void IfNorthSouth(instructionPointer * restrict ip)
 
 #define PUSHVAL(x, y) \
 	case (x): \
-		StackPush(ip->stack, (fungeCell)y); \
+		stack_push(ip->stack, (fungeCell)y); \
 		break;
 
 /// This function handles string mode.
-FUNGE_ATTR_FAST static inline CON_RETTYPE HandleStringMode(fungeCell opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST static inline CON_RETTYPE handle_string_mode(fungeCell opcode, instructionPointer * restrict ip)
 {
 	if (opcode == '"') {
 		ip->mode = ipmCODE;
 	} else if (opcode != ' ') {
 		ip->stringLastWasSpace = false;
-		StackPush(ip->stack, opcode);
+		stack_push(ip->stack, opcode);
 	} else if (opcode == ' ') {
-		if ((!ip->stringLastWasSpace) || (SettingCurrentStandard == stdver93)) {
+		if ((!ip->stringLastWasSpace) || (setting_current_standard == stdver93)) {
 			ip->stringLastWasSpace = true;
-			StackPush(ip->stack, opcode);
+			stack_push(ip->stack, opcode);
 		// More than one space in string mode take no tick in concurrent Funge.
 		} else {
-			ReturnFromExecuteInstruction(true);
+			ReturnFromexecute_instruction(true);
 		}
 	}
-	ReturnFromExecuteInstruction(false);
+	ReturnFromexecute_instruction(false);
 }
 
 /// This function handles fingerprint instructions.
-FUNGE_ATTR_FAST static inline void HandleFPrint(fungeCell opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST static inline void handle_fprint(fungeCell opcode, instructionPointer * restrict ip)
 {
-	if (SettingDisableFingerprints) {
-		PrintUnknownInstrWarn(opcode, ip);
-		ipReverse(ip);
+	if (setting_disable_fingerprints) {
+		warn_unknown_instr(opcode, ip);
+		ip_reverse(ip);
 	} else {
 		int_fast8_t entry = (int_fast8_t)(opcode - 'A');
 		if ((ip->fingerOpcodes[entry]->top > 0)
@@ -134,66 +134,66 @@ FUNGE_ATTR_FAST static inline void HandleFPrint(fungeCell opcode, instructionPoi
 			// Call the fingerprint.
 			ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
 		} else {
-			PrintUnknownInstrWarn(opcode, ip);
-			ipReverse(ip);
+			warn_unknown_instr(opcode, ip);
+			ip_reverse(ip);
 		}
 	}
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPointer * restrict ip, ssize_t * threadindex)
+FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPointer * restrict ip, ssize_t * threadindex)
 #else
-FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPointer * restrict ip)
 #endif
 {
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
-		ReturnIfCon(HandleStringMode(opcode, ip));
+		ReturnIfCon(handle_string_mode(opcode, ip));
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
-		HandleFPrint(opcode, ip);
+		handle_fprint(opcode, ip);
 	// OK a core instruction.
 	// Find what one and execute it.
 	} else {
 		switch (opcode) {
 			case ' ': {
 				do {
-					ipForward(ip, 1);
-				} while (FungeSpaceGet(&ip->position) == ' ');
+					ip_forward(ip, 1);
+				} while (fungespace_get(&ip->position) == ' ');
 				ip->needMove = false;
-				ReturnFromExecuteInstruction(true);
+				ReturnFromexecute_instruction(true);
 			}
 			case 'z':
 				break;
 			case ';': {
 				do {
-					ipForward(ip, 1);
-				} while (FungeSpaceGet(&ip->position) != ';');
-				ReturnFromExecuteInstruction(true);
+					ip_forward(ip, 1);
+				} while (fungespace_get(&ip->position) != ';');
+				ReturnFromexecute_instruction(true);
 			}
 			case '^':
-				ipGoNorth(ip);
+				ip_go_north(ip);
 				break;
 			case '>':
-				ipGoEast(ip);
+				ip_go_east(ip);
 				break;
 			case 'v':
-				ipGoSouth(ip);
+				ip_go_south(ip);
 				break;
 			case '<':
-				ipGoWest(ip);
+				ip_go_west(ip);
 				break;
 			case 'j': {
 				// Currently need to do it like this or wrapping
 				// won't work for j.
-				fungeCell jumps = StackPop(ip->stack);
+				fungeCell jumps = stack_pop(ip->stack);
 				if (jumps != 0) {
 					fungeVector tmp;
 					tmp.x = ip->delta.x;
 					tmp.y = ip->delta.y;
 					ip->delta.y *= jumps;
 					ip->delta.x *= jumps;
-					ipForward(ip, 1);
+					ip_forward(ip, 1);
 					ip->delta.x = tmp.x;
 					ip->delta.y = tmp.y;
 				}
@@ -204,26 +204,26 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 				// If this matters for you, contact me (with a patch).
 				long int rnd = random() % 4;
 				switch (rnd) {
-					case 0: ipGoNorth(ip); break;
-					case 1: ipGoEast(ip); break;
-					case 2: ipGoSouth(ip); break;
-					case 3: ipGoWest(ip); break;
+					case 0: ip_go_north(ip); break;
+					case 1: ip_go_east(ip); break;
+					case 2: ip_go_south(ip); break;
+					case 3: ip_go_west(ip); break;
 				}
 				break;
 			}
 			case 'r':
-				ipReverse(ip);
+				ip_reverse(ip);
 				break;
 			case '[':
-				ipTurnLeft(ip);
+				ip_turn_left(ip);
 				break;
 			case ']':
-				ipTurnRight(ip);
+				ip_turn_right(ip);
 				break;
 			case 'x': {
 				fungeVector pos;
-				pos = StackPopVector(ip->stack);
-				ipSetDelta(ip, & pos);
+				pos = stack_pop_vector(ip->stack);
+				ip_set_delta(ip, & pos);
 				break;
 			}
 
@@ -249,149 +249,149 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 				ip->stringLastWasSpace = false;
 				break;
 			case ':':
-				StackDupTop(ip->stack);
+				stack_dup_top(ip->stack);
 				break;
 
 			case '#':
-				ipForward(ip, 1);
+				ip_forward(ip, 1);
 				break;
 
 			case '_':
-				IfEastWest(ip);
+				if_east_west(ip);
 				break;
 			case '|':
-				IfNorthSouth(ip);
+				if_north_south(ip);
 				break;
 			case 'w': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
 				if (a < b)
-					ipTurnLeft(ip);
+					ip_turn_left(ip);
 				else if (a > b)
-					ipTurnRight(ip);
+					ip_turn_right(ip);
 				break;
 			}
 			case 'k':
 #ifdef CONCURRENT_FUNGE
-				RunIterate(ip, &IPList, threadindex, false);
+				run_iterate(ip, &IPList, threadindex, false);
 #else
-				RunIterate(ip, false);
+				run_iterate(ip, false);
 #endif
 				break;
 
 			case '-': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
-				StackPush(ip->stack, a - b);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
+				stack_push(ip->stack, a - b);
 				break;
 			}
 			case '+': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
-				StackPush(ip->stack, a + b);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
+				stack_push(ip->stack, a + b);
 				break;
 			}
 			case '*': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
-				StackPush(ip->stack, a * b);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
+				stack_push(ip->stack, a * b);
 				break;
 			}
 			case '/': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
 				if (b == 0)
-					StackPush(ip->stack, 0);
+					stack_push(ip->stack, 0);
 				else
-					StackPush(ip->stack, a / b);
+					stack_push(ip->stack, a / b);
 				break;
 			}
 			case '%': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
 				if (b == 0)
-					StackPush(ip->stack, 0);
+					stack_push(ip->stack, 0);
 				else
-					StackPush(ip->stack, a % b);
+					stack_push(ip->stack, a % b);
 				break;
 			}
 
 			case '!':
-				StackPush(ip->stack, !StackPop(ip->stack));
+				stack_push(ip->stack, !stack_pop(ip->stack));
 				break;
 			case '`': {
 				fungeCell a, b;
-				b = StackPop(ip->stack);
-				a = StackPop(ip->stack);
-				StackPush(ip->stack, a > b);
+				b = stack_pop(ip->stack);
+				a = stack_pop(ip->stack);
+				stack_push(ip->stack, a > b);
 				break;
 			}
 
 			case 'p': {
 				fungeVector pos;
 				fungeCell a;
-				pos = StackPopVector(ip->stack);
-				a = StackPop(ip->stack);
-				FungeSpaceSetOff(a, &pos, &ip->storageOffset);
+				pos = stack_pop_vector(ip->stack);
+				a = stack_pop(ip->stack);
+				fungespace_set_offset(a, &pos, &ip->storageOffset);
 				break;
 			}
 			case 'g': {
 				fungeVector pos;
 				fungeCell a;
-				pos = StackPopVector(ip->stack);
-				a = FungeSpaceGetOff(&pos, &ip->storageOffset);
-				StackPush(ip->stack, a);
+				pos = stack_pop_vector(ip->stack);
+				a = fungespace_get_offset(&pos, &ip->storageOffset);
+				stack_push(ip->stack, a);
 				break;
 			}
 			case '\'':
-				ipForward(ip, 1);
-				StackPush(ip->stack, FungeSpaceGet(&ip->position));
+				ip_forward(ip, 1);
+				stack_push(ip->stack, fungespace_get(&ip->position));
 				break;
 			case 's':
-				ipForward(ip, 1);
-				FungeSpaceSet(StackPop(ip->stack), &ip->position);
+				ip_forward(ip, 1);
+				fungespace_set(stack_pop(ip->stack), &ip->position);
 				break;
 
 
 			case 'n':
-				StackClear(ip->stack);
+				stack_clear(ip->stack);
 				break;
 			case '$':
-				StackPopDiscard(ip->stack);
+				stack_pop_discard(ip->stack);
 				break;
 			case '\\':
-				StackSwapTop(ip->stack);
+				stack_swap_top(ip->stack);
 				break;
 
 			case ',': {
-				fungeCell a = StackPop(ip->stack);
+				fungeCell a = stack_pop(ip->stack);
 				// Reverse on failed output/input
 				if (cf_putchar_maybe_locked(a) != (char)a)
-					ipReverse(ip);
+					ip_reverse(ip);
 				if (a == '\n')
 					if (fflush(stdout) != 0)
-						ipReverse(ip);
+						ip_reverse(ip);
 				break;
 			}
 			case '.':
 				// Reverse on failed output/input
-				if (printf("%" FUNGECELLPRI " ", StackPop(ip->stack)) < 0)
-					ipReverse(ip);
+				if (printf("%" FUNGECELLPRI " ", stack_pop(ip->stack)) < 0)
+					ip_reverse(ip);
 				break;
 
 			case '~': {
 				fungeCell a;
 				fflush(stdout);
 				if (input_getchar(&a)) {
-					StackPush(ip->stack, a);
+					stack_push(ip->stack, a);
 				} else {
-					ipReverse(ip);
+					ip_reverse(ip);
 				}
 				break;
 			}
@@ -402,46 +402,46 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 				while (gotint == rgi_noint)
 					gotint = input_getint(&a, 10);
 				if (gotint == rgi_success) {
-					StackPush(ip->stack, a);
+					stack_push(ip->stack, a);
 				} else {
-					ipReverse(ip);
+					ip_reverse(ip);
 				}
 				break;
 			}
 
 			case 'y':
-				RunSysInfo(ip);
+				run_sys_info(ip);
 				break;
 
 			case '{': {
 				fungeCell count;
 				fungeVector pos;
-				count = StackPop(ip->stack);
-				ipForward(ip, 1);
+				count = stack_pop(ip->stack);
+				ip_forward(ip, 1);
 				pos.x = ip->position.x;
 				pos.y = ip->position.y;
-				ipForward(ip, -1);
-				if (!StackStackBegin(ip, &ip->stackstack, count, &pos))
-					ipReverse(ip);
+				ip_forward(ip, -1);
+				if (!stackstack_begin(ip, &ip->stackstack, count, &pos))
+					ip_reverse(ip);
 				break;
 			}
 			case '}':
 				if (ip->stackstack->size == 1) {
-					ipReverse(ip);
+					ip_reverse(ip);
 				} else {
 					fungeCell count;
-					count = StackPop(ip->stack);
-					if (!StackStackEnd(ip, &ip->stackstack, count))
-						ipReverse(ip);
+					count = stack_pop(ip->stack);
+					if (!stackstack_end(ip, &ip->stackstack, count))
+						ip_reverse(ip);
 				}
 				break;
 			case 'u':
 				if (ip->stackstack->size == 1) {
-					ipReverse(ip);
+					ip_reverse(ip);
 				} else {
 					fungeCell count;
-					count = StackPop(ip->stack);
-					StackStackTransfer(count,
+					count = stack_pop(ip->stack);
+					stackstack_transfer(count,
 					                   ip->stackstack->stacks[ip->stackstack->current],
 					                   ip->stackstack->stacks[ip->stackstack->current - 1]);
 				}
@@ -449,10 +449,10 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 
 
 			case 'i':
-				RunFileInput(ip);
+				run_file_input(ip);
 				break;
 			case 'o':
-				RunFileOutput(ip);
+				run_file_output(ip);
 				break;
 			case '=':
 				RunSystemExecute(ip);
@@ -460,31 +460,31 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 
 			case '(':
 			case ')': {
-				fungeCell fpsize = StackPop(ip->stack);
+				fungeCell fpsize = stack_pop(ip->stack);
 				// Check for sanity (because we won't have any fingerprints
 				// outside such a range. This prevents long lockups here.
 				if (fpsize < 1) {
-					ipReverse(ip);
-				} else if (SettingDisableFingerprints) {
-					StackPopNDiscard(ip->stack, fpsize);
-					ipReverse(ip);
+					ip_reverse(ip);
+				} else if (setting_disable_fingerprints) {
+					stack_pop_n_discard(ip->stack, fpsize);
+					ip_reverse(ip);
 				} else {
 					fungeCell fprint = 0;
-					if (SettingWarnings && (fpsize > 8)) {
+					if (setting_enable_warnings && (fpsize > 8)) {
 						fprintf(stderr,
 						        "WARN: %c (x=%" FUNGECELLPRI " y=%" FUNGECELLPRI "): count is very large(%" FUNGECELLPRI "), probably a bug.\n",
 						        (char)opcode, ip->position.x, ip->position.y, fpsize);
 					}
 					while (fpsize--) {
 						fprint <<= 8;
-						fprint += StackPop(ip->stack);
+						fprint += stack_pop(ip->stack);
 					}
 					if (opcode == '(') {
-						if (!ManagerLoad(ip, fprint))
-							ipReverse(ip);
+						if (!manager_load(ip, fprint))
+							ip_reverse(ip);
 					} else {
-						if (!ManagerUnload(ip, fprint))
-							ipReverse(ip);
+						if (!manager_unload(ip, fprint))
+							ip_reverse(ip);
 					}
 				}
 				break;
@@ -492,7 +492,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 
 #ifdef CONCURRENT_FUNGE
 			case 't':
-				*threadindex = ipListDuplicateIP(&IPList, *threadindex);
+				*threadindex = iplist_duplicate_ip(&IPList, *threadindex);
 				break;
 
 #endif /* CONCURRENT_FUNGE */
@@ -503,7 +503,7 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 					fflush(stdout);
 					exit(0);
 				} else {
-					*threadindex = ipListTerminateIP(&IPList, *threadindex);
+					*threadindex = iplist_terminate_ip(&IPList, *threadindex);
 					//if (IPList->top == 0)
 					IPList->ips[*threadindex].needMove = false;
 				}
@@ -519,27 +519,27 @@ FUNGE_ATTR_FAST CON_RETTYPE ExecuteInstruction(fungeCell opcode, instructionPoin
 #ifdef FUZZ_TESTING
 				exit(0);
 #else
-				exit((int)StackPop(ip->stack));
+				exit((int)stack_pop(ip->stack));
 #endif
 				break;
 
 			default:
-				PrintUnknownInstrWarn(opcode, ip);
-				ipReverse(ip);
+				warn_unknown_instr(opcode, ip);
+				ip_reverse(ip);
 		}
 	}
-	ReturnFromExecuteInstruction(false);
+	ReturnFromexecute_instruction(false);
 }
 
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void ThreadForward(instructionPointer * ip)
+static inline void thread_forward(instructionPointer * ip)
 {
 	assert(ip != NULL);
 
 	if (ip->needMove)
-		ipForward(ip, 1);
+		ip_forward(ip, 1);
 	else
 		ip->needMove = true;
 }
@@ -547,7 +547,7 @@ static inline void ThreadForward(instructionPointer * ip)
 
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NORET
-static inline void interpreterMainLoop(void)
+static inline void interpreter_main_loop(void)
 {
 #ifdef CONCURRENT_FUNGE
 	while (true) {
@@ -556,23 +556,23 @@ static inline void interpreterMainLoop(void)
 			bool retval;
 			fungeCell opcode;
 
-			opcode = FungeSpaceGet(&IPList->ips[i].position);
+			opcode = fungespace_get(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
-			if (SettingTraceLevel > 8) {
+			if (setting_trace_level > 8) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
-				PrintStackTop(IPList->ips[i].stack);
-			} else if (SettingTraceLevel > 3) {
+				stack_print_top(IPList->ips[i].stack);
+			} else if (setting_trace_level > 3) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID,
 				        IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
-			} else if (SettingTraceLevel > 2)
+			} else if (setting_trace_level > 2)
 				fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 
-			retval = ExecuteInstruction(opcode, &IPList->ips[i], &i);
-			ThreadForward(&IPList->ips[i]);
+			retval = execute_instruction(opcode, &IPList->ips[i], &i);
+			thread_forward(&IPList->ips[i]);
 			if (!retval)
 				i--;
 		}
@@ -581,22 +581,22 @@ static inline void interpreterMainLoop(void)
 	while (true) {
 		fungeCell opcode;
 
-		opcode = FungeSpaceGet(&IP->position);
+		opcode = fungespace_get(&IP->position);
 #    ifndef DISABLE_TRACE
-		if (SettingTraceLevel > 8) {
+		if (setting_trace_level > 8) {
 			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
-			PrintStackTop(IP->stack);
-		} else if (SettingTraceLevel > 3) {
+			stack_print_top(IP->stack);
+		} else if (setting_trace_level > 3) {
 			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
-		} else if (SettingTraceLevel > 2)
+		} else if (setting_trace_level > 2)
 			fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 
-		ExecuteInstruction(opcode, IP);
+		execute_instruction(opcode, IP);
 		if (IP->needMove)
-			ipForward(IP, 1);
+			ip_forward(IP, 1);
 		else
 			IP->needMove = true;
 	}
@@ -608,14 +608,14 @@ static inline void interpreterMainLoop(void)
 // Used with debugging for freeing stuff at end of the program.
 // Not needed, but useful to check that free functions works,
 // and for detecting real memory leaks.
-static void DebugFreeThings(void)
+static void debug_free(void)
 {
 # ifdef CONCURRENT_FUNGE
-	ipListFree(IPList);
+	iplist_free(IPList);
 # else
-	ipFree(IP);
+	ip_free(IP);
 # endif
-	FungeSpaceFree();
+	fungespace_free();
 	for (int i = 0; i < fungeargc; i++) {
 		cf_free(fungeargv[i]);
 	}
@@ -623,27 +623,27 @@ static void DebugFreeThings(void)
 }
 #endif
 
-FUNGE_ATTR_FAST void interpreterRun(const char *filename)
+FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 {
-	if (!FungeSpaceCreate()) {
+	if (!fungespace_create()) {
 		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
 	}
 #ifndef NDEBUG
-	atexit(&DebugFreeThings);
+	atexit(&debug_free);
 #endif
-	if (!FungeSpaceLoad(filename)) {
+	if (!fungespace_load(filename)) {
 		fprintf(stderr, "Failed to process file \"%s\": %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 #ifdef CONCURRENT_FUNGE
-	IPList = ipListCreate();
+	IPList = iplist_create();
 	if (IPList == NULL) {
 		perror("Couldn't create instruction pointer list!?");
 		exit(EXIT_FAILURE);
 	}
 #else
-	IP = ipCreate();
+	IP = ip_create();
 	if (IP == NULL) {
 		perror("Couldn't create instruction pointer!?");
 		exit(EXIT_FAILURE);
@@ -658,5 +658,5 @@ FUNGE_ATTR_FAST void interpreterRun(const char *filename)
 		// Set up randomness
 		srandom(tv.tv_usec);
 	}
-	interpreterMainLoop();
+	interpreter_main_loop();
 }

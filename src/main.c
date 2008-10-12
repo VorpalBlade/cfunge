@@ -40,7 +40,7 @@ int fungeargc = 0;
 
 // These are NOT worth inlineing, even though only called once.
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
-static void printFeatures(void)
+static void print_features(void)
 {
 	puts("Features compiled into this binary:");
 #ifdef CONCURRENT_FUNGE
@@ -71,11 +71,11 @@ static void printFeatures(void)
 
 	cf_putchar_maybe_locked('\n');
 	// This call does not return.
-	ManagerList();
+	manager_list();
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
-static void printHelp(void)
+static void print_help(void)
 {
 	puts("Usage: cfunge [OPTIONS] [FILE] [SCRIPT OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
@@ -95,7 +95,7 @@ static void printHelp(void)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
-static void printVersion(void)
+static void print_version(void)
 {
 	printf("cfunge %s\n", APPVERSION);
 	puts("Copyright (C) 2008 Arvid Norlander.");
@@ -127,37 +127,37 @@ int main(int argc, char *argv[])
 	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
 		switch (opt) {
 			case 'F':
-				SettingDisableFingerprints = true;
+				setting_disable_fingerprints = true;
 				break;
 			case 'f':
-				printFeatures();
+				print_features();
 				break;
 			case 'h':
-				printHelp();
+				print_help();
 				break;
 			case 'S':
-				SettingSandbox = true;
+				setting_enable_sandbox = true;
 				break;
 			case 's':
 				if (strncmp(optarg, "93", 2) == 0)
-					SettingCurrentStandard = stdver93;
+					setting_current_standard = stdver93;
 				else if (strncmp(optarg, "98", 2) == 0)
-					SettingCurrentStandard = stdver98;
+					setting_current_standard = stdver98;
 				else if (strncmp(optarg, "108", 3) == 0)
-					SettingCurrentStandard = stdver108;
+					setting_current_standard = stdver108;
 				else {
 					fprintf(stderr, "%s is not valid for -s.\n", optarg);
 					return EXIT_FAILURE;
 				}
 				break;
 			case 't':
-				SettingTraceLevel = (uint_fast16_t)atoi(optarg);
+				setting_trace_level = (uint_fast16_t)atoi(optarg);
 				break;
 			case 'V':
-				printVersion();
+				print_version();
 				break;
 			case 'W':
-				SettingWarnings = true;
+				setting_enable_warnings = true;
 				break;
 			default:
 				fprintf(stderr, "For help see: %s -h\n", argv[0]);
@@ -185,6 +185,6 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
-		interpreterRun(argv[optind]);
+		interpreter_run(argv[optind]);
 	}
 }

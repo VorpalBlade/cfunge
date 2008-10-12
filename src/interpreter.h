@@ -59,13 +59,13 @@ extern int fungeargc;
  * @param ip to IP to execute this instruction for.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void IfEastWest(instructionPointer * restrict ip);
+void if_east_west(instructionPointer * restrict ip);
 /**
  * Run a | instruction.
  * @param ip to IP to execute this instruction for.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void IfNorthSouth(instructionPointer * restrict ip);
+void if_north_south(instructionPointer * restrict ip);
 
 /**
  * Run instruction. Different prototype depending on if CONCURRENT_FUNGE
@@ -79,12 +79,12 @@ void IfNorthSouth(instructionPointer * restrict ip);
  */
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-bool ExecuteInstruction(fungeCell opcode,
+bool execute_instruction(fungeCell opcode,
                         instructionPointer * restrict ip,
                         ssize_t * threadindex);
 #else
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ExecuteInstruction(fungeCell opcode,
+void execute_instruction(fungeCell opcode,
                         instructionPointer * restrict ip);
 #endif
 
@@ -94,6 +94,6 @@ void ExecuteInstruction(fungeCell opcode,
  * @param filename Filename to operate on.
  */
 FUNGE_ATTR_NORET FUNGE_ATTR_FAST
-void interpreterRun(const char *filename);
+void interpreter_run(const char *filename);
 
 #endif

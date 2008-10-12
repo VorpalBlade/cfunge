@@ -23,13 +23,13 @@
 
 static void FingerNULLreverse(instructionPointer * ip)
 {
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 bool FingerNULLload(instructionPointer * ip)
 {
 	for (char c = 'A'; c < 'Z'; c++)
-		if (!OpcodeStackAdd(ip, c, &FingerNULLreverse))
+		if (!opcode_stack_push(ip, c, &FingerNULLreverse))
 			return false;
 	return true;
 }

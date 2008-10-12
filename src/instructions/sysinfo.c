@@ -147,7 +147,7 @@ static size_t environ_count = 0;
 
 // Push a single request value.
 // pushStack is stack to push on.
-FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * restrict ip, fungeStack * restrict pushStack)
+FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer * restrict ip, funge_stack * restrict pushStack)
 {
 	switch (request) {
 		case si_flags: { // Flags
@@ -155,67 +155,67 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 #ifdef CONCURRENT_FUNGE
 			tmp |= FUNGE_FLAGS_CONCURRENT;
 #endif
-			if (!SettingSandbox) {
+			if (!setting_enable_sandbox) {
 				// i, o and =
 				tmp |= FUNGE_FLAGS_NOTSANDBOX;
 			}
-			if (SettingCurrentStandard == stdver108)
+			if (setting_current_standard == stdver108)
 				tmp |= FUNGE_FLAGS_STD108;
-			StackPush(pushStack, tmp);
+			stack_push(pushStack, tmp);
 			break;
 		}
 		case si_cell_size: // Cell size
-			StackPush(pushStack, sizeof(fungeCell));
+			stack_push(pushStack, sizeof(fungeCell));
 			break;
 		case si_handprint98: // Handprint
-			StackPush(pushStack, FUNGE_OLD_HANDPRINT);
+			stack_push(pushStack, FUNGE_OLD_HANDPRINT);
 			break;
 		case si_version: // Version
-			StackPush(pushStack, FUNGEVERSION);
+			stack_push(pushStack, FUNGEVERSION);
 			break;
 		case si_operating_paradigm: // Operating paradigm
-			if (SettingSandbox) {
-				StackPush(pushStack, 0);
+			if (setting_enable_sandbox) {
+				stack_push(pushStack, 0);
 			} else {
 				// 1 = As system()
-				StackPush(pushStack, 1);
+				stack_push(pushStack, 1);
 			}
 			break;
 		case si_path_separator: // Path separator
 #ifdef __WIN32__
-			StackPush(pushStack, (fungeCell)'\\');
+			stack_push(pushStack, (fungeCell)'\\');
 #else
-			StackPush(pushStack, (fungeCell)'/');
+			stack_push(pushStack, (fungeCell)'/');
 #endif
 			break;
 		case si_vector_size: // Scalars / vector
-			StackPush(pushStack, 2);
+			stack_push(pushStack, 2);
 			break;
 		case si_ip_id: // IP ID
-			StackPush(pushStack, ip->ID);
+			stack_push(pushStack, ip->ID);
 			break;
 		case si_ip_team_id: // TEAM ID
-			StackPush(pushStack, 0);
+			stack_push(pushStack, 0);
 			break;
 		case si_ip_pos: // Vector of current IP position
-			StackPushVector(pushStack, &ip->position);
+			stack_push_vector(pushStack, &ip->position);
 			break;
 		case si_ip_delta: // Delta of current IP position
-			StackPushVector(pushStack, &ip->delta);
+			stack_push_vector(pushStack, &ip->delta);
 			break;
 		case si_ip_storage_offset: // Storage offset of current IP position
-			StackPushVector(pushStack, &ip->storageOffset);
+			stack_push_vector(pushStack, &ip->storageOffset);
 			break;
 		case si_least_point: { // Least point
 			fungeRect rect;
-			FungeSpaceGetBoundRect(&rect);
-			StackPushVector(pushStack, VectorCreateRef(rect.x, rect.y));
+			fungespace_get_bounds_rect(&rect);
+			stack_push_vector(pushStack, vector_create_ref(rect.x, rect.y));
 			break;
 		}
 		case si_greatest_point: { // Greatest point
 			fungeRect rect;
-			FungeSpaceGetBoundRect(&rect);
-			StackPushVector(pushStack, VectorCreateRef(rect.x + rect.w, rect.y + rect.h));
+			fungespace_get_bounds_rect(&rect);
+			stack_push_vector(pushStack, vector_create_ref(rect.x + rect.w, rect.y + rect.h));
 			break;
 		}
 		case si_year_month_day: { // Time ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
@@ -223,7 +223,7 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			StackPush(pushStack, (fungeCell)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
+			stack_push(pushStack, (fungeCell)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
 			break;
 		}
 		case si_hour_minute_second: { // Time (hour * 256 * 256) + (minute * 256) + (second)
@@ -231,25 +231,25 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			StackPush(pushStack, (fungeCell)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
+			stack_push(pushStack, (fungeCell)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
 			break;
 		}
 		case si_stack_count: // Number of stacks on stack stack
-			StackPush(pushStack, ip->stackstack->size);
+			stack_push(pushStack, ip->stackstack->size);
 			break;
 		case si_stack_sizes: // Number of elements on all stacks
 			for (size_t i = 0; i < ip->stackstack->current; i++)
-				StackPush(pushStack, ip->stackstack->stacks[i]->top);
-			StackPush(pushStack, TOSSSize);
+				stack_push(pushStack, ip->stackstack->stacks[i]->top);
+			stack_push(pushStack, TOSSSize);
 			break;
 		case si_argc: // Command line arguments
-			StackPush(pushStack, fungeargc);
+			stack_push(pushStack, fungeargc);
 			break;
 		case si_argv: // Command line arguments
-			StackPush(pushStack, (fungeCell)'\0');
-			StackPush(pushStack, (fungeCell)'\0');
+			stack_push(pushStack, (fungeCell)'\0');
+			stack_push(pushStack, (fungeCell)'\0');
 			for (int i = fungeargc - 1; i >= 0; i--) {
-				StackPushString(pushStack, fungeargv[i], strlen(fungeargv[i]));
+				stack_push_string(pushStack, fungeargv[i], strlen(fungeargv[i]));
 			}
 			break;
 		case si_env_count: // Command line arguments
@@ -259,8 +259,8 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 				while (true) {
 					if (!environ[i] || *environ[i] == (fungeCell)'\0')
 						break;
-					if (SettingSandbox) {
-						if (!CheckEnvIsSafe(environ[i])) {
+					if (setting_enable_sandbox) {
+						if (!check_env_is_safe(environ[i])) {
 							i++;
 							continue;
 						}
@@ -269,22 +269,22 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 					i++;
 				}
 			}
-			StackPush(pushStack, environ_count);
+			stack_push(pushStack, environ_count);
 			break;
 		case si_env: { // Environment variables
 			size_t i = 0;
-			StackPush(pushStack, (fungeCell)'\0');
+			stack_push(pushStack, (fungeCell)'\0');
 
 			while (true) {
 				if (!environ[i] || *environ[i] == (fungeCell)'\0')
 					break;
-				if (SettingSandbox) {
-					if (!CheckEnvIsSafe(environ[i])) {
+				if (setting_enable_sandbox) {
+					if (!check_env_is_safe(environ[i])) {
 						i++;
 						continue;
 					}
 				}
-				StackPushString(pushStack, environ[i], strlen(environ[i]));
+				stack_push_string(pushStack, environ[i], strlen(environ[i]));
 				i++;
 			}
 
@@ -292,14 +292,14 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 		}
 		case si_handprint108: // 1 0"gnirts" with Funge-108 URI (global env) (108 specific)
 			// Bytes
-			StackPushString(pushStack, FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
+			stack_push_string(pushStack, FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
 			break;
 		case si_basic_data_unit: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
 			// Bytes
-			StackPush(pushStack, 2);
+			stack_push(pushStack, 2);
 			break;
 		case si_cell_size_in_unit: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
-			StackPush(pushStack, sizeof(fungeCell) * CHAR_BIT);
+			stack_push(pushStack, sizeof(fungeCell) * CHAR_BIT);
 			break;
 #ifndef NDEBUG
 		default:
@@ -309,39 +309,39 @@ FUNGE_ATTR_FAST static void PushRequest(fungeCell request, instructionPointer * 
 	}
 }
 
-FUNGE_ATTR_FAST void RunSysInfo(instructionPointer *ip)
+FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 {
-	fungeCell request = StackPop(ip->stack);
+	fungeCell request = stack_pop(ip->stack);
 	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
 	// Negative or 0: push all
 	if (request <= 0) {
-		if (SettingCurrentStandard == stdver108) {
+		if (setting_current_standard == stdver108) {
 			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
-				PushRequest(Funge108Requests[i], ip, ip->stack);
+				push_request(Funge108Requests[i], ip, ip->stack);
 		} else {
 			for (int i = sizeof(Funge98Requests)/sizeof(si_flags)-1; i >= 0; i--)
-				PushRequest(Funge98Requests[i], ip, ip->stack);
+				push_request(Funge98Requests[i], ip, ip->stack);
 		}
 	// Simple to get single cell in this range
 	} else if (request < 10) {
-		PushRequest(request, ip, ip->stack);
+		push_request(request, ip, ip->stack);
 	} else {
-		fungeStack * restrict tmp = StackCreate();
-		if (SettingCurrentStandard == stdver108) {
+		funge_stack * restrict tmp = stack_create();
+		if (setting_current_standard == stdver108) {
 			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
-				PushRequest(Funge108Requests[i], ip, tmp);
+				push_request(Funge108Requests[i], ip, tmp);
 		} else {
 			for (int i = sizeof(Funge98Requests)/sizeof(si_flags)-1; i >= 0; i--)
-				PushRequest(Funge98Requests[i], ip, tmp);
+				push_request(Funge98Requests[i], ip, tmp);
 		}
 		// Find out if we should act as pick or not...
 		if (tmp->top > (size_t)request) {
-			StackPush(ip->stack, tmp->entries[tmp->top - request]);
+			stack_push(ip->stack, tmp->entries[tmp->top - request]);
 		} else {
 			// Act as pick
-			StackPush(ip->stack, StackGetIndex(ip->stack, request - tmp->top));
+			stack_push(ip->stack, stack_get_index(ip->stack, request - tmp->top));
 		}
-		StackFree(tmp);
+		stack_free(tmp);
 	}
 }

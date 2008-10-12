@@ -55,7 +55,7 @@ static inline bool CheckIPgotHRTI(instructionPointer * ip)
 static void FingerHRTIeraseMark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -66,14 +66,14 @@ static void FingerHRTIeraseMark(instructionPointer * ip)
 /// G - Granularity
 static void FingerHRTIgranularity(instructionPointer * ip)
 {
-	StackPush(ip->stack, (fungeCell)resolution);
+	stack_push(ip->stack, (fungeCell)resolution);
 }
 
 /// M - Mark
 static void FingerHRTImark(instructionPointer * ip)
 {
 	if (!CheckIPgotHRTI(ip)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -84,11 +84,11 @@ static void FingerHRTImark(instructionPointer * ip)
 static void FingerHRTItimer(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp || (ip->fingerHRTItimestamp->tv_sec == 0)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
 		struct timeval curTime;
 		gettimeofday(&curTime, NULL);
-		StackPush(ip->stack, GetDifference(ip->fingerHRTItimestamp, &curTime));
+		stack_push(ip->stack, GetDifference(ip->fingerHRTItimestamp, &curTime));
 	}
 }
 
@@ -97,7 +97,7 @@ static void FingerHRTIsecond(instructionPointer * ip)
 {
 	struct timeval curTime;
 	gettimeofday(&curTime, NULL);
-	StackPush(ip->stack, (fungeCell)curTime.tv_usec);
+	stack_push(ip->stack, (fungeCell)curTime.tv_usec);
 }
 
 FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
@@ -121,11 +121,11 @@ bool FingerHRTIload(instructionPointer * ip)
 {
 	if (!SetupHRTI(ip))
 		return false;
-	ManagerAddOpcode(HRTI, 'E', eraseMark)
-	ManagerAddOpcode(HRTI, 'G', granularity)
-	ManagerAddOpcode(HRTI, 'M', mark)
-	ManagerAddOpcode(HRTI, 'T', timer)
-	ManagerAddOpcode(HRTI, 'S', second)
+	manager_add_opcode(HRTI, 'E', eraseMark)
+	manager_add_opcode(HRTI, 'G', granularity)
+	manager_add_opcode(HRTI, 'M', mark)
+	manager_add_opcode(HRTI, 'T', timer)
+	manager_add_opcode(HRTI, 'S', second)
 
 	return true;
 }

@@ -37,6 +37,6 @@
  * @return True if safe, otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool CheckEnvIsSafe(const char *envvar);
+bool check_env_is_safe(const char *envvar);
 
 #endif

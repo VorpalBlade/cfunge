@@ -48,7 +48,7 @@
 /// S - Is Perl loaded? Or will it be shelled?
 static void FingerPERLshelled(instructionPointer * ip)
 {
-	StackPush(ip->stack, 1); // Not Perl, at least last I checked this was C.
+	stack_push(ip->stack, 1); // Not Perl, at least last I checked this was C.
 }
 
 // Yes... This is a mess...
@@ -66,7 +66,7 @@ static char * RunPerl(const char * restrict perlcode)
 
 	// Non-blocking to prevent locking up in read() in parent
 	if (fcntl(outfds[0], F_SETFL, O_NONBLOCK) == -1) {
-		if (SettingWarnings)
+		if (setting_enable_warnings)
 			perror("RunPerl, fcntl on outfds failed");
 		close(outfds[0]);
 		close(outfds[1]);
@@ -76,7 +76,7 @@ static char * RunPerl(const char * restrict perlcode)
 	pid = fork();
 	switch (pid) {
 		case -1: // Parent, error
-			if (SettingWarnings)
+			if (setting_enable_warnings)
 				perror("RunPerl, could not fork");
 			// Clean up
 			close(outfds[0]);
@@ -148,7 +148,7 @@ static char * RunPerl(const char * restrict perlcode)
 								free_nogc(buf);
 								return stringbuffer_finish(sb);
 							} else {
-								if (SettingWarnings)
+								if (setting_enable_warnings)
 									perror("RunPerl, read failed");
 								free_nogc(buf);
 								stringbuffer_destroy(sb);
@@ -185,15 +185,15 @@ static char * RunPerl(const char * restrict perlcode)
 static void FingerPERLeval(instructionPointer * ip)
 {
 	char * restrict result;
-	char * restrict perlcode = StackPopString(ip->stack);
+	char * restrict perlcode = stack_pop_string(ip->stack);
 	result = RunPerl(perlcode);
 	if (result == NULL) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
-		StackPush(ip->stack, '\0');
-		StackPushString(ip->stack, result, strlen(result));
+		stack_push(ip->stack, '\0');
+		stack_push_string(ip->stack, result, strlen(result));
 	}
-	StackFreeString(perlcode);
+	stack_freeString(perlcode);
 	free_nogc(result);
 }
 
@@ -201,27 +201,27 @@ static void FingerPERLeval(instructionPointer * ip)
 static void FingerPERLintEval(instructionPointer * ip)
 {
 	char * restrict result;
-	char * restrict perlcode = StackPopString(ip->stack);
+	char * restrict perlcode = stack_pop_string(ip->stack);
 	result = RunPerl(perlcode);
 	if (result == NULL) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
 		long int i = strtol(result, NULL, 10);
 		if ((i == LONG_MIN) || (i == LONG_MAX)) {
 			if (errno == ERANGE)
-				StackPush(ip->stack, -1);
+				stack_push(ip->stack, -1);
 		} else {
-			StackPush(ip->stack, (fungeCell)i);
+			stack_push(ip->stack, (fungeCell)i);
 		}
 	}
-	StackFreeString(perlcode);
+	stack_freeString(perlcode);
 	free_nogc(result);
 }
 
 bool FingerPERLload(instructionPointer * ip)
 {
-	ManagerAddOpcode(PERL,  'E', eval)
-	ManagerAddOpcode(PERL,  'I', intEval)
-	ManagerAddOpcode(PERL,  'S', shelled)
+	manager_add_opcode(PERL,  'E', eval)
+	manager_add_opcode(PERL,  'I', intEval)
+	manager_add_opcode(PERL,  'S', shelled)
 	return true;
 }

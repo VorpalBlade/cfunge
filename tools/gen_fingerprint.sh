@@ -321,7 +321,7 @@ addtoc "bool Finger${FPRINT}load(instructionPointer * ip)"
 addtoc '{'
 for (( i = 0; i < ${#OPCODES}; i++ )); do
 	ord number "${OPCODES:$i:1}"
-	addtoc "	ManagerAddOpcode(${FPRINT},  '${OPCODES:$i:1}', ${OPCODE_NAMES[$number]})"
+	addtoc "	manager_add_opcode(${FPRINT},  '${OPCODES:$i:1}', ${OPCODE_NAMES[$number]})"
 done
 
 cat >> "${FPRINT}.c" << EOF

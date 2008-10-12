@@ -60,18 +60,18 @@ struct s_fungeOpcodeStack;
 /// Fields of the style fingerXXXX* are for fingerprint per-IP data.
 /// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
-	fungeStack                * stack;         ///< Pointer to top stack.
+	funge_stack                * stack;         ///< Pointer to top stack.
 	fungeVector                 position;      ///< Current position.
 	ipDelta                     delta;         ///< Current delta.
 	fungeVector                 storageOffset; ///< The storage offset for current IP.
 	ipMode                      mode;          ///< String or code mode.
 	// "Full" bool for very often checked flags.
-	bool                        needMove;      ///< Should ipForward be called at end of main loop. Is reset to true each time.
+	bool                        needMove;      ///< Should ip_forward be called at end of main loop. Is reset to true each time.
 	bool                        stringLastWasSpace;     ///< Used in string mode for SGML style spaces.
 	// Bitfield for uncommon flags
 	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
 	fungeCell                   ID;                     ///< The ID of this IP.
-	fungeStackStack           * stackstack;             ///< The stack stack.
+	funge_stackstack           * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	struct timeval            * fingerHRTItimestamp;               ///< Data for fingerprint HRTI.
 } instructionPointer;
@@ -95,12 +95,12 @@ typedef struct s_ipList {
  * Create a new instruction pointer.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-instructionPointer * ipCreate(void);
+instructionPointer * ip_create(void);
 /**
  * Free an instruction pointer.
  */
 FUNGE_ATTR_FAST
-void ipFree(instructionPointer * restrict ip);
+void ip_free(instructionPointer * restrict ip);
 
 /**
  * Move the IP forward.
@@ -112,38 +112,38 @@ void ipFree(instructionPointer * restrict ip);
  * probably want to set a temp delta instead and take +/- one step for now.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipForward(instructionPointer * restrict ip, int_fast64_t steps);
+void ip_forward(instructionPointer * restrict ip, int_fast64_t steps);
 
 /**
  * Mirror IP direction.
  */
-#define ipReverse(ip) \
+#define ip_reverse(ip) \
 	{ \
 		(ip)->delta.x *= -1; \
 		(ip)->delta.y *= -1; \
 	}
 /// Turn the IP left as [ would do.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipTurnLeft(instructionPointer * restrict ip);
+void ip_turn_left(instructionPointer * restrict ip);
 /// Turn the IP right as ] would do.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipTurnRight(instructionPointer * restrict ip);
+void ip_turn_right(instructionPointer * restrict ip);
 /// Set delta of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta);
+void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta);
 /// Set position of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ipSetPosition(instructionPointer * restrict ip, const fungeVector * restrict position);
+void ip_set_position(instructionPointer * restrict ip, const fungeVector * restrict position);
 
 // To make things simpler.
 /// Set IP delta to west.
-#define ipGoWest(ip)  ipSetDelta(ip, VectorCreateRef(-1,  0))
+#define ip_go_west(ip)  ip_set_delta(ip, vector_create_ref(-1,  0))
 /// Set IP delta to east.
-#define ipGoEast(ip)  ipSetDelta(ip, VectorCreateRef( 1,  0))
+#define ip_go_east(ip)  ip_set_delta(ip, vector_create_ref( 1,  0))
 /// Set IP delta to north.
-#define ipGoNorth(ip) ipSetDelta(ip, VectorCreateRef( 0, -1))
+#define ip_go_north(ip) ip_set_delta(ip, vector_create_ref( 0, -1))
 /// Set IP delta to south.
-#define ipGoSouth(ip) ipSetDelta(ip, VectorCreateRef( 0,  1))
+#define ip_go_south(ip) ip_set_delta(ip, vector_create_ref( 0,  1))
 
 #ifdef CONCURRENT_FUNGE
 /**
@@ -151,14 +151,14 @@ void ipSetPosition(instructionPointer * restrict ip, const fungeVector * restric
  * @warning Should only be called from internal setup code.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-ipList* ipListCreate(void);
+ipList* iplist_create(void);
 /**
  * Free an IP list.
  * @warning Should only be called from internal tear-down code.
  * @param me ipList to free.
  */
 FUNGE_ATTR_FAST
-void ipListFree(ipList* me);
+void iplist_free(ipList* me);
 /**
  * Add a new IP, one place before current one.
  * @param me ipList to operate on.
@@ -167,7 +167,7 @@ void ipListFree(ipList* me);
  * this call. A value of -1 = failed to create IP.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-ssize_t ipListDuplicateIP(ipList** me, size_t index);
+ssize_t iplist_duplicate_ip(ipList** me, size_t index);
 /**
  * Terminate an ip.
  * @param me ipList to operate on.
@@ -175,7 +175,7 @@ ssize_t ipListDuplicateIP(ipList** me, size_t index);
  * @return Returns index of next to execute as that may have changed after this call.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-ssize_t ipListTerminateIP(ipList** me, size_t index);
+ssize_t iplist_terminate_ip(ipList** me, size_t index);
 #endif
 
 

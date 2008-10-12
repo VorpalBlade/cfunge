@@ -37,12 +37,12 @@ static size_t referencesSize = 0;
 static void FingerREFCreference(instructionPointer * ip)
 {
 	fungeCell x, y;
-	y = StackPop(ip->stack);
-	x = StackPop(ip->stack);
+	y = stack_pop(ip->stack);
+	x = stack_pop(ip->stack);
 	if (referencesSize == referencesTop + 1) {
 		fungeVector * newrefs = (fungeVector*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(fungeVector));
 		if (newrefs == NULL) {
-			ipReverse(ip);
+			ip_reverse(ip);
 			return;
 		} else {
 			references = newrefs;
@@ -55,18 +55,18 @@ static void FingerREFCreference(instructionPointer * ip)
 	referencesTop++;
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
-	StackPush(ip->stack, referencesTop);
+	stack_push(ip->stack, referencesTop);
 }
 
 static void FingerREFCdereference(instructionPointer * ip)
 {
 	fungeCell ref;
-	ref = StackPop(ip->stack);
+	ref = stack_pop(ip->stack);
 	if ((ref <= 0) || ((size_t)ref > referencesTop)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
-	StackPushVector(ip->stack, &references[ref]);
+	stack_push_vector(ip->stack, &references[ref]);
 }
 
 FUNGE_ATTR_FAST static inline bool InitReferences(void)
@@ -85,7 +85,7 @@ bool FingerREFCload(instructionPointer * ip)
 	if (!references)
 		if (!InitReferences())
 			return false;
-	ManagerAddOpcode(REFC,  'D', dereference)
-	ManagerAddOpcode(REFC,  'R', reference)
+	manager_add_opcode(REFC,  'D', dereference)
+	manager_add_opcode(REFC,  'R', reference)
 	return true;
 }

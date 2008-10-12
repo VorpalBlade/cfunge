@@ -37,7 +37,7 @@ FUNGE_ATTR_FAST static void binary(fungeCell number)
 static void FingerBASEoutputBinary(instructionPointer * ip)
 {
 	fungeCell x;
-	x = StackPop(ip->stack);
+	x = stack_pop(ip->stack);
 	cf_flockfile(stdout);
 	binary(x);
 	cf_putchar_unlocked(' ');
@@ -47,14 +47,14 @@ static void FingerBASEoutputBinary(instructionPointer * ip)
 static void FingerBASEoutputOctal(instructionPointer * ip)
 {
 	fungeCell x;
-	x = StackPop(ip->stack);
+	x = stack_pop(ip->stack);
 	printf("%" FUNGECELLoctPRI " ", (fungeUnsignedCell)x);
 }
 
 static void FingerBASEoutputHex(instructionPointer * ip)
 {
 	fungeCell x;
-	x = StackPop(ip->stack);
+	x = stack_pop(ip->stack);
 	printf("%" FUNGECELLhexPRI " ", (fungeUnsignedCell)x);
 }
 
@@ -66,10 +66,10 @@ static void FingerBASEoutputBase(instructionPointer * ip)
 {
 	fungeCell base, val;
 
-	base = StackPop(ip->stack);
-	val = StackPop(ip->stack);
+	base = stack_pop(ip->stack);
+	val = stack_pop(ip->stack);
 	if ((base < 1) || (base > 36) || (val < 0)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -100,9 +100,9 @@ static void FingerBASEinputBase(instructionPointer * ip)
 	ret_getint gotint = rgi_noint;
 	fungeCell a = 0;
 
-	base = StackPop(ip->stack);
+	base = stack_pop(ip->stack);
 	if ((base < 1) || (base > 36)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -112,19 +112,19 @@ static void FingerBASEinputBase(instructionPointer * ip)
 		gotint = input_getint(&a, base);
 	}
 	if (gotint == rgi_success) {
-		StackPush(ip->stack, a);
+		stack_push(ip->stack, a);
 	} else {
-		ipReverse(ip);
+		ip_reverse(ip);
 	}
 }
 
 
 bool FingerBASEload(instructionPointer * ip)
 {
-	ManagerAddOpcode(BASE,  'B', outputBinary)
-	ManagerAddOpcode(BASE,  'H', outputHex)
-	ManagerAddOpcode(BASE,  'I', inputBase)
-	ManagerAddOpcode(BASE,  'N', outputBase)
-	ManagerAddOpcode(BASE,  'O', outputOctal)
+	manager_add_opcode(BASE,  'B', outputBinary)
+	manager_add_opcode(BASE,  'H', outputHex)
+	manager_add_opcode(BASE,  'I', inputBase)
+	manager_add_opcode(BASE,  'N', outputBase)
+	manager_add_opcode(BASE,  'O', outputOctal)
 	return true;
 }

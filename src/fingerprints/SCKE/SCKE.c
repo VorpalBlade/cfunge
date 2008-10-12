@@ -38,7 +38,7 @@ static void FingerSCKEgetHostByName(instructionPointer * ip)
 	struct addrinfo *result = NULL;
 	int retval;
 
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
@@ -56,13 +56,13 @@ static void FingerSCKEgetHostByName(instructionPointer * ip)
 
 	{
 		struct sockaddr_in *addr = (struct sockaddr_in*)result->ai_addr;
-		StackPush(ip->stack, addr->sin_addr.s_addr);
+		stack_push(ip->stack, addr->sin_addr.s_addr);
 	}
 	goto end;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 end:
-	StackFreeString(str);
+	stack_freeString(str);
 	if (result)
 		freeaddrinfo(result);
 }
@@ -70,7 +70,7 @@ end:
 /// P - Peek for incoming data
 static void FingerSCKEPeek(instructionPointer * ip)
 {
-	fungeCell s = StackPop(ip->stack);
+	fungeCell s = stack_pop(ip->stack);
 	FungeSocketHandle* handle = FingerSOCKLookupHandle(s);
 	if (!handle)
 		goto error;
@@ -86,10 +86,10 @@ static void FingerSCKEPeek(instructionPointer * ip)
 		if (retval == -1) {
 			goto error;
 		} else if (retval == 0) {
-			StackPush(ip->stack, 0);
+			stack_push(ip->stack, 0);
 		} else {
 			if ((fds.revents & POLLIN) != 0)
-				StackPush(ip->stack, 1);
+				stack_push(ip->stack, 1);
 			else
 				goto error;
 		}
@@ -97,12 +97,12 @@ static void FingerSCKEPeek(instructionPointer * ip)
 
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 bool FingerSCKEload(instructionPointer * ip)
 {
-	ManagerAddOpcode(SCKE,  'H', getHostByName)
-	ManagerAddOpcode(SCKE,  'P', Peek)
+	manager_add_opcode(SCKE,  'H', getHostByName)
+	manager_add_opcode(SCKE,  'P', Peek)
 	return true;
 }

@@ -29,30 +29,30 @@
 #include "../settings.h"
 
 #ifdef CONCURRENT_FUNGE
-#  define RUNSELF() RunIterate(ip, IPList, threadindex, true)
-#  define RUNINSTR() ExecuteInstruction(kInstr, ip, threadindex)
+#  define RUNSELF() run_iterate(ip, IPList, threadindex, true)
+#  define RUNINSTR() execute_instruction(kInstr, ip, threadindex)
 #else
-#  define RUNSELF() RunIterate(ip, true)
-#  define RUNINSTR() ExecuteInstruction(kInstr, ip)
+#  define RUNSELF() run_iterate(ip, true)
+#  define RUNINSTR() execute_instruction(kInstr, ip)
 #endif
 
 #ifndef DISABLE_TRACE
-static inline void PrintTrace(fungeCell iters, fungeCell kInstr)
+static inline void print_trace(fungeCell iters, fungeCell kInstr)
 {
-	if (SettingTraceLevel > 5)
+	if (setting_trace_level > 5)
 		fprintf(stderr, "  * In k: iteration: %" FUNGECELLPRI " instruction: %c (%" FUNGECELLPRI ")\n",
 				iters, (char)kInstr, kInstr);
 }
 #endif
 
 /// This moves IP to next instruction, with respect to ;, space and current delta.
-static inline fungeCell FindNextInstr(instructionPointer * restrict ip, fungeCell kInstr) {
+static inline fungeCell find_next_instr(instructionPointer * restrict ip, fungeCell kInstr) {
 	bool injump = false;
 	if (kInstr == ';')
 		injump = true;
 	while (true) {
-		ipForward(ip, 1);
-		kInstr = FungeSpaceGet(&ip->position);
+		ip_forward(ip, 1);
+		kInstr = fungespace_get(&ip->position);
 		if (kInstr == ';') {
 			injump = !injump;
 			continue;
@@ -69,22 +69,22 @@ static inline fungeCell FindNextInstr(instructionPointer * restrict ip, fungeCel
 }
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
 #else
-FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursive)
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecursive)
 #endif
 {
-	fungeCell iters = StackPop(ip->stack);
+	fungeCell iters = stack_pop(ip->stack);
 	if (iters == 0) {
 		fungeCell kInstr;
 		// Skip past next instruction.
-		ipForward(ip, 1);
-		kInstr = FungeSpaceGet(&ip->position);
+		ip_forward(ip, 1);
+		kInstr = fungespace_get(&ip->position);
 		if (kInstr == ' ' || kInstr == ';') {
-			kInstr = FindNextInstr(ip, kInstr);
+			kInstr = find_next_instr(ip, kInstr);
 		}
 	} else if (iters < 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
 		fungeCell kInstr;
 		// Note that:
@@ -98,13 +98,13 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 		// And this is for knowing where to move past (in 108)
 		fungeVector posinstr;
 		// Fetch instruction
-		ipForward(ip, 1);
-		kInstr = FungeSpaceGet(&ip->position);
+		ip_forward(ip, 1);
+		kInstr = fungespace_get(&ip->position);
 
 		// We should reach past any spaces and ;; pairs and execute first
 		// instruction we find. This is unclear/undef in 98 but defined in 108.
 		if (kInstr == ' ' || kInstr == ';') {
-			kInstr = FindNextInstr(ip, kInstr);
+			kInstr = find_next_instr(ip, kInstr);
 		}
 
 		// First store pos where we got to restore to to "move past" instruction in Funge-108.
@@ -127,7 +127,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 				// Storing second part of the current IP state (for Funge-108)
 				ipDelta olddelta = ip->delta;
 
-				// This horrible kludge is needed because ipListDuplicateIP
+				// This horrible kludge is needed because iplist_duplicate_ip
 				// calls realloc so IP pointer may end up invalid. A horrible
 				// hack yes.
 #ifdef CONCURRENT_FUNGE
@@ -135,13 +135,13 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 #endif
 				while (iters--) {
 #ifndef DISABLE_TRACE
-					PrintTrace(iters, kInstr);
+					print_trace(iters, kInstr);
 #endif /* DISABLE_TRACE */
 
 					switch (kInstr) {
 #ifdef CONCURRENT_FUNGE
 						case 't':
-							*threadindex = ipListDuplicateIP(IPList, *threadindex);
+							*threadindex = iplist_duplicate_ip(IPList, *threadindex);
 							break;
 #endif
 						case 'k':
@@ -168,7 +168,7 @@ FUNGE_ATTR_FAST void RunIterate(instructionPointer * restrict ip, bool isRecursi
 #endif
 				// If delta and ip did not change, move forward in Funge-108.
 				// ...unless we are recursive, to cause correct behaviour...
-				if (SettingCurrentStandard == stdver108 && !isRecursive) {
+				if (setting_current_standard == stdver108 && !isRecursive) {
 					if (olddelta.x == ip->delta.x
 					    && olddelta.y == ip->delta.y
 					    && oldpos.x == ip->position.x

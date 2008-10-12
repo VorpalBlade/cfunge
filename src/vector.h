@@ -39,13 +39,13 @@ typedef struct s_fungeVector {
 /// @param a This should be the x value.
 /// @param b This should be the y value.
 /// @return A pointer to a vector allocated on the stack, so no need to free it.
-#define VectorCreateRef(a, b) (& (fungeVector) { .x = (a), .y = (b) })
+#define vector_create_ref(a, b) (& (fungeVector) { .x = (a), .y = (b) })
 
 /**
  * Checks if vector is cardinal (as in ^>v<).
  * @param v The vector to check.
  */
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
-bool VectorIsCardinal(const fungeVector * v);
+bool vector_is_cardinal(const fungeVector * v);
 
 #endif

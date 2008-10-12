@@ -38,13 +38,13 @@ static double d;
 
 FUNGE_ATTR_FAST static inline void popDbl(instructionPointer * restrict ip)
 {
-	u.i.low = StackPop(ip->stack);
-	u.i.high = StackPop(ip->stack);
+	u.i.low = stack_pop(ip->stack);
+	u.i.high = stack_pop(ip->stack);
 }
 FUNGE_ATTR_FAST static inline void pushDbl(instructionPointer * restrict ip)
 {
-	StackPush(ip->stack, u.i.high);
-	StackPush(ip->stack, u.i.low);
+	stack_push(ip->stack, u.i.high);
+	stack_push(ip->stack, u.i.low);
 }
 
 // Basic arithmetics
@@ -193,7 +193,7 @@ static void FingerFPDPpow(instructionPointer * ip)
 static void FingerFPDPfromint(instructionPointer * ip)
 {
 	fungeCell i;
-	i = StackPop(ip->stack);
+	i = stack_pop(ip->stack);
 	u.d = (double)i;
 	pushDbl(ip);
 }
@@ -201,16 +201,16 @@ static void FingerFPDPfromint(instructionPointer * ip)
 static void FingerFPDPtoint(instructionPointer * ip)
 {
 	popDbl(ip);
-	StackPush(ip->stack, (fungeCell)u.d);
+	stack_push(ip->stack, (fungeCell)u.d);
 }
 
 static void FingerFPDPfromascii(instructionPointer * ip)
 {
 	char * restrict str;
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	u.d = strtod(str, NULL);
 	pushDbl(ip);
-	StackFreeString(str);
+	stack_freeString(str);
 }
 
 static void FingerFPDPprint(instructionPointer * ip)
@@ -221,26 +221,26 @@ static void FingerFPDPprint(instructionPointer * ip)
 
 bool FingerFPDPload(instructionPointer * ip)
 {
-	ManagerAddOpcode(FPDP,  'A', add)
-	ManagerAddOpcode(FPDP,  'B', sin)
-	ManagerAddOpcode(FPDP,  'C', cos)
-	ManagerAddOpcode(FPDP,  'D', div)
-	ManagerAddOpcode(FPDP,  'E', asin)
-	ManagerAddOpcode(FPDP,  'F', fromint)
-	ManagerAddOpcode(FPDP,  'G', atan)
-	ManagerAddOpcode(FPDP,  'H', acos)
-	ManagerAddOpcode(FPDP,  'I', toint)
-	ManagerAddOpcode(FPDP,  'K', ln)
-	ManagerAddOpcode(FPDP,  'L', log10)
-	ManagerAddOpcode(FPDP,  'M', mul)
-	ManagerAddOpcode(FPDP,  'N', neg)
-	ManagerAddOpcode(FPDP,  'P', print)
-	ManagerAddOpcode(FPDP,  'Q', sqrt)
-	ManagerAddOpcode(FPDP,  'R', fromascii)
-	ManagerAddOpcode(FPDP,  'S', sub)
-	ManagerAddOpcode(FPDP,  'T', tan)
-	ManagerAddOpcode(FPDP,  'V', abs)
-	ManagerAddOpcode(FPDP,  'X', exp)
-	ManagerAddOpcode(FPDP,  'Y', pow)
+	manager_add_opcode(FPDP,  'A', add)
+	manager_add_opcode(FPDP,  'B', sin)
+	manager_add_opcode(FPDP,  'C', cos)
+	manager_add_opcode(FPDP,  'D', div)
+	manager_add_opcode(FPDP,  'E', asin)
+	manager_add_opcode(FPDP,  'F', fromint)
+	manager_add_opcode(FPDP,  'G', atan)
+	manager_add_opcode(FPDP,  'H', acos)
+	manager_add_opcode(FPDP,  'I', toint)
+	manager_add_opcode(FPDP,  'K', ln)
+	manager_add_opcode(FPDP,  'L', log10)
+	manager_add_opcode(FPDP,  'M', mul)
+	manager_add_opcode(FPDP,  'N', neg)
+	manager_add_opcode(FPDP,  'P', print)
+	manager_add_opcode(FPDP,  'Q', sqrt)
+	manager_add_opcode(FPDP,  'R', fromascii)
+	manager_add_opcode(FPDP,  'S', sub)
+	manager_add_opcode(FPDP,  'T', tan)
+	manager_add_opcode(FPDP,  'V', abs)
+	manager_add_opcode(FPDP,  'X', exp)
+	manager_add_opcode(FPDP,  'Y', pow)
 	return true;
 }

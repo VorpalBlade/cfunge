@@ -56,7 +56,7 @@ typedef struct s_fungeOpcodeStack {
 
 /**
  * Function prototype for fingerprint loader. It should load a fingerprint
- * into IP using either ManagerAddOpcode or OpcodeStackAdd! The former is
+ * into IP using either manager_add_opcode or opcode_stack_push! The former is
  * recommended. May also do some other setup like initialising static variables.
  * Please leave things in a clean state if it fails.
  * @return Returns true if successful, otherwise false.
@@ -65,13 +65,13 @@ typedef struct s_fungeOpcodeStack {
 typedef bool (*fingerprintLoader)(instructionPointer * ip);
 /**
  * Add func to the correct opcode (instruction) in ip.
- * If possible use ManagerAddOpcode() macro instead!
+ * If possible use manager_add_opcode() macro instead!
  * @param ip IP to add this opcode to.
  * @param opcode What opcode to add.
  * @param func Function pointer to routine implementing the instruction.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
+bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
 /**
  * Pop an opcode from an stack returning it.
  * @param ip IP to pop opcode for.
@@ -79,7 +79,7 @@ bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOp
  * @return A function pointer.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode);
+fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode);
 
 /**
  * Initialise opcode stacks for IP
@@ -88,7 +88,7 @@ fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode);
  * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerCreate(instructionPointer * restrict ip);
+bool manager_create(instructionPointer * restrict ip);
 
 /**
  * Free opcode stacks for IP
@@ -97,7 +97,7 @@ bool ManagerCreate(instructionPointer * restrict ip);
  * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void ManagerFree(instructionPointer * restrict ip);
+void manager_free(instructionPointer * restrict ip);
 
 #ifdef CONCURRENT_FUNGE
 /**
@@ -108,7 +108,7 @@ void ManagerFree(instructionPointer * restrict ip);
  * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
+bool manager_duplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
 #endif
 
 /**
@@ -119,7 +119,7 @@ bool ManagerDuplicate(const instructionPointer * restrict oldip, instructionPoin
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerLoad(instructionPointer * restrict ip, fungeCell fingerprint);
+bool manager_load(instructionPointer * restrict ip, fungeCell fingerprint);
 
 /**
  * Try to unload a fingerprint.
@@ -129,25 +129,25 @@ bool ManagerLoad(instructionPointer * restrict ip, fungeCell fingerprint);
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool ManagerUnload(instructionPointer * restrict ip, fungeCell fingerprint);
+bool manager_unload(instructionPointer * restrict ip, fungeCell fingerprint);
 
 /**
  * Print out list of supported fingerprints
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NORET
-void ManagerList(void);
+void manager_list(void);
 
 /// For use in fingerprint loading routines ONLY.
 /// Example code:
 /// @code
-/// ManagerAddOpcode(CPLI, 'V', abs)
+/// manager_add_opcode(CPLI, 'V', abs)
 /// @endcode
 /// This will "bind" the function named FingerCPLIabs to the instruction V.
 /// @param fprint Fingerprint name
 /// @param opcode Instruction char (range A-Z)
 /// @param name Function name. Real function name constructed from fprint and this.
-#define ManagerAddOpcode(fprint, opcode, name) \
-	if (!OpcodeStackAdd(ip, (opcode), &Finger ## fprint ## name)) \
+#define manager_add_opcode(fprint, opcode, name) \
+	if (!opcode_stack_push(ip, (opcode), &Finger ## fprint ## name)) \
 		return false;
 
 #endif

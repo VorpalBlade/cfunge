@@ -30,47 +30,47 @@
 static void FingerDIRFchdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	if (strlen(str) < 1) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 	if (chdir(str) != 0)
-		ipReverse(ip);
-	StackFreeString(str);
+		ip_reverse(ip);
+	stack_freeString(str);
 }
 
 static void FingerDIRFmkdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	if (strlen(str) < 1) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 	if (mkdir(str, S_IRWXU) != 0)
-		ipReverse(ip);
-	StackFreeString(str);
+		ip_reverse(ip);
+	stack_freeString(str);
 }
 
 static void FingerDIRFrmdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	if (strlen(str) < 1) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 	if (rmdir(str) != 0)
-		ipReverse(ip);
-	StackFreeString(str);
+		ip_reverse(ip);
+	stack_freeString(str);
 }
 
 
 bool FingerDIRFload(instructionPointer * ip)
 {
-	ManagerAddOpcode(DIRF, 'C', chdir)
-	ManagerAddOpcode(DIRF, 'M', mkdir)
-	ManagerAddOpcode(DIRF, 'R', rmdir)
+	manager_add_opcode(DIRF, 'C', chdir)
+	manager_add_opcode(DIRF, 'M', mkdir)
+	manager_add_opcode(DIRF, 'R', rmdir)
 	return true;
 }

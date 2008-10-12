@@ -40,15 +40,15 @@ typedef enum { stdver98 = 0, stdver93 = 1, stdver108 = 2 } standardVersion;
 
 /// What version we should simulate.
 /// Affects space processing.
-extern standardVersion SettingCurrentStandard;
+extern standardVersion setting_current_standard;
 
 /// Level of trace output
-extern uint_fast16_t SettingTraceLevel;
+extern uint_fast16_t setting_trace_level;
 /// Should we enable warnings
-extern bool SettingWarnings;
+extern bool setting_enable_warnings;
 
 /// Should fingerprints be enabled
-extern bool SettingDisableFingerprints;
+extern bool setting_disable_fingerprints;
 
 /// Sandbox, prevent bad programs affecting system.
 /// If true:
@@ -60,6 +60,6 @@ extern bool SettingDisableFingerprints;
 /// - In core opcodes: =, o and i are forbidden and certain environment
 ///   variables are hidden.
 /// - In fingerprints: Non-safe fingerprints are not loaded.
-extern bool SettingSandbox;
+extern bool setting_enable_sandbox;
 
 #endif

@@ -40,14 +40,14 @@ static bool TIMEuseUTC = false;
 static void FingerTIMEday(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_mday);
+	stack_push(ip->stack, curTime->tm_mday);
 }
 
 /// F - Get day of year.
 static void FingerTIMEdayOfYear(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_yday);
+	stack_push(ip->stack, curTime->tm_yday);
 }
 
 /// G - Set to use UTC.
@@ -60,7 +60,7 @@ static void FingerTIMEuseGMT(FUNGE_ATTR_UNUSED instructionPointer * ip)
 static void FingerTIMEhour(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_hour);
+	stack_push(ip->stack, curTime->tm_hour);
 }
 
 /// L - Set to use local time.
@@ -73,48 +73,48 @@ static void FingerTIMEuseLocal(FUNGE_ATTR_UNUSED instructionPointer * ip)
 static void FingerTIMEminute(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_min);
+	stack_push(ip->stack, curTime->tm_min);
 }
 
 /// O - Get month.
 static void FingerTIMEmonth(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_mon + 1);
+	stack_push(ip->stack, curTime->tm_mon + 1);
 }
 
 /// S - Get second.
 static void FingerTIMEsecond(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_sec);
+	stack_push(ip->stack, curTime->tm_sec);
 }
 
 /// W - Get day of week.
 static void FingerTIMEdayOfWeek(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, curTime->tm_wday + 1);
+	stack_push(ip->stack, curTime->tm_wday + 1);
 }
 
 /// Y - Get year.
 static void FingerTIMEyear(instructionPointer * ip)
 {
 	GetTheTime
-	StackPush(ip->stack, 1900 + curTime->tm_year);
+	stack_push(ip->stack, 1900 + curTime->tm_year);
 }
 
 bool FingerTIMEload(instructionPointer * ip)
 {
-	ManagerAddOpcode(TIME,  'D', day)
-	ManagerAddOpcode(TIME,  'F', dayOfYear)
-	ManagerAddOpcode(TIME,  'G', useGMT)
-	ManagerAddOpcode(TIME,  'H', hour)
-	ManagerAddOpcode(TIME,  'L', useLocal)
-	ManagerAddOpcode(TIME,  'M', minute)
-	ManagerAddOpcode(TIME,  'O', month)
-	ManagerAddOpcode(TIME,  'S', second)
-	ManagerAddOpcode(TIME,  'W', dayOfWeek)
-	ManagerAddOpcode(TIME,  'Y', year)
+	manager_add_opcode(TIME,  'D', day)
+	manager_add_opcode(TIME,  'F', dayOfYear)
+	manager_add_opcode(TIME,  'G', useGMT)
+	manager_add_opcode(TIME,  'H', hour)
+	manager_add_opcode(TIME,  'L', useLocal)
+	manager_add_opcode(TIME,  'M', minute)
+	manager_add_opcode(TIME,  'O', month)
+	manager_add_opcode(TIME,  'S', second)
+	manager_add_opcode(TIME,  'W', dayOfWeek)
+	manager_add_opcode(TIME,  'Y', year)
 	return true;
 }

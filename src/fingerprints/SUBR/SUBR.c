@@ -41,34 +41,34 @@ static void FingerSUBRcall(instructionPointer * ip)
 {
 	fungeCell n;
 	fungeVector pos;
-	fungeStack *tmpstack;
+	funge_stack *tmpstack;
 
-	n = StackPop(ip->stack);
+	n = stack_pop(ip->stack);
 	if (n < 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 	// Pop vector
-	pos = StackPopVector(ip->stack);
+	pos = stack_pop_vector(ip->stack);
 	// Stupid to change a fingerprint after it is published.
 	if (ip->fingerSUBRisRelative) {
 		pos.x += ip->storageOffset.x;
 		pos.y += ip->storageOffset.y;
 	}
 
-	tmpstack = StackCreate();
+	tmpstack = stack_create();
 
 	for (fungeCell i = 0; i < n; ++i)
-		StackPush(tmpstack, StackPop(ip->stack));
+		stack_push(tmpstack, stack_pop(ip->stack));
 
-	StackPushVector(ip->stack, &ip->position);
-	StackPushVector(ip->stack, &ip->delta);
+	stack_push_vector(ip->stack, &ip->position);
+	stack_push_vector(ip->stack, &ip->delta);
 	while (n--)
-		StackPush(ip->stack, StackPop(tmpstack));
-	StackFree(tmpstack);
+		stack_push(ip->stack, stack_pop(tmpstack));
+	stack_free(tmpstack);
 
-	ipSetPosition(ip, &pos);
-	ipSetDelta(ip, &SUBRnewDelta);
+	ip_set_position(ip, &pos);
+	ip_set_delta(ip, &SUBRnewDelta);
 	ip->needMove = false;
 }
 
@@ -77,15 +77,15 @@ static void FingerSUBRjump(instructionPointer * ip)
 {
 	fungeVector pos;
 
-	pos = StackPopVector(ip->stack);
+	pos = stack_pop_vector(ip->stack);
 	// Stupid to change a fingerprint after it is published.
 	if (ip->fingerSUBRisRelative) {
 		pos.x += ip->storageOffset.x;
 		pos.y += ip->storageOffset.y;
 	}
 
-	ipSetPosition(ip, &pos);
-	ipSetDelta(ip, &SUBRnewDelta);
+	ip_set_position(ip, &pos);
+	ip_set_delta(ip, &SUBRnewDelta);
 }
 
 /// O - Change to relative addressing
@@ -100,38 +100,38 @@ static void FingerSUBRreturn(instructionPointer * ip)
 	fungeCell n;
 	fungeVector pos;
 	fungeVector vec;
-	fungeStack *tmpstack;
+	funge_stack *tmpstack;
 
-	n = StackPop(ip->stack);
+	n = stack_pop(ip->stack);
 	if (n < 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
-	tmpstack = StackCreate();
+	tmpstack = stack_create();
 
 	for (fungeCell i = 0; i < n; ++i)
-		StackPush(tmpstack, StackPop(ip->stack));
+		stack_push(tmpstack, stack_pop(ip->stack));
 
-	vec = StackPopVector(ip->stack);
-	pos = StackPopVector(ip->stack);
-	ipSetPosition(ip, &pos);
-	ipSetDelta(ip, &vec);
+	vec = stack_pop_vector(ip->stack);
+	pos = stack_pop_vector(ip->stack);
+	ip_set_position(ip, &pos);
+	ip_set_delta(ip, &vec);
 
 	while (n--)
-		StackPush(ip->stack, StackPop(tmpstack));
+		stack_push(ip->stack, stack_pop(tmpstack));
 
-	StackFree(tmpstack);
+	stack_free(tmpstack);
 }
 
 
 bool FingerSUBRload(instructionPointer * ip)
 {
-	ManagerAddOpcode(SUBR,  'A', absolute)
-	ManagerAddOpcode(SUBR,  'C', call)
-	ManagerAddOpcode(SUBR,  'J', jump)
-	ManagerAddOpcode(SUBR,  'O', relative)
+	manager_add_opcode(SUBR,  'A', absolute)
+	manager_add_opcode(SUBR,  'C', call)
+	manager_add_opcode(SUBR,  'J', jump)
+	manager_add_opcode(SUBR,  'O', relative)
 	// No not a keyword in this case
-	ManagerAddOpcode(SUBR,  'R', return)
+	manager_add_opcode(SUBR,  'R', return)
 	return true;
 }

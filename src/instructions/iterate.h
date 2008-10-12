@@ -44,10 +44,10 @@
  */
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunIterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive);
+void run_iterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive);
 #else
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunIterate(instructionPointer * restrict ip, bool isRecursive);
+void run_iterate(instructionPointer * restrict ip, bool isRecursive);
 #endif
 
 #endif

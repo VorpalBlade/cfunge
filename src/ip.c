@@ -31,7 +31,7 @@
 #include <assert.h>
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline bool ipCreateInPlace(instructionPointer *me)
+static inline bool ip_create_in_place(instructionPointer *me)
 {
 	assert(me != NULL);
 	me->position.x           = 0;
@@ -44,25 +44,25 @@ static inline bool ipCreateInPlace(instructionPointer *me)
 	me->needMove             = true;
 	me->stringLastWasSpace   = false;
 	me->fingerSUBRisRelative = false;
-	me->stackstack           = StackStackCreate();
+	me->stackstack           = stackstack_create();
 	if (!me->stackstack)
 		return false;
 	me->stack                = me->stackstack->stacks[me->stackstack->current];
 	me->ID                   = 0;
-	if (!SettingDisableFingerprints) {
-		if (!ManagerCreate(me))
+	if (!setting_disable_fingerprints) {
+		if (!manager_create(me))
 			return false;
 	}
 	me->fingerHRTItimestamp  = NULL;
 	return true;
 }
 
-FUNGE_ATTR_FAST instructionPointer * ipCreate(void)
+FUNGE_ATTR_FAST instructionPointer * ip_create(void)
 {
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
 	if (!tmp)
 		return NULL;
-	if (!ipCreateInPlace(tmp)) {
+	if (!ip_create_in_place(tmp)) {
 		cf_free(tmp);
 		return NULL;
 	}
@@ -71,19 +71,19 @@ FUNGE_ATTR_FAST instructionPointer * ipCreate(void)
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, instructionPointer * restrict new)
+static inline bool ip_duplicate_in_place(const instructionPointer * restrict old, instructionPointer * restrict new)
 {
 	assert(old != NULL);
 	assert(new != NULL);
 	memcpy(new, old, sizeof(instructionPointer));
 
-	new->stackstack           = StackStackDuplicate(old->stackstack);
+	new->stackstack           = stackstack_duplicate(old->stackstack);
 	if (!new->stackstack)
 		return false;
 
 	new->stack                = new->stackstack->stacks[new->stackstack->current];
-	if (!SettingDisableFingerprints) {
-		if (!ManagerDuplicate(old, new))
+	if (!setting_disable_fingerprints) {
+		if (!manager_duplicate(old, new))
 			return false;
 	}
 	new->fingerHRTItimestamp  = NULL;
@@ -91,17 +91,17 @@ static inline bool ipDuplicateInPlace(const instructionPointer * restrict old, i
 }
 #endif
 
-FUNGE_ATTR_FAST static inline void ipFreeResources(instructionPointer * ip)
+FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 {
 	if (!ip)
 		return;
 	if (ip->stackstack) {
-		StackStackFree(ip->stackstack);
+		stackstack_free(ip->stackstack);
 		ip->stackstack = NULL;
 	}
 	ip->stack = NULL;
-	if (!SettingDisableFingerprints) {
-		ManagerFree(ip);
+	if (!setting_disable_fingerprints) {
+		manager_free(ip);
 	}
 	if (ip->fingerHRTItimestamp) {
 		cf_free(ip->fingerHRTItimestamp);
@@ -110,23 +110,23 @@ FUNGE_ATTR_FAST static inline void ipFreeResources(instructionPointer * ip)
 }
 
 
-FUNGE_ATTR_FAST void ipFree(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ip_free(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
-	ipFreeResources(ip);
+	ip_free_resources(ip);
 	cf_free(ip);
 }
 
-FUNGE_ATTR_FAST void ipForward(instructionPointer * restrict ip, int_fast64_t steps)
+FUNGE_ATTR_FAST void ip_forward(instructionPointer * restrict ip, int_fast64_t steps)
 {
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;
 	ip->position.y += ip->delta.y * steps;
-	FungeSpaceWrap(&ip->position, &ip->delta);
+	fungespace_wrap(&ip->position, &ip->delta);
 }
 
-FUNGE_ATTR_FAST void ipTurnRight(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ip_turn_right(instructionPointer * restrict ip)
 {
 	fungeCell tmpX;
 
@@ -137,7 +137,7 @@ FUNGE_ATTR_FAST void ipTurnRight(instructionPointer * restrict ip)
 	ip->delta.y = tmpX;
 }
 
-FUNGE_ATTR_FAST void ipTurnLeft(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void ip_turn_left(instructionPointer * restrict ip)
 {
 	fungeCell tmpX;
 
@@ -148,7 +148,7 @@ FUNGE_ATTR_FAST void ipTurnLeft(instructionPointer * restrict ip)
 	ip->delta.y = -tmpX;
 }
 
-FUNGE_ATTR_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta * restrict delta)
+FUNGE_ATTR_FAST void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);
 	assert(delta != NULL);
@@ -156,13 +156,13 @@ FUNGE_ATTR_FAST void ipSetDelta(instructionPointer * restrict ip, const ipDelta 
 	ip->delta.y = delta->y;
 }
 
-FUNGE_ATTR_FAST void ipSetPosition(instructionPointer * restrict ip, const fungeVector * restrict position)
+FUNGE_ATTR_FAST void ip_set_position(instructionPointer * restrict ip, const fungeVector * restrict position)
 {
 	assert(ip != NULL);
 	assert(position != NULL);
 	ip->position.x = position->x;
 	ip->position.y = position->y;
-	FungeSpaceWrap(&ip->position, &ip->delta);
+	fungespace_wrap(&ip->position, &ip->delta);
 }
 
 
@@ -171,12 +171,12 @@ FUNGE_ATTR_FAST void ipSetPosition(instructionPointer * restrict ip, const funge
  ***********/
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST ipList* ipListCreate(void)
+FUNGE_ATTR_FAST ipList* iplist_create(void)
 {
 	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
 	if (!tmp)
 		return NULL;
-	if (!ipCreateInPlace(&tmp->ips[0]))
+	if (!ip_create_in_place(&tmp->ips[0]))
 		return NULL;
 	tmp->size = 1;
 	tmp->top = 0;
@@ -184,17 +184,17 @@ FUNGE_ATTR_FAST ipList* ipListCreate(void)
 	return tmp;
 }
 
-FUNGE_ATTR_FAST void ipListFree(ipList* me)
+FUNGE_ATTR_FAST void iplist_free(ipList* me)
 {
 	if (!me)
 		return;
 	for (size_t i = 0; i <= me->top; i++) {
-		ipFreeResources(&me->ips[i]);
+		ip_free_resources(&me->ips[i]);
 	}
 	cf_free(me);
 }
 
-FUNGE_ATTR_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
+FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 {
 	ipList *list;
 
@@ -232,21 +232,21 @@ FUNGE_ATTR_FAST ssize_t ipListDuplicateIP(ipList** me, size_t index)
 	 * t0 | t1  | t2 |
 	 * t0 | t0a | t1 | t2
 	 */
-	if (!ipDuplicateInPlace(&list->ips[index], &list->ips[index + 1])) {
+	if (!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1])) {
 		// We are in trouble
 		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.\n", stderr);
 	}
 
 	// Here we mirror new IP and do ID changes.
 	index++;
-	ipReverse(&list->ips[index]);
-	ipForward(&list->ips[index], 1);
+	ip_reverse(&list->ips[index]);
+	ip_forward(&list->ips[index], 1);
 	list->ips[index].ID = ++list->highestID;
 	list->top++;
 	return index - 1;
 }
 
-FUNGE_ATTR_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
+FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 {
 	ipList *list;
 
@@ -265,7 +265,7 @@ FUNGE_ATTR_FAST ssize_t ipListTerminateIP(ipList** me, size_t index)
 	 *  t0 | t1 | t3 | t4 | t5 |
 	 *
 	 */
-	ipFreeResources(&list->ips[index]);
+	ip_free_resources(&list->ips[index]);
 	// Do we need to move downwards?
 	if (index != list->top) {
 		/* Move downwards:

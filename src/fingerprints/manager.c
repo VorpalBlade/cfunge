@@ -46,7 +46,7 @@
  * Create an opcode stack.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
-static inline fungeOpcodeStack* CreateOpcodeStack(void)
+static inline fungeOpcodeStack* opcode_stack_create(void)
 {
 	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
 	if (tmp == NULL)
@@ -66,7 +66,7 @@ static inline fungeOpcodeStack* CreateOpcodeStack(void)
  * Free an opcode stack.
  */
 FUNGE_ATTR_FAST
-static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
+static inline void opcode_stack_free(fungeOpcodeStack * restrict me)
 {
 	if (!me)
 		return;
@@ -80,7 +80,7 @@ static inline void FreeOpcodeStack(fungeOpcodeStack * restrict me)
  * Duplicate an opcode stack, used for split (t).
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * restrict old)
+static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * restrict old)
 {
 	fungeOpcodeStack * tmp;
 
@@ -103,7 +103,7 @@ static inline fungeOpcodeStack* DuplicateOpcodeStack(const fungeOpcodeStack * re
 
 /// Add an entry to an OP code stack.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
+bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Check if we need to realloc.
@@ -122,7 +122,7 @@ bool OpcodeStackAdd(instructionPointer * restrict ip, char opcode, fingerprintOp
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode) {
+fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode) {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	if (stack->top == 0) {
 		return NULL;
@@ -137,7 +137,7 @@ fingerprintOpcode OpcodeStackPop(instructionPointer * restrict ip, char opcode) 
  * Pop a function pointer from an opcode stack, discarding it.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void OpcodeStackDrop(fungeOpcodeStack * restrict stack)
+static inline void opcode_stack_drop(fungeOpcodeStack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -153,10 +153,10 @@ static inline void OpcodeStackDrop(fungeOpcodeStack * restrict stack)
  ****************************/
 
 /// Set up the fingerprint stacks for an IP.
-FUNGE_ATTR_FAST bool ManagerCreate(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST bool manager_create(instructionPointer * restrict ip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		ip->fingerOpcodes[i] = CreateOpcodeStack();
+		ip->fingerOpcodes[i] = opcode_stack_create();
 		if (!ip->fingerOpcodes[i])
 			return false;
 	}
@@ -164,25 +164,25 @@ FUNGE_ATTR_FAST bool ManagerCreate(instructionPointer * restrict ip)
 }
 
 /// Clean up the fingerprint stacks for an IP.
-FUNGE_ATTR_FAST void ManagerFree(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void manager_free(instructionPointer * restrict ip)
 {
 	if (!ip)
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		FreeOpcodeStack(ip->fingerOpcodes[i]);
+		opcode_stack_free(ip->fingerOpcodes[i]);
 	}
 }
 
 #ifdef CONCURRENT_FUNGE
 /// Duplicate the opcode stacks from one ip to another, for concurrent Funge.
-FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
-                                 instructionPointer * restrict newip)
+FUNGE_ATTR_FAST bool manager_duplicate(const instructionPointer * restrict oldip,
+                                       instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		newip->fingerOpcodes[i] = DuplicateOpcodeStack(oldip->fingerOpcodes[i]);
+		newip->fingerOpcodes[i] = opcode_stack_duplicate(oldip->fingerOpcodes[i]);
 		if (!newip->fingerOpcodes[i]) {
 			// Try to create a new one instead then...
-			newip->fingerOpcodes[i] = CreateOpcodeStack();
+			newip->fingerOpcodes[i] = opcode_stack_create();
 			if (!newip->fingerOpcodes[i])
 				return false;
 		}
@@ -198,7 +198,7 @@ FUNGE_ATTR_FAST bool ManagerDuplicate(const instructionPointer * restrict oldip,
  * -1 means not found.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline ssize_t FindFingerPrint(const fungeCell fingerprint)
+static inline ssize_t find_fingerprint(const fungeCell fingerprint)
 {
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		if (fingerprint <= ImplementedFingerprints[i].fprint) {
@@ -208,7 +208,7 @@ static inline ssize_t FindFingerPrint(const fungeCell fingerprint)
 			// If we run in a sandbox, can fingerprint be loaded?
 			// If not: break, as we know we found the right fingerprint,
 			// so no need to search more.
-			if (SettingSandbox && !ImplementedFingerprints[i].safe)
+			if (setting_enable_sandbox && !ImplementedFingerprints[i].safe)
 				return FPRINT_NOTFOUND;
 			return i;
 		}
@@ -216,16 +216,16 @@ static inline ssize_t FindFingerPrint(const fungeCell fingerprint)
 	return FPRINT_NOTFOUND;
 }
 
-FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, fungeCell fingerprint)
+FUNGE_ATTR_FAST bool manager_load(instructionPointer * restrict ip, fungeCell fingerprint)
 {
-	ssize_t index = FindFingerPrint(fingerprint);
+	ssize_t index = find_fingerprint(fingerprint);
 	if (index == FPRINT_NOTFOUND) {
 		return false;
 	} else {
 		bool gotLoaded = ImplementedFingerprints[index].loader(ip);
 		if (gotLoaded) {
-			StackPush(ip->stack, fingerprint);
-			StackPush(ip->stack, 1);
+			stack_push(ip->stack, fingerprint);
+			stack_push(ip->stack, 1);
 			return true;
 		} else {
 			return false;
@@ -233,13 +233,13 @@ FUNGE_ATTR_FAST bool ManagerLoad(instructionPointer * restrict ip, fungeCell fin
 	}
 }
 
-FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, fungeCell fingerprint)
+FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, fungeCell fingerprint)
 {
-	ssize_t index = FindFingerPrint(fingerprint);
+	ssize_t index = find_fingerprint(fingerprint);
 	if (index == -1)
 		return false;
 	for (size_t i = 0; i < strlen(ImplementedFingerprints[index].opcodes); i++)
-		OpcodeStackDrop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
+		opcode_stack_drop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
 }
 
@@ -247,7 +247,7 @@ FUNGE_ATTR_FAST bool ManagerUnload(instructionPointer * restrict ip, fungeCell f
 #  error "CHAR_BIT != 8, please make sure the function below the location of this error works on your system."
 #endif
 
-FUNGE_ATTR_FAST void ManagerList(void)
+FUNGE_ATTR_FAST void manager_list(void)
 {
 	puts("Supported fingerprints in this binary:");
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {

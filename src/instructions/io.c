@@ -31,12 +31,12 @@
 #include <assert.h>
 #include <stdbool.h>
 
-FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 
-	if (SettingSandbox) {
-		ipReverse(ip);
+	if (setting_enable_sandbox) {
+		ip_reverse(ip);
 		return;
 	}
 
@@ -47,36 +47,36 @@ FUNGE_ATTR_FAST void RunFileInput(instructionPointer * restrict ip)
 		fungeVector size;
 
 		// Pop stuff.
-		filename = StackPopString(ip->stack);
+		filename = stack_pop_string(ip->stack);
 
 		// Sanity test!
 		if (*filename == '\0') {
-			StackFreeString(filename);
-			ipReverse(ip);
+			stack_freeString(filename);
+			ip_reverse(ip);
 			return;
 		}
 
-		binary = (bool)(StackPop(ip->stack) & 1);
-		offset = StackPopVector(ip->stack);
+		binary = (bool)(stack_pop(ip->stack) & 1);
+		offset = stack_pop_vector(ip->stack);
 
-		if (!FungeSpaceLoadAtOffset(filename,
-		                            VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
+		if (!fungespace_load_at_offset(filename,
+		                            vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
 		                            &size, binary)) {
-			ipReverse(ip);
+			ip_reverse(ip);
 		} else {
-			StackPushVector(ip->stack, &size);
-			StackPushVector(ip->stack, &offset);
+			stack_push_vector(ip->stack, &size);
+			stack_push_vector(ip->stack, &offset);
 		}
-		StackFreeString(filename);
+		stack_freeString(filename);
 	}
 }
 
-FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
+FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 
-	if (SettingSandbox) {
-		ipReverse(ip);
+	if (setting_enable_sandbox) {
+		ip_reverse(ip);
 		return;
 	}
 
@@ -87,23 +87,23 @@ FUNGE_ATTR_FAST void RunFileOutput(instructionPointer * restrict ip)
 		fungeVector size;
 
 		// Pop stuff.
-		filename = StackPopString(ip->stack);
-		textfile = (bool)(StackPop(ip->stack) & 1);
-		offset = StackPopVector(ip->stack);
-		size = StackPopVector(ip->stack);
+		filename = stack_pop_string(ip->stack);
+		textfile = (bool)(stack_pop(ip->stack) & 1);
+		offset = stack_pop_vector(ip->stack);
+		size = stack_pop_vector(ip->stack);
 
 		// Sanity test!
 		if (*filename == '\0' || size.x < 1 || size.y < 1) {
-			StackFreeString(filename);
-			ipReverse(ip);
+			stack_freeString(filename);
+			ip_reverse(ip);
 			return;
 		}
 
-		if (!FungeSpaceSaveToFile(filename,
-		                          VectorCreateRef(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
+		if (!fungespace_save_to_file(filename,
+		                          vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
 		                          &size, textfile))
-			ipReverse(ip);
-			StackFreeString(filename);
+			ip_reverse(ip);
+			stack_freeString(filename);
 	}
 
 }

@@ -45,7 +45,7 @@ static void FingerTERMclearScreen(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// D - Move cursor down n lines
 static void FingerTERMgoDown(instructionPointer * ip)
 {
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
 		return;
 	} else if (n < 0) {
@@ -62,11 +62,11 @@ static void FingerTERMgotoXY(instructionPointer * ip)
 {
 	char *s;
 	fungeCell x, y;
-	x = StackPop(ip->stack);
-	y = StackPop(ip->stack);
+	x = stack_pop(ip->stack);
+	y = stack_pop(ip->stack);
 	s = tparm(cursor_address, (int)x, (int)y, 0, 0, 0, 0, 0, 0, 0);
 	if (!valid(s)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 	putp(s);
@@ -93,7 +93,7 @@ static void FingerTERMclearToEOS(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// U - Move cursor up n lines
 static void FingerTERMgoUp(instructionPointer * ip)
 {
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	if (n == 0) {
 		return;
 	} else if (n < 0) {
@@ -136,12 +136,12 @@ bool FingerTERMload(instructionPointer * ip)
 {
 	if (!initialise())
 		return false;
-	ManagerAddOpcode(TERM,  'C', clearScreen)
-	ManagerAddOpcode(TERM,  'D', goDown)
-	ManagerAddOpcode(TERM,  'G', gotoXY)
-	ManagerAddOpcode(TERM,  'H', goHome)
-	ManagerAddOpcode(TERM,  'L', clearToEOL)
-	ManagerAddOpcode(TERM,  'S', clearToEOS)
-	ManagerAddOpcode(TERM,  'U', goUp)
+	manager_add_opcode(TERM,  'C', clearScreen)
+	manager_add_opcode(TERM,  'D', goDown)
+	manager_add_opcode(TERM,  'G', gotoXY)
+	manager_add_opcode(TERM,  'H', goHome)
+	manager_add_opcode(TERM,  'L', clearToEOL)
+	manager_add_opcode(TERM,  'S', clearToEOS)
+	manager_add_opcode(TERM,  'U', goUp)
 	return true;
 }

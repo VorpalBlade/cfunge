@@ -33,37 +33,38 @@
 // left.
 static char*  lastline = NULL;
 static size_t linelength = 0;
-static char*  lastlineCurrent = NULL;
+// Pointer to how far we consumed the current line.
+static char*  lastline_current = NULL;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool getTheLine(void)
+static inline bool get_line(void)
 {
-	if (!lastline || !lastlineCurrent || (*lastlineCurrent == '\0')) {
+	if (!lastline || !lastline_current || (*lastline_current == '\0')) {
 		ssize_t retval = cf_getline(&lastline, &linelength, stdin);
 		if (retval == -1)
 			return false;
-		lastlineCurrent = lastline;
+		lastline_current = lastline;
 	}
 	return true;
 }
-FUNGE_ATTR_FAST static inline void discardTheLine(void)
+FUNGE_ATTR_FAST static inline void discard_line(void)
 {
 	if (lastline != NULL)
 		cf_free(lastline);
 	lastline = NULL;
-	lastlineCurrent = NULL;
+	lastline_current = NULL;
 }
 
 
 FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
 {
 	char tmp;
-	if (!getTheLine())
+	if (!get_line())
 		return false;
-	tmp = *lastlineCurrent;
-	lastlineCurrent++;
-	if (lastlineCurrent && (*lastlineCurrent == '\0'))
-		discardTheLine();
+	tmp = *lastline_current;
+	lastline_current++;
+	if (lastline_current && (*lastline_current == '\0'))
+		discard_line();
 	*chr = (fungeCell)tmp;
 	return true;
 }
@@ -71,11 +72,11 @@ FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
 FUNGE_ATTR_FAST bool input_getline(char ** str)
 {
 	char * tmp;
-	if (!getTheLine())
+	if (!get_line())
 		return false;
-	tmp = cf_strdup(lastlineCurrent);
+	tmp = cf_strdup(lastline_current);
 	*str = tmp;
-	discardTheLine();
+	discard_line();
 	return true;
 }
 
@@ -130,31 +131,31 @@ FUNGE_ATTR_FAST ret_getint input_getint(fungeCell * restrict value, int base)
 	char * endptr = NULL;
 	assert(value != NULL);
 
-	if (!getTheLine())
+	if (!get_line())
 		return rgi_eof;
 	// Find first char that is a number, then convert number.
 	do {
 		if (base == 10) {
-			if (!isdigit(*lastlineCurrent))
+			if (!isdigit(*lastline_current))
 				continue;
 		} else if (base == 16) {
-			if (!isxdigit(*lastlineCurrent))
+			if (!isxdigit(*lastline_current))
 				continue;
 		} else {
-			const char * p = strchr(digits, *lastlineCurrent);
+			const char * p = strchr(digits, *lastline_current);
 			if (!p || ((p - digits) >= (ptrdiff_t)base))
 				continue;
 		}
 		found = true;
 		// Ok, we found it, lets convert it.
-		endptr = lastlineCurrent + parseInt(lastlineCurrent, value,
+		endptr = lastline_current + parseInt(lastline_current, value,
 		                                    (fungeCell)base);
 		break;
-	} while (*(lastlineCurrent++) != '\0');
+	} while (*(lastline_current++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.
 	if (endptr && ((*endptr == '\n') || (*endptr == '\r') || (*endptr == '\0')))
-		discardTheLine();
+		discard_line();
 	else
-		lastlineCurrent = endptr;
+		lastline_current = endptr;
 	return found ? rgi_success : rgi_noint;
 }

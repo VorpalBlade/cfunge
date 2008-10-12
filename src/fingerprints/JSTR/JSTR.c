@@ -28,21 +28,21 @@ static void FingerJSTRpushN(instructionPointer * ip)
 	fungeCell n;
 	fungeVector pos, delta;
 
-	n     = StackPop(ip->stack);
-	pos   = StackPopVector(ip->stack);
-	delta = StackPopVector(ip->stack);
+	n     = stack_pop(ip->stack);
+	pos   = stack_pop_vector(ip->stack);
+	delta = stack_pop_vector(ip->stack);
 	pos.x += ip->storageOffset.x;
 	pos.y += ip->storageOffset.y;
 
 	if (n <= 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
-	StackPush(ip->stack, 0);
+	stack_push(ip->stack, 0);
 
 	while (n--) {
-		StackPush(ip->stack, FungeSpaceGet(&pos));
+		stack_push(ip->stack, fungespace_get(&pos));
 		pos.x += delta.x;
 		pos.y += delta.y;
 	}
@@ -54,19 +54,19 @@ static void FingerJSTRpopN(instructionPointer * ip)
 	fungeCell n;
 	fungeVector pos, delta;
 
-	n     = StackPop(ip->stack);
-	pos   = StackPopVector(ip->stack);
-	delta = StackPopVector(ip->stack);
+	n     = stack_pop(ip->stack);
+	pos   = stack_pop_vector(ip->stack);
+	delta = stack_pop_vector(ip->stack);
 	pos.x += ip->storageOffset.x;
 	pos.y += ip->storageOffset.y;
 
 	if (n <= 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
 	while (n--) {
-		FungeSpaceSet(StackPop(ip->stack), &pos);
+		fungespace_set(stack_pop(ip->stack), &pos);
 		pos.x += delta.x;
 		pos.y += delta.y;
 	}
@@ -74,7 +74,7 @@ static void FingerJSTRpopN(instructionPointer * ip)
 
 bool FingerJSTRload(instructionPointer * ip)
 {
-	ManagerAddOpcode(JSTR,  'G', pushN)
-	ManagerAddOpcode(JSTR,  'P', popN)
+	manager_add_opcode(JSTR,  'G', pushN)
+	manager_add_opcode(JSTR,  'P', popN)
 	return true;
 }

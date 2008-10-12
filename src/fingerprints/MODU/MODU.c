@@ -36,24 +36,24 @@ static inline fungeCell floordiv(fungeCell x, fungeCell y)
 static void FingerMODUsignedResult(instructionPointer * ip)
 {
 	fungeCell x, y;
-	y = StackPop(ip->stack);
-	x = StackPop(ip->stack);
+	y = stack_pop(ip->stack);
+	x = stack_pop(ip->stack);
 	if (y) {
-		StackPush(ip->stack, x - floordiv(x, y) * y);
+		stack_push(ip->stack, x - floordiv(x, y) * y);
 	} else {
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	}
 }
 
 static void FingerMODUunsignedResult(instructionPointer * ip)
 {
 	fungeCell x, y;
-	y = StackPop(ip->stack);
-	x = StackPop(ip->stack);
+	y = stack_pop(ip->stack);
+	x = stack_pop(ip->stack);
 	if (y) {
-		StackPush(ip->stack, ABS(x % y));
+		stack_push(ip->stack, ABS(x % y));
 	} else {
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	}
 }
 
@@ -61,21 +61,21 @@ static void FingerMODUunsignedResult(instructionPointer * ip)
 static void FingerMODUremainder(instructionPointer * ip)
 {
 	fungeCell x, y;
-	y = StackPop(ip->stack);
-	x = StackPop(ip->stack);
+	y = stack_pop(ip->stack);
+	x = stack_pop(ip->stack);
 	if (y) {
 		// Well that's easy, this *is* C.
-		StackPush(ip->stack, x % y);
+		stack_push(ip->stack, x % y);
 	} else {
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	}
 }
 
 
 bool FingerMODUload(instructionPointer * ip)
 {
-	ManagerAddOpcode(MODU,  'M', signedResult)
-	ManagerAddOpcode(MODU,  'R', remainder)
-	ManagerAddOpcode(MODU,  'U', unsignedResult)
+	manager_add_opcode(MODU,  'M', signedResult)
+	manager_add_opcode(MODU,  'R', remainder)
+	manager_add_opcode(MODU,  'U', unsignedResult)
 	return true;
 }

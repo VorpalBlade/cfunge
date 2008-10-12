@@ -31,32 +31,32 @@
 static void FingerORTHbitAnd(instructionPointer * ip)
 {
 	fungeCell x, y;
-	x = StackPop(ip->stack);
-	y = StackPop(ip->stack);
-	StackPush(ip->stack, x & y);
+	x = stack_pop(ip->stack);
+	y = stack_pop(ip->stack);
+	stack_push(ip->stack, x & y);
 }
 
 static void FingerORTHbitOr(instructionPointer * ip)
 {
 	fungeCell x, y;
-	x = StackPop(ip->stack);
-	y = StackPop(ip->stack);
-	StackPush(ip->stack, x | y);
+	x = stack_pop(ip->stack);
+	y = stack_pop(ip->stack);
+	stack_push(ip->stack, x | y);
 }
 
 static void FingerORTHbitXor(instructionPointer * ip)
 {
 	fungeCell x, y;
-	x = StackPop(ip->stack);
-	y = StackPop(ip->stack);
-	StackPush(ip->stack, x ^ y);
+	x = stack_pop(ip->stack);
+	y = stack_pop(ip->stack);
+	stack_push(ip->stack, x ^ y);
 }
 
 // ortho get
 static void FingerORTHget(instructionPointer * ip)
 {
-	fungeVector v = StackPopVector(ip->stack);
-	StackPush(ip->stack, FungeSpaceGet(VectorCreateRef(v.y, v.x)));
+	fungeVector v = stack_pop_vector(ip->stack);
+	stack_push(ip->stack, fungespace_get(vector_create_ref(v.y, v.x)));
 }
 
 // ortho put
@@ -65,64 +65,64 @@ static void FingerORTHput(instructionPointer * ip)
 	fungeVector v;
 	fungeCell c;
 
-	v = StackPopVector(ip->stack);
-	c = StackPop(ip->stack);
+	v = stack_pop_vector(ip->stack);
+	c = stack_pop(ip->stack);
 
-	FungeSpaceSet(c, VectorCreateRef(v.y, v.x));
+	fungespace_set(c, vector_create_ref(v.y, v.x));
 }
 
 // output string
 static void FingerORTHoutputString(instructionPointer * ip)
 {
-	char * restrict str = StackPopString(ip->stack);
+	char * restrict str = stack_pop_string(ip->stack);
 	// puts add newline, we therefore do fputs on stdout
 	fputs(str, stdout);
-	StackFreeString(str);
+	stack_freeString(str);
 }
 
 // change dx
 static void FingerORTHchangeDx(instructionPointer * ip)
 {
-	ip->delta.x = StackPop(ip->stack);
+	ip->delta.x = stack_pop(ip->stack);
 }
 
 // change dy
 static void FingerORTHchangeDy(instructionPointer * ip)
 {
-	ip->delta.y = StackPop(ip->stack);
+	ip->delta.y = stack_pop(ip->stack);
 }
 
 // change x
 static void FingerORTHchangeX(instructionPointer * ip)
 {
-	ipSetPosition(ip, VectorCreateRef(StackPop(ip->stack), ip->position.y));
+	ip_set_position(ip, vector_create_ref(stack_pop(ip->stack), ip->position.y));
 }
 
 // change y
 static void FingerORTHchangeY(instructionPointer * ip)
 {
-	ipSetPosition(ip, VectorCreateRef(ip->position.x, StackPop(ip->stack)));
+	ip_set_position(ip, vector_create_ref(ip->position.x, stack_pop(ip->stack)));
 }
 
 // ramp if zero
 static void FingerORTHrampIfZero(instructionPointer * ip)
 {
-	if (!StackPop(ip->stack))
-		ipForward(ip, 1);
+	if (!stack_pop(ip->stack))
+		ip_forward(ip, 1);
 }
 
 bool FingerORTHload(instructionPointer * ip)
 {
-	ManagerAddOpcode(ORTH,  'A', bitAnd)
-	ManagerAddOpcode(ORTH,  'O', bitOr)
-	ManagerAddOpcode(ORTH,  'E', bitXor)
-	ManagerAddOpcode(ORTH,  'G', get)
-	ManagerAddOpcode(ORTH,  'P', put)
-	ManagerAddOpcode(ORTH,  'S', outputString)
-	ManagerAddOpcode(ORTH,  'V', changeDx)
-	ManagerAddOpcode(ORTH,  'W', changeDy)
-	ManagerAddOpcode(ORTH,  'X', changeX)
-	ManagerAddOpcode(ORTH,  'Y', changeY)
-	ManagerAddOpcode(ORTH,  'Z', rampIfZero)
+	manager_add_opcode(ORTH,  'A', bitAnd)
+	manager_add_opcode(ORTH,  'O', bitOr)
+	manager_add_opcode(ORTH,  'E', bitXor)
+	manager_add_opcode(ORTH,  'G', get)
+	manager_add_opcode(ORTH,  'P', put)
+	manager_add_opcode(ORTH,  'S', outputString)
+	manager_add_opcode(ORTH,  'V', changeDx)
+	manager_add_opcode(ORTH,  'W', changeDy)
+	manager_add_opcode(ORTH,  'X', changeX)
+	manager_add_opcode(ORTH,  'Y', changeY)
+	manager_add_opcode(ORTH,  'Z', rampIfZero)
 	return true;
 }

@@ -66,83 +66,83 @@
 /// A - and
 static void FingerFIXPand(instructionPointer * ip)
 {
-	StackPush(ip->stack, StackPop(ip->stack) & StackPop(ip->stack));
+	stack_push(ip->stack, stack_pop(ip->stack) & stack_pop(ip->stack));
 }
 
 /// B - acos
 static void FingerFIXPacos(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * acosl((long double)n / 10000) * FUNGE_180_PI);
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// C - cos
 static void FingerFIXPcos(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * cosl(((long double)n / 10000) * FUNGE_PI_180));
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 
 }
 
 /// D - rand
 static void FingerFIXPrand(instructionPointer * ip)
 {
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 
 	// No one said this had to be uniform, did they?
 	if (n == 0)
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	else
-		StackPush(ip->stack, random() % n);
+		stack_push(ip->stack, random() % n);
 }
 
 /// I - sin
 static void FingerFIXPsin(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * sinl(((long double)n / 10000) * FUNGE_PI_180));
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// J - asin
 static void FingerFIXPasin(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * asinl((long double)n / 10000) * FUNGE_180_PI);
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// N - neg
 static void FingerFIXPneg(instructionPointer * ip)
 {
-	StackPush(ip->stack, -StackPop(ip->stack));
+	stack_push(ip->stack, -stack_pop(ip->stack));
 }
 
 /// O - or
 static void FingerFIXPor(instructionPointer * ip)
 {
-	StackPush(ip->stack, StackPop(ip->stack) | StackPop(ip->stack));
+	stack_push(ip->stack, stack_pop(ip->stack) | stack_pop(ip->stack));
 }
 
 /// P - mulpi
 static void FingerFIXPmulpi(instructionPointer * ip)
 {
-	StackPush(ip->stack, (fungeCell)(M_PI * StackPop(ip->stack)));
+	stack_push(ip->stack, (fungeCell)(M_PI * stack_pop(ip->stack)));
 }
 
 /// Q - sqrt
 static void FingerFIXPsqrt(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(sqrtl((long double)n));
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// R - pow
@@ -150,66 +150,66 @@ static void FingerFIXPpow(instructionPointer * ip)
 {
 	long double d;
 	fungeCell a, b;
-	b = StackPop(ip->stack);
-	a = StackPop(ip->stack);
+	b = stack_pop(ip->stack);
+	a = stack_pop(ip->stack);
 	d = roundl(powl((long double)a, (long double)b));
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// S - signbit
 static void FingerFIXPsignbit(instructionPointer * ip)
 {
-	fungeCell n = StackPop(ip->stack);
-	StackPush(ip->stack, n > 0 ? 1 : (n < 0 ? -1 : 0));
+	fungeCell n = stack_pop(ip->stack);
+	stack_push(ip->stack, n > 0 ? 1 : (n < 0 ? -1 : 0));
 }
 
 /// T - tan
 static void FingerFIXPtan(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * tanl(((long double)n / 10000) * FUNGE_PI_180));
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// U - atan
 static void FingerFIXPatan(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	d = roundl(10000 * atanl((long double)n / 10000)  * FUNGE_180_PI);
-	StackPush(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (fungeCell)d);
 }
 
 /// V - abs
 static void FingerFIXPabs(instructionPointer * ip)
 {
-	StackPush(ip->stack, ABS(StackPop(ip->stack)));
+	stack_push(ip->stack, ABS(stack_pop(ip->stack)));
 }
 
 /// X - xor
 static void FingerFIXPxor(instructionPointer * ip)
 {
-	StackPush(ip->stack, StackPop(ip->stack) ^ StackPop(ip->stack));
+	stack_push(ip->stack, stack_pop(ip->stack) ^ stack_pop(ip->stack));
 }
 
 bool FingerFIXPload(instructionPointer * ip)
 {
-	ManagerAddOpcode(FIXP, 'A', and)
-	ManagerAddOpcode(FIXP, 'B', acos)
-	ManagerAddOpcode(FIXP, 'C', cos)
-	ManagerAddOpcode(FIXP, 'D', rand)
-	ManagerAddOpcode(FIXP, 'I', sin)
-	ManagerAddOpcode(FIXP, 'J', asin)
-	ManagerAddOpcode(FIXP, 'N', neg)
-	ManagerAddOpcode(FIXP, 'O', or)
-	ManagerAddOpcode(FIXP, 'P', mulpi)
-	ManagerAddOpcode(FIXP, 'Q', sqrt)
-	ManagerAddOpcode(FIXP, 'R', pow)
-	ManagerAddOpcode(FIXP, 'S', signbit)
-	ManagerAddOpcode(FIXP, 'T', tan)
-	ManagerAddOpcode(FIXP, 'U', atan)
-	ManagerAddOpcode(FIXP, 'V', abs)
-	ManagerAddOpcode(FIXP, 'X', xor)
+	manager_add_opcode(FIXP, 'A', and)
+	manager_add_opcode(FIXP, 'B', acos)
+	manager_add_opcode(FIXP, 'C', cos)
+	manager_add_opcode(FIXP, 'D', rand)
+	manager_add_opcode(FIXP, 'I', sin)
+	manager_add_opcode(FIXP, 'J', asin)
+	manager_add_opcode(FIXP, 'N', neg)
+	manager_add_opcode(FIXP, 'O', or)
+	manager_add_opcode(FIXP, 'P', mulpi)
+	manager_add_opcode(FIXP, 'Q', sqrt)
+	manager_add_opcode(FIXP, 'R', pow)
+	manager_add_opcode(FIXP, 'S', signbit)
+	manager_add_opcode(FIXP, 'T', tan)
+	manager_add_opcode(FIXP, 'U', atan)
+	manager_add_opcode(FIXP, 'V', abs)
+	manager_add_opcode(FIXP, 'X', xor)
 	return true;
 }

@@ -40,45 +40,45 @@ typedef union u_floatint {
 static void FingerFPSPadd(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = StackPop(ip->stack);
-	b.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
+	b.i = stack_pop(ip->stack);
 	b.f += a.f;
-	StackPush(ip->stack, b.i);
+	stack_push(ip->stack, b.i);
 }
 
 static void FingerFPSPsub(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = StackPop(ip->stack);
-	b.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
+	b.i = stack_pop(ip->stack);
 	b.f -= a.f;
-	StackPush(ip->stack, b.i);
+	stack_push(ip->stack, b.i);
 }
 
 static void FingerFPSPmul(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = StackPop(ip->stack);
-	b.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
+	b.i = stack_pop(ip->stack);
 	b.f *= a.f;
-	StackPush(ip->stack, b.i);
+	stack_push(ip->stack, b.i);
 }
 
 static void FingerFPSPdiv(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = StackPop(ip->stack);
-	b.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
+	b.i = stack_pop(ip->stack);
 	b.f /= a.f;
-	StackPush(ip->stack, b.i);
+	stack_push(ip->stack, b.i);
 }
 
 static void FingerFPSPsqrt(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = sqrtf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 
@@ -87,49 +87,49 @@ static void FingerFPSPsqrt(instructionPointer * ip)
 static void FingerFPSPsin(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = sinf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPcos(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = cosf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPtan(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = tanf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPasin(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = asinf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPacos(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = acosf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPatan(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = atanf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 
@@ -138,25 +138,25 @@ static void FingerFPSPatan(instructionPointer * ip)
 static void FingerFPSPln(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = logf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPlog10(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = log10f(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPexp(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = expf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 
@@ -165,26 +165,26 @@ static void FingerFPSPexp(instructionPointer * ip)
 static void FingerFPSPneg(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f *= -1;
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPabs(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	a.f = fabsf(a.f);
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPpow(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = StackPop(ip->stack);
-	b.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
+	b.i = stack_pop(ip->stack);
 	b.f = powf(b.f, a.f);
-	StackPush(ip->stack, b.i);
+	stack_push(ip->stack, b.i);
 }
 
 
@@ -194,57 +194,57 @@ static void FingerFPSPfromint(instructionPointer * ip)
 {
 	floatint a;
 	fungeCell i;
-	i = StackPop(ip->stack);
+	i = stack_pop(ip->stack);
 	a.f = (float)i;
-	StackPush(ip->stack, a.i);
+	stack_push(ip->stack, a.i);
 }
 
 static void FingerFPSPtoint(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
-	StackPush(ip->stack, (fungeCell)a.f);
+	a.i = stack_pop(ip->stack);
+	stack_push(ip->stack, (fungeCell)a.f);
 }
 
 static void FingerFPSPfromascii(instructionPointer * ip)
 {
 	char * restrict str;
 	floatint a;
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	a.f = strtof(str, NULL);
-	StackPush(ip->stack, a.i);
-	StackFreeString(str);
+	stack_push(ip->stack, a.i);
+	stack_freeString(str);
 }
 
 static void FingerFPSPprint(instructionPointer * ip)
 {
 	floatint a;
-	a.i = StackPop(ip->stack);
+	a.i = stack_pop(ip->stack);
 	printf("%f ", a.f);
 }
 
 bool FingerFPSPload(instructionPointer * ip)
 {
-	ManagerAddOpcode(FPSP,  'A', add)
-	ManagerAddOpcode(FPSP,  'B', sin)
-	ManagerAddOpcode(FPSP,  'C', cos)
-	ManagerAddOpcode(FPSP,  'D', div)
-	ManagerAddOpcode(FPSP,  'E', asin)
-	ManagerAddOpcode(FPSP,  'F', fromint)
-	ManagerAddOpcode(FPSP,  'G', atan)
-	ManagerAddOpcode(FPSP,  'H', acos)
-	ManagerAddOpcode(FPSP,  'I', toint)
-	ManagerAddOpcode(FPSP,  'K', ln)
-	ManagerAddOpcode(FPSP,  'L', log10)
-	ManagerAddOpcode(FPSP,  'M', mul)
-	ManagerAddOpcode(FPSP,  'N', neg)
-	ManagerAddOpcode(FPSP,  'P', print)
-	ManagerAddOpcode(FPSP,  'Q', sqrt)
-	ManagerAddOpcode(FPSP,  'R', fromascii)
-	ManagerAddOpcode(FPSP,  'S', sub)
-	ManagerAddOpcode(FPSP,  'T', tan)
-	ManagerAddOpcode(FPSP,  'V', abs)
-	ManagerAddOpcode(FPSP,  'X', exp)
-	ManagerAddOpcode(FPSP,  'Y', pow)
+	manager_add_opcode(FPSP,  'A', add)
+	manager_add_opcode(FPSP,  'B', sin)
+	manager_add_opcode(FPSP,  'C', cos)
+	manager_add_opcode(FPSP,  'D', div)
+	manager_add_opcode(FPSP,  'E', asin)
+	manager_add_opcode(FPSP,  'F', fromint)
+	manager_add_opcode(FPSP,  'G', atan)
+	manager_add_opcode(FPSP,  'H', acos)
+	manager_add_opcode(FPSP,  'I', toint)
+	manager_add_opcode(FPSP,  'K', ln)
+	manager_add_opcode(FPSP,  'L', log10)
+	manager_add_opcode(FPSP,  'M', mul)
+	manager_add_opcode(FPSP,  'N', neg)
+	manager_add_opcode(FPSP,  'P', print)
+	manager_add_opcode(FPSP,  'Q', sqrt)
+	manager_add_opcode(FPSP,  'R', fromascii)
+	manager_add_opcode(FPSP,  'S', sub)
+	manager_add_opcode(FPSP,  'T', tan)
+	manager_add_opcode(FPSP,  'V', abs)
+	manager_add_opcode(FPSP,  'X', exp)
+	manager_add_opcode(FPSP,  'Y', pow)
 	return true;
 }

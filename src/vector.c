@@ -22,7 +22,7 @@
 #include "vector.h"
 #include <stdint.h>
 
-FUNGE_ATTR_FAST inline bool VectorIsCardinal(const fungeVector * v)
+FUNGE_ATTR_FAST inline bool vector_is_cardinal(const fungeVector * v)
 {
 	if ((ABS(v->x) > 1) || (ABS(v->y) > 1))
 		return false;

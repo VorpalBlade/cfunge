@@ -27,7 +27,7 @@
 /// D - Push depth of stack to tos
 static void FingerFRTHstackSize(instructionPointer * ip)
 {
-	StackPush(ip->stack, (fungeCell)ip->stack->top);
+	stack_push(ip->stack, (fungeCell)ip->stack->top);
 }
 
 /// L - Forth Roll command
@@ -36,28 +36,28 @@ static void FingerFRTHforthRoll(instructionPointer * ip)
 	// FIXME: Move most of this functionality into stack.c
 	fungeCell u;
 	size_t s;
-	u = StackPop(ip->stack);
+	u = stack_pop(ip->stack);
 	s = ip->stack->top;
 
 	if (u >= (fungeCell)s) {
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	} else {
 		fungeCell * elems;
 		fungeCell xu;
 
 		elems = cf_malloc_noptr(sizeof(fungeCell) * ip->stack->top);
 		if (!elems) {
-			ipReverse(ip);
+			ip_reverse(ip);
 			return;
 		}
 		memcpy(elems, ip->stack->entries, sizeof(fungeCell) * ip->stack->top);
 		xu = elems[s - (u+1)];
 
-		StackPopNDiscard(ip->stack, u + 1);
+		stack_pop_n_discard(ip->stack, u + 1);
 		for (size_t i = s - u; i < s; i++) {
-			StackPush(ip->stack, elems[i]);
+			stack_push(ip->stack, elems[i]);
 		}
-		StackPush(ip->stack, xu);
+		stack_push(ip->stack, xu);
 		cf_free(elems);
 	}
 }
@@ -66,12 +66,12 @@ static void FingerFRTHforthRoll(instructionPointer * ip)
 static void FingerFRTHforthOver(instructionPointer * ip)
 {
 	fungeCell a, b;
-	b = StackPop(ip->stack);
-	a = StackPop(ip->stack);
+	b = stack_pop(ip->stack);
+	a = stack_pop(ip->stack);
 
-	StackPush(ip->stack, a);
-	StackPush(ip->stack, b);
-	StackPush(ip->stack, a);
+	stack_push(ip->stack, a);
+	stack_push(ip->stack, b);
+	stack_push(ip->stack, a);
 }
 
 /// P - Forth Pick command
@@ -79,14 +79,14 @@ static void FingerFRTHforthPick(instructionPointer * ip)
 {
 	fungeCell u;
 	fungeCell s;
-	u = StackPop(ip->stack);
+	u = stack_pop(ip->stack);
 	s = (fungeCell)ip->stack->top;
 
 	if (u >= s) {
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	} else {
-		fungeCell i = StackGetIndex(ip->stack, s - u);
-		StackPush(ip->stack, i);
+		fungeCell i = stack_get_index(ip->stack, s - u);
+		stack_push(ip->stack, i);
 	}
 }
 
@@ -94,21 +94,21 @@ static void FingerFRTHforthPick(instructionPointer * ip)
 static void FingerFRTHforthRot(instructionPointer * ip)
 {
 	fungeCell a, b, c;
-	c = StackPop(ip->stack);
-	b = StackPop(ip->stack);
-	a = StackPop(ip->stack);
+	c = stack_pop(ip->stack);
+	b = stack_pop(ip->stack);
+	a = stack_pop(ip->stack);
 
-	StackPush(ip->stack, b);
-	StackPush(ip->stack, c);
-	StackPush(ip->stack, a);
+	stack_push(ip->stack, b);
+	stack_push(ip->stack, c);
+	stack_push(ip->stack, a);
 }
 
 bool FingerFRTHload(instructionPointer * ip)
 {
-	ManagerAddOpcode(FRTH,  'D', stackSize)
-	ManagerAddOpcode(FRTH,  'L', forthRoll)
-	ManagerAddOpcode(FRTH,  'O', forthOver)
-	ManagerAddOpcode(FRTH,  'P', forthPick)
-	ManagerAddOpcode(FRTH,  'R', forthRot)
+	manager_add_opcode(FRTH,  'D', stackSize)
+	manager_add_opcode(FRTH,  'L', forthRoll)
+	manager_add_opcode(FRTH,  'O', forthOver)
+	manager_add_opcode(FRTH,  'P', forthPick)
+	manager_add_opcode(FRTH,  'R', forthRot)
 	return true;
 }

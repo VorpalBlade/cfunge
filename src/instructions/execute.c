@@ -38,8 +38,8 @@ FUNGE_ATTR_FAST void RunSystemExecute(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 
-	if (SettingSandbox) {
-		ipReverse(ip);
+	if (setting_enable_sandbox) {
+		ip_reverse(ip);
 		return;
 	}
 
@@ -47,23 +47,23 @@ FUNGE_ATTR_FAST void RunSystemExecute(instructionPointer * restrict ip)
 		char * restrict command;
 		int retval;
 		// Pop stuff.
-		command = StackPopString(ip->stack);
+		command = stack_pop_string(ip->stack);
 
 		// Sanity test!
 		if (*command == '\0') {
 #ifdef DISABLE_GC
 			cf_free(command);
 #endif
-			StackPush(ip->stack, FUNGE_NOCOMMAND);
+			stack_push(ip->stack, FUNGE_NOCOMMAND);
 			return;
 		}
 
 		retval = system(command);
 		// POSIX says we may only use WEXITSTATUS if WIFEXITED returns true...
 		if (WIFEXITED(retval)) {
-			StackPush(ip->stack, (fungeCell)WEXITSTATUS(retval));
+			stack_push(ip->stack, (fungeCell)WEXITSTATUS(retval));
 		} else {
-			StackPush(ip->stack, (fungeCell)retval);
+			stack_push(ip->stack, (fungeCell)retval);
 		}
 #ifdef DISABLE_GC
 		cf_free(command);

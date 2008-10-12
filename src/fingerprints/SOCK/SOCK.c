@@ -113,7 +113,7 @@ FungeSocketHandle* FingerSOCKLookupHandle(fungeCell h)
 
 
 static inline int popFam(instructionPointer * ip) {
-	switch (StackPop(ip->stack)) {
+	switch (stack_pop(ip->stack)) {
 		case 1:  return AF_UNIX;
 		case 2:  return AF_INET;
 		default: return AF_UNSPEC;
@@ -124,7 +124,7 @@ static inline int popFam(instructionPointer * ip) {
 /// A - Accept a connection
 static void FingerSOCKaccept(instructionPointer * ip)
 {
-	fungeCell s = StackPop(ip->stack);
+	fungeCell s = stack_pop(ip->stack);
 
 	if (!ValidHandle(s))
 		goto error;
@@ -146,22 +146,22 @@ static void FingerSOCKaccept(instructionPointer * ip)
 		sockets[i]->fd = as;
 		sockets[i]->family = sockets[s]->family;
 
-		StackPush(ip->stack, addr.in.sin_port);
-		StackPush(ip->stack, addr.in.sin_addr.s_addr);
-		StackPush(ip->stack, i);
+		stack_push(ip->stack, addr.in.sin_port);
+		stack_push(ip->stack, addr.in.sin_addr.s_addr);
+		stack_push(ip->stack, i);
 	}
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// B - Bind a socket
 static void FingerSOCKbind(instructionPointer * ip)
 {
-	uint32_t  address = (uint32_t)StackPop(ip->stack);
-	uint16_t  port    = (uint16_t)StackPop(ip->stack);
+	uint32_t  address = (uint32_t)stack_pop(ip->stack);
+	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
 	int       fam     = popFam(ip);
-	fungeCell s       = StackPop(ip->stack);
+	fungeCell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
 	if (!ValidHandle(s))
@@ -184,16 +184,16 @@ static void FingerSOCKbind(instructionPointer * ip)
 	}
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// C - Open a connection
 static void FingerSOCKopen(instructionPointer * ip)
 {
-	uint32_t  address = (uint32_t)StackPop(ip->stack);
-	uint16_t  port    = (uint16_t)StackPop(ip->stack);
+	uint32_t  address = (uint32_t)stack_pop(ip->stack);
+	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
 	int       fam     = popFam(ip);
-	fungeCell s       = StackPop(ip->stack);
+	fungeCell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
 	if (!ValidHandle(s))
@@ -216,7 +216,7 @@ static void FingerSOCKopen(instructionPointer * ip)
 	}
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// I - Convert an ASCII IP address to a 32 bit address
@@ -225,20 +225,20 @@ static void FingerSOCKfromascii(instructionPointer * ip)
 	char * restrict str;
 	struct in_addr addr;
 
-	str = StackPopString(ip->stack);
+	str = stack_pop_string(ip->stack);
 	if (inet_pton(AF_INET, str, &addr) != 1) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
-		StackPush(ip->stack, addr.s_addr);
+		stack_push(ip->stack, addr.s_addr);
 	}
-	StackFreeString(str);
+	stack_freeString(str);
 
 }
 
 /// K - Kill a connection
 static void FingerSOCKkill(instructionPointer * ip)
 {
-	fungeCell s       = StackPop(ip->stack);
+	fungeCell s       = stack_pop(ip->stack);
 	if (!ValidHandle(s))
 		goto invalid;
 	shutdown(sockets[s]->fd, SHUT_RDWR);
@@ -250,14 +250,14 @@ static void FingerSOCKkill(instructionPointer * ip)
 error:
 	FreeHandle(s);
 invalid:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// L - Set a socket to listening mode (n=backlog size)
 static void FingerSOCKlisten(instructionPointer * ip)
 {
-	fungeCell s = StackPop(ip->stack);
-	int n = StackPop(ip->stack);
+	fungeCell s = stack_pop(ip->stack);
+	int n = stack_pop(ip->stack);
 
 	if (!ValidHandle(s))
 		goto error;
@@ -266,7 +266,7 @@ static void FingerSOCKlisten(instructionPointer * ip)
 		goto error;
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// O - Set socket option
@@ -275,10 +275,10 @@ static void FingerSOCKsetopt(instructionPointer * ip)
 	int val;
 	int o;
 
-	fungeCell s = StackPop(ip->stack);
-	fungeCell t = StackPop(ip->stack);
+	fungeCell s = stack_pop(ip->stack);
+	fungeCell t = stack_pop(ip->stack);
 
-	val = StackPop(ip->stack);
+	val = stack_pop(ip->stack);
 
 	if (!ValidHandle(s))
 		goto error;
@@ -301,7 +301,7 @@ static void FingerSOCKsetopt(instructionPointer * ip)
 	}
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// R - Receive from a socket
@@ -309,10 +309,10 @@ static void FingerSOCKreceive(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t got;
-	fungeCell s   = StackPop(ip->stack);
-	size_t    len = StackPop(ip->stack);
+	fungeCell s   = stack_pop(ip->stack);
+	size_t    len = stack_pop(ip->stack);
 
-	fungeVector v = StackPopVector(ip->stack);
+	fungeVector v = stack_pop_vector(ip->stack);
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
@@ -323,17 +323,17 @@ static void FingerSOCKreceive(instructionPointer * ip)
 
 	got = recv(sockets[s]->fd, buffer, len, 0);
 
-	StackPush(ip->stack, got);
+	stack_push(ip->stack, got);
 
 	if (got == -1)
 		goto error;
 
 	for (ssize_t i = 0; i < got; ++i)
-		FungeSpaceSet(buffer[i], VectorCreateRef(v.x+i, v.y));
+		fungespace_set(buffer[i], vector_create_ref(v.x+i, v.y));
 
 	goto end;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 end:
 	if (buffer)
 		cf_free(buffer);
@@ -345,12 +345,12 @@ static void FingerSOCKcreate(instructionPointer * ip)
 	int type;
 	int fam;
 	// Protocol.
-	StackPopDiscard(ip->stack);
+	stack_pop_discard(ip->stack);
 
-	switch (StackPop(ip->stack)) {
+	switch (stack_pop(ip->stack)) {
 		case 1: type = SOCK_DGRAM ; break;
 		case 2: type = SOCK_STREAM ; break;
-		default: ipReverse(ip); return;
+		default: ip_reverse(ip); return;
 	}
 
 	fam = popFam(ip);
@@ -370,11 +370,11 @@ static void FingerSOCKcreate(instructionPointer * ip)
 
 		sockets[h]->family = fam;
 
-		StackPush(ip->stack, h);
+		stack_push(ip->stack, h);
 	}
 	return;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// W - Write to a socket
@@ -382,10 +382,10 @@ static void FingerSOCKwrite(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t sent;
-	fungeCell s   = StackPop(ip->stack);
-	size_t    len = StackPop(ip->stack);
+	fungeCell s   = stack_pop(ip->stack);
+	size_t    len = stack_pop(ip->stack);
 
-	fungeVector v = StackPopVector(ip->stack);
+	fungeVector v = stack_pop_vector(ip->stack);
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
@@ -395,18 +395,18 @@ static void FingerSOCKwrite(instructionPointer * ip)
 	buffer = cf_malloc_noptr(len * sizeof(char));
 
 	for (size_t i = 0; i < len; ++i)
-		buffer[i] = FungeSpaceGet(VectorCreateRef(v.x+i, v.y));
+		buffer[i] = fungespace_get(vector_create_ref(v.x+i, v.y));
 
 	sent = send(sockets[s]->fd, buffer, len, 0);
 
-	StackPush(ip->stack, sent);
+	stack_push(ip->stack, sent);
 
 	if (sent == -1)
 		goto error;
 
 	goto end;
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 end:
 	if (buffer)
 		cf_free(buffer);
@@ -427,15 +427,15 @@ bool FingerSOCKload(instructionPointer * ip)
 		if (!InitHandleList())
 			return false;
 
-	ManagerAddOpcode(SOCK,  'A', accept)
-	ManagerAddOpcode(SOCK,  'B', bind)
-	ManagerAddOpcode(SOCK,  'C', open)
-	ManagerAddOpcode(SOCK,  'I', fromascii)
-	ManagerAddOpcode(SOCK,  'K', kill)
-	ManagerAddOpcode(SOCK,  'L', listen)
-	ManagerAddOpcode(SOCK,  'O', setopt)
-	ManagerAddOpcode(SOCK,  'R', receive)
-	ManagerAddOpcode(SOCK,  'S', create)
-	ManagerAddOpcode(SOCK,  'W', write)
+	manager_add_opcode(SOCK,  'A', accept)
+	manager_add_opcode(SOCK,  'B', bind)
+	manager_add_opcode(SOCK,  'C', open)
+	manager_add_opcode(SOCK,  'I', fromascii)
+	manager_add_opcode(SOCK,  'K', kill)
+	manager_add_opcode(SOCK,  'L', listen)
+	manager_add_opcode(SOCK,  'O', setopt)
+	manager_add_opcode(SOCK,  'R', receive)
+	manager_add_opcode(SOCK,  'S', create)
+	manager_add_opcode(SOCK,  'W', write)
 	return true;
 }

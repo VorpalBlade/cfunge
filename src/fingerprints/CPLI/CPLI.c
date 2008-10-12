@@ -32,29 +32,29 @@
 static void FingerCPLIadd(instructionPointer * ip)
 {
 	fungeCell ar, ai, br, bi;
-	bi = StackPop(ip->stack);
-	br = StackPop(ip->stack);
-	ai = StackPop(ip->stack);
-	ar = StackPop(ip->stack);
-	StackPush(ip->stack, ar + br);
-	StackPush(ip->stack, ai + bi);
+	bi = stack_pop(ip->stack);
+	br = stack_pop(ip->stack);
+	ai = stack_pop(ip->stack);
+	ar = stack_pop(ip->stack);
+	stack_push(ip->stack, ar + br);
+	stack_push(ip->stack, ai + bi);
 }
 
 /// D - div
 static void FingerCPLIdiv(instructionPointer * ip)
 {
 	fungeCell ar, ai, br, bi, denom;
-	bi = StackPop(ip->stack);
-	br = StackPop(ip->stack);
-	ai = StackPop(ip->stack);
-	ar = StackPop(ip->stack);
+	bi = stack_pop(ip->stack);
+	br = stack_pop(ip->stack);
+	ai = stack_pop(ip->stack);
+	ar = stack_pop(ip->stack);
 	denom = bi * bi + br * br;
 	if (denom != 0) {
-		StackPush(ip->stack, (ai*bi + ar*br) / denom);
-		StackPush(ip->stack, (ai*br - ar*bi) / denom);
+		stack_push(ip->stack, (ai*bi + ar*br) / denom);
+		stack_push(ip->stack, (ai*br - ar*bi) / denom);
 	} else {
-		StackPush(ip->stack, 0);
-		StackPush(ip->stack, 0);
+		stack_push(ip->stack, 0);
+		stack_push(ip->stack, 0);
 	}
 }
 
@@ -62,20 +62,20 @@ static void FingerCPLIdiv(instructionPointer * ip)
 static void FingerCPLImul(instructionPointer * ip)
 {
 	fungeCell ar, ai, br, bi;
-	bi = StackPop(ip->stack);
-	br = StackPop(ip->stack);
-	ai = StackPop(ip->stack);
-	ar = StackPop(ip->stack);
-	StackPush(ip->stack, ar*br - ai*bi);
-	StackPush(ip->stack, ar*bi + ai*br);
+	bi = stack_pop(ip->stack);
+	br = stack_pop(ip->stack);
+	ai = stack_pop(ip->stack);
+	ar = stack_pop(ip->stack);
+	stack_push(ip->stack, ar*br - ai*bi);
+	stack_push(ip->stack, ar*bi + ai*br);
 }
 
 /// O - out
 static void FingerCPLIout(instructionPointer * ip)
 {
 	fungeCell r, i;
-	i = StackPop(ip->stack);
-	r = StackPop(ip->stack);
+	i = stack_pop(ip->stack);
+	r = stack_pop(ip->stack);
 	printf("%" FUNGECELLPRI, r);
 	if (i > 0)
 		cf_putchar_maybe_locked('+');
@@ -86,12 +86,12 @@ static void FingerCPLIout(instructionPointer * ip)
 static void FingerCPLIsub(instructionPointer * ip)
 {
 	fungeCell ar, ai, br, bi;
-	bi = StackPop(ip->stack);
-	br = StackPop(ip->stack);
-	ai = StackPop(ip->stack);
-	ar = StackPop(ip->stack);
-	StackPush(ip->stack, ar - br);
-	StackPush(ip->stack, ai - bi);
+	bi = stack_pop(ip->stack);
+	br = stack_pop(ip->stack);
+	ai = stack_pop(ip->stack);
+	ar = stack_pop(ip->stack);
+	stack_push(ip->stack, ar - br);
+	stack_push(ip->stack, ai - bi);
 }
 
 /// V - abs
@@ -99,19 +99,19 @@ static void FingerCPLIabs(instructionPointer * ip)
 {
 	fungeCell r, i;
 	long double tmp;
-	i = StackPop(ip->stack);
-	r = StackPop(ip->stack);
+	i = stack_pop(ip->stack);
+	r = stack_pop(ip->stack);
 	tmp = sqrtl((long double)(r * r + i * i));
-	StackPush(ip->stack, (fungeCell)tmp);
+	stack_push(ip->stack, (fungeCell)tmp);
 }
 
 bool FingerCPLIload(instructionPointer * ip)
 {
-	ManagerAddOpcode(CPLI, 'A', add)
-	ManagerAddOpcode(CPLI, 'D', div)
-	ManagerAddOpcode(CPLI, 'M', mul)
-	ManagerAddOpcode(CPLI, 'O', out)
-	ManagerAddOpcode(CPLI, 'S', sub)
-	ManagerAddOpcode(CPLI, 'V', abs)
+	manager_add_opcode(CPLI, 'A', add)
+	manager_add_opcode(CPLI, 'D', div)
+	manager_add_opcode(CPLI, 'M', mul)
+	manager_add_opcode(CPLI, 'O', out)
+	manager_add_opcode(CPLI, 'S', sub)
+	manager_add_opcode(CPLI, 'V', abs)
 	return true;
 }

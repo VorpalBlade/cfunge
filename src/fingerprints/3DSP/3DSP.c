@@ -47,7 +47,7 @@ FUNGE_ATTR_FAST
 static inline float PopFloat(instructionPointer * restrict ip)
 {
 	floatint u;
-	u.i = StackPop(ip->stack);
+	u.i = stack_pop(ip->stack);
 	return u.f;
 }
 
@@ -56,7 +56,7 @@ static inline void PushFloat(instructionPointer * restrict ip, float f)
 {
 	floatint u;
 	u.f = f;
-	StackPush(ip->stack, u.i);
+	stack_push(ip->stack, u.i);
 }
 
 
@@ -106,7 +106,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 		for (fungeCell j = 0; j < 4; ++j) {
 			floatint u;
 			u.f = (float)m[4*j + i];
-			FungeSpaceSetOff(u.i, VectorCreateRef(fV->x+i, fV->y+j), &ip->storageOffset);
+			fungespace_set_offset(u.i, vector_create_ref(fV->x+i, fV->y+j), &ip->storageOffset);
 		}
 	}
 }
@@ -118,7 +118,7 @@ static inline void readMatrix(const instructionPointer * restrict ip,
 	for (fungeCell x = 0; x < 4; ++x) {
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
-			u.i = FungeSpaceGetOff(VectorCreateRef(fV->x+x, fV->y+y), &ip->storageOffset);
+			u.i = fungespace_get_offset(vector_create_ref(fV->x+x, fV->y+y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
 		}
 	}
@@ -249,8 +249,8 @@ static void Finger3DSPmatrixCopy(instructionPointer * ip)
 {
 	fungeVector fs, ft;
 
-	fs = StackPopVector(ip->stack);
-	ft = StackPopVector(ip->stack);
+	fs = stack_pop_vector(ip->stack);
+	ft = stack_pop_vector(ip->stack);
 	// Add in storage offset
 	fs.x += ip->storageOffset.x;
 	fs.y += ip->storageOffset.y;
@@ -260,8 +260,8 @@ static void Finger3DSPmatrixCopy(instructionPointer * ip)
 
 	for (fungeCell x = 0; x < 4; ++x)
 		for (fungeCell y = 0; y < 4; ++y) {
-			FungeSpaceSet(FungeSpaceGet(VectorCreateRef(fs.x+x, fs.y+y)),
-			              VectorCreateRef(ft.x+x, ft.y+y));
+			fungespace_set(fungespace_get(vector_create_ref(fs.x+x, fs.y+y)),
+			              vector_create_ref(ft.x+x, ft.y+y));
 		}
 }
 
@@ -270,11 +270,11 @@ static void Finger3DSPmatrixRotate(instructionPointer * ip)
 {
 	double s, c;
 	double angle = PopFloat(ip);
-	fungeCell axis = StackPop(ip->stack);
-	fungeVector fV = StackPopVector(ip->stack);
+	fungeCell axis = stack_pop(ip->stack);
+	fungeVector fV = stack_pop_vector(ip->stack);
 
 	if (!(axis >= 1 && axis <= 3)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -317,7 +317,7 @@ static void Finger3DSPmatrixScale(instructionPointer * ip)
 	double v[3];
 	fungeVector fV;
 	PopVec(ip, v);
-	fV = StackPopVector(ip->stack);
+	fV = stack_pop_vector(ip->stack);
 	{
 		double matrix[16] = {v[0],   0,   0,   0
 		                    ,   0,v[1],   0,   0
@@ -333,7 +333,7 @@ static void Finger3DSPmatrixTranslate(instructionPointer * ip)
 	double v[3];
 	fungeVector fV;
 	PopVec(ip, v);
-	fV = StackPopVector(ip->stack);
+	fV = stack_pop_vector(ip->stack);
 
 	{
 		double matrix[16] = {   1,   0,   0,   v[0]
@@ -383,7 +383,7 @@ static void Finger3DSPtransform(instructionPointer * ip)
 	double m[16];
 	double r[4];
 
-	fm = StackPopVector(ip->stack);
+	fm = stack_pop_vector(ip->stack);
 
 	PopVec(ip, v);
 	v[3] = 1;
@@ -400,9 +400,9 @@ static void Finger3DSPmatrixMul(instructionPointer * ip)
 	fungeVector ft, fa, fb;
 	double a[16], b[16], r[16];
 
-	fb = StackPopVector(ip->stack);
-	fa = StackPopVector(ip->stack);
-	ft = StackPopVector(ip->stack);
+	fb = stack_pop_vector(ip->stack);
+	fa = stack_pop_vector(ip->stack);
+	ft = stack_pop_vector(ip->stack);
 
 	readMatrix(ip, &fb, b);
 	readMatrix(ip, &fa, a);
@@ -413,7 +413,7 @@ static void Finger3DSPmatrixMul(instructionPointer * ip)
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
 			u.f = (float)r[y*4 + x];
-			FungeSpaceSetOff(u.i, VectorCreateRef(ft.x+x, ft.y+y), &ip->storageOffset);
+			fungespace_set_offset(u.i, vector_create_ref(ft.x+x, ft.y+y), &ip->storageOffset);
 		}
 }
 
@@ -435,21 +435,21 @@ static void Finger3DSPscale(instructionPointer * ip)
 
 bool Finger3DSPload(instructionPointer * ip)
 {
-	ManagerAddOpcode(3DSP,  'A', add)
-	ManagerAddOpcode(3DSP,  'B', sub)
-	ManagerAddOpcode(3DSP,  'C', cross)
-	ManagerAddOpcode(3DSP,  'D', dot)
-	ManagerAddOpcode(3DSP,  'L', length)
-	ManagerAddOpcode(3DSP,  'M', mul)
-	ManagerAddOpcode(3DSP,  'N', normalise)
-	ManagerAddOpcode(3DSP,  'P', matrixCopy)
-	ManagerAddOpcode(3DSP,  'R', matrixRotate)
-	ManagerAddOpcode(3DSP,  'S', matrixScale)
-	ManagerAddOpcode(3DSP,  'T', matrixTranslate)
-	ManagerAddOpcode(3DSP,  'U', duplicate)
-	ManagerAddOpcode(3DSP,  'V', map)
-	ManagerAddOpcode(3DSP,  'X', transform)
-	ManagerAddOpcode(3DSP,  'Y', matrixMul)
-	ManagerAddOpcode(3DSP,  'Z', scale)
+	manager_add_opcode(3DSP,  'A', add)
+	manager_add_opcode(3DSP,  'B', sub)
+	manager_add_opcode(3DSP,  'C', cross)
+	manager_add_opcode(3DSP,  'D', dot)
+	manager_add_opcode(3DSP,  'L', length)
+	manager_add_opcode(3DSP,  'M', mul)
+	manager_add_opcode(3DSP,  'N', normalise)
+	manager_add_opcode(3DSP,  'P', matrixCopy)
+	manager_add_opcode(3DSP,  'R', matrixRotate)
+	manager_add_opcode(3DSP,  'S', matrixScale)
+	manager_add_opcode(3DSP,  'T', matrixTranslate)
+	manager_add_opcode(3DSP,  'U', duplicate)
+	manager_add_opcode(3DSP,  'V', map)
+	manager_add_opcode(3DSP,  'X', transform)
+	manager_add_opcode(3DSP,  'Y', matrixMul)
+	manager_add_opcode(3DSP,  'Z', scale)
 	return true;
 }

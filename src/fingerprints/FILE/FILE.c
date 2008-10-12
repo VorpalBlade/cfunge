@@ -105,14 +105,14 @@ static void FingerFILEfclose(instructionPointer * ip)
 {
 	fungeCell h;
 
-	h = StackPop(ip->stack);
+	h = stack_pop(ip->stack);
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
 	if (fclose(handles[h]->file) != 0)
-		ipReverse(ip);
+		ip_reverse(ip);
 
 	FreeHandle(h);
 }
@@ -122,12 +122,12 @@ static void FingerFILEdelete(instructionPointer * ip)
 {
 	char * restrict filename;
 
-	filename = StackPopString(ip->stack);
+	filename = stack_pop_string(ip->stack);
 	if(unlink(filename) != 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	}
 
-	StackFreeString(filename);
+	stack_freeString(filename);
 	return;
 }
 
@@ -138,9 +138,9 @@ static void FingerFILEfgets(instructionPointer * ip)
 	fungeCell h;
 	FILE * fp;
 
-	h = StackPeek(ip->stack);
+	h = stack_peek(ip->stack);
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -151,7 +151,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 		int ch;
 		sb = stringbuffer_new();
 		if (!sb) {
-			ipReverse(ip);
+			ip_reverse(ip);
 			return;
 		}
 
@@ -173,7 +173,7 @@ static void FingerFILEfgets(instructionPointer * ip)
 				case EOF:
 					if (ferror(fp)) {
 						clearerr(fp);
-						ipReverse(ip);
+						ip_reverse(ip);
 						stringbuffer_destroy(sb);
 						return;
 					} else {
@@ -192,8 +192,8 @@ static void FingerFILEfgets(instructionPointer * ip)
 			size_t len;
 			str = stringbuffer_finish(sb);
 			len = strlen(str);
-			StackPushString(ip->stack, str, len);
-			StackPush(ip->stack, (fungeCell)len);
+			stack_push_string(ip->stack, str, len);
+			stack_push(ip->stack, (fungeCell)len);
 			free_nogc(str);
 			return;
 		}
@@ -206,9 +206,9 @@ static void FingerFILEftell(instructionPointer * ip)
 	fungeCell h;
 	long pos;
 
-	h = StackPeek(ip->stack);
+	h = stack_peek(ip->stack);
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -216,11 +216,11 @@ static void FingerFILEftell(instructionPointer * ip)
 
 	if (pos == -1) {
 		clearerr(handles[h]->file);
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
-	StackPush(ip->stack, (fungeCell)pos);
+	stack_push(ip->stack, (fungeCell)pos);
 }
 
 /// O - Open a file (Va = i/o buffer vector)
@@ -231,9 +231,9 @@ static void FingerFILEfopen(instructionPointer * ip)
 	fungeVector vect;
 	fungeCell h;
 
-	filename = StackPopString(ip->stack);
-	mode = StackPop(ip->stack);
-	vect = StackPopVector(ip->stack);
+	filename = stack_pop_string(ip->stack);
+	mode = stack_pop(ip->stack);
+	vect = stack_pop_vector(ip->stack);
 
 	h = AllocateHandle();
 	if (h == -1) {
@@ -259,13 +259,13 @@ static void FingerFILEfopen(instructionPointer * ip)
 		rewind(handles[h]->file);
 
 	handles[h]->buffvect = vect;
-	StackPush(ip->stack, h);
+	stack_push(ip->stack, h);
 	goto end;
 // Look... The alternatives to the goto were worse...
 error:
-	ipReverse(ip);
+	ip_reverse(ip);
 end:
-	StackFreeString(filename);
+	stack_freeString(filename);
 }
 
 /// P - Put string to file (like c fputs)
@@ -274,17 +274,17 @@ static void FingerFILEfputs(instructionPointer * ip)
 	char * restrict str;
 	fungeCell h;
 
-	str = StackPopString(ip->stack);
-	h = StackPeek(ip->stack);
+	str = stack_pop_string(ip->stack);
+	h = stack_peek(ip->stack);
 	if (!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
 		if (fputs(str, handles[h]->file) == EOF) {
 			clearerr(handles[h]->file);
-			ipReverse(ip);
+			ip_reverse(ip);
 		}
 	}
-	StackFreeString(str);
+	stack_freeString(str);
 }
 
 /// R - Read n bytes from file to i/o buffer
@@ -292,29 +292,29 @@ static void FingerFILEfread(instructionPointer * ip)
 {
 	fungeCell n, h;
 
-	n = StackPop(ip->stack);
-	h = StackPeek(ip->stack);
+	n = stack_pop(ip->stack);
+	h = stack_peek(ip->stack);
 
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
 	if (n <= 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
 		unsigned char * restrict buf = calloc_nogc(n, sizeof(char));
 		if (!buf) {
-			ipReverse(ip);
+			ip_reverse(ip);
 			return;
 		}
 
 		if (fread(buf, sizeof(unsigned char), n, fp) != (size_t)n) {
 			if (ferror(fp)) {
 				clearerr(fp);
-				ipReverse(ip);
+				ip_reverse(ip);
 				cf_free(buf);
 				return;
 			} else {
@@ -323,7 +323,7 @@ static void FingerFILEfread(instructionPointer * ip)
 		}
 
 		for (fungeCell i = 0; i < n; i++) {
-			FungeSpaceSet(buf[i], VectorCreateRef(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
+			fungespace_set(buf[i], vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		free_nogc(buf);
 	}
@@ -334,12 +334,12 @@ static void FingerFILEfseek(instructionPointer * ip)
 {
 	fungeCell n, m, h;
 
-	n = StackPop(ip->stack);
-	m = StackPop(ip->stack);
-	h = StackPeek(ip->stack);
+	n = stack_pop(ip->stack);
+	m = stack_pop(ip->stack);
+	h = stack_peek(ip->stack);
 
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
@@ -364,7 +364,7 @@ static void FingerFILEfseek(instructionPointer * ip)
 	}
 	// An error if we got here...
 	clearerr(handles[h]->file);
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// W - Write n bytes from i/o buffer to file
@@ -372,28 +372,28 @@ static void FingerFILEfwrite(instructionPointer * ip)
 {
 	fungeCell n, h;
 
-	n = StackPop(ip->stack);
-	h = StackPeek(ip->stack);
+	n = stack_pop(ip->stack);
+	h = stack_peek(ip->stack);
 
 	if(!ValidHandle(h)) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
 	if (n <= 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
 		unsigned char * restrict buf = cf_malloc_noptr(n * sizeof(char));
 
 		for (fungeCell i = 0; i < n; i++) {
-			buf[i] = FungeSpaceGet(VectorCreateRef(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
+			buf[i] = fungespace_get(vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		if (fwrite(buf, sizeof(unsigned char), n, fp) != (size_t)n) {
 			if (ferror(fp)) {
 				clearerr(fp);
-				ipReverse(ip);
+				ip_reverse(ip);
 			}
 		}
 		cf_free(buf);
@@ -416,14 +416,14 @@ bool FingerFILEload(instructionPointer * ip)
 		if (!InitHandleList())
 			return false;
 
-	ManagerAddOpcode(FILE,  'C', fclose)
-	ManagerAddOpcode(FILE,  'D', delete)
-	ManagerAddOpcode(FILE,  'G', fgets)
-	ManagerAddOpcode(FILE,  'L', ftell)
-	ManagerAddOpcode(FILE,  'O', fopen)
-	ManagerAddOpcode(FILE,  'P', fputs)
-	ManagerAddOpcode(FILE,  'R', fread)
-	ManagerAddOpcode(FILE,  'S', fseek)
-	ManagerAddOpcode(FILE,  'W', fwrite)
+	manager_add_opcode(FILE,  'C', fclose)
+	manager_add_opcode(FILE,  'D', delete)
+	manager_add_opcode(FILE,  'G', fgets)
+	manager_add_opcode(FILE,  'L', ftell)
+	manager_add_opcode(FILE,  'O', fopen)
+	manager_add_opcode(FILE,  'P', fputs)
+	manager_add_opcode(FILE,  'R', fread)
+	manager_add_opcode(FILE,  'S', fseek)
+	manager_add_opcode(FILE,  'W', fwrite)
 	return true;
 }

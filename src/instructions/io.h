@@ -35,9 +35,9 @@
 
 /// The i instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunFileInput(instructionPointer * restrict ip);
+void run_file_input(instructionPointer * restrict ip);
 /// The o instruction.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void RunFileOutput(instructionPointer * restrict ip);
+void run_file_output(instructionPointer * restrict ip);
 
 #endif

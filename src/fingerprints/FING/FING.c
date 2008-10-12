@@ -27,7 +27,7 @@
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 static inline char PopStackSpec(instructionPointer * ip)
 {
-	fungeCell n = StackPop(ip->stack);
+	fungeCell n = stack_pop(ip->stack);
 	if (n < 0) return 0;
 	else if (n <= 25) return 'A' + n;
 	else if (n < 'A') return 0;
@@ -38,7 +38,7 @@ static inline char PopStackSpec(instructionPointer * ip)
 /// Used for pushing a reflect on stack.
 static void DoReflect(instructionPointer * ip)
 {
-	ipReverse(ip);
+	ip_reverse(ip);
 }
 
 /// X - Swap two semantics
@@ -47,17 +47,17 @@ static void FingerFINGswap(instructionPointer * ip)
 	char first = PopStackSpec(ip);
 	char second = PopStackSpec(ip);
 	if (first == 0 || second == 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
-		fingerprintOpcode op1 = OpcodeStackPop(ip, first);
-		fingerprintOpcode op2 = OpcodeStackPop(ip, second);
+		fingerprintOpcode op1 = opcode_stack_pop(ip, first);
+		fingerprintOpcode op2 = opcode_stack_pop(ip, second);
 		// Push reflect if there wasn't anything on the stack.
 		if (!op1)
 			op1 = &DoReflect;
 		if (!op2)
 			op2 = &DoReflect;
-		OpcodeStackAdd(ip, second, op1);
-		OpcodeStackAdd(ip, first, op2);
+		opcode_stack_push(ip, second, op1);
+		opcode_stack_push(ip, first, op2);
 	}
 }
 
@@ -66,9 +66,9 @@ static void FingerFINGdrop(instructionPointer * ip)
 {
 	char opcode = PopStackSpec(ip);
 	if (opcode == 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
-		OpcodeStackPop(ip, opcode);
+		opcode_stack_pop(ip, opcode);
 	}
 }
 
@@ -78,26 +78,26 @@ static void FingerFINGpush(instructionPointer * ip)
 	char dst = PopStackSpec(ip);
 	char src = PopStackSpec(ip);
 	if (src == 0 || dst == 0) {
-		ipReverse(ip);
+		ip_reverse(ip);
 	} else {
-		fingerprintOpcode op = OpcodeStackPop(ip, src);
+		fingerprintOpcode op = opcode_stack_pop(ip, src);
 		if (op == NULL) {
 			op = &DoReflect;
 		} else {
-			if (!OpcodeStackAdd(ip, src, op)) {
-				ipReverse(ip);
+			if (!opcode_stack_push(ip, src, op)) {
+				ip_reverse(ip);
 				return;
 			}
 		}
-		if (!OpcodeStackAdd(ip, dst, op))
-			ipReverse(ip);
+		if (!opcode_stack_push(ip, dst, op))
+			ip_reverse(ip);
 	}
 }
 
 bool FingerFINGload(instructionPointer * ip)
 {
-	ManagerAddOpcode(FING,  'X', swap)
-	ManagerAddOpcode(FING,  'Y', drop)
-	ManagerAddOpcode(FING,  'Z', push)
+	manager_add_opcode(FING,  'X', swap)
+	manager_add_opcode(FING,  'Y', drop)
+	manager_add_opcode(FING,  'Z', push)
 	return true;
 }

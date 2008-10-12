@@ -118,12 +118,12 @@ static inline void PushResults(instructionPointer * restrict ip,
 	for (int i = MATCHSIZE - 1; i >= 0; i--) {
 		if (matches[i].rm_so != -1) {
 			count++;
-			StackPush(ip->stack, 0);
-			StackPushString(ip->stack, str + matches[i].rm_so,
+			stack_push(ip->stack, 0);
+			stack_push_string(ip->stack, str + matches[i].rm_so,
 			                matches[i].rm_eo - matches[i].rm_so - 1);
 		}
 	}
-	StackPush(ip->stack, count);
+	stack_push(ip->stack, count);
 }
 
 /// C - Compile a regular expression
@@ -137,20 +137,20 @@ static void FingerREXPcompile(instructionPointer * ip)
 	if (compiled_valid)
 		regfree(&compiled_regex);
 
-	flags = TranslateFlagsC(StackPop(ip->stack));
-	str = StackPopString(ip->stack);
+	flags = TranslateFlagsC(stack_pop(ip->stack));
+	str = stack_pop_string(ip->stack);
 
 	compret = regcomp(&compiled_regex, str, flags);
 
 	if (compret != 0) {
-		ipReverse(ip);
-		StackPush(ip->stack, TranslateReturnC(compret));
+		ip_reverse(ip);
+		stack_push(ip->stack, TranslateReturnC(compret));
 		compiled_valid = false;
 	} else {
 		compiled_valid = true;
 	}
 
-	StackFreeString(str);
+	stack_freeString(str);
 }
 
 /// E - Execute regular expression on string
@@ -161,20 +161,20 @@ static void FingerREXPexecute(instructionPointer * ip)
 	int execret;
 
 	if (!compiled_valid) {
-		ipReverse(ip);
+		ip_reverse(ip);
 		return;
 	}
 
-	flags = TranslateFlagsE(StackPop(ip->stack));
-	str = StackPopString(ip->stack);
+	flags = TranslateFlagsE(stack_pop(ip->stack));
+	str = stack_pop_string(ip->stack);
 
 	execret = regexec(&compiled_regex, str, MATCHSIZE, matches, flags);
 	if (execret == 0) {
 		PushResults(ip, str);
 	} else {
-		ipReverse(ip);
+		ip_reverse(ip);
 	}
-	StackFreeString(str);
+	stack_freeString(str);
 }
 
 /// F - Free compiled regex buffer
@@ -188,8 +188,8 @@ static void FingerREXPfree(FUNGE_ATTR_UNUSED instructionPointer * ip)
 
 bool FingerREXPload(instructionPointer * ip)
 {
-	ManagerAddOpcode(REXP,  'C', compile)
-	ManagerAddOpcode(REXP,  'E', execute)
-	ManagerAddOpcode(REXP,  'F', free)
+	manager_add_opcode(REXP,  'C', compile)
+	manager_add_opcode(REXP,  'E', execute)
+	manager_add_opcode(REXP,  'F', free)
 	return true;
 }

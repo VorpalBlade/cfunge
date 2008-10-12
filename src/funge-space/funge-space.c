@@ -63,7 +63,7 @@ static fungeSpace fspace = {
  * Check if position is in range.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline bool FungeSpaceInRange(const fungeVector * restrict position)
+static inline bool fungespace_in_range(const fungeVector * restrict position)
 {
 	if ((position->x > fspace.bottomRightCorner.x) || (position->x < fspace.topLeftCorner.x))
 		return false;
@@ -73,7 +73,7 @@ static inline bool FungeSpaceInRange(const fungeVector * restrict position)
 }
 
 FUNGE_ATTR_FAST bool
-FungeSpaceCreate(void)
+fungespace_create(void)
 {
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace.entries)
@@ -85,7 +85,7 @@ FungeSpaceCreate(void)
 
 
 FUNGE_ATTR_FAST void
-FungeSpaceFree(void)
+fungespace_free(void)
 {
 	if (fspace.entries)
 		ght_finalize(fspace.entries);
@@ -93,7 +93,7 @@ FungeSpaceFree(void)
 }
 
 FUNGE_ATTR_FAST void
-FungeSpaceGetBoundRect(fungeRect * restrict rect)
+fungespace_get_bounds_rect(fungeRect * restrict rect)
 {
 	rect->x = fspace.topLeftCorner.x;
 	rect->y = fspace.topLeftCorner.y;
@@ -104,7 +104,7 @@ FungeSpaceGetBoundRect(fungeRect * restrict rect)
 
 
 FUNGE_ATTR_FAST fungeCell
-FungeSpaceGet(const fungeVector * restrict position)
+fungespace_get(const fungeVector * restrict position)
 {
 	fungeCell *tmp;
 
@@ -119,7 +119,7 @@ FungeSpaceGet(const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST fungeCell
-FungeSpaceGetOff(const fungeVector * restrict position, const fungeVector * restrict offset)
+fungespace_get_offset(const fungeVector * restrict position, const fungeVector * restrict offset)
 {
 	fungeVector tmp;
 	fungeCell *result;
@@ -138,7 +138,7 @@ FungeSpaceGetOff(const fungeVector * restrict position, const fungeVector * rest
 }
 
 FUNGE_ATTR_FAST static inline void
-FungeSpaceSetNoBoundUpdate(fungeCell value, const fungeVector * restrict position)
+fungespace_set_no_bounds_update(fungeCell value, const fungeVector * restrict position)
 {
 	if (value == ' ') {
 		ght_remove(fspace.entries, position);
@@ -156,10 +156,10 @@ FungeSpaceSetNoBoundUpdate(fungeCell value, const fungeVector * restrict positio
 }
 
 FUNGE_ATTR_FAST void
-FungeSpaceSet(fungeCell value, const fungeVector * restrict position)
+fungespace_set(fungeCell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
-	FungeSpaceSetNoBoundUpdate(value, position);
+	fungespace_set_no_bounds_update(value, position);
 	if (value != ' ') {
 		if (fspace.bottomRightCorner.y < position->y)
 			fspace.bottomRightCorner.y = position->y;
@@ -173,10 +173,10 @@ FungeSpaceSet(fungeCell value, const fungeVector * restrict position)
 }
 
 FUNGE_ATTR_FAST static inline void
-FungeSpaceSetInitial(fungeCell value, const fungeVector * restrict position)
+fungespace_set_initial(fungeCell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
-	FungeSpaceSetNoBoundUpdate(value, position);
+	fungespace_set_no_bounds_update(value, position);
 	if (value != ' ') {
 		if (!fspace.boundsvalid || fspace.bottomRightCorner.y < position->y)
 			fspace.bottomRightCorner.y = position->y;
@@ -192,19 +192,19 @@ FungeSpaceSetInitial(fungeCell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST void
-FungeSpaceSetOff(fungeCell value, const fungeVector * restrict position, const fungeVector * restrict offset)
+fungespace_set_offset(fungeCell value, const fungeVector * restrict position, const fungeVector * restrict offset)
 {
 	assert(position != NULL);
 	assert(offset != NULL);
 
-	FungeSpaceSet(value, VectorCreateRef(position->x + offset->x, position->y + offset->y));
+	fungespace_set(value, vector_create_ref(position->x + offset->x, position->y + offset->y));
 }
 
 FUNGE_ATTR_FAST void
-FungeSpaceWrap(fungeVector * restrict position, const fungeVector * restrict delta)
+fungespace_wrap(fungeVector * restrict position, const fungeVector * restrict delta)
 {
 	// Quick and dirty if cardinal.
-	if (VectorIsCardinal(delta)) {
+	if (vector_is_cardinal(delta)) {
 		// FIXME, HACK: Why are the +1/-1 needed?
 		if (position->x < fspace.topLeftCorner.x)
 			position->x = fspace.bottomRightCorner.x+1;
@@ -216,11 +216,11 @@ FungeSpaceWrap(fungeVector * restrict position, const fungeVector * restrict del
 		else if (position->y > fspace.bottomRightCorner.y)
 			position->y = fspace.topLeftCorner.y-1;
 	} else {
-		if (!FungeSpaceInRange(position)) {
+		if (!fungespace_in_range(position)) {
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
-			} while (FungeSpaceInRange(position));
+			} while (fungespace_in_range(position));
 			position->x += delta->x;
 			position->y += delta->y;
 		}
@@ -234,16 +234,16 @@ FungeSpaceWrap(fungeVector * restrict position, const fungeVector * restrict del
 
 
 // For use with call in gdb
-void FungeSpaceDump(void) FUNGE_ATTR_UNUSED;
+void fungespace_dump(void) FUNGE_ATTR_UNUSED;
 
-void FungeSpaceDump(void)
+void fungespace_dump(void)
 {
 	if (!fspace.entries)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
 	for (fungeCell y = 0; y <= fspace.bottomRightCorner.y; y++) {
 		for (fungeCell x = 0; x <= fspace.bottomRightCorner.x; x++)
-			fprintf(stderr, "%c", (char)FungeSpaceGet(VectorCreateRef(x, y)));
+			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
 		fprintf(stderr, "\n");
 	}
 	fputs("\n", stderr);
@@ -262,7 +262,7 @@ void FungeSpaceDump(void)
 r -2 in case of empty file.
  */
 FUNGE_ATTR_FAST
-static inline int DoMmap(const char * restrict filename, char **maddr, size_t * restrict length) {
+static inline int do_mmap(const char * restrict filename, char **maddr, size_t * restrict length) {
 	char *addr = NULL;
 	struct stat sb;
 	int fd = -1;
@@ -303,13 +303,13 @@ error:
 }
 
 /**
- * Clean up a mapping created with DoMmap().
+ * Clean up a mapping created with do_mmap().
  * @param fd is the file descriptor to close.
  * @param addr is the address to the mmap()ed area.
  * @param length is the length of the mmap()ed area.
  */
 FUNGE_ATTR_FAST
-static inline void DoMmapCleanup(int fd, char *addr, size_t length) {
+static inline void do_mmap_cleanup(int fd, char *addr, size_t length) {
 	if (addr != NULL) {
 		munmap(addr, length);
 	}
@@ -325,7 +325,7 @@ static inline void DoMmapCleanup(int fd, char *addr, size_t length) {
  * @param length is the length of the string.
  */
 FUNGE_ATTR_FAST
-static inline void LoadString(const char * restrict program, size_t length) {
+static inline void load_string(const char * restrict program, size_t length) {
 	bool lastwascr = false;
 	// Row in fungespace
 	fungeCell y = 0;
@@ -350,7 +350,7 @@ static inline void LoadString(const char * restrict program, size_t length) {
 					x = 0;
 					y++;
 				}
-				FungeSpaceSetInitial((fungeCell)program[i], VectorCreateRef(x, y));
+				fungespace_set_initial((fungeCell)program[i], vector_create_ref(x, y));
 				x++;
 				break;
 		}
@@ -358,7 +358,7 @@ static inline void LoadString(const char * restrict program, size_t length) {
 }
 
 FUNGE_ATTR_FAST bool
-FungeSpaceLoad(const char * restrict filename)
+fungespace_load(const char * restrict filename)
 {
 	char *addr;
 	int fd;
@@ -366,31 +366,31 @@ FungeSpaceLoad(const char * restrict filename)
 
 	assert(filename != NULL);
 
-	fd = DoMmap(filename, &addr, &length);
+	fd = do_mmap(filename, &addr, &length);
 	if (fd == -1)
 		return false;
 	// Empty file?
 	if (fd == -2)
 		return true;
 
-	LoadString(addr, length);
+	load_string(addr, length);
 
 	// Cleanup
-	DoMmapCleanup(fd, addr, length);
+	do_mmap_cleanup(fd, addr, length);
 	return true;
 }
 
 
 #ifdef FUNGE_EXTERNAL_LIBRARY
 FUNGE_ATTR_FAST void
-FungeSpaceLoadString(const char * restrict program)
+fungespace_load_string(const char * restrict program)
 {
-	LoadString(program, strlen(program));
+	load_string(program, strlen(program));
 }
 #endif
 
 FUNGE_ATTR_FAST bool
-FungeSpaceLoadAtOffset(const char        * restrict filename,
+fungespace_load_at_offset(const char        * restrict filename,
                        const fungeVector * restrict offset,
                        fungeVector       * restrict size,
                        bool binary)
@@ -407,7 +407,7 @@ FungeSpaceLoadAtOffset(const char        * restrict filename,
 	assert(offset != NULL);
 	assert(size != NULL);
 
-	fd = DoMmap(filename, &addr, &length);
+	fd = do_mmap(filename, &addr, &length);
 	if (fd == -1)
 		return false;
 	// Empty file?
@@ -420,7 +420,7 @@ FungeSpaceLoadAtOffset(const char        * restrict filename,
 	for (size_t i = 0; i < length; i++) {
 		if (binary) {
 			if (addr[i] != ' ')
-				FungeSpaceSetOff((fungeCell)addr[i], VectorCreateRef(x, y), offset);
+				fungespace_set_offset((fungeCell)addr[i], vector_create_ref(x, y), offset);
 			x++;
 		} else {
 			switch (addr[i]) {
@@ -442,7 +442,7 @@ FungeSpaceLoadAtOffset(const char        * restrict filename,
 						y++;
 					}
 					if (addr[i] != ' ')
-						FungeSpaceSetOff((fungeCell)addr[i], VectorCreateRef(x, y), offset);
+						fungespace_set_offset((fungeCell)addr[i], vector_create_ref(x, y), offset);
 					x++;
 					break;
 			}
@@ -451,12 +451,12 @@ FungeSpaceLoadAtOffset(const char        * restrict filename,
 
 	if (x > size->x) size->x = x;
 	if (y > size->y) size->y = y;
-	DoMmapCleanup(fd, addr, length);
+	do_mmap_cleanup(fd, addr, length);
 	return true;
 }
 
 FUNGE_ATTR_FAST bool
-FungeSpaceSaveToFile(const char        * restrict filename,
+fungespace_save_to_file(const char        * restrict filename,
                      const fungeVector * restrict offset,
                      const fungeVector * restrict size,
                      bool textfile)
@@ -487,7 +487,7 @@ FungeSpaceSaveToFile(const char        * restrict filename,
 		cf_flockfile(file);
 		for (fungeCell y = offset->y; y < maxy; y++) {
 			for (fungeCell x = offset->x; x < maxx; x++) {
-				value = FungeSpaceGet(VectorCreateRef(x, y));
+				value = fungespace_get(vector_create_ref(x, y));
 				cf_putc_unlocked(value, file);
 			}
 			cf_putc_unlocked('\n', file);
@@ -511,7 +511,7 @@ FungeSpaceSaveToFile(const char        * restrict filename,
 				return false;
 			}
 			for (fungeCell x = offset->x; x < maxx; x++) {
-				string[x-offset->x] = FungeSpaceGet(VectorCreateRef(x, y));
+				string[x-offset->x] = fungespace_get(vector_create_ref(x, y));
 			}
 
 			do {
