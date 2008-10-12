@@ -30,7 +30,7 @@
 static suseconds_t resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell GetDifference(const struct timeval * before,
+static inline fungeCell get_difference(const struct timeval * before,
                                           const struct timeval * after)
 {
 	return 1000000 * ((fungeCell)after->tv_sec - (fungeCell)before->tv_sec)
@@ -39,7 +39,7 @@ static inline fungeCell GetDifference(const struct timeval * before,
 
 /// This function checks that the IP got a non-null HRTI data pointer.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline bool CheckIPgotHRTI(instructionPointer * ip)
+static inline bool check_ip_got_HRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {
 		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(struct timeval));
@@ -54,7 +54,7 @@ static inline bool CheckIPgotHRTI(instructionPointer * ip)
 /// E - Erase Mark
 static void finger_HRTI_erase_mark(instructionPointer * ip)
 {
-	if (!CheckIPgotHRTI(ip)) {
+	if (!check_ip_got_HRTI(ip)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -72,7 +72,7 @@ static void finger_HRTI_granularity(instructionPointer * ip)
 /// M - Mark
 static void finger_HRTI_mark(instructionPointer * ip)
 {
-	if (!CheckIPgotHRTI(ip)) {
+	if (!check_ip_got_HRTI(ip)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -88,7 +88,7 @@ static void finger_HRTI_timer(instructionPointer * ip)
 	} else {
 		struct timeval curTime;
 		gettimeofday(&curTime, NULL);
-		stack_push(ip->stack, GetDifference(ip->fingerHRTItimestamp, &curTime));
+		stack_push(ip->stack, get_difference(ip->fingerHRTItimestamp, &curTime));
 	}
 }
 
@@ -100,7 +100,7 @@ static void finger_HRTI_second(instructionPointer * ip)
 	stack_push(ip->stack, (fungeCell)curTime.tv_usec);
 }
 
-FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
+FUNGE_ATTR_FAST static inline bool setup_HRTI(instructionPointer * ip)
 {
 	// This bit is global
 	if (resolution == 0) {
@@ -114,12 +114,12 @@ FUNGE_ATTR_FAST static inline bool SetupHRTI(instructionPointer * ip)
 		} while (resolution == 0);
 	}
 	// Per IP, set up the data
-	return CheckIPgotHRTI(ip);
+	return check_ip_got_HRTI(ip);
 }
 
 bool finger_HRTI_load(instructionPointer * ip)
 {
-	if (!SetupHRTI(ip))
+	if (!setup_HRTI(ip))
 		return false;
 	manager_add_opcode(HRTI, 'E', erase_mark)
 	manager_add_opcode(HRTI, 'G', granularity)

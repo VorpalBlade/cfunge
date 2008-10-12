@@ -69,7 +69,7 @@ static void finger_REFC_dereference(instructionPointer * ip)
 	stack_push_vector(ip->stack, &references[ref]);
 }
 
-FUNGE_ATTR_FAST static inline bool InitReferences(void)
+FUNGE_ATTR_FAST static inline bool init_references(void)
 {
 	assert(!references);
 	references = (fungeVector*)cf_malloc_noptr(ALLOCCHUNK * sizeof(fungeVector));
@@ -83,7 +83,7 @@ FUNGE_ATTR_FAST static inline bool InitReferences(void)
 bool finger_REFC_load(instructionPointer * ip)
 {
 	if (!references)
-		if (!InitReferences())
+		if (!init_references())
 			return false;
 	manager_add_opcode(REFC,  'D', dereference)
 	manager_add_opcode(REFC,  'R', reference)

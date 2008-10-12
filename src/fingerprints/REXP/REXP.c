@@ -62,7 +62,7 @@ static regmatch_t matches[MATCHSIZE];
 #define FUNGE_REG_NOTEOL 2
 
 FUNGE_ATTR_FAST
-static inline int TranslateFlagsC(fungeCell flags)
+static inline int translate_flags_C(fungeCell flags)
 {
 	int ret = 0;
 	if (flags & FUNGE_REG_EXTENDED)
@@ -77,7 +77,7 @@ static inline int TranslateFlagsC(fungeCell flags)
 }
 
 FUNGE_ATTR_FAST
-static inline int TranslateFlagsE(fungeCell flags)
+static inline int translate_flags_E(fungeCell flags)
 {
 	int ret = 0;
 	if (flags & FUNGE_REG_NOTBOL)
@@ -90,7 +90,7 @@ static inline int TranslateFlagsE(fungeCell flags)
 #define GenErrorCase(name) case name: return FUNGE_ ## name
 
 FUNGE_ATTR_FAST
-static inline int TranslateReturnC(int error)
+static inline int translate_return_C(int error)
 {
 	switch (error) {
 		GenErrorCase(REG_BADBR);
@@ -111,7 +111,7 @@ static inline int TranslateReturnC(int error)
 }
 
 FUNGE_ATTR_FAST
-static inline void PushResults(instructionPointer * restrict ip,
+static inline void push_results(instructionPointer * restrict ip,
                                char * restrict str)
 {
 	int count = 0;
@@ -137,14 +137,14 @@ static void finger_REXP_compile(instructionPointer * ip)
 	if (compiled_valid)
 		regfree(&compiled_regex);
 
-	flags = TranslateFlagsC(stack_pop(ip->stack));
+	flags = translate_flags_C(stack_pop(ip->stack));
 	str = stack_pop_string(ip->stack);
 
 	compret = regcomp(&compiled_regex, str, flags);
 
 	if (compret != 0) {
 		ip_reverse(ip);
-		stack_push(ip->stack, TranslateReturnC(compret));
+		stack_push(ip->stack, translate_return_C(compret));
 		compiled_valid = false;
 	} else {
 		compiled_valid = true;
@@ -165,12 +165,12 @@ static void finger_REXP_execute(instructionPointer * ip)
 		return;
 	}
 
-	flags = TranslateFlagsE(stack_pop(ip->stack));
+	flags = translate_flags_E(stack_pop(ip->stack));
 	str = stack_pop_string(ip->stack);
 
 	execret = regexec(&compiled_regex, str, MATCHSIZE, matches, flags);
 	if (execret == 0) {
-		PushResults(ip, str);
+		push_results(ip, str);
 	} else {
 		ip_reverse(ip);
 	}

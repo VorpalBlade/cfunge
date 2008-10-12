@@ -53,7 +53,7 @@ static void finger_PERL_shelled(instructionPointer * ip)
 
 // Yes... This is a mess...
 FUNGE_ATTR_FAST
-static char * RunPerl(const char * restrict perlcode)
+static char * run_perl(const char * restrict perlcode)
 {
 	pid_t pid;
 	int outfds[2]; // For pipe of stderr.
@@ -67,7 +67,7 @@ static char * RunPerl(const char * restrict perlcode)
 	// Non-blocking to prevent locking up in read() in parent
 	if (fcntl(outfds[0], F_SETFL, O_NONBLOCK) == -1) {
 		if (setting_enable_warnings)
-			perror("RunPerl, fcntl on outfds failed");
+			perror("run_perl, fcntl on outfds failed");
 		close(outfds[0]);
 		close(outfds[1]);
 		return NULL;
@@ -77,7 +77,7 @@ static char * RunPerl(const char * restrict perlcode)
 	switch (pid) {
 		case -1: // Parent, error
 			if (setting_enable_warnings)
-				perror("RunPerl, could not fork");
+				perror("run_perl, could not fork");
 			// Clean up
 			close(outfds[0]);
 			close(outfds[1]);
@@ -149,7 +149,7 @@ static char * RunPerl(const char * restrict perlcode)
 								return stringbuffer_finish(sb);
 							} else {
 								if (setting_enable_warnings)
-									perror("RunPerl, read failed");
+									perror("run_perl, read failed");
 								free_nogc(buf);
 								stringbuffer_destroy(sb);
 								return NULL;
@@ -186,7 +186,7 @@ static void finger_PERL_eval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = stack_pop_string(ip->stack);
-	result = RunPerl(perlcode);
+	result = run_perl(perlcode);
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {
@@ -202,7 +202,7 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = stack_pop_string(ip->stack);
-	result = RunPerl(perlcode);
+	result = run_perl(perlcode);
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {

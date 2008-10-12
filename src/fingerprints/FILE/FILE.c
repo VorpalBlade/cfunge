@@ -37,9 +37,9 @@ typedef struct sFungeFileHandle {
 static FungeFileHandle** handles = NULL;
 static size_t maxHandle = 0;
 
-/// Used by AllocateHandle() below to find next free handle.
+/// Used by allocate_handle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell findNextFreeHandle(void)
+static inline fungeCell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
@@ -61,11 +61,11 @@ static inline fungeCell findNextFreeHandle(void)
 /// Get a new handle to use for a file, also allocates buffer for it.
 /// @return Handle, or -1 on failure
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell AllocateHandle(void)
+static inline fungeCell allocate_handle(void)
 {
 	fungeCell h;
 
-	h = findNextFreeHandle();
+	h = findNextfree_handle();
 	if (h < 0)
 		return -1;
 
@@ -77,7 +77,7 @@ static inline fungeCell AllocateHandle(void)
 
 /// Free a handle. fclose() the file before calling this.
 FUNGE_ATTR_FAST
-static inline void FreeHandle(fungeCell h)
+static inline void free_handle(fungeCell h)
 {
 	if (!handles[h])
 		return;
@@ -91,7 +91,7 @@ static inline void FreeHandle(fungeCell h)
 
 /// Checks if handle is valid.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool ValidHandle(fungeCell h)
+static inline bool valid_handle(fungeCell h)
 {
 	if ((h < 0) || ((size_t)h >= maxHandle) || (!handles[h])) {
 		return false;
@@ -106,7 +106,7 @@ static void finger_FILE_fclose(instructionPointer * ip)
 	fungeCell h;
 
 	h = stack_pop(ip->stack);
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -114,7 +114,7 @@ static void finger_FILE_fclose(instructionPointer * ip)
 	if (fclose(handles[h]->file) != 0)
 		ip_reverse(ip);
 
-	FreeHandle(h);
+	free_handle(h);
 }
 
 /// C - Delete specified file
@@ -139,7 +139,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 	FILE * fp;
 
 	h = stack_peek(ip->stack);
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -207,7 +207,7 @@ static void finger_FILE_ftell(instructionPointer * ip)
 	long pos;
 
 	h = stack_peek(ip->stack);
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -235,7 +235,7 @@ static void finger_FILE_fopen(instructionPointer * ip)
 	mode = stack_pop(ip->stack);
 	vect = stack_pop_vector(ip->stack);
 
-	h = AllocateHandle();
+	h = allocate_handle();
 	if (h == -1) {
 		goto error;
 	}
@@ -248,11 +248,11 @@ static void finger_FILE_fopen(instructionPointer * ip)
 		case 4: handles[h]->file = fopen(filename, "w+b"); break;
 		case 5: handles[h]->file = fopen(filename, "a+b"); break;
 		default:
-			FreeHandle(h);
+			free_handle(h);
 			goto error;
 	}
 	if (!handles[h]->file) {
-		FreeHandle(h);
+		free_handle(h);
 		goto error;
 	}
 	if ((mode == 2) || (mode == 5))
@@ -276,7 +276,7 @@ static void finger_FILE_fputs(instructionPointer * ip)
 
 	str = stack_pop_string(ip->stack);
 	h = stack_peek(ip->stack);
-	if (!ValidHandle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 	} else {
 		if (fputs(str, handles[h]->file) == EOF) {
@@ -295,7 +295,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -338,7 +338,7 @@ static void finger_FILE_fseek(instructionPointer * ip)
 	m = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -375,7 +375,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!ValidHandle(h)) {
+	if(!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -400,7 +400,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	}
 }
 
-FUNGE_ATTR_FAST static inline bool InitHandleList(void)
+FUNGE_ATTR_FAST static inline bool init_handle_list(void)
 {
 	assert(!handles);
 	handles = (FungeFileHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeFileHandle*));
@@ -413,7 +413,7 @@ FUNGE_ATTR_FAST static inline bool InitHandleList(void)
 bool finger_FILE_load(instructionPointer * ip)
 {
 	if (!handles)
-		if (!InitHandleList())
+		if (!init_handle_list())
 			return false;
 
 	manager_add_opcode(FILE,  'C', fclose)

@@ -25,7 +25,7 @@
 /// Used to handle "0-25" and "A-Z"
 /// @return Returns 0 for invalid, otherwise A-Z
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-static inline char PopStackSpec(instructionPointer * ip)
+static inline char pop_stack_spec(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n < 0) return 0;
@@ -36,7 +36,7 @@ static inline char PopStackSpec(instructionPointer * ip)
 }
 
 /// Used for pushing a reflect on stack.
-static void DoReflect(instructionPointer * ip)
+static void do_reflect(instructionPointer * ip)
 {
 	ip_reverse(ip);
 }
@@ -44,8 +44,8 @@ static void DoReflect(instructionPointer * ip)
 /// X - Swap two semantics
 static void finger_FING_swap(instructionPointer * ip)
 {
-	char first = PopStackSpec(ip);
-	char second = PopStackSpec(ip);
+	char first = pop_stack_spec(ip);
+	char second = pop_stack_spec(ip);
 	if (first == 0 || second == 0) {
 		ip_reverse(ip);
 	} else {
@@ -53,9 +53,9 @@ static void finger_FING_swap(instructionPointer * ip)
 		fingerprintOpcode op2 = opcode_stack_pop(ip, second);
 		// Push reflect if there wasn't anything on the stack.
 		if (!op1)
-			op1 = &DoReflect;
+			op1 = &do_reflect;
 		if (!op2)
-			op2 = &DoReflect;
+			op2 = &do_reflect;
 		opcode_stack_push(ip, second, op1);
 		opcode_stack_push(ip, first, op2);
 	}
@@ -64,7 +64,7 @@ static void finger_FING_swap(instructionPointer * ip)
 /// Y - Drop semantic
 static void finger_FING_drop(instructionPointer * ip)
 {
-	char opcode = PopStackSpec(ip);
+	char opcode = pop_stack_spec(ip);
 	if (opcode == 0) {
 		ip_reverse(ip);
 	} else {
@@ -75,14 +75,14 @@ static void finger_FING_drop(instructionPointer * ip)
 /// Z - Push source semantic onto dst
 static void finger_FING_push(instructionPointer * ip)
 {
-	char dst = PopStackSpec(ip);
-	char src = PopStackSpec(ip);
+	char dst = pop_stack_spec(ip);
+	char src = pop_stack_spec(ip);
 	if (src == 0 || dst == 0) {
 		ip_reverse(ip);
 	} else {
 		fingerprintOpcode op = opcode_stack_pop(ip, src);
 		if (op == NULL) {
-			op = &DoReflect;
+			op = &do_reflect;
 		} else {
 			if (!opcode_stack_push(ip, src, op)) {
 				ip_reverse(ip);

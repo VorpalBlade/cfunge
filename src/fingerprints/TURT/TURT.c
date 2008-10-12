@@ -130,7 +130,7 @@ static Turtle turt;
 static Drawing pic;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline Path* CreatePath(Point a, bool b, uint32_t c)
+static inline Path* create_path(Point a, bool b, uint32_t c)
 {
 	Path* p = malloc(sizeof(Path));
 	if (!p)
@@ -145,7 +145,7 @@ static inline Path* CreatePath(Point a, bool b, uint32_t c)
 FUNGE_ATTR_FAST
 static inline void addPath(Point pt, bool penDown, uint32_t colour)
 {
-	Path* p = CreatePath(pt, penDown, colour);
+	Path* p = create_path(pt, penDown, colour);
 
 	if (pic.pathBeg == NULL)
 		pic.pathBeg = p;
@@ -299,7 +299,7 @@ static inline void freeResources(void)
 
 /// Print the "header" of the SVG file
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintHeader(genxWriter gw) {
+static inline void print_header(genxWriter gw) {
 	tc minx, miny, w, h;
 
 	minx = turt.min.x - TURT_PADDING;
@@ -348,7 +348,7 @@ static inline void PrintHeader(genxWriter gw) {
 
 /// Used to print a point in a path element.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void PrintPoint(StringBuffer * sb, char prefix, tc x, tc y)
+static inline void print_point(StringBuffer * sb, char prefix, tc x, tc y)
 {
 	stringbuffer_append_printf(sb, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
 }
@@ -409,7 +409,7 @@ static void finger_TURT_set_heading(instructionPointer * ip)
 }
 
 
-static inline bool GeneratePath(genxWriter gw, uint32_t colour, const char * path,
+static inline bool generate_path(genxWriter gw, uint32_t colour, const char * path,
                                 genxElement g_path, genxAttribute g_style, genxAttribute g_d)
 {
 	char sstyle[sizeof("stroke:#112233")];
@@ -422,7 +422,7 @@ static inline bool GeneratePath(genxWriter gw, uint32_t colour, const char * pat
 	return true;
 }
 
-static inline bool GeneratePaths(genxWriter gw)
+static inline bool generate_paths(genxWriter gw)
 {
 	genxElement g_path;
 	genxAttribute g_style, g_d;
@@ -453,17 +453,17 @@ static inline bool GeneratePaths(genxWriter gw)
 			if (!sb)
 				return false;
 			if (p->penDown)
-				PrintPoint(sb, 'M', prev->d.p.x, prev->d.p.y);
+				print_point(sb, 'M', prev->d.p.x, prev->d.p.y);
 		}
 		if (p->penDown) {
-			PrintPoint(sb, 'L', p->d.p.x, p->d.p.y);
+			print_point(sb, 'L', p->d.p.x, p->d.p.y);
 		} else if (p != pic.path) {
-			PrintPoint(sb, 'M', p->d.p.x, p->d.p.y);
+			print_point(sb, 'M', p->d.p.x, p->d.p.y);
 		}
 		if (p->next && (p->d.colour != p->next->d.colour)) {
 			path_data = stringbuffer_finish(sb);
 			sb = NULL;
-			GeneratePath(gw, p->d.colour, path_data, g_path, g_style, g_d);
+			generate_path(gw, p->d.colour, path_data, g_path, g_style, g_d);
 			// TODO: Should we free?
 			if (path_data)
 				free_nogc(path_data);
@@ -475,13 +475,13 @@ static inline bool GeneratePaths(genxWriter gw)
 	// Final printout:
 	path_data = stringbuffer_finish(sb);
 	if (strlen(path_data) > 0) {
-		GeneratePath(gw, prev->d.colour, path_data, g_path, g_style, g_d);
+		generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
 	}
 	if (path_data) free_nogc(path_data);
 	return true;
 }
 
-static inline bool GenerateCircle(genxWriter gw, Dot* dot,
+static inline bool generate_circle(genxWriter gw, Dot* dot,
                                   genxElement g_circle, genxAttribute g_cx, genxAttribute g_cy,
                                   genxAttribute g_r, genxAttribute g_fill)
 {
@@ -497,7 +497,7 @@ static inline bool GenerateCircle(genxWriter gw, Dot* dot,
 	return true;
 }
 
-static inline bool GenerateCircles(genxWriter gw)
+static inline bool generate_circles(genxWriter gw)
 {
 	genxStatus status;
 	genxElement g_circle;
@@ -511,7 +511,7 @@ static inline bool GenerateCircles(genxWriter gw)
 	g_fill = genxDeclareAttribute(gw, NULL, (constUtf8)"fill", &status);
 
 	for (size_t i = 0; i < pic.dots_size; i++) {
-		if (!GenerateCircle(gw, &pic.dots[i], g_circle, g_cx, g_cy, g_r, g_fill))
+		if (!generate_circle(gw, &pic.dots[i], g_circle, g_cx, g_cy, g_r, g_fill))
 			return false;
 	}
 	return true;
@@ -543,10 +543,10 @@ static void finger_TURT_print_drawing(instructionPointer * ip)
 		goto error;
 	}
 
-	PrintHeader(gw);
+	print_header(gw);
 
-	GeneratePaths(gw);
-	GenerateCircles(gw);
+	generate_paths(gw);
+	generate_circles(gw);
 	// End <svg>
 	genxEndElement(gw);
 	if (genxEndDocument(gw) != GENX_SUCCESS) {

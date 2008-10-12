@@ -44,9 +44,9 @@ typedef union {
 static FungeSocketHandle** sockets = NULL;
 static size_t maxHandle = 0;
 
-/// Used by AllocateHandle() below to find next free handle.
+/// Used by allocate_handle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell findNextFreeHandle(void)
+static inline fungeCell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (sockets[i] == NULL)
@@ -68,11 +68,11 @@ static inline fungeCell findNextFreeHandle(void)
 /// Get a new handle to use for a file, also allocates buffer for it.
 /// @return Handle, or -1 on failure
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell AllocateHandle(void)
+static inline fungeCell allocate_handle(void)
 {
 	fungeCell h;
 
-	h = findNextFreeHandle();
+	h = findNextfree_handle();
 	if (h < 0)
 		return -1;
 
@@ -84,7 +84,7 @@ static inline fungeCell AllocateHandle(void)
 
 /// Free a handle. fclose() the file before calling this.
 FUNGE_ATTR_FAST
-static inline void FreeHandle(fungeCell h)
+static inline void free_handle(fungeCell h)
 {
 	if (!sockets[h])
 		return;
@@ -94,7 +94,7 @@ static inline void FreeHandle(fungeCell h)
 
 /// Checks if handle is valid.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool ValidHandle(fungeCell h)
+static inline bool valid_handle(fungeCell h)
 {
 	if ((h < 0) || ((size_t)h >= maxHandle) || (!sockets[h])) {
 		return false;
@@ -106,7 +106,7 @@ static inline bool ValidHandle(fungeCell h)
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h)
 {
-	if (!ValidHandle(h))
+	if (!valid_handle(h))
 		return NULL;
 	return sockets[h];
 }
@@ -126,7 +126,7 @@ static void finger_SOCK_accept(instructionPointer * ip)
 {
 	fungeCell s = stack_pop(ip->stack);
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	{
@@ -140,7 +140,7 @@ static void finger_SOCK_accept(instructionPointer * ip)
 
 		as = accept(sockets[s]->fd, &addr.gen, &addrlen);
 
-		i = AllocateHandle();
+		i = allocate_handle();
 		if (i == -1)
 			goto error;
 		sockets[i]->fd = as;
@@ -164,7 +164,7 @@ static void finger_SOCK_bind(instructionPointer * ip)
 	fungeCell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	switch (fam) {
@@ -196,7 +196,7 @@ static void finger_SOCK_open(instructionPointer * ip)
 	fungeCell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	switch (fam) {
@@ -239,16 +239,16 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 static void finger_SOCK_kill(instructionPointer * ip)
 {
 	fungeCell s       = stack_pop(ip->stack);
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto invalid;
 	shutdown(sockets[s]->fd, SHUT_RDWR);
 	if (close(sockets[s]->fd) == -1) {
 		goto error;
 	}
-	FreeHandle(s);
+	free_handle(s);
 	return;
 error:
-	FreeHandle(s);
+	free_handle(s);
 invalid:
 	ip_reverse(ip);
 }
@@ -259,7 +259,7 @@ static void finger_SOCK_listen(instructionPointer * ip)
 	fungeCell s = stack_pop(ip->stack);
 	int n = stack_pop(ip->stack);
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	if (listen(sockets[s]->fd, n) == -1)
@@ -280,7 +280,7 @@ static void finger_SOCK_setopt(instructionPointer * ip)
 
 	val = stack_pop(ip->stack);
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	switch (t) {
@@ -316,7 +316,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	buffer = cf_malloc_noptr(len * sizeof(char));
@@ -359,7 +359,7 @@ static void finger_SOCK_create(instructionPointer * ip)
 		goto error;
 
 	{
-		fungeCell h = AllocateHandle();
+		fungeCell h = allocate_handle();
 		if (h == -1) {
 			goto error;
 		}
@@ -389,7 +389,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
-	if (!ValidHandle(s))
+	if (!valid_handle(s))
 		goto error;
 
 	buffer = cf_malloc_noptr(len * sizeof(char));
@@ -412,7 +412,7 @@ end:
 		cf_free(buffer);
 }
 
-FUNGE_ATTR_FAST static inline bool InitHandleList(void)
+FUNGE_ATTR_FAST static inline bool init_handle_list(void)
 {
 	sockets = (FungeSocketHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeSocketHandle*));
 	if (!sockets)
@@ -424,7 +424,7 @@ FUNGE_ATTR_FAST static inline bool InitHandleList(void)
 bool finger_SOCK_load(instructionPointer * ip)
 {
 	if (!sockets)
-		if (!InitHandleList())
+		if (!init_handle_list())
 			return false;
 
 	manager_add_opcode(SOCK,  'A', accept)

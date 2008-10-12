@@ -44,7 +44,7 @@ typedef union u_floatint {
  ********************/
 
 FUNGE_ATTR_FAST
-static inline float PopFloat(instructionPointer * restrict ip)
+static inline float pop_float(instructionPointer * restrict ip)
 {
 	floatint u;
 	u.i = stack_pop(ip->stack);
@@ -52,7 +52,7 @@ static inline float PopFloat(instructionPointer * restrict ip)
 }
 
 FUNGE_ATTR_FAST
-static inline void PushFloat(instructionPointer * restrict ip, float f)
+static inline void push_float(instructionPointer * restrict ip, float f)
 {
 	floatint u;
 	u.f = f;
@@ -61,39 +61,39 @@ static inline void PushFloat(instructionPointer * restrict ip, float f)
 
 
 FUNGE_ATTR_FAST
-static inline void PopVecF(instructionPointer * restrict ip, float vec[3])
+static inline void pop_vec_float(instructionPointer * restrict ip, float vec[3])
 {
-	vec[2] = PopFloat(ip);
-	vec[1] = PopFloat(ip);
-	vec[0] = PopFloat(ip);
+	vec[2] = pop_float(ip);
+	vec[1] = pop_float(ip);
+	vec[0] = pop_float(ip);
 }
 
 FUNGE_ATTR_FAST
-static inline void PushVecF(instructionPointer * restrict ip, const float vec[3])
+static inline void push_vec_float(instructionPointer * restrict ip, const float vec[3])
 {
-	PushFloat(ip, vec[0]);
-	PushFloat(ip, vec[1]);
-	PushFloat(ip, vec[2]);
+	push_float(ip, vec[0]);
+	push_float(ip, vec[1]);
+	push_float(ip, vec[2]);
 }
 
 FUNGE_ATTR_FAST
-static inline void PopVec(instructionPointer * restrict ip, double vec[3])
+static inline void pop_vec(instructionPointer * restrict ip, double vec[3])
 {
-	vec[2] = PopFloat(ip);
-	vec[1] = PopFloat(ip);
-	vec[0] = PopFloat(ip);
+	vec[2] = pop_float(ip);
+	vec[1] = pop_float(ip);
+	vec[0] = pop_float(ip);
 }
 
 FUNGE_ATTR_FAST
-static inline void PushVec(instructionPointer * restrict ip, const double vec[3])
+static inline void push_vec(instructionPointer * restrict ip, const double vec[3])
 {
-	PushFloat(ip, (float)vec[0]);
-	PushFloat(ip, (float)vec[1]);
-	PushFloat(ip, (float)vec[2]);
+	push_float(ip, (float)vec[0]);
+	push_float(ip, (float)vec[1]);
+	push_float(ip, (float)vec[2]);
 }
 
 FUNGE_ATTR_FAST
-static inline double VectorLength(const double vec[3])
+static inline double vector_length(const double vec[3])
 {
 	return sqrt(vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]);
 }
@@ -156,76 +156,76 @@ static inline void mulMatrices(const double a[16], const double b[16], double r[
 static void finger_3DSP_add(instructionPointer * ip)
 {
 	double a[3], b[3];
-	PopVec(ip, b);
-	PopVec(ip, a);
+	pop_vec(ip, b);
+	pop_vec(ip, a);
 
 	a[0] += b[0];
 	a[1] += b[1];
 	a[2] += b[2];
-	PushVec(ip, a);
+	push_vec(ip, a);
 }
 
 /// B - Subtract two 3d vectors
 static void finger_3DSP_sub(instructionPointer * ip)
 {
 	double a[3], b[3];
-	PopVec(ip, b);
-	PopVec(ip, a);
+	pop_vec(ip, b);
+	pop_vec(ip, a);
 
 	a[0] -= b[0];
 	a[1] -= b[1];
 	a[2] -= b[2];
-	PushVec(ip, a);
+	push_vec(ip, a);
 }
 
 /// C - Cross porduct of two vectors
 static void finger_3DSP_cross(instructionPointer * ip)
 {
 	double a[3], b[3], c[3];
-	PopVec(ip, b);
-	PopVec(ip, a);
+	pop_vec(ip, b);
+	pop_vec(ip, a);
 
 	c[0] = a[1]*b[2] - a[2]*b[1];
 	c[1] = a[2]*b[0] - a[0]*b[2];
 	c[2] = a[0]*b[1] - a[1]*b[0];
 
-	PushVec(ip, c);
+	push_vec(ip, c);
 }
 
 /// D - Dot product of two vector
 static void finger_3DSP_dot(instructionPointer * ip)
 {
 	double a[3], b[3];
-	PopVec(ip, b);
-	PopVec(ip, a);
+	pop_vec(ip, b);
+	pop_vec(ip, a);
 
 	a[0] *= b[0];
 	a[1] *= b[1];
 	a[2] *= b[2];
 
-	PushFloat(ip, (float)(a[0] + a[1] + a[2]));
+	push_float(ip, (float)(a[0] + a[1] + a[2]));
 }
 
 /// L - Length of vector
 static void finger_3DSP_length(instructionPointer * ip)
 {
 	double a[3];
-	PopVec(ip, a);
-	PushFloat(ip, (float)VectorLength(a));
+	pop_vec(ip, a);
+	push_float(ip, (float)vector_length(a));
 }
 
 /// M - Multiply two 3d vectors
 static void finger_3DSP_mul(instructionPointer * ip)
 {
 	double a[3], b[3];
-	PopVec(ip, b);
-	PopVec(ip, a);
+	pop_vec(ip, b);
+	pop_vec(ip, a);
 
 	a[0] *= b[0];
 	a[1] *= b[1];
 	a[2] *= b[2];
 
-	PushVec(ip, a);
+	push_vec(ip, a);
 }
 
 /// N - Normalize vector (sets length to 1)
@@ -234,14 +234,14 @@ static void finger_3DSP_normalise(instructionPointer * ip)
 	double a[3];
 	double len;
 
-	PopVec(ip, a);
-	len = VectorLength(a);
+	pop_vec(ip, a);
+	len = vector_length(a);
 
 	a[0] /= len;
 	a[1] /= len;
 	a[2] /= len;
 
-	PushVec(ip, a);
+	push_vec(ip, a);
 }
 
 /// P - Copy a matrix
@@ -269,7 +269,7 @@ static void finger_3DSP_matrix_copy(instructionPointer * ip)
 static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 {
 	double s, c;
-	double angle = PopFloat(ip);
+	double angle = pop_float(ip);
 	fungeCell axis = stack_pop(ip->stack);
 	fungeVector fV = stack_pop_vector(ip->stack);
 
@@ -316,7 +316,7 @@ static void finger_3DSP_matrix_scale(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
-	PopVec(ip, v);
+	pop_vec(ip, v);
 	fV = stack_pop_vector(ip->stack);
 	{
 		double matrix[16] = {v[0],   0,   0,   0
@@ -332,7 +332,7 @@ static void finger_3DSP_matrix_translate(instructionPointer * ip)
 {
 	double v[3];
 	fungeVector fV;
-	PopVec(ip, v);
+	pop_vec(ip, v);
 	fV = stack_pop_vector(ip->stack);
 
 	{
@@ -348,9 +348,9 @@ static void finger_3DSP_matrix_translate(instructionPointer * ip)
 static void finger_3DSP_duplicate(instructionPointer * ip)
 {
 	float a[3];
-	PopVecF(ip, a);
-	PushVecF(ip, a);
-	PushVecF(ip, a);
+	pop_vec_float(ip, a);
+	push_vec_float(ip, a);
+	push_vec_float(ip, a);
 }
 
 /// V - Map 3d point to 2d view
@@ -358,7 +358,7 @@ static void finger_3DSP_map(instructionPointer * ip)
 {
 	double v[3];
 
-	PopVec(ip, v);
+	pop_vec(ip, v);
 	// Use fpclassify() to avoid:
 	// "warning: comparing floating point with == or != is unsafe".
 #ifdef FP_ZERO
@@ -371,8 +371,8 @@ static void finger_3DSP_map(instructionPointer * ip)
 		v[1] /= v[2];
 		v[2] /= v[2];
 	}
-	PushFloat(ip, (float)v[0]);
-	PushFloat(ip, (float)v[1]);
+	push_float(ip, (float)v[0]);
+	push_float(ip, (float)v[1]);
 }
 
 /// X - Transform a vector using transformation matrix
@@ -385,13 +385,13 @@ static void finger_3DSP_transform(instructionPointer * ip)
 
 	fm = stack_pop_vector(ip->stack);
 
-	PopVec(ip, v);
+	pop_vec(ip, v);
 	v[3] = 1;
 
 	readMatrix(ip, &fm, m);
 
 	mulMatrixVector(m, v, r);
-	PushVec(ip, r);
+	push_vec(ip, r);
 }
 
 /// Y - Multiply two matrices
@@ -423,14 +423,14 @@ static void finger_3DSP_scale(instructionPointer * ip)
 	double a[3];
 	double n;
 
-	PopVec(ip, a);
-	n = PopFloat(ip);
+	pop_vec(ip, a);
+	n = pop_float(ip);
 
 	a[0] *= n;
 	a[1] *= n;
 	a[2] *= n;
 
-	PushVec(ip, a);
+	push_vec(ip, a);
 }
 
 bool finger_3DSP_load(instructionPointer * ip)

@@ -24,7 +24,7 @@
 
 /// This simply fetches the second vector.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
+static inline fungeVector get_second_vector(instructionPointer * restrict ip)
 {
 	fungeVector a, b;
 
@@ -43,21 +43,21 @@ static inline fungeVector GetSecondVector(instructionPointer * restrict ip)
 /// G - Get value using indirect vector
 static void finger_INDV_get_num(instructionPointer * ip)
 {
-	fungeVector v = GetSecondVector(ip);
+	fungeVector v = get_second_vector(ip);
 	stack_push(ip->stack, fungespace_get(&v));
 }
 
 /// P - Put value using indirect vector
 static void finger_INDV_put_num(instructionPointer * ip)
 {
-	fungeVector v = GetSecondVector(ip);
+	fungeVector v = get_second_vector(ip);
 	fungespace_set(stack_pop(ip->stack), &v);
 }
 
 /// V - Get vector using indirect vector
 static void finger_INDV_get_vec(instructionPointer * ip)
 {
-	fungeVector v = GetSecondVector(ip);
+	fungeVector v = get_second_vector(ip);
 	stack_push_vector(ip->stack,
 		vector_create_ref(
 			fungespace_get(vector_create_ref(v.x+1, v.y)),
@@ -70,7 +70,7 @@ static void finger_INDV_get_vec(instructionPointer * ip)
 static void finger_INDV_put_vec(instructionPointer * ip)
 {
 	fungeVector a, b;
-	a = GetSecondVector(ip);
+	a = get_second_vector(ip);
 	b = stack_pop_vector(ip->stack);
 	fungespace_set(b.y, &a);
 	fungespace_set(b.x, vector_create_ref(a.x+1, a.y));

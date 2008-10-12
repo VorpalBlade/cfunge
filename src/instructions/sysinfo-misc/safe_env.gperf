@@ -1,6 +1,6 @@
 %language=ANSI-C
-%define hash-function-name SafeEnvHash
-%define lookup-function-name SafeInWordSet
+%define hash-function-name safe_env_hash
+%define lookup-function-name safe_in_word_set
 %compare-lengths
 %compare-strncmp
 %readonly-tables
@@ -44,12 +44,12 @@ USER
 VISUAL
 %%
 
-FUNGE_FAST bool check_env_is_safe(const char *envvar) {
+FUNGE_ATTR_FAST bool check_env_is_safe(const char *envvar) {
 	const char * p;
 
 	p = strchr(envvar, '=');
 	if (!p)
 		return false;
 	else
-		return (SafeInWordSet(envvar, p - envvar) != NULL);
+		return (safe_in_word_set(envvar, p - envvar) != NULL);
 }

@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.0.1 */
+/* ANSI-C code produced by gperf version 3.0.3 */
 /* Command-line: gperf safe_env.gperf  */
 /* Computed positions: -k'4,$' */
 
@@ -43,7 +43,7 @@
 /* maximum key range = 53, duplicates = 0 */
 
 FUNGE_ATTR_FAST static inline unsigned int
-SafeEnvHash (register const char *str, register unsigned int len)
+safe_env_hash (register const char *str, register unsigned int len)
 {
   static const unsigned char asso_values[] =
     {
@@ -89,7 +89,7 @@ SafeEnvHash (register const char *str, register unsigned int len)
 }
 
 FUNGE_ATTR_FAST static inline const char *
-SafeInWordSet (register const char *str, register unsigned int len)
+safe_in_word_set (register const char *str, register unsigned int len)
 {
   static const unsigned char lengthtable[] =
     {
@@ -146,7 +146,7 @@ SafeInWordSet (register const char *str, register unsigned int len)
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register int key = SafeEnvHash (str, len);
+      register int key = safe_env_hash (str, len);
 
       if (key <= MAX_HASH_VALUE && key >= 0)
         if (len == lengthtable[key])
@@ -169,5 +169,5 @@ FUNGE_ATTR_FAST bool check_env_is_safe(const char *envvar) {
 	if (!p)
 		return false;
 	else
-		return (SafeInWordSet(envvar, p - envvar) != NULL);
+		return (safe_in_word_set(envvar, p - envvar) != NULL);
 }
