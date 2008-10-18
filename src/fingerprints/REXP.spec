@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:REXP
-%url:http://www.rcfunge98.com/rcfunge_manual.html#REXP
+%url:http://www.rcfunge98.com/rcsfingers.html#REXP
 %desc:Regular Expression Matching
 %safe:true
 %begin-instrs

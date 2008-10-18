@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:3DSP
-%url:http://www.rcfunge98.com/rcfunge_manual.html#3DSP
+%url:http://www.rcfunge98.com/rcsfingers.html#3DSP
 %desc:3D space manipulation extension
 %safe:true
 %begin-instrs

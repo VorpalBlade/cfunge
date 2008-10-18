@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:DIRF
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:Directory functions extension
 %safe:false
 %begin-instrs

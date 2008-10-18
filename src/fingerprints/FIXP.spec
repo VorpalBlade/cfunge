@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FIXP
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:Some useful math functions
 %safe:true
 %begin-instrs

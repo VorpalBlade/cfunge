@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:TERM
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:Terminal control functions
 %safe:true
 %begin-instrs

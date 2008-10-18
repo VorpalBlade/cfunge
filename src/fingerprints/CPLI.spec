@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:CPLI
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:Complex Integer extension
 %safe:true
 %begin-instrs

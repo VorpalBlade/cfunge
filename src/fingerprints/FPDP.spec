@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FPDP
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:Double precision floating point
 %safe:true
 %begin-instrs

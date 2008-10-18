@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:STRN
-%url:http://www.elf-emulation.com/funge/rcfunge_manual.html
+%url:http://www.rcfunge98.com/rcsfingers.html
 %desc:String functions
 %safe:true
 %begin-instrs
