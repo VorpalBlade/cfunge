@@ -71,7 +71,7 @@ typedef struct s_instructionPointer {
 	// Bitfield for uncommon flags
 	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
 	fungeCell                   ID;                     ///< The ID of this IP.
-	funge_stackstack           * stackstack;             ///< The stack stack.
+	funge_stackstack          * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	struct timeval            * fingerHRTItimestamp;               ///< Data for fingerprint HRTI.
 } instructionPointer;

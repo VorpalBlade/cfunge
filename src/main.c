@@ -77,7 +77,7 @@ static void print_features(void)
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
 static void print_help(void)
 {
-	puts("Usage: cfunge [OPTIONS] [FILE] [SCRIPT OPTIONS]");
+	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
 	puts(" -F           Disable all fingerprints.");
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
