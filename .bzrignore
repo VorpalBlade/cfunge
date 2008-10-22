@@ -8,9 +8,9 @@
 ./.gdbinit
 ./CMakeCache.txt
 ./CMakeFiles
+./build
 ./cfunge
 ./cfunge.dynamic.*
-./cfunge.kdevelop.pcs
 ./cfunge.static.*
 ./cmake_install.cmake
 ./dist
