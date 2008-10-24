@@ -249,7 +249,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			stack_push(pushStack, (fungeCell)'\0');
 			stack_push(pushStack, (fungeCell)'\0');
 			for (int i = fungeargc - 1; i >= 0; i--) {
-				stack_push_string(pushStack, fungeargv[i], strlen(fungeargv[i]));
+				stack_push_string(pushStack, (const unsigned char*)fungeargv[i], strlen(fungeargv[i]));
 			}
 			break;
 		case si_env_count: // Command line arguments
@@ -284,7 +284,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 						continue;
 					}
 				}
-				stack_push_string(pushStack, environ[i], strlen(environ[i]));
+				stack_push_string(pushStack, (const unsigned char*)environ[i], strlen(environ[i]));
 				i++;
 			}
 
@@ -292,7 +292,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 		}
 		case si_handprint108: // 1 0"gnirts" with Funge-108 URI (global env) (108 specific)
 			// Bytes
-			stack_push_string(pushStack, FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
+			stack_push_string(pushStack, (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
 			break;
 		case si_basic_data_unit: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
 			// Bytes

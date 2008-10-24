@@ -117,13 +117,13 @@ fungeVector stack_pop_vector(funge_stack * restrict stack);
  * Push a null-terminated string to a 0"gnirts".
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_push_string(funge_stack * restrict stack, const char * restrict str, size_t len);
+void stack_push_string(funge_stack * restrict stack, const unsigned char * restrict str, size_t len);
 /**
  * Pop a 0"gnirts" and return a null-terminated string.
  * Use stack_freeString() to free the string.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-char * stack_pop_string(funge_stack * restrict stack);
+unsigned char * stack_pop_string(funge_stack * restrict stack);
 
 /**
  * Free a 0"gnirts" that was popped with stack_pop_string().
@@ -138,7 +138,7 @@ char * stack_pop_string(funge_stack * restrict stack);
  * @return Result returned as null-terminated string.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-char * stack_pop_sized_string(funge_stack * restrict stack, size_t len);
+unsigned char * stack_pop_sized_string(funge_stack * restrict stack, size_t len);
 /// Clear all items from a stack.
 #define stack_clear(stack) { stack->top = 0; }
 /**

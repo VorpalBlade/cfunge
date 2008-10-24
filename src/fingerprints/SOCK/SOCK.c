@@ -225,7 +225,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 	char * restrict str;
 	struct in_addr addr;
 
-	str = stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack);
 	if (inet_pton(AF_INET, str, &addr) != 1) {
 		ip_reverse(ip);
 	} else {
@@ -319,7 +319,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	if (!valid_handle(s))
 		goto error;
 
-	buffer = cf_malloc_noptr(len * sizeof(char));
+	buffer = cf_malloc_noptr(len * sizeof(unsigned char));
 
 	got = recv(sockets[s]->fd, buffer, len, 0);
 
@@ -392,7 +392,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	if (!valid_handle(s))
 		goto error;
 
-	buffer = cf_malloc_noptr(len * sizeof(char));
+	buffer = cf_malloc_noptr(len * sizeof(unsigned char));
 
 	for (size_t i = 0; i < len; ++i)
 		buffer[i] = fungespace_get(vector_create_ref(v.x+i, v.y));

@@ -32,12 +32,12 @@ static void finger_STRN_append(instructionPointer * ip)
 	char * restrict top;
 	char * restrict bottom;
 	char * restrict c;
-	top = stack_pop_string(ip->stack);
-	bottom = stack_pop_string(ip->stack);
+	top = (char*)stack_pop_string(ip->stack);
+	bottom = (char*)stack_pop_string(ip->stack);
 	c = calloc_nogc(strlen(top) + strlen(bottom) + 1, sizeof(char));
 	strcat(c, top);
 	strcat(c, bottom);
-	stack_push_string(ip->stack, c, strlen(c));
+	stack_push_string(ip->stack, (unsigned char*)c, strlen(c));
 	stack_freeString(top);
 	stack_freeString(bottom);
 	free_nogc(c);
@@ -46,11 +46,11 @@ static void finger_STRN_append(instructionPointer * ip)
 /// C - Compare strings
 static void finger_STRN_compare(instructionPointer * ip)
 {
-	char * restrict a;
-	char * restrict b;
+	unsigned char * restrict a;
+	unsigned char * restrict b;
 	a = stack_pop_string(ip->stack);
 	b = stack_pop_string(ip->stack);
-	stack_push(ip->stack, strcmp(a, b));
+	stack_push(ip->stack, strcmp((char*)a, (char*)b));
 	stack_freeString(a);
 	stack_freeString(b);
 }
@@ -58,23 +58,23 @@ static void finger_STRN_compare(instructionPointer * ip)
 /// D - Display a string
 static void finger_STRN_display(instructionPointer * ip)
 {
-	char * restrict s;
+	unsigned char * restrict s;
 	s = stack_pop_string(ip->stack);
-	fputs(s, stdout);
+	fputs((char*)s, stdout);
 	stack_freeString(s);
 }
 
 /// F - Search for bottom string in upper string
 static void finger_STRN_search(instructionPointer * ip)
 {
-	char * top;
-	char * restrict bottom;
-	char * c;
+	unsigned char * top;
+	unsigned char * restrict bottom;
+	unsigned char * c;
 	top = stack_pop_string(ip->stack);
 	bottom = stack_pop_string(ip->stack);
-	c = strstr(top, bottom);
+	c = (unsigned char*)strstr((char*)top, (char*)bottom);
 	if (c) {
-		stack_push_string(ip->stack, c, strlen(c));
+		stack_push_string(ip->stack, c, strlen((char*)c));
 	} else {
 		stack_push(ip->stack, '\0');
 	}
@@ -118,25 +118,25 @@ static void finger_STRN_get(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	stack_push_string(ip->stack, s, strlen(s));
+	stack_push_string(ip->stack, (unsigned char*)s, strlen(s));
 	free_nogc(s);
 }
 
 /// I - Input a string
 static void finger_STRN_input(instructionPointer * ip)
 {
-	char * line = NULL;
-	char * newline;
+	unsigned char * line = NULL;
+	unsigned char * newline;
 	bool retval = input_getline(&line);
 	if (retval == false || line == NULL) {
 		ip_reverse(ip);
 		return;
 	}
 	// Discard any trailing newline.
-	newline = strrchr(line, '\n');
+	newline = (unsigned char*)strrchr((char*)line, '\n');
 	if (newline)
 		newline[0] = '\0';
-	stack_push_string(ip->stack, line, strlen(line));
+	stack_push_string(ip->stack, line, strlen((char*)line));
 	cf_free(line);
 }
 
@@ -145,10 +145,10 @@ static void finger_STRN_left(instructionPointer * ip)
 {
 	fungeCell n;
 	size_t len;
-	char *s;
+	unsigned char *s;
 	n = stack_pop(ip->stack);
 	s = stack_pop_string(ip->stack);
-	len = strlen(s);
+	len = strlen((char*)s);
 	if (n < 0 || len < (size_t)n) {
 		stack_freeString(s);
 		ip_reverse(ip);
@@ -166,7 +166,7 @@ static void finger_STRN_slice(instructionPointer * ip)
 	char *s;
 	n = stack_pop(ip->stack);
 	p = stack_pop(ip->stack);
-	s = stack_pop_string(ip->stack);
+	s = (char*)stack_pop_string(ip->stack);
 	if (p < 0 || n < 0) {
 		stack_freeString(s);
 		ip_reverse(ip);
@@ -178,17 +178,17 @@ static void finger_STRN_slice(instructionPointer * ip)
 		return;
 	}
 	s[p+n] = '\0';
-	stack_push_string(ip->stack, s + p, strlen(s + p));
+	stack_push_string(ip->stack, (unsigned char*)s + p, strlen(s + p));
 	stack_freeString(s);
 }
 
 /// N - Get length of string
 static void finger_STRN_length(instructionPointer * ip)
 {
-	char * restrict s;
+	unsigned char * restrict s;
 	size_t len;
 	s = stack_pop_string(ip->stack);
-	len = strlen(s);
+	len = strlen((char*)s);
 	stack_push_string(ip->stack, s, len);
 	stack_push(ip->stack, len);
 	stack_freeString(s);
@@ -197,7 +197,7 @@ static void finger_STRN_length(instructionPointer * ip)
 /// P - Put string at specified position
 static void finger_STRN_put(instructionPointer * ip)
 {
-	char *s;
+	unsigned char *s;
 	fungeVector pos;
 	size_t len;
 
@@ -205,7 +205,7 @@ static void finger_STRN_put(instructionPointer * ip)
 	pos.x += ip->storageOffset.x;
 	pos.y += ip->storageOffset.y;
 	s   = stack_pop_string(ip->stack);
-	len = strlen(s);
+	len = strlen((char*)s);
 
 	for (size_t i = 0; i < len + 1; i++) {
 		fungespace_set(s[i], &pos);
@@ -219,10 +219,10 @@ static void finger_STRN_right(instructionPointer * ip)
 {
 	fungeCell n;
 	size_t len;
-	char *s;
+	unsigned char *s;
 	n = stack_pop(ip->stack);
 	s = stack_pop_string(ip->stack);
-	len = strlen(s);
+	len = strlen((char*)s);
 	if (n < 0 || len < (size_t)n) {
 		stack_freeString(s);
 		ip_reverse(ip);
@@ -241,16 +241,16 @@ static void finger_STRN_itoa(instructionPointer * ip)
 
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb);
-	stack_push_string(ip->stack, s, strlen(s));
+	stack_push_string(ip->stack, (unsigned char*)s, strlen(s));
 	free_nogc(s);
 }
 
 /// V - Retrieve value from string
 static void finger_STRN_atoi(instructionPointer * ip)
 {
-	char *s;
+	unsigned char *s;
 	s = stack_pop_string(ip->stack);
-	stack_push(ip->stack, atoi(s));
+	stack_push(ip->stack, atoi((char*)s));
 	stack_freeString(s);
 }
 

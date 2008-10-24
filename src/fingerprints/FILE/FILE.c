@@ -122,7 +122,7 @@ static void finger_FILE_delete(instructionPointer * ip)
 {
 	char * restrict filename;
 
-	filename = stack_pop_string(ip->stack);
+	filename = (char*)stack_pop_string(ip->stack);
 	if(unlink(filename) != 0) {
 		ip_reverse(ip);
 	}
@@ -192,7 +192,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 			size_t len;
 			str = stringbuffer_finish(sb);
 			len = strlen(str);
-			stack_push_string(ip->stack, str, len);
+			stack_push_string(ip->stack, (unsigned char*)str, len);
 			stack_push(ip->stack, (fungeCell)len);
 			free_nogc(str);
 			return;
@@ -231,7 +231,7 @@ static void finger_FILE_fopen(instructionPointer * ip)
 	fungeVector vect;
 	fungeCell h;
 
-	filename = stack_pop_string(ip->stack);
+	filename = (char*)stack_pop_string(ip->stack);
 	mode = stack_pop(ip->stack);
 	vect = stack_pop_vector(ip->stack);
 
@@ -274,7 +274,7 @@ static void finger_FILE_fputs(instructionPointer * ip)
 	char * restrict str;
 	fungeCell h;
 
-	str = stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack);
 	h = stack_peek(ip->stack);
 	if (!valid_handle(h)) {
 		ip_reverse(ip);

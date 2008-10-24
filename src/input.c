@@ -69,12 +69,12 @@ FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
 	return true;
 }
 
-FUNGE_ATTR_FAST bool input_getline(char ** str)
+FUNGE_ATTR_FAST bool input_getline(unsigned char ** str)
 {
-	char * tmp;
+	unsigned char * tmp;
 	if (!get_line())
 		return false;
-	tmp = cf_strdup(lastline_current);
+	tmp = (unsigned char*)cf_strdup(lastline_current);
 	*str = tmp;
 	discard_line();
 	return true;

@@ -119,7 +119,7 @@ static inline void push_results(instructionPointer * restrict ip,
 		if (matches[i].rm_so != -1) {
 			count++;
 			stack_push(ip->stack, 0);
-			stack_push_string(ip->stack, str + matches[i].rm_so,
+			stack_push_string(ip->stack, (unsigned char*)str + matches[i].rm_so,
 			                matches[i].rm_eo - matches[i].rm_so - 1);
 		}
 	}
@@ -138,7 +138,7 @@ static void finger_REXP_compile(instructionPointer * ip)
 		regfree(&compiled_regex);
 
 	flags = translate_flags_C(stack_pop(ip->stack));
-	str = stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack);
 
 	compret = regcomp(&compiled_regex, str, flags);
 
@@ -166,7 +166,7 @@ static void finger_REXP_execute(instructionPointer * ip)
 	}
 
 	flags = translate_flags_E(stack_pop(ip->stack));
-	str = stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack);
 
 	execret = regexec(&compiled_regex, str, MATCHSIZE, matches, flags);
 	if (execret == 0) {

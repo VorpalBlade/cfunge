@@ -47,7 +47,7 @@ FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 		char * restrict command;
 		int retval;
 		// Pop stuff.
-		command = stack_pop_string(ip->stack);
+		command = (char*)stack_pop_string(ip->stack);
 
 		// Sanity test!
 		if (*command == '\0') {

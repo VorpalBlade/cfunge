@@ -69,6 +69,6 @@ bool input_getchar(fungeCell * chr);
  * @return True if we got a string, false if we got EOF and should reflect.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool input_getline(char ** str);
+bool input_getline(unsigned char ** str);
 
 #endif

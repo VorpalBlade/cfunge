@@ -219,7 +219,7 @@ FUNGE_ATTR_FAST fungeVector stack_pop_vector(funge_stack * restrict stack)
 	return (fungeVector) { .x = x, .y = y };
 }
 
-FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const char * restrict str, size_t len)
+FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsigned char * restrict str, size_t len)
 {
 	assert(str != NULL);
 	assert(stack != NULL);
@@ -230,26 +230,26 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const char 
 		stack_push_no_check(stack, str[len]);
 }
 
-FUNGE_ATTR_FAST char *stack_pop_string(funge_stack * restrict stack)
+FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack)
 {
 	fungeCell c;
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
-	char * buf = (char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
 	if (!buf)
 		return NULL;
 
 	while ((c = stack_pop(stack)) != '\0') {
-		buf[index] = (char)c;
+		buf[index] = (unsigned char)c;
 		index++;
 	}
 	buf[index] = '\0';
 	return buf;
 }
 
-FUNGE_ATTR_FAST char *stack_pop_sized_string(funge_stack * restrict stack, size_t len)
+FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict stack, size_t len)
 {
-	char * restrict x = (char*)cf_malloc_noptr((len + 1) * sizeof(char));
+	unsigned char * restrict x = (unsigned char*)cf_malloc_noptr((len + 1) * sizeof(char));
 	if (!x)
 		return NULL;
 

@@ -207,7 +207,7 @@ static void finger_FPDP_toint(instructionPointer * ip)
 static void finger_FPDP_fromascii(instructionPointer * ip)
 {
 	char * restrict str;
-	str = stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack);
 	u.d = strtod(str, NULL);
 	pushDbl(ip);
 	stack_freeString(str);

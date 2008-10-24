@@ -391,9 +391,9 @@ fungespace_load_string(const unsigned char * restrict program)
 
 FUNGE_ATTR_FAST bool
 fungespace_load_at_offset(const char        * restrict filename,
-                       const fungeVector * restrict offset,
-                       fungeVector       * restrict size,
-                       bool binary)
+                          const fungeVector * restrict offset,
+                          fungeVector       * restrict size,
+                          bool binary)
 {
 	char *addr;
 	int fd;
@@ -457,9 +457,9 @@ fungespace_load_at_offset(const char        * restrict filename,
 
 FUNGE_ATTR_FAST bool
 fungespace_save_to_file(const char        * restrict filename,
-                     const fungeVector * restrict offset,
-                     const fungeVector * restrict size,
-                     bool textfile)
+                        const fungeVector * restrict offset,
+                        const fungeVector * restrict size,
+                        bool textfile)
 {
 	FILE * file;
 
