@@ -325,7 +325,7 @@ static inline void do_mmap_cleanup(int fd, char *addr, size_t length) {
  * @param length is the length of the string.
  */
 FUNGE_ATTR_FAST
-static inline void load_string(const char * restrict program, size_t length) {
+static inline void load_string(const unsigned char * restrict program, size_t length) {
 	bool lastwascr = false;
 	// Row in fungespace
 	fungeCell y = 0;
@@ -373,7 +373,7 @@ fungespace_load(const char * restrict filename)
 	if (fd == -2)
 		return true;
 
-	load_string(addr, length);
+	load_string((unsigned char*)addr, length);
 
 	// Cleanup
 	do_mmap_cleanup(fd, addr, length);
@@ -383,7 +383,7 @@ fungespace_load(const char * restrict filename)
 
 #ifdef FUNGE_EXTERNAL_LIBRARY
 FUNGE_ATTR_FAST void
-fungespace_load_string(const char * restrict program)
+fungespace_load_string(const unsigned char * restrict program)
 {
 	load_string(program, strlen(program));
 }

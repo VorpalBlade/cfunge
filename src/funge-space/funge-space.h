@@ -112,7 +112,7 @@ bool fungespace_load(const char * restrict filename);
  * @param program Program to load.
  */
 FUNGE_ATTR_FAST
-void fungespace_load_string(const char * restrict program);
+void fungespace_load_string(const unsigned char * restrict program);
 #endif
 
 /**
