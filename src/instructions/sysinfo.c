@@ -242,7 +242,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 				stack_push(pushStack, ip->stackstack->stacks[i]->top);
 			stack_push(pushStack, TOSSSize);
 			break;
-		case si_argc: // Command line arguments
+		case si_argc: // Command line arguments (count) (108 specific)
 			stack_push(pushStack, fungeargc);
 			break;
 		case si_argv: // Command line arguments
@@ -252,7 +252,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 				stack_push_string(pushStack, (const unsigned char*)fungeargv[i], strlen(fungeargv[i]));
 			}
 			break;
-		case si_env_count: // Command line arguments
+		case si_env_count: // Environment variables (count) (108 specific)
 			// Check if result is cached.
 			if (environ_count == 0) {
 				size_t i = 0;

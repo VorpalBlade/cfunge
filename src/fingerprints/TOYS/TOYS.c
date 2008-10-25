@@ -83,7 +83,7 @@ static void finger_TOYS_bracelet(instructionPointer * ip)
 	for (fungeCell x = 0; x < d.x; ++x)
 		for (fungeCell y = 0; y < d.y; ++y)
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
-			                 vector_create_ref(x, y), &t);
+			                      vector_create_ref(x, y), &t);
 }
 
 /// D - toilet seat
@@ -195,7 +195,7 @@ static void finger_TOYS_scissors(instructionPointer * ip)
 	for (fungeCell x = d.x; x-- > 0;)
 		for (fungeCell y = d.y; y-- > 0;)
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
-			                 vector_create_ref(x, y), &t);
+			                      vector_create_ref(x, y), &t);
 }
 
 /// L - corner
@@ -227,7 +227,7 @@ static void finger_TOYS_kittycat(instructionPointer * ip)
 	for (fungeCell x = 0; x < d.x; ++x)
 		for (fungeCell y = 0; y < d.y; ++y) {
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
-			                 vector_create_ref(x, y), &t);
+			                      vector_create_ref(x, y), &t);
 			fungespace_set_offset(' ', vector_create_ref(x, y), &o);
 		}
 }
@@ -351,7 +351,7 @@ static void finger_TOYS_dixiecup(instructionPointer * ip)
 	for (fungeCell x = d.x; x-- > 0;)
 		for (fungeCell y = d.y; y-- > 0;) {
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
-			                 vector_create_ref(x, y), &t);
+			                      vector_create_ref(x, y), &t);
 			fungespace_set_offset(' ', vector_create_ref(x, y), &o);
 		}
 }
