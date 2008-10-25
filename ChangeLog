@@ -10,7 +10,7 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r432)
+Changes since last release (r455)
 ---------------------------------
 These are important changes since last release:
  * Fixed off by one in TIME.
@@ -27,9 +27,16 @@ These are important changes since last release:
  * Funge-Space now use memory pools for allocation. This reduces memory
    fragmentation and also malloc bookkeeping overhead. It is also slightly
    faster.
- * Add valgrind annotations for the memory pools as a compile time option.
+ * Added valgrind annotations for the memory pools as a compile time option.
    If enabled this slows down the code by several orders of magnitude, but is
    useful for debugging.
+ * Major changes to function names, they now use _ instead of CamelCase.
+ * Fixed various build system bugs.
+ * Major speed improvement in mycology, flushing output less often.
+ * Strings in cfunge are now mostly unsigned.
+ * Reading a file with i is now unsigned.
+ * STDIO is now unsigned.
+ * Removed kdevelop project files.
 
 
 0.3.2
