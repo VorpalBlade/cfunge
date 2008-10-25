@@ -106,7 +106,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 		for (fungeCell j = 0; j < 4; ++j) {
 			floatint u;
 			u.f = (float)m[4*j + i];
-			fungespace_set_offset(u.i, vector_create_ref(fV->x+i, fV->y+j), &ip->storageOffset);
+			fungespace_set_offset(u.i, vector_create_ref(fV->x + i, fV->y + j), &ip->storageOffset);
 		}
 	}
 }
@@ -118,7 +118,7 @@ static inline void readMatrix(const instructionPointer * restrict ip,
 	for (fungeCell x = 0; x < 4; ++x) {
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
-			u.i = fungespace_get_offset(vector_create_ref(fV->x+x, fV->y+y), &ip->storageOffset);
+			u.i = fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
 		}
 	}
@@ -185,9 +185,9 @@ static void finger_3DSP_cross(instructionPointer * ip)
 	pop_vec(ip, b);
 	pop_vec(ip, a);
 
-	c[0] = a[1]*b[2] - a[2]*b[1];
-	c[1] = a[2]*b[0] - a[0]*b[2];
-	c[2] = a[0]*b[1] - a[1]*b[0];
+	c[0] = a[1] * b[2] - a[2] * b[1];
+	c[1] = a[2] * b[0] - a[0] * b[2];
+	c[2] = a[0] * b[1] - a[1] * b[0];
 
 	push_vec(ip, c);
 }
@@ -260,8 +260,8 @@ static void finger_3DSP_matrix_copy(instructionPointer * ip)
 
 	for (fungeCell x = 0; x < 4; ++x)
 		for (fungeCell y = 0; y < 4; ++y) {
-			fungespace_set(fungespace_get(vector_create_ref(fs.x+x, fs.y+y)),
-			              vector_create_ref(ft.x+x, ft.y+y));
+			fungespace_set(fungespace_get(vector_create_ref(fs.x + x, fs.y + y)),
+			               vector_create_ref(ft.x + x, ft.y + y));
 		}
 }
 
@@ -278,7 +278,7 @@ static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 		return;
 	}
 
-	angle *= M_PI/180;
+	angle *= M_PI / 180;
 
 	s = sin(angle);
 	c = cos(angle);
@@ -413,7 +413,7 @@ static void finger_3DSP_matrix_mul(instructionPointer * ip)
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
 			u.f = (float)r[y*4 + x];
-			fungespace_set_offset(u.i, vector_create_ref(ft.x+x, ft.y+y), &ip->storageOffset);
+			fungespace_set_offset(u.i, vector_create_ref(ft.x + x, ft.y + y), &ip->storageOffset);
 		}
 }
 

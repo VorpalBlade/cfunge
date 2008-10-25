@@ -106,7 +106,7 @@ static void finger_FILE_fclose(instructionPointer * ip)
 	fungeCell h;
 
 	h = stack_pop(ip->stack);
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -123,7 +123,7 @@ static void finger_FILE_delete(instructionPointer * ip)
 	char * restrict filename;
 
 	filename = (char*)stack_pop_string(ip->stack);
-	if(unlink(filename) != 0) {
+	if (unlink(filename) != 0) {
 		ip_reverse(ip);
 	}
 
@@ -139,7 +139,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 	FILE * fp;
 
 	h = stack_peek(ip->stack);
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -185,7 +185,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 					break;
 			}
 		}
-		// Yeah, can't break two levels otherwise...
+	// Yeah, can't break two levels otherwise...
 	endofloop:
 		{
 			char * str;
@@ -207,7 +207,7 @@ static void finger_FILE_ftell(instructionPointer * ip)
 	long pos;
 
 	h = stack_peek(ip->stack);
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -295,7 +295,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -318,7 +318,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 				cf_free(buf);
 				return;
 			} else {
-				assert (feof(fp));
+				assert(feof(fp));
 			}
 		}
 
@@ -338,7 +338,7 @@ static void finger_FILE_fseek(instructionPointer * ip)
 	m = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -375,7 +375,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
 
-	if(!valid_handle(h)) {
+	if (!valid_handle(h)) {
 		ip_reverse(ip);
 		return;
 	}

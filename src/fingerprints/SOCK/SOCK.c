@@ -112,7 +112,8 @@ FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h)
 }
 
 
-static inline int popFam(instructionPointer * ip) {
+static inline int popFam(instructionPointer * ip)
+{
 	switch (stack_pop(ip->stack)) {
 		case 1:  return AF_UNIX;
 		case 2:  return AF_INET;
@@ -134,9 +135,9 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		socklen_t addrlen = sizeof(addr.in);
 		int as, i;
 
-		addr.in.sin_addr.s_addr=0;
-		addr.in.sin_port=0;
-		addr.in.sin_family=AF_INET;
+		addr.in.sin_addr.s_addr = 0;
+		addr.in.sin_port = 0;
+		addr.in.sin_family = AF_INET;
 
 		as = accept(sockets[s]->fd, &addr.gen, &addrlen);
 
@@ -173,7 +174,7 @@ static void finger_SOCK_bind(instructionPointer * ip)
 
 			addr.in.sin_family = AF_INET;
 			addr.in.sin_addr.s_addr = address;
-			addr.in.sin_port=htons(port);
+			addr.in.sin_port = htons(port);
 
 			retval = bind(sockets[s]->fd, &addr.gen, sizeof(addr.in));
 			if (retval == -1)
@@ -205,7 +206,7 @@ static void finger_SOCK_open(instructionPointer * ip)
 
 			addr.in.sin_family = AF_INET;
 			addr.in.sin_addr.s_addr = address;
-			addr.in.sin_port=htons(port);
+			addr.in.sin_port = htons(port);
 
 			retval = connect(sockets[s]->fd, &addr.gen, sizeof(addr.in));
 			if (retval == -1)
@@ -329,7 +330,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 		goto error;
 
 	for (ssize_t i = 0; i < got; ++i)
-		fungespace_set(buffer[i], vector_create_ref(v.x+i, v.y));
+		fungespace_set(buffer[i], vector_create_ref(v.x + i, v.y));
 
 	goto end;
 error:
@@ -395,7 +396,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	buffer = cf_malloc_noptr(len * sizeof(unsigned char));
 
 	for (size_t i = 0; i < len; ++i)
-		buffer[i] = fungespace_get(vector_create_ref(v.x+i, v.y));
+		buffer[i] = fungespace_get(vector_create_ref(v.x + i, v.y));
 
 	sent = send(sockets[s]->fd, buffer, len, 0);
 

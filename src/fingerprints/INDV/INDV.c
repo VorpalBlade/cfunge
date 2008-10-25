@@ -32,7 +32,7 @@ static inline fungeVector get_second_vector(instructionPointer * restrict ip)
 	// Add first level of storage offset...
 	a.x += ip->storageOffset.x;
 	a.y += ip->storageOffset.y;
-	b.x = fungespace_get(vector_create_ref(a.x+1, a.y));
+	b.x = fungespace_get(vector_create_ref(a.x + 1, a.y));
 	b.y = fungespace_get(&a);
 	// Add in second level of storage offset...
 	b.x += ip->storageOffset.x;
@@ -60,7 +60,7 @@ static void finger_INDV_get_vec(instructionPointer * ip)
 	fungeVector v = get_second_vector(ip);
 	stack_push_vector(ip->stack,
 		vector_create_ref(
-			fungespace_get(vector_create_ref(v.x+1, v.y)),
+			fungespace_get(vector_create_ref(v.x + 1, v.y)),
 			fungespace_get(&v)
 		)
 	);
@@ -73,7 +73,7 @@ static void finger_INDV_put_vec(instructionPointer * ip)
 	a = get_second_vector(ip);
 	b = stack_pop_vector(ip->stack);
 	fungespace_set(b.y, &a);
-	fungespace_set(b.x, vector_create_ref(a.x+1, a.y));
+	fungespace_set(b.x, vector_create_ref(a.x + 1, a.y));
 }
 
 bool finger_INDV_load(instructionPointer * ip)

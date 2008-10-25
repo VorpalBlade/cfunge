@@ -21,6 +21,15 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/*
+ * Modifications for cfunge:
+ * - Drop some crossfire specific includes and functions that depended on other
+ *   parts of crossfire.
+ * - Adding stringbuffer_destroy
+ * - Adding GCC attributes.
+ *
+ */
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>

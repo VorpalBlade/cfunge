@@ -112,7 +112,7 @@ static inline int translate_return_C(int error)
 
 FUNGE_ATTR_FAST
 static inline void push_results(instructionPointer * restrict ip,
-                               char * restrict str)
+                                char * restrict str)
 {
 	int count = 0;
 	for (int i = MATCHSIZE - 1; i >= 0; i--) {
@@ -120,7 +120,7 @@ static inline void push_results(instructionPointer * restrict ip,
 			count++;
 			stack_push(ip->stack, 0);
 			stack_push_string(ip->stack, (unsigned char*)str + matches[i].rm_so,
-			                matches[i].rm_eo - matches[i].rm_so - 1);
+			                  matches[i].rm_eo - matches[i].rm_so - 1);
 		}
 	}
 	stack_push(ip->stack, count);

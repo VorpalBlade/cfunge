@@ -31,7 +31,7 @@ static suseconds_t resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline fungeCell get_difference(const struct timeval * before,
-                                          const struct timeval * after)
+                                       const struct timeval * after)
 {
 	return 1000000 * ((fungeCell)after->tv_sec - (fungeCell)before->tv_sec)
 	       + (fungeCell)after->tv_usec - (fungeCell)before->tv_usec;

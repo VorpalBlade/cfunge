@@ -98,8 +98,8 @@ typedef struct Turtle {
 	Point min;
 	Point max;
 	uint32_t colour;
-	bool penDown:1;
-	bool movedWithoutDraw:1;
+	bool penDown;
+	bool movedWithoutDraw;
 } Turtle;
 
 typedef struct Dot {
@@ -110,7 +110,7 @@ typedef struct Dot {
 typedef struct Path {
 	struct Path* next;
 	Dot d;
-	bool penDown:1;
+	bool penDown;
 } Path;
 
 typedef struct Drawing {
@@ -123,7 +123,7 @@ typedef struct Drawing {
 	 * When possible prefer transparency.
 	 * This can be done because specs doesn't say what default is.
 	 */
-	bool         bgSet:1;
+	bool         bgSet;
 } Drawing;
 
 static Turtle turt;
@@ -299,7 +299,8 @@ static inline void freeResources(void)
 
 /// Print the "header" of the SVG file
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void print_header(genxWriter gw) {
+static inline void print_header(genxWriter gw)
+{
 	tc minx, miny, w, h;
 
 	minx = turt.min.x - TURT_PADDING;
@@ -410,7 +411,7 @@ static void finger_TURT_set_heading(instructionPointer * ip)
 
 
 static inline bool generate_path(genxWriter gw, uint32_t colour, const char * path,
-                                genxElement g_path, genxAttribute g_style, genxAttribute g_d)
+                                 genxElement g_path, genxAttribute g_style, genxAttribute g_d)
 {
 	char sstyle[sizeof("stroke:#112233")];
 	snprintf(sstyle, sizeof(sstyle), "stroke:%s", toCSSColour(colour));
@@ -482,8 +483,8 @@ static inline bool generate_paths(genxWriter gw)
 }
 
 static inline bool generate_circle(genxWriter gw, Dot* dot,
-                                  genxElement g_circle, genxAttribute g_cx, genxAttribute g_cy,
-                                  genxAttribute g_r, genxAttribute g_fill)
+                                   genxElement g_circle, genxAttribute g_cx, genxAttribute g_cy,
+                                   genxAttribute g_r, genxAttribute g_fill)
 {
 	char buf[64];
 	genxStartElement(g_circle);
