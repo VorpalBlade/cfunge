@@ -24,6 +24,12 @@
 #include "../../lib/libghthash/ght_hash_table.h"
 #include "../../lib/libghthash/cfunge_mempool.h"
 
+#include <unistd.h>
+
+#if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
+#  error "cfunge needs a working mmap(), which this system claims it lacks."
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -31,13 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <unistd.h>
 #include <fcntl.h>
-
-#if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
-#  error "cfunge needs a working mmap(), which this system claims it doesn't have."
-#endif
-
 
 #define FUNGESPACEINITIALSIZE 0x40000
 
@@ -119,7 +119,8 @@ fungespace_get(const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST fungeCell
-fungespace_get_offset(const fungeVector * restrict position, const fungeVector * restrict offset)
+fungespace_get_offset(const fungeVector * restrict position,
+                      const fungeVector * restrict offset)
 {
 	fungeVector tmp;
 	fungeCell *result;
@@ -138,7 +139,8 @@ fungespace_get_offset(const fungeVector * restrict position, const fungeVector *
 }
 
 FUNGE_ATTR_FAST static inline void
-fungespace_set_no_bounds_update(fungeCell value, const fungeVector * restrict position)
+fungespace_set_no_bounds_update(fungeCell value,
+                                const fungeVector * restrict position)
 {
 	if (value == ' ') {
 		ght_remove(fspace.entries, position);
@@ -192,7 +194,8 @@ fungespace_set_initial(fungeCell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST void
-fungespace_set_offset(fungeCell value, const fungeVector * restrict position, const fungeVector * restrict offset)
+fungespace_set_offset(fungeCell value, const fungeVector * restrict position,
+                      const fungeVector * restrict offset)
 {
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -201,7 +204,8 @@ fungespace_set_offset(fungeCell value, const fungeVector * restrict position, co
 }
 
 FUNGE_ATTR_FAST void
-fungespace_wrap(fungeVector * restrict position, const fungeVector * restrict delta)
+fungespace_wrap(fungeVector * restrict position,
+                const fungeVector * restrict delta)
 {
 	// Quick and dirty if cardinal.
 	if (vector_is_cardinal(delta)) {
@@ -262,7 +266,8 @@ void fungespace_dump(void)
 r -2 in case of empty file.
  */
 FUNGE_ATTR_FAST
-static inline int do_mmap(const char * restrict filename, char **maddr, size_t * restrict length)
+static inline int do_mmap(const char * restrict filename, unsigned char **maddr,
+                          size_t * restrict length)
 {
 	char *addr = NULL;
 	struct stat sb;
@@ -291,7 +296,10 @@ static inline int do_mmap(const char * restrict filename, char **maddr, size_t *
 		perror("mmap() on file failed");
 		goto error;
 	}
-	*maddr = addr;
+#if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
+	posix_madvise(addr, len, POSIX_MADV_SEQUENTIAL);
+#endif
+	*maddr = (unsigned char*)addr;
 	return fd;
 error:
 	if (addr != NULL) {
@@ -310,10 +318,10 @@ error:
  * @param length is the length of the mmap()ed area.
  */
 FUNGE_ATTR_FAST
-static inline void do_mmap_cleanup(int fd, char *addr, size_t length)
+static inline void do_mmap_cleanup(int fd, unsigned char *addr, size_t length)
 {
 	if (addr != NULL) {
-		munmap(addr, length);
+		munmap((char*)addr, length);
 	}
 	if (fd != -1) {
 		close(fd);
@@ -327,7 +335,8 @@ static inline void do_mmap_cleanup(int fd, char *addr, size_t length)
  * @param length is the length of the string.
  */
 FUNGE_ATTR_FAST
-static inline void load_string(const unsigned char * restrict program, size_t length)
+static inline void load_string(const unsigned char * restrict program,
+                               size_t length)
 {
 	bool lastwascr = false;
 	// Row in fungespace
@@ -363,7 +372,7 @@ static inline void load_string(const unsigned char * restrict program, size_t le
 FUNGE_ATTR_FAST bool
 fungespace_load(const char * restrict filename)
 {
-	char *addr;
+	unsigned char *addr;
 	int fd;
 	size_t length;
 
@@ -376,7 +385,7 @@ fungespace_load(const char * restrict filename)
 	if (fd == -2)
 		return true;
 
-	load_string((unsigned char*)addr, length);
+	load_string(addr, length);
 
 	// Cleanup
 	do_mmap_cleanup(fd, addr, length);
@@ -398,7 +407,7 @@ fungespace_load_at_offset(const char        * restrict filename,
                           fungeVector       * restrict size,
                           bool binary)
 {
-	char *addr;
+	unsigned char *addr;
 	int fd;
 	size_t length;
 
