@@ -60,8 +60,8 @@ FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 		offset = stack_pop_vector(ip->stack);
 
 		if (!fungespace_load_at_offset(filename,
-		                            vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
-		                            &size, binary)) {
+		                               vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
+		                               &size, binary)) {
 			ip_reverse(ip);
 		} else {
 			stack_push_vector(ip->stack, &size);
@@ -100,10 +100,10 @@ FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 		}
 
 		if (!fungespace_save_to_file(filename,
-		                          vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
-		                          &size, textfile))
+		                             vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
+		                             &size, textfile))
 			ip_reverse(ip);
-			stack_freeString(filename);
+		stack_freeString(filename);
 	}
 
 }

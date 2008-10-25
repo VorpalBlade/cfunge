@@ -151,7 +151,7 @@ FUNGE_ATTR_FAST ret_getint input_getint(fungeCell * restrict value, int base)
 		found = true;
 		// Ok, we found it, lets convert it.
 		endptr = lastline_current + parseInt(lastline_current, value,
-		                                    (fungeCell)base);
+		                                     (fungeCell)base);
 		break;
 	} while (*(lastline_current++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.

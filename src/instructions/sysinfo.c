@@ -317,10 +317,10 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 	// Negative or 0: push all
 	if (request <= 0) {
 		if (setting_current_standard == stdver108) {
-			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
+			for (int i = sizeof(Funge108Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge108Requests[i], ip, ip->stack);
 		} else {
-			for (int i = sizeof(Funge98Requests)/sizeof(si_flags)-1; i >= 0; i--)
+			for (int i = sizeof(Funge98Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge98Requests[i], ip, ip->stack);
 		}
 	// Simple to get single cell in this range
@@ -329,10 +329,10 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 	} else {
 		funge_stack * restrict tmp = stack_create();
 		if (setting_current_standard == stdver108) {
-			for (int i = sizeof(Funge108Requests)/sizeof(si_flags)-1; i >= 0; i--)
+			for (int i = sizeof(Funge108Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge108Requests[i], ip, tmp);
 		} else {
-			for (int i = sizeof(Funge98Requests)/sizeof(si_flags)-1; i >= 0; i--)
+			for (int i = sizeof(Funge98Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge98Requests[i], ip, tmp);
 		}
 		// Find out if we should act as pick or not...

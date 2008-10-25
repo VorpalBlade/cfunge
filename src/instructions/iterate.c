@@ -41,12 +41,13 @@ static inline void print_trace(fungeCell iters, fungeCell kInstr)
 {
 	if (setting_trace_level > 5)
 		fprintf(stderr, "  * In k: iteration: %" FUNGECELLPRI " instruction: %c (%" FUNGECELLPRI ")\n",
-				iters, (char)kInstr, kInstr);
+		        iters, (char)kInstr, kInstr);
 }
 #endif
 
 /// This moves IP to next instruction, with respect to ;, space and current delta.
-static inline fungeCell find_next_instr(instructionPointer * restrict ip, fungeCell kInstr) {
+static inline fungeCell find_next_instr(instructionPointer * restrict ip, fungeCell kInstr)
+{
 	bool injump = false;
 	if (kInstr == ';')
 		injump = true;

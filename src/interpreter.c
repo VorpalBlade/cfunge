@@ -437,8 +437,8 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 					fungeCell count;
 					count = stack_pop(ip->stack);
 					stackstack_transfer(count,
-					                   ip->stackstack->stacks[ip->stackstack->current],
-					                   ip->stackstack->stacks[ip->stackstack->current - 1]);
+					                    ip->stackstack->stacks[ip->stackstack->current],
+					                    ip->stackstack->stacks[ip->stackstack->current - 1]);
 				}
 				break;
 

@@ -122,7 +122,8 @@ bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprin
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode) {
+fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode)
+{
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	if (stack->top == 0) {
 		return NULL;

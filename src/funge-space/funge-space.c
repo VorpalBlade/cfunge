@@ -207,14 +207,14 @@ fungespace_wrap(fungeVector * restrict position, const fungeVector * restrict de
 	if (vector_is_cardinal(delta)) {
 		// FIXME, HACK: Why are the +1/-1 needed?
 		if (position->x < fspace.topLeftCorner.x)
-			position->x = fspace.bottomRightCorner.x+1;
+			position->x = fspace.bottomRightCorner.x + 1;
 		else if (position->x > fspace.bottomRightCorner.x)
-			position->x = fspace.topLeftCorner.x-1;
+			position->x = fspace.topLeftCorner.x - 1;
 
 		if (position->y < fspace.topLeftCorner.y)
-			position->y = fspace.bottomRightCorner.y+1;
+			position->y = fspace.bottomRightCorner.y + 1;
 		else if (position->y > fspace.bottomRightCorner.y)
-			position->y = fspace.topLeftCorner.y-1;
+			position->y = fspace.topLeftCorner.y - 1;
 	} else {
 		if (!fungespace_in_range(position)) {
 			do {
@@ -262,7 +262,8 @@ void fungespace_dump(void)
 r -2 in case of empty file.
  */
 FUNGE_ATTR_FAST
-static inline int do_mmap(const char * restrict filename, char **maddr, size_t * restrict length) {
+static inline int do_mmap(const char * restrict filename, char **maddr, size_t * restrict length)
+{
 	char *addr = NULL;
 	struct stat sb;
 	int fd = -1;
@@ -309,7 +310,8 @@ error:
  * @param length is the length of the mmap()ed area.
  */
 FUNGE_ATTR_FAST
-static inline void do_mmap_cleanup(int fd, char *addr, size_t length) {
+static inline void do_mmap_cleanup(int fd, char *addr, size_t length)
+{
 	if (addr != NULL) {
 		munmap(addr, length);
 	}
@@ -325,7 +327,8 @@ static inline void do_mmap_cleanup(int fd, char *addr, size_t length) {
  * @param length is the length of the string.
  */
 FUNGE_ATTR_FAST
-static inline void load_string(const unsigned char * restrict program, size_t length) {
+static inline void load_string(const unsigned char * restrict program, size_t length)
+{
 	bool lastwascr = false;
 	// Row in fungespace
 	fungeCell y = 0;
@@ -333,7 +336,7 @@ static inline void load_string(const unsigned char * restrict program, size_t le
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
-			// Ignore Form Feed.
+			// We ignore Form Feed here.
 			case '\f':
 				break;
 			case '\r':
@@ -424,7 +427,7 @@ fungespace_load_at_offset(const char        * restrict filename,
 			x++;
 		} else {
 			switch (addr[i]) {
-				// Don't ignore Form Feed here...
+				// We don't ignore Form Feed here...
 				case '\r':
 					lastwascr = true;
 					break;
@@ -525,7 +528,7 @@ fungespace_save_to_file(const char        * restrict filename,
 				}
 			}
 			cf_free(string);
-			towrite[index]=(fungeCell)'\n';
+			towrite[index] = (fungeCell)'\n';
 			index++;
 		}
 		// Remove trailing newlines.
