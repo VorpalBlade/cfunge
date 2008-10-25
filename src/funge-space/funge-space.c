@@ -48,7 +48,7 @@ typedef struct fungeSpace {
 	/// And this is the hash table.
 	ght_hash_table_t *entries;
 	/// Used during loading to handle 0,0 not being least point.
-	bool              boundsvalid:1;
+	bool              boundsvalid;
 } fungeSpace;
 
 /// Funge-space storage.

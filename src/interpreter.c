@@ -372,7 +372,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 			case ',': {
 				fungeCell a = stack_pop(ip->stack);
 				// Reverse on failed output/input
-				if (cf_putchar_maybe_locked(a) != (char)a)
+				if (cf_putchar_maybe_locked(a) != (unsigned char)a)
 					ip_reverse(ip);
 				break;
 			}
