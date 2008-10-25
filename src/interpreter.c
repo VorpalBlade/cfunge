@@ -374,9 +374,6 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				// Reverse on failed output/input
 				if (cf_putchar_maybe_locked(a) != (char)a)
 					ip_reverse(ip);
-				if (a == '\n')
-					if (fflush(stdout) != 0)
-						ip_reverse(ip);
 				break;
 			}
 			case '.':
@@ -387,7 +384,6 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 
 			case '~': {
 				fungeCell a;
-				fflush(stdout);
 				if (input_getchar(&a)) {
 					stack_push(ip->stack, a);
 				} else {
@@ -398,7 +394,6 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 			case '&': {
 				fungeCell a;
 				ret_getint gotint = rgi_noint;
-				fflush(stdout);
 				while (gotint == rgi_noint)
 					gotint = input_getint(&a, 10);
 				if (gotint == rgi_success) {

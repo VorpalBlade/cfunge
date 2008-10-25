@@ -40,7 +40,9 @@ FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline bool get_line(void)
 {
 	if (!lastline || !lastline_current || (*lastline_current == '\0')) {
-		ssize_t retval = cf_getline(&lastline, &linelength, stdin);
+		ssize_t retval;
+		fflush(stdout);
+		retval = cf_getline(&lastline, &linelength, stdin);
 		if (retval == -1)
 			return false;
 		lastline_current = lastline;
