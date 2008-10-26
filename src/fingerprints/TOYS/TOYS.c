@@ -33,7 +33,7 @@
 
 // Also: code based on CCBI.
 
-/// A - gable
+/// A - gable (Duplicate stack top n times)
 static void finger_TOYS_gable(instructionPointer * ip)
 {
 	fungeCell n, c;
@@ -50,7 +50,7 @@ static void finger_TOYS_gable(instructionPointer * ip)
 		stack_push(ip->stack, c);
 }
 
-/// B - pair of shoes
+/// B - pair of shoes (Butterfly operation)
 static void finger_TOYS_pair_of_shoes(instructionPointer * ip)
 {
 	// Got no idea if this is correct.
@@ -64,7 +64,7 @@ static void finger_TOYS_pair_of_shoes(instructionPointer * ip)
 
 }
 
-/// C - bracelet
+/// C - bracelet (Low order copy)
 static void finger_TOYS_bracelet(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -86,13 +86,13 @@ static void finger_TOYS_bracelet(instructionPointer * ip)
 			                      vector_create_ref(x, y), &t);
 }
 
-/// D - toilet seat
+/// D - toilet seat (Decrement top of stack)
 static void finger_TOYS_toilet_seat(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) - 1);
 }
 
-/// E - pitchfork head
+/// E - pitchfork head (Replace stack with sum of all items on stack)
 static void finger_TOYS_pitchfork_head(instructionPointer * ip)
 {
 	fungeCell sum = 0;
@@ -102,7 +102,7 @@ static void finger_TOYS_pitchfork_head(instructionPointer * ip)
 	stack_push(ip->stack, sum);
 }
 
-/// F - calipers
+/// F - calipers (Write matrix to funge space from stack)
 static void finger_TOYS_calipers(instructionPointer * ip)
 {
 	fungeVector t;
@@ -119,7 +119,7 @@ static void finger_TOYS_calipers(instructionPointer * ip)
 			fungespace_set(stack_pop(ip->stack), vector_create_ref(x, y));
 }
 
-/// G - counterclockwise
+/// G - counterclockwise (Read matrix from funge space onto stack)
 static void finger_TOYS_counterclockwise(instructionPointer * ip)
 {
 	fungeVector o;
@@ -136,7 +136,7 @@ static void finger_TOYS_counterclockwise(instructionPointer * ip)
 			stack_push(ip->stack, fungespace_get(vector_create_ref(x, y)));
 }
 
-/// H - pair of stilts
+/// H - pair of stilts (Bitshift)
 static void finger_TOYS_pair_of_stilts(instructionPointer * ip)
 {
 	fungeCell a, b;
@@ -150,13 +150,13 @@ static void finger_TOYS_pair_of_stilts(instructionPointer * ip)
 		stack_push(ip->stack, a << b);
 }
 
-/// I - doric column
+/// I - doric column (Increment top of stack)
 static void finger_TOYS_doric_column(instructionPointer * ip)
 {
 	stack_push(ip->stack, stack_pop(ip->stack) + 1);
 }
 
-/// J - fishhook
+/// J - fishhook (Translate current funge space column)
 static void finger_TOYS_fishhook(instructionPointer * ip)
 {
 	fungeRect bounds;
@@ -176,7 +176,7 @@ static void finger_TOYS_fishhook(instructionPointer * ip)
 	}
 }
 
-/// K - scissors
+/// K - scissors (High order copy)
 static void finger_TOYS_scissors(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -198,7 +198,7 @@ static void finger_TOYS_scissors(instructionPointer * ip)
 			                      vector_create_ref(x, y), &t);
 }
 
-/// L - corner
+/// L - corner (Like ' but picks up cell to left and doesn't skip)
 static void finger_TOYS_corner(instructionPointer * ip)
 {
 	ip_turn_left(ip);
@@ -208,7 +208,7 @@ static void finger_TOYS_corner(instructionPointer * ip)
 	ip_turn_right(ip);
 }
 
-/// M - kittycat
+/// M - kittycat (Low order move)
 static void finger_TOYS_kittycat(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -232,13 +232,13 @@ static void finger_TOYS_kittycat(instructionPointer * ip)
 		}
 }
 
-/// N - lightning bolt
+/// N - lightning bolt (Negate top of stack)
 static void finger_TOYS_lightning_bolt(instructionPointer * ip)
 {
 	stack_push(ip->stack, -stack_pop(ip->stack));
 }
 
-/// O - boulder
+/// O - boulder (Translate current funge space row)
 static void finger_TOYS_boulder(instructionPointer * ip)
 {
 	fungeRect bounds;
@@ -257,7 +257,7 @@ static void finger_TOYS_boulder(instructionPointer * ip)
 	}
 }
 
-/// P - mailbox
+/// P - mailbox (Replace stack with product of all items on stack)
 static void finger_TOYS_mailbox(instructionPointer * ip)
 {
 	fungeCell product = 1;
@@ -267,7 +267,7 @@ static void finger_TOYS_mailbox(instructionPointer * ip)
 	stack_push(ip->stack, product);
 }
 
-/// Q - necklace
+/// Q - necklace (Write behind IP)
 static void finger_TOYS_necklace(instructionPointer * ip)
 {
 	fungeCell v = stack_pop(ip->stack);
@@ -277,7 +277,7 @@ static void finger_TOYS_necklace(instructionPointer * ip)
 	ip_forward(ip, 1);
 }
 
-/// R - can opener
+/// R - can opener (Like L but to the right)
 static void finger_TOYS_can_opener(instructionPointer * ip)
 {
 	ip_turn_right(ip);
@@ -287,7 +287,7 @@ static void finger_TOYS_can_opener(instructionPointer * ip)
 	ip_turn_left(ip);
 }
 
-/// S - chicane
+/// S - chicane (memset on funge space)
 static void finger_TOYS_chicane(instructionPointer * ip)
 {
 	fungeVector d, o;
@@ -309,7 +309,7 @@ static void finger_TOYS_chicane(instructionPointer * ip)
 			fungespace_set(c, vector_create_ref(x, y));
 }
 
-/// T - barstool
+/// T - barstool (Act like _ or | depending on popped number)
 static void finger_TOYS_barstool(instructionPointer * ip)
 {
 	switch (stack_pop(ip->stack)) {
@@ -319,7 +319,7 @@ static void finger_TOYS_barstool(instructionPointer * ip)
 	}
 }
 
-/// U - tumbler
+/// U - tumbler (Like ? but replaces instruction with said random choice)
 static void finger_TOYS_tumbler(instructionPointer * ip)
 {
 	long int rnd = random() % 4;
@@ -332,7 +332,7 @@ static void finger_TOYS_tumbler(instructionPointer * ip)
 	}
 }
 
-/// V - dixiecup
+/// V - dixiecup (High order move)
 static void finger_TOYS_dixiecup(instructionPointer * ip)
 {
 	fungeVector t, d, o;
@@ -356,7 +356,7 @@ static void finger_TOYS_dixiecup(instructionPointer * ip)
 		}
 }
 
-/// W - television antenna
+/// W - television antenna (Atomic g/wait and try again/reverse)
 static void finger_TOYS_television_antenna(instructionPointer * ip)
 {
 	fungeVector vect;
@@ -373,19 +373,19 @@ static void finger_TOYS_television_antenna(instructionPointer * ip)
 		ip_reverse(ip);
 }
 
-/// X - buried treasure
+/// X - buried treasure (Increment IP's x coord)
 static void finger_TOYS_buried_treasure(instructionPointer * ip)
 {
 	ip->position.x++;
 }
 
-/// Y - slingshot
+/// Y - slingshot (Increment IP's y coord)
 static void finger_TOYS_slingshot(instructionPointer * ip)
 {
 	ip->position.y++;
 }
 
-/// Z - barn door
+/// Z - barn door (Increment IP's z coord)
 static void finger_TOYS_barn_door(instructionPointer * ip)
 {
 	// As this needs trefunge to work.
