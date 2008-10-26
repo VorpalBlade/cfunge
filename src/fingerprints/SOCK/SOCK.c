@@ -25,6 +25,9 @@
 #include "SOCK.h"
 #include "../../stack.h"
 
+#include <unistd.h>
+#include <fcntl.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -140,6 +143,10 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		addr.in.sin_family = AF_INET;
 
 		as = accept(sockets[s]->fd, &addr.gen, &addrlen);
+		if (as == -1)
+			goto error;
+
+		fcntl(as, F_SETFD, FD_CLOEXEC, 1);
 
 		i = allocate_handle();
 		if (i == -1)
@@ -211,6 +218,7 @@ static void finger_SOCK_open(instructionPointer * ip)
 			retval = connect(sockets[s]->fd, &addr.gen, sizeof(addr.in));
 			if (retval == -1)
 				goto error;
+
 			break;
 		}
 		default: goto error;
@@ -368,6 +376,8 @@ static void finger_SOCK_create(instructionPointer * ip)
 		sockets[h]->fd = socket(fam, type, 0);
 		if (sockets[h]->fd == -1)
 			goto error;
+
+		fcntl(sockets[h]->fd, F_SETFD, FD_CLOEXEC, 1);
 
 		sockets[h]->family = fam;
 

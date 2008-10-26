@@ -25,6 +25,9 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <unistd.h>
+#include <fcntl.h>
+
 // Based on how CCBI does it.
 
 typedef struct sFungeFileHandle {
@@ -255,6 +258,7 @@ static void finger_FILE_fopen(instructionPointer * ip)
 		free_handle(h);
 		goto error;
 	}
+	fcntl(fileno(handles[h]->file), F_SETFD, FD_CLOEXEC, 1);
 	if ((mode == 2) || (mode == 5))
 		rewind(handles[h]->file);
 

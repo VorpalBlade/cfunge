@@ -104,6 +104,8 @@ static char * run_perl(const char * restrict perlcode)
 			close(outfds[0]);
 			// Dup the FD
 			dup2(outfds[1], 2);
+			// Close unused copy
+			close(outfds[1]);
 
 			// Execute
 			if (execvp("perl", arguments) == -1) {
