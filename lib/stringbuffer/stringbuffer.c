@@ -104,7 +104,7 @@ char *stringbuffer_finish(StringBuffer *sb) {
 
 FUNGE_ATTR_FAST
 void stringbuffer_append_char(StringBuffer *sb, const char c) {
-    stringbuffer_ensure(sb, 1);
+    stringbuffer_ensure(sb, 2);
     sb->buf[sb->pos] = c;
     sb->pos += 1;
 }
