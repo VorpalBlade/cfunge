@@ -29,18 +29,31 @@
 /// A - Append bottom string to upper string
 static void finger_STRN_append(instructionPointer * ip)
 {
-	char * restrict top;
+	char * top;
 	char * restrict bottom;
-	char * restrict c;
+	char * c = NULL;
+	size_t top_len;
+	size_t bottom_len;
+
 	top = (char*)stack_pop_string(ip->stack);
-	bottom = (char*)stack_pop_string(ip->stack);
-	c = calloc_nogc(strlen(top) + strlen(bottom) + 1, sizeof(char));
-	strcat(c, top);
-	strcat(c, bottom);
+	bottom =  (char*)stack_pop_string(ip->stack);
+	top_len = strlen(top);
+	bottom_len = strlen(bottom);
+
+	c = cf_realloc(top, top_len + strlen(bottom) + 1);
+	if (!c) {
+		ip_reverse(ip);
+		stack_freeString(top);
+		stack_freeString(bottom);
+		return;
+	}
+	memcpy(c + top_len, bottom, bottom_len);
+	c[top_len + bottom_len] = '\0';
+
 	stack_push_string(ip->stack, (unsigned char*)c, strlen(c));
-	stack_freeString(top);
+
 	stack_freeString(bottom);
-	free_nogc(c);
+	cf_free(c);
 }
 
 /// C - Compare strings
