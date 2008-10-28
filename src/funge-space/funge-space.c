@@ -207,20 +207,20 @@ FUNGE_ATTR_FAST void
 fungespace_wrap(fungeVector * restrict position,
                 const fungeVector * restrict delta)
 {
-	// Quick and dirty if cardinal.
-	if (vector_is_cardinal(delta)) {
-		// FIXME, HACK: Why are the +1/-1 needed?
-		if (position->x < fspace.topLeftCorner.x)
-			position->x = fspace.bottomRightCorner.x + 1;
-		else if (position->x > fspace.bottomRightCorner.x)
-			position->x = fspace.topLeftCorner.x - 1;
-
-		if (position->y < fspace.topLeftCorner.y)
-			position->y = fspace.bottomRightCorner.y + 1;
-		else if (position->y > fspace.bottomRightCorner.y)
-			position->y = fspace.topLeftCorner.y - 1;
-	} else {
-		if (!fungespace_in_range(position)) {
+	if (!fungespace_in_range(position)) {
+		// Quick and dirty if cardinal.
+		if (vector_is_cardinal(delta)) {
+			// FIXME, HACK: Why are the +1/-1 needed?
+			if (position->x < fspace.topLeftCorner.x)
+				position->x = fspace.bottomRightCorner.x + 1;
+			else if (position->x > fspace.bottomRightCorner.x)
+				position->x = fspace.topLeftCorner.x - 1;
+	
+			if (position->y < fspace.topLeftCorner.y)
+				position->y = fspace.bottomRightCorner.y + 1;
+			else if (position->y > fspace.bottomRightCorner.y)
+				position->y = fspace.topLeftCorner.y - 1;
+		} else {
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
