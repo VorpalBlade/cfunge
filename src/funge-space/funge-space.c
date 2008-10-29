@@ -74,7 +74,7 @@ static fungeSpace fspace = {
 #define FUNGESPACE_STATIC_Y 1024
 
 #define FUNGESPACE_RANGE_CHECK(rx, ry) \
-	((rx < FUNGESPACE_STATIC_X) && (ry < FUNGESPACE_STATIC_Y))
+	(((rx) < FUNGESPACE_STATIC_X) && ((ry) < FUNGESPACE_STATIC_Y))
 #define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
 
 static fungeCell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
