@@ -19,6 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * How it works:
+ * * We use a static array for the commonly used funge space near (0,0).
+ * * The array is slightly offset to include a bit of the negative funge space
+ *   too.
+ * * Outside this array we use a hash library.
+ */
+
+
 #include "../global.h"
 #include "funge-space.h"
 #include "../../lib/libghthash/ght_hash_table.h"
@@ -59,6 +68,17 @@ static fungeSpace fspace = {
 	.boundsvalid = false
 };
 
+#define FUNGESPACE_STATIC_OFFSET_X 64
+#define FUNGESPACE_STATIC_OFFSET_Y 64
+#define FUNGESPACE_STATIC_X 512
+#define FUNGESPACE_STATIC_Y 1024
+
+#define FUNGESPACE_RANGE_CHECK(rx, ry) \
+	((rx < FUNGESPACE_STATIC_X) && (ry < FUNGESPACE_STATIC_Y))
+#define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
+
+static fungeCell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
+
 /**
  * Check if position is in range.
  */
@@ -75,11 +95,14 @@ static inline bool fungespace_in_range(const fungeVector * restrict position)
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
 {
+	// Fill static array with spaces.
+	for (size_t i = 0; i < sizeof(static_space) / sizeof(fungeCell); i++)
+		static_space[i] = ' ';
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace.entries)
 		return false;
 	ght_set_rehash(fspace.entries, true);
-
+	// Set up mempool for hash library.
 	return mempool_setup();
 }
 
@@ -102,19 +125,23 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
 }
 
-
 FUNGE_ATTR_FAST fungeCell
 fungespace_get(const fungeVector * restrict position)
 {
 	fungeCell *tmp;
+	// Offsets for static.
+	fungeUnsignedCell x = (fungeUnsignedCell)position->x + FUNGESPACE_STATIC_OFFSET_X;
+	fungeUnsignedCell y = (fungeUnsignedCell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
-	assert(position != NULL);
-
-	tmp = (fungeCell*)ght_get(fspace.entries, position);
-	if (!tmp)
-		return (fungeCell)' ';
-	else
-		return *tmp;
+	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+		return static_space[STATIC_COORD(x,y)];
+	} else {
+		tmp = (fungeCell*)ght_get(fspace.entries, position);
+		if (!tmp)
+			return (fungeCell)' ';
+		else
+			return *tmp;
+	}
 }
 
 
@@ -124,6 +151,9 @@ fungespace_get_offset(const fungeVector * restrict position,
 {
 	fungeVector tmp;
 	fungeCell *result;
+	// Offsets for static.
+	fungeUnsignedCell x, y;
+
 
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -131,27 +161,42 @@ fungespace_get_offset(const fungeVector * restrict position,
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	result = (fungeCell*)ght_get(fspace.entries, &tmp);
-	if (!result)
-		return (fungeCell)' ';
-	else
-		return *result;
+	x = (fungeUnsignedCell)tmp.x + FUNGESPACE_STATIC_OFFSET_X;
+	y = (fungeUnsignedCell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
+
+	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+		return static_space[STATIC_COORD(x,y)];
+	} else {
+		result = (fungeCell*)ght_get(fspace.entries, &tmp);
+		if (!result)
+			return (fungeCell)' ';
+		else
+			return *result;
+	}
 }
 
 FUNGE_ATTR_FAST static inline void
 fungespace_set_no_bounds_update(fungeCell value,
                                 const fungeVector * restrict position)
 {
-	if (value == ' ') {
-		ght_remove(fspace.entries, position);
+	// Offsets for static.
+	fungeUnsignedCell x = (fungeUnsignedCell)position->x + FUNGESPACE_STATIC_OFFSET_X;
+	fungeUnsignedCell y = (fungeUnsignedCell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
+
+	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+		static_space[STATIC_COORD(x,y)] = value;
 	} else {
-		// Reuse cell if it exists
-		fungeCell *tmp;
-		if ((tmp = (fungeCell*)ght_get(fspace.entries, position)) != NULL) {
-			*tmp = value;
+		if (value == ' ') {
+			ght_remove(fspace.entries, position);
 		} else {
-			if (ght_insert(fspace.entries, value, position) == -1) {
-				ght_replace(fspace.entries, value, position);
+			// Reuse cell if it exists
+			fungeCell *tmp;
+			if ((tmp = (fungeCell*)ght_get(fspace.entries, position)) != NULL) {
+				*tmp = value;
+			} else {
+				if (ght_insert(fspace.entries, value, position) == -1) {
+					ght_replace(fspace.entries, value, position);
+				}
 			}
 		}
 	}
@@ -215,7 +260,7 @@ fungespace_wrap(fungeVector * restrict position,
 				position->x = fspace.bottomRightCorner.x + 1;
 			else if (position->x > fspace.bottomRightCorner.x)
 				position->x = fspace.topLeftCorner.x - 1;
-	
+
 			if (position->y < fspace.topLeftCorner.y)
 				position->y = fspace.bottomRightCorner.y + 1;
 			else if (position->y > fspace.bottomRightCorner.y)
