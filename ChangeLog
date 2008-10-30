@@ -10,9 +10,29 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r455)
----------------------------------
-These are important changes since last release:
+
+0.3.3
+-----
+Major highlights:
+ * Massively faster Funge-Space for the commonly used area. cfunge now uses a
+   static array for the Funge-Space that most common programs use (a chunk
+   around 0,0 that is).
+ * Funge-Space (outside the static area, that is the hash table area) now use
+   memory pools for allocation. This reduces memory fragmentation and also
+   malloc bookkeeping overhead. It is also slightly faster.
+ * Reduced memory usage by fixing an over-allocation in the hash library code.
+ * Fixed rare crash bug in the shared (between several fingerprints) string
+   buffer code. Thanks to Heikki Kallasjoki and Alex Smith for reporting this.
+ * Set FD_CLOEXEC on files and sockets in the fingerprints FILE and SOCK.
+   This makes it close any sockets and files before invoking programs using
+   either = or PERL.
+ * Flush standard output less often, this increases speed in mycology a lot.
+ * Changed function naming scheme, now using underscore instead of CamelCase.
+ * Standard IO, i, o, FILE, SOCK and so on now use unsigned char*.
+ * Minor bug fixes in TIME, STRN, REXP, the build system and various other
+   places.
+
+Important changes in this release:
  * Fixed off by one in TIME.
  * Made STRN use the global input buffer.
  * Fixed alignment bugs in several of the test programs.
@@ -37,11 +57,24 @@ These are important changes since last release:
  * Reading a file with i is now unsigned.
  * STDIO is now unsigned.
  * Removed kdevelop project files.
+ * Set FD_CLOEXEC on files and sockets in the fingerprints FILE and SOCK. This
+   makes it close any sockets and files before invoking programs using either =
+   or PERL.
+ * Fixed rare crash bug in the shared (between several fingerprints) string
+   buffer code. Thanks to Heikki Kallasjoki and Alex Smith for reporting this.
+ * STRN A is now a bit more efficient (still far from perfect).
+ * Changed order of tests in bound testing code, slight speedup for most
+   programs.
+ * Fixed bug in REXP, REG_NOSUB used to cause E to push 128 empty strings, now
+   it pushes a 0 instead.
+ * Massively faster Funge-Space for the commonly used area. cfunge now uses a
+   static array for the Funge-Space that most common programs use (a chunk
+   around 0,0 that is).
 
 
 0.3.2
 -----
-These are important changes since last release:
+Important changes in this release:
  * Fix small bug in K in SOCK causing the instruction to fail if the socket
    wasn't connected.
  * Add checks for some long double math.h functions that didn't exist on
@@ -52,7 +85,7 @@ These are important changes since last release:
 
 0.3.1
 -----
-These are important changes since last release:
+Important changes in this release:
  * Code now use memcpy() to copy IP for t, then deep copy of the remaining
    elements.
  * Fixed crash with nested k instructions on t.
