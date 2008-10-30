@@ -131,7 +131,7 @@ void ip_turn_right(instructionPointer * restrict ip);
 /// Set delta of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta);
-/// Set position of an IP to a new vector.
+/// Set position of an IP to a new vector. Will wrap if needed (based on current delta).
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_position(instructionPointer * restrict ip, const fungeVector * restrict position);
 

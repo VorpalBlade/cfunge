@@ -309,7 +309,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = calloc_nogc(n, sizeof(char));
+		unsigned char * restrict buf = calloc_nogc(n, sizeof(unsigned char));
 		if (!buf) {
 			ip_reverse(ip);
 			return;
