@@ -35,6 +35,7 @@
 
 static regex_t compiled_regex;
 static bool compiled_valid = false;
+static bool compiled_nosub = false;
 static regmatch_t matches[MATCHSIZE];
 
 // The flags used in Funge could differ from the system ones.
@@ -114,16 +115,20 @@ FUNGE_ATTR_FAST
 static inline void push_results(instructionPointer * restrict ip,
                                 char * restrict str)
 {
-	int count = 0;
-	for (int i = MATCHSIZE - 1; i >= 0; i--) {
-		if (matches[i].rm_so != -1) {
-			count++;
-			stack_push(ip->stack, 0);
-			stack_push_string(ip->stack, (unsigned char*)str + matches[i].rm_so,
-			                  matches[i].rm_eo - matches[i].rm_so - 1);
+	if (compiled_nosub) {
+		stack_push(ip->stack, 0);
+	} else {
+		int count = 0;
+		for (int i = MATCHSIZE - 1; i >= 0; i--) {
+			if (matches[i].rm_so != -1) {
+				count++;
+				stack_push(ip->stack, 0);
+				stack_push_string(ip->stack, (unsigned char*)str + matches[i].rm_so,
+				                  matches[i].rm_eo - matches[i].rm_so - 1);
+			}
 		}
+		stack_push(ip->stack, count);
 	}
-	stack_push(ip->stack, count);
 }
 
 /// C - Compile a regular expression
@@ -148,6 +153,7 @@ static void finger_REXP_compile(instructionPointer * ip)
 		compiled_valid = false;
 	} else {
 		compiled_valid = true;
+		compiled_nosub = (flags & REG_NOSUB);
 	}
 
 	stack_freeString(str);
