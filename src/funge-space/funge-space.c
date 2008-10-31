@@ -248,6 +248,7 @@ fungespace_set_offset(fungeCell value, const fungeVector * restrict position,
 	fungespace_set(value, vector_create_ref(position->x + offset->x, position->y + offset->y));
 }
 
+
 FUNGE_ATTR_FAST void
 fungespace_wrap(fungeVector * restrict position,
                 const fungeVector * restrict delta)

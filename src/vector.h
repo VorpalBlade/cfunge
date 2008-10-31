@@ -46,6 +46,6 @@ typedef struct s_fungeVector {
  * @param v The vector to check.
  */
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
-bool vector_is_cardinal(const fungeVector * v);
+inline bool vector_is_cardinal(const fungeVector * restrict v);
 
 #endif

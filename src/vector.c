@@ -22,11 +22,15 @@
 #include "vector.h"
 #include <stdint.h>
 
-FUNGE_ATTR_FAST inline bool vector_is_cardinal(const fungeVector * v)
+FUNGE_ATTR_PURE FUNGE_ATTR_FAST
+inline bool vector_is_cardinal(const fungeVector * restrict v)
 {
-	if ((ABS(v->x) > 1) || (ABS(v->y) > 1))
+	// Due to unsigned this can't overflow in the addition below.
+	fungeUnsignedCell x = ABS(v->x);
+	fungeUnsignedCell y = ABS(v->y);
+	if ((x+y) != 1)
 		return false;
-	if ((v->x) && (v->y))
+	if (x && y)
 		return false;
 	return true;
 }
