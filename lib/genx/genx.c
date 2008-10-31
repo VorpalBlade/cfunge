@@ -160,10 +160,12 @@ FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static utf8 copy(constUtf8 from)
 {
 	utf8 temp;
+	size_t len = strlen((const char *) from);
 
-	if ((temp = (utf8) allocate(strlen((const char *) from) + 1)) == NULL)
+	if ((temp = (utf8) allocate(len + 1)) == NULL)
 		return NULL;
-	strcpy((char *) temp, (const char *) from);
+	memcpy(temp, from, len);
+	temp[len]='\0';
 	return temp;
 }
 

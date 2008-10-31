@@ -324,7 +324,7 @@ static inline int do_mmap(const char * restrict filename, unsigned char **maddr,
 		return -1;
 
 	if (fstat(fd, &sb) == -1) {
-		perror("fstat on file failed");
+		perror("fstat() on file failed");
 		goto error;
 	}
 

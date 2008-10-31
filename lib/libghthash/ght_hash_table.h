@@ -349,7 +349,8 @@ extern "C"
 	 *
 	 * @see ght_next()
 	 */
-	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key) FUNGE_ATTR_FAST;
+	void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator,
+	                const fungeSpaceHashKey **pp_key) FUNGE_ATTR_FAST;
 
 	/**
 	 * Return the next entry in the hash table. This function should be

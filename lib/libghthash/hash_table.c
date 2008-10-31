@@ -55,7 +55,9 @@ static inline void              he_finalize(ght_hash_entry_t *p_he) FUNGE_ATTR_F
 /* --- private methods --- */
 
 /* Move p_entry one up in its list. */
-FUNGE_ATTR_FAST static inline void transpose(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_entry_t *p_entry)
+FUNGE_ATTR_FAST
+static inline void transpose(ght_hash_table_t *p_ht, ght_uint32_t l_bucket,
+                             ght_hash_entry_t *p_entry)
 {
 	/*
 	 *  __    __    __    __
@@ -89,7 +91,9 @@ FUNGE_ATTR_FAST static inline void transpose(ght_hash_table_t *p_ht, ght_uint32_
 }
 
 /* Move p_entry first */
-FUNGE_ATTR_FAST static inline void move_to_front(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_entry_t *p_entry)
+FUNGE_ATTR_FAST
+static inline void move_to_front(ght_hash_table_t *p_ht, ght_uint32_t l_bucket,
+                                 ght_hash_entry_t *p_entry)
 {
 	/*
 	 *  __    __    __
@@ -116,7 +120,9 @@ FUNGE_ATTR_FAST static inline void move_to_front(ght_hash_table_t *p_ht, ght_uin
 	p_ht->pp_entries[l_bucket] = p_entry;
 }
 
-FUNGE_ATTR_FAST static inline void remove_from_chain(ght_hash_table_t *p_ht, ght_uint32_t l_bucket, ght_hash_entry_t *p)
+FUNGE_ATTR_FAST
+static inline void remove_from_chain(ght_hash_table_t *p_ht,
+                                     ght_uint32_t l_bucket, ght_hash_entry_t *p)
 {
 	if (p->p_prev) {
 		p->p_prev->p_next = p->p_next;
@@ -140,15 +146,20 @@ FUNGE_ATTR_FAST static inline void remove_from_chain(ght_hash_table_t *p_ht, ght
 }
 
 FUNGE_ATTR_FAST
-static inline bool CompareKeys(const ght_hash_key_t * restrict a, const ght_hash_key_t * restrict b) {
+static inline bool CompareKeys(const ght_hash_key_t * restrict a,
+                               const ght_hash_key_t * restrict b)
+{
 	if ((a->p_key.x == b->p_key.x) && (a->p_key.y == b->p_key.y))
 		return true;
 	return false;
 }
 
 /* Search for an element in a bucket */
-FUNGE_ATTR_FAST static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht, ght_uint32_t l_bucket,
-        ght_hash_key_t *p_key, const unsigned char i_heuristics)
+FUNGE_ATTR_FAST
+static inline ght_hash_entry_t *search_in_bucket(ght_hash_table_t *p_ht,
+                                                 ght_uint32_t l_bucket,
+                                                 ght_hash_key_t *p_key,
+                                                 const unsigned char i_heuristics)
 {
 	ght_hash_entry_t *p_e;
 
@@ -187,7 +198,8 @@ FUNGE_ATTR_FAST static inline void free_entry_chain(ght_hash_entry_t *p_entry)
 
 
 /* Fill in the data to a existing hash key */
-FUNGE_ATTR_FAST static inline void hk_fill(ght_hash_key_t *p_hk, const fungeSpaceHashKey *p_key)
+FUNGE_ATTR_FAST static inline void hk_fill(ght_hash_key_t *p_hk,
+                                           const fungeSpaceHashKey *p_key)
 {
 	assert(p_hk != NULL);
 
@@ -195,7 +207,9 @@ FUNGE_ATTR_FAST static inline void hk_fill(ght_hash_key_t *p_hk, const fungeSpac
 }
 
 /* Create an hash entry */
-FUNGE_ATTR_FAST static inline ght_hash_entry_t *he_create(fungeCell p_data, const fungeSpaceHashKey *p_key_data)
+FUNGE_ATTR_FAST
+static inline ght_hash_entry_t *he_create(fungeCell p_data,
+                                          const fungeSpaceHashKey *p_key_data)
 {
 	ght_hash_entry_t *p_he;
 
@@ -343,9 +357,10 @@ size_t ght_table_size(ght_hash_table_t *p_ht)
 #endif
 
 /* Insert an entry into the hash table */
-FUNGE_ATTR_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
-                          fungeCell p_entry_data,
-                          const fungeSpaceHashKey * restrict p_key_data)
+FUNGE_ATTR_FAST
+int ght_insert(ght_hash_table_t * restrict p_ht,
+               fungeCell p_entry_data,
+               const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_entry;
 	ght_uint32_t l_key;
@@ -399,8 +414,9 @@ FUNGE_ATTR_FAST int ght_insert(ght_hash_table_t * restrict p_ht,
 }
 
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-FUNGE_ATTR_FAST fungeCell *ght_get(ght_hash_table_t * restrict p_ht,
-                                  const fungeSpaceHashKey * restrict p_key_data)
+FUNGE_ATTR_FAST
+fungeCell *ght_get(ght_hash_table_t * restrict p_ht,
+                   const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -423,9 +439,10 @@ FUNGE_ATTR_FAST fungeCell *ght_get(ght_hash_table_t * restrict p_ht,
 }
 
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
-FUNGE_ATTR_FAST fungeCell ght_replace(ght_hash_table_t * restrict p_ht,
-                                     fungeCell p_entry_data,
-                                     const fungeSpaceHashKey * restrict p_key_data)
+FUNGE_ATTR_FAST
+fungeCell ght_replace(ght_hash_table_t * restrict p_ht,
+                      fungeCell p_entry_data,
+                      const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -456,8 +473,9 @@ FUNGE_ATTR_FAST fungeCell ght_replace(ght_hash_table_t * restrict p_ht,
 
 /* Remove an entry from the hash table. The removed entry, or NULL, is
    returned (and NOT free'd). */
-FUNGE_ATTR_FAST fungeCell ght_remove(ght_hash_table_t * restrict p_ht,
-                                    const fungeSpaceHashKey * restrict p_key_data)
+FUNGE_ATTR_FAST
+fungeCell ght_remove(ght_hash_table_t * restrict p_ht,
+                     const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_out;
 	ght_hash_key_t key;
@@ -498,7 +516,9 @@ FUNGE_ATTR_FAST fungeCell ght_remove(ght_hash_table_t * restrict p_ht,
 }
 
 FUNGE_ATTR_FAST
-static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key, size_t *size)
+static inline void *first_keysize(ght_hash_table_t *p_ht,
+                                  ght_iterator_t *p_iterator,
+                                  const fungeSpaceHashKey **pp_key, size_t *size)
 {
 	assert(p_ht && p_iterator);
 
@@ -525,13 +545,15 @@ static inline void *first_keysize(ght_hash_table_t *p_ht, ght_iterator_t *p_iter
 
 /* Get the first entry in an iteration */
 FUNGE_ATTR_FAST
-void *ght_first(ght_hash_table_t *p_ht, ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key)
+void *ght_first(ght_hash_table_t *p_ht,
+                ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key)
 {
 	return first_keysize(p_ht, p_iterator, pp_key, NULL);
 }
 
 FUNGE_ATTR_FAST
-static inline void *next_keysize(ght_iterator_t *p_iterator, const fungeSpaceHashKey **pp_key, size_t *size)
+static inline void *next_keysize(ght_iterator_t *p_iterator,
+                                 const fungeSpaceHashKey **pp_key, size_t *size)
 {
 	assert(p_iterator != NULL);
 
