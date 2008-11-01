@@ -1,0 +1,90 @@
+[FINGERPRINTS]
+Short descriptions of implemented fingerprints:
+.TP
+3DSP
+3D space manipulation extension
+.TP
+BASE
+I/O for numbers in other bases
+.TP
+CPLI
+Complex Integer extension
+.TP
+DIRF
+Directory functions extension (not available in sandbox mode)
+.TP
+FILE
+File I/O functions (not available in sandbox mode)
+.TP
+FING
+Operate on single fingerprint semantics
+.TP
+FIXP
+Some useful math functions
+.TP
+FPDP
+Double precision floating point
+.TP
+FPSP
+Single precision floating point
+.TP
+FRTH
+Some common forth commands
+.TP
+HRTI
+High\-Resolution Timer Interface
+.TP
+INDV
+Pointer functions
+.TP
+JSTR
+Read and write strings in Funge\-Space
+.TP
+MODU
+Modulo Arithmetic
+.TP
+NULL
+Null Fingerprint
+.TP
+ORTH
+Orthogonal Easement Library
+.TP
+PERL
+Generic Interface to the Perl Language (not available in sandbox mode)
+.TP
+REFC
+Referenced Cells Extension
+.TP
+REXP
+Regular Expression Matching
+.TP
+ROMA
+Roman Numerals
+.TP
+SCKE
+TCP/IP async socket and dns resolving extension (not available in sandbox mode)
+.TP
+SOCK
+TCP/IP socket extension (not available in sandbox mode)
+.TP
+STRN
+String functions
+.TP
+SUBR
+Subroutine extension
+.TP
+TERM
+Terminal control functions
+.TP
+TIME
+Time and Date functions
+.TP
+TOYS
+Funge\-98 Standard Toys
+.TP
+TURT
+Simple Turtle Graphics Library
+.LP
+For more details please see the specs for each fingerprint.
+In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the
+same thing as CCBI.

@@ -102,8 +102,8 @@ Short descriptions of implemented fingerprints:
  3DSP 3D space manipulation extension
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
- DIRF Directory functions extension (not available in sandbox mode)
- FILE File I/O functions (not available in sandbox mode)
+ DIRF Directory functions extension
+ FILE File I/O functions
  FING Operate on single fingerprint semantics
  FIXP Some useful math functions
  FPDP Double precision floating point
@@ -115,13 +115,13 @@ Short descriptions of implemented fingerprints:
  MODU Modulo Arithmetic Extension
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
- PERL Generic Interface to the Perl Language (not available in sandbox mode)
+ PERL Generic Interface to the Perl Language
  REFC Referenced Cells Extension
  REXP Regular Expression Matching
  ROMA Funge-98 Roman Numerals
  SCKE TCP/IP async socket and dns resolving extension
- STRN String functions
  SOCK TCP/IP socket extension
+ STRN String functions
  SUBR Subroutine extension
  TERM Terminal control functions
  TIME Time and Date functions

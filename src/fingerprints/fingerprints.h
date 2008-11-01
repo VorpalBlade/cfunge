@@ -112,13 +112,13 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// INDV - Pointer functions
 	{ .fprint = 0x494e4456, .uri = NULL, .loader = &finger_INDV_load, .opcodes = "GPVW",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = true },
-	// JSTR - Read and write strings in Funge-Space.
+	// JSTR - Read and write strings in Funge-Space
 	{ .fprint = 0x4a535452, .uri = NULL, .loader = &finger_JSTR_load, .opcodes = "GP",
 	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .uri = NULL, .loader = &finger_MODU_load, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
-	// NULL - Null
+	// NULL - Null Fingerprint
 	{ .fprint = 0x4e554c4c, .uri = NULL, .loader = &finger_NULL_load, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },
 	// ORTH - Orthogonal Easement Library

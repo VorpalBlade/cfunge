@@ -73,7 +73,9 @@ fi
 addtolist() {
 	echo "$1" >> "fingerprints.h"
 }
-
+addtoman() {
+	echo "$1" >> "doc/cfunge-man-fingerprints.in"
+}
 
 # $1 is fingerprint name
 # Returns if ok, otherwise it dies.
@@ -90,12 +92,31 @@ checkfprint() {
 	fi
 }
 
+GENERATE_MAN=
+
+# This is used internally to generate a list for man page.
+if [[ $1 ]]; then
+	case $1 in
+		"-man")
+			GENERATE_MAN=yes
+			;;
+		*)
+			die "Invalid cmd line parameter, normally don't use any."
+			;;
+	esac
+fi
+
 # This is to allow sorted list even with aliases...
 # I hate aliases...
 ENTRIES=()
-ENTRYL1=()
-ENTRYL2=()
-ENTRYL3=()
+if [[ $GENERATE_MAN ]]; then
+	MANENTRY1=()
+	MANENTRY2=()
+else
+	ENTRYL1=()
+	ENTRYL2=()
+	ENTRYL3=()
+fi
 
 # $1 = fprint name
 genfprintinfo() {
@@ -240,25 +261,35 @@ genfprintinfo() {
 		FPRINTHEX+="$hex"
 	done
 	ENTRIES+=( "$FPRINTHEX" )
-	ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
-	ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
-	ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
-	statuslvl2 "Done"
-	if [[ ${!MYALIASES[*]} ]]; then
-		progresslvl2 "Generating aliases..."
-		local myalias
-		for myalias in "${MYALIASES[@]}"; do
-			checkfprint "$myalias"
-			local ALIASHEX='0x'
-			for (( i = 0; i < ${#myalias}; i++ )); do
-				printf -v hex '%x' "'${myalias:$i:1}"
-				ALIASHEX+="$hex"
+
+	if [[ $GENERATE_MAN ]]; then
+		MANENTRY1[$FPRINTHEX]="${FPRINT}"
+		# Fix this if we need to escape anything else.
+		MANENTRY2[$FPRINTHEX]="${DESCRIPTION//-/\\-}"
+		if [[ "${SAFE}" == "false" ]]; then
+			MANENTRY2[$FPRINTHEX]+=" (not available in sandbox mode)"
+		fi
+	else
+		ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
+		ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
+		ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+		statuslvl2 "Done"
+		if [[ ${!MYALIASES[*]} ]]; then
+			progresslvl2 "Generating aliases..."
+			local myalias
+			for myalias in "${MYALIASES[@]}"; do
+				checkfprint "$myalias"
+				local ALIASHEX='0x'
+				for (( i = 0; i < ${#myalias}; i++ )); do
+					printf -v hex '%x' "'${myalias:$i:1}"
+					ALIASHEX+="$hex"
+				done
+				ENTRIES+=("$ALIASHEX")
+				ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
+				ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
+				ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
 			done
-			ENTRIES+=("$ALIASHEX")
-			ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
-			ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
-			ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
-		done
+		fi
 	fi
 }
 
@@ -272,6 +303,29 @@ FPRINTS=()
 for spec in "${SPECS[@]}"; do
 	FPRINTS+=( ${spec%.spec} )
 done
+
+if [[ $GENERATE_MAN ]]; then
+	for fprint in "${FPRINTS[@]}"; do
+		genfprintinfo "$fprint"
+	done
+	cd ../.. || die "change directory to top src dir failed."
+	echo "[FINGERPRINTS]" > doc/cfunge-man-fingerprints.in
+	addtoman "Short descriptions of implemented fingerprints:"
+	# I really hate aliases...
+	SORTEDENTRIES=( $(IFS=$'\n'; echo "${ENTRIES[*]}" | sort -n) )
+	for entry in "${SORTEDENTRIES[@]}"; do
+		addtoman ".TP"
+		addtoman "${MANENTRY1[$entry]}"
+		addtoman "${MANENTRY2[$entry]}"
+	done
+	addtoman ".LP"
+	addtoman "For more details please see the specs for each fingerprint."
+	addtoman "In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the"
+	addtoman "same thing as CCBI."
+
+	status "Man page generated"
+	exit 0
+fi
 
 progress "Creating list file"
 cat > "fingerprints.h" << EOF

@@ -3,7 +3,7 @@
 # Note this file can NOT be used to generate the fingerprint
 # itself
 %url:http://catseye.tc/projects/funge98/library/NULL.html
-%desc:Null
+%desc:Null Fingerprint
 %safe:true
 %begin-instrs
 #I	name	desc

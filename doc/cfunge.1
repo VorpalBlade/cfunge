@@ -31,6 +31,31 @@ Show version information and exit.
 .TP
 \fB\-W\fR
 Show warnings.
+.SH "SANDBOX MODE"
+Sandbox mode prevents Funge programs from doing "harmful" things, this includes,
+but is not limited to:
+.TP
+Any file or filesystem IO is forbidden.
+.TP
+The list of environment variables the program can see in y are restricted.
+.TP
+Non\-safe fingerprints can not be loaded (this includes network and file system access as well as other things).
+.SH "IMPLEMENTATION DEFINED BEHAVIOUR"
+The Befunge98 standard leaves some things undefined, here is what cfunge do for some of those cases:
+.TP
+y pushes time in UTC not local time.
+.TP
+k with a negative argument reflects.
+.TP
+# across edge of Funge\-Space may or may not skip first char after wrapping depending on exact situation.
+.TP
+( and ) with a negative count reflects and doesn't pop any fingerprint.
+.TP
+Loaded fingerprints are inherited to child IPs at split (t).
+.TP
+Standard output is flushed at the end of the program and just before any instruction reading standard input. However it is of course possible that the operating system decides to flush anyway.
+.TP
+Standard input is read one line at a time and buffered internally. Those instructions reading chars fetch one char from this buffer, leaving the rest (if any) including any ending newline. Instructions reading an integer will leave anything after the integer in the buffer with one exception: if the next char is a newline it will be discarded.
 .SH FINGERPRINTS
 Short descriptions of implemented fingerprints:
 .TP
@@ -74,10 +99,10 @@ JSTR
 Read and write strings in Funge\-Space
 .TP
 MODU
-Modulo Arithmetic Extension
+Modulo Arithmetic
 .TP
 NULL
-Funge\-98 Null Fingerprint
+Null Fingerprint
 .TP
 ORTH
 Orthogonal Easement Library
@@ -92,16 +117,16 @@ REXP
 Regular Expression Matching
 .TP
 ROMA
-Funge\-98 Roman Numerals
+Roman Numerals
 .TP
 SCKE
-TCP/IP async socket and dns resolving extension
+TCP/IP async socket and dns resolving extension (not available in sandbox mode)
+.TP
+SOCK
+TCP/IP socket extension (not available in sandbox mode)
 .TP
 STRN
 String functions
-.TP
-SOCK
-TCP/IP socket extension
 .TP
 SUBR
 Subroutine extension
@@ -121,31 +146,6 @@ Simple Turtle Graphics Library
 For more details please see the specs for each fingerprint.
 In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the
 same thing as CCBI.
-.SH "SANDBOX MODE"
-Sandbox mode prevents Funge programs from doing "harmful" things, this includes,
-but is not limited to:
-.TP
-Any file or filesystem IO is forbidden.
-.TP
-The list of environment variables the program can see in y are restricted.
-.TP
-Non\-safe fingerprints can not be loaded (this includes network and file system access as well as other things).
-.SH "IMPLEMENTATION DEFINED BEHAVIOUR"
-The Befunge98 standard leaves some things undefined, here is what cfunge do for some of those cases:
-.TP
-y pushes time in UTC not local time.
-.TP
-k with a negative argument reflects.
-.TP
-# across edge of Funge\-Space may or may not skip first char after wrapping depending on exact situation.
-.TP
-( and ) with a negative count reflects and doesn't pop any fingerprint.
-.TP
-Loaded fingerprints are inherited to child IPs at split (t).
-.TP
-Standard output is flushed at the end of the program and just before any instruction reading standard input. However it is of course possible that the operating system decides to flush anyway.
-.TP
-Standard input is read one line at a time and buffered internally. Those instructions reading chars fetch one char from this buffer, leaving the rest (if any) including any ending newline. Instructions reading an integer will leave anything after the integer in the buffer with one exception: if the next char is a newline it will be discarded.
 .SH AUTHOR
 Written by Arvid Norlander.
 .SH COPYRIGHT
