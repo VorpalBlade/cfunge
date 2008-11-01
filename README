@@ -114,7 +114,6 @@ Short descriptions of implemented fingerprints:
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
  PERL Generic Interface to the Perl Language (not available in sandbox mode)
- PNTR Alias for INDV
  REFC Referenced Cells Extension
  REXP Regular Expression Matching
  ROMA Funge-98 Roman Numerals
@@ -145,7 +144,11 @@ some of those cases:
    * Newline (line feed, ASCII 10) printed using , instruction.
    * Any input instructions.
    * End of program.
- * Input buffering works as in CCBI.
+ * Standard input is read one line at a time and buffered internally. Those
+   instructions reading chars fetch one char from this buffer, leaving the rest
+   (if any) including any ending newline. Instructions reading an integer will
+   leave anything after the integer in the buffer with one exception: if the
+   next char is a newline it will be discarded.
 
 
 Notes on different standards

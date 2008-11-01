@@ -302,7 +302,7 @@ ENDIF(USE_MUDFLAP)
 ################################################################################
 # Generate man page
 ADD_CUSTOM_TARGET(build-man
-	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
+	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
 	DEPENDS cfunge
 	WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
 	COMMENT "Generating man page..."
