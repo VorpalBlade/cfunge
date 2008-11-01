@@ -18,7 +18,7 @@
 
 PROJECT(CFUNGE C)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 MARK_AS_ADVANCED(
 	CMAKE_BACKWARDS_COMPATIBILITY
@@ -44,7 +44,7 @@ MARK_AS_ADVANCED(
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
-INCLUDE(UsePkgConfig)
+INCLUDE(FindPkgConfig)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckFunctionExists)
 
@@ -80,31 +80,26 @@ ENDMACRO(CFUNGE_CHECK_FUNC)
 # Boehm GC
 OPTION(USE_GC "If this is enabled, use Boehm-GC." OFF)
 IF(USE_GC)
-	PKGCONFIG(bdw-gc BoehmIncDir BoehmLinkDir BoehmLinkFlags BoehmCflags)
-	IF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-		MESSAGE(STATUS "Found Boehm GC")
-	ELSE (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
-		MESSAGE(FATAL_ERROR "Could NOT find new enough Boehm GC (you need 7.x or later)")
-	ENDIF (BoehmIncDir AND BoehmLinkDir AND BoehmLinkFlags AND BoehmCflags)
+	pkg_check_modules(BOEHMGC REQUIRED bdw-gc>=7.0)
 
 	FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
-		${BoehmIncDir}
+		${BOEHMGC_INCLUDE_DIRS}
 	)
 	FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
-		${BoehmIncDir}
+		${BOEHMGC_INCLUDE_DIRS}
 	)
 
 	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
 		PATHS
-		${BoehmLinkDir}
+		${BOEHMGC_LIBRARY_DIRS}
 	)
 	FIND_LIBRARY(BOEHM_LIBRARY_CORD NAMES cord libcord
 		PATHS
-		${BoehmLinkDir}
+		${BOEHMGC_LIBRARY_DIRS}
 	)
 	INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
 	INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
-	LINK_DIRECTORIES(${BoehmLinkDir})
+	LINK_DIRECTORIES(${BOEHMGC_LIBRARY_DIRS})
 ELSE(USE_GC)
 	ADD_DEFINITIONS(-DDISABLE_GC)
 ENDIF(USE_GC)
