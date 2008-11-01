@@ -16,7 +16,9 @@ don't. For example:
 Dependencies
 ------------
 REQUIRED:
- * cmake (http://www.cmake.org/) to generate Makefile for cfunge.
+ * cmake (http://www.cmake.org/) to generate Makefile for cfunge. At least
+   version 2.6 is recommended, older versions may work, but that haven't been
+   tested.
 
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    + GCC 3.4.6, 4.1.2, 4.2.1 and 4.3.2 are known to work, other versions may or

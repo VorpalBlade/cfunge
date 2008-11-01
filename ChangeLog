@@ -10,6 +10,11 @@ For more info:
 and
   bzr help revisionspec
 
+Changes since last release (r471)
+---------------------------------
+These are important changes since last release:
+ * cfunge now depend on cmake 2.6 (or later).
+ * Man page have been extended.
 
 0.3.3
 -----
