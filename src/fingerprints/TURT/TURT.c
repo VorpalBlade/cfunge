@@ -64,11 +64,6 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-#define PATH_START_STRING "\n<path style=\"stroke:%s\" d=\""
-#define PATH_END_STRING   "\"/>"
-/// SVG suggests a maximum line length of 255 (according to CCBI code comment)
-#define NODES_PER_LINE 10
-
 #define FIXEDFMT   "%s%d.%04u"
 #define PRINTFIXED(n) ((n) < 0) ? "-" : "", getInt(n), getDec(n)
 
@@ -649,20 +644,20 @@ bool finger_TURT_load(instructionPointer * ip)
 #ifndef NDEBUG
 	atexit(&freeResources);
 #endif
-	manager_add_opcode(TURT,  'A', query_heading)
-	manager_add_opcode(TURT,  'B', back)
-	manager_add_opcode(TURT,  'C', pen_colour)
-	manager_add_opcode(TURT,  'D', show_display)
-	manager_add_opcode(TURT,  'E', query_pen)
-	manager_add_opcode(TURT,  'F', forward)
-	manager_add_opcode(TURT,  'H', set_heading)
-	manager_add_opcode(TURT,  'I', print_drawing)
-	manager_add_opcode(TURT,  'L', turn_left)
-	manager_add_opcode(TURT,  'N', clear_paper)
-	manager_add_opcode(TURT,  'P', pen_position)
-	manager_add_opcode(TURT,  'Q', query_position)
-	manager_add_opcode(TURT,  'R', turn_right)
-	manager_add_opcode(TURT,  'T', teleport)
-	manager_add_opcode(TURT,  'U', query_bounds)
+	manager_add_opcode(TURT, 'A', query_heading)
+	manager_add_opcode(TURT, 'B', back)
+	manager_add_opcode(TURT, 'C', pen_colour)
+	manager_add_opcode(TURT, 'D', show_display)
+	manager_add_opcode(TURT, 'E', query_pen)
+	manager_add_opcode(TURT, 'F', forward)
+	manager_add_opcode(TURT, 'H', set_heading)
+	manager_add_opcode(TURT, 'I', print_drawing)
+	manager_add_opcode(TURT, 'L', turn_left)
+	manager_add_opcode(TURT, 'N', clear_paper)
+	manager_add_opcode(TURT, 'P', pen_position)
+	manager_add_opcode(TURT, 'Q', query_position)
+	manager_add_opcode(TURT, 'R', turn_right)
+	manager_add_opcode(TURT, 'T', teleport)
+	manager_add_opcode(TURT, 'U', query_bounds)
 	return true;
 }
