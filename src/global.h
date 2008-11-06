@@ -41,6 +41,15 @@
 /// Make non-GCC compilers happy.
 #  define  __attribute__(x)  /* NO-OP */
 #endif
+
+#if defined(__GNUC__) && (__GNUC__ >= 3) && !defined(__INTEL_COMPILER)
+/// Give compiler a hint about the most common outcome.
+/// Please do not add this unless you have profiled.
+#  define FUNGE_EXPECT(expr, outcome) __builtin_expect(expr,outcome)
+#else
+#  define FUNGE_EXPECT(expr, outcome) (expr)
+#endif /* __GNUC__ */
+
 /*@}*/
 
 
