@@ -144,7 +144,7 @@ static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr);
 /*******************************
  * private memory utilities
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
 static inline void * allocate(size_t bytes)
 {
 	return (void *) malloc(bytes);
@@ -239,19 +239,18 @@ static genxStatus initPlist(genxWriter w, plist * pl)
  * make room in a plist
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static Boolean checkExpand(plist * pl)
+static Boolean checkExpand(plist * restrict pl)
 {
-	void * * newlist;
-	ssize_t i;
+	void ** restrict newlist;
 
 	if ((size_t)pl->count < pl->space)
 		return True;
 
 	pl->space *= 2;
-	newlist = (void * *) allocate(pl->space * sizeof(void *));
+	newlist = (void **) allocate(pl->space * sizeof(void *));
 	if (newlist == NULL)
 		return False;
-	for (i = 0; i < pl->count; i++)
+	for (ssize_t i = 0; i < pl->count; i++)
 		newlist[i] = pl->pointers[i];
 	deallocate(pl->pointers);
 	pl->pointers = newlist;
@@ -692,7 +691,7 @@ FUNGE_ATTR_FAST genxStatus genxCheckText(genxWriter w, constUtf8 s)
 /*
  * Purify some text
  */
-FUNGE_ATTR_FAST int genxScrubText(genxWriter w, constUtf8 in, utf8 out)
+FUNGE_ATTR_FAST int genxScrubText(genxWriter w, constUtf8 in, utf8 restrict out)
 {
 	int problems = 0;
 	constUtf8 last = in;
