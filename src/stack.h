@@ -190,7 +190,6 @@ funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_begin(struct s_instructionPointer * restrict ip,
-                     funge_stackstack ** me,
                      fungeCell count,
                      const fungeVector * restrict storageOffset);
 /**
@@ -201,7 +200,6 @@ bool stackstack_begin(struct s_instructionPointer * restrict ip,
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_end(struct s_instructionPointer * restrict ip,
-                   funge_stackstack ** me,
                    fungeCell count);
 /**
  * Transfer items from one stack to another (not in order).
