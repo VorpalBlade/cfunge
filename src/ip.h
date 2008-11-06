@@ -91,16 +91,21 @@ typedef struct s_ipList {
 } ipList;
 #endif
 
+#ifndef CONCURRENT_FUNGE
 /**
  * Create a new instruction pointer.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 instructionPointer * ip_create(void);
+#endif
+
+#if !defined(CONCURRENT_FUNGE) && !defined(NDEBUG)
 /**
  * Free an instruction pointer.
  */
 FUNGE_ATTR_FAST
 void ip_free(instructionPointer * restrict ip);
+#endif
 
 /**
  * Move the IP forward.
@@ -152,6 +157,8 @@ void ip_set_position(instructionPointer * restrict ip, const fungeVector * restr
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ipList* iplist_create(void);
+
+#ifndef NDEBUG
 /**
  * Free an IP list.
  * @warning Should only be called from internal tear-down code.
@@ -159,6 +166,8 @@ ipList* iplist_create(void);
  */
 FUNGE_ATTR_FAST
 void iplist_free(ipList* me);
+#endif
+
 /**
  * Add a new IP, one place before current one.
  * @param me ipList to operate on.
@@ -168,6 +177,7 @@ void iplist_free(ipList* me);
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ssize_t iplist_duplicate_ip(ipList** me, size_t index);
+
 /**
  * Terminate an ip.
  * @param me ipList to operate on.
