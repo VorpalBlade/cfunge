@@ -96,7 +96,7 @@ static void finger_TOYS_toilet_seat(instructionPointer * ip)
 static void finger_TOYS_pitchfork_head(instructionPointer * ip)
 {
 	fungeCell sum = 0;
-	for (size_t i = ip->stack->top; i-- > 0;)
+	for (size_t i = 0; i < ip->stack->top; i++)
 		sum += ip->stack->entries[i];
 	stack_clear(ip->stack);
 	stack_push(ip->stack, sum);
@@ -261,7 +261,7 @@ static void finger_TOYS_boulder(instructionPointer * ip)
 static void finger_TOYS_mailbox(instructionPointer * ip)
 {
 	fungeCell product = 1;
-	for (size_t i = ip->stack->top; i-- > 0;)
+	for (size_t i = 0; i < ip->stack->top; i++)
 		product *= ip->stack->entries[i];
 	stack_clear(ip->stack);
 	stack_push(ip->stack, product);
