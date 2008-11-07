@@ -82,7 +82,7 @@ static inline void opcode_stack_free(fungeOpcodeStack * restrict me)
 FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * restrict old)
 {
-	fungeOpcodeStack * tmp;
+	fungeOpcodeStack * restrict tmp;
 
 	if (!old)
 		return NULL;
@@ -95,8 +95,8 @@ static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * 
 		return NULL;
 	tmp->size = old->top + 1;
 	tmp->top = old->top;
-	for (size_t i = 0; i < tmp->top; i++)
-		tmp->entries[i] = old->entries[i];
+	// Copy the pointers.
+	memcpy(tmp->entries, old->entries, tmp->top * sizeof(fingerprintOpcode));
 	return tmp;
 }
 #endif
