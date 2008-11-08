@@ -97,16 +97,16 @@ static const ght_uint32_t crc32_table[256] = {
 FUNGE_ATTR_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
 {
 	const unsigned char *p;
-	const unsigned char *p_end;
 	ght_uint32_t  crc;
 
 	assert(p_key != NULL);
 
 	crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
 	p = (const unsigned char *)&(p_key->p_key);
-	p_end = p + sizeof(fungeSpaceHashKey);
-	while (p < p_end)
-		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ *(p++)];
+
+	for (size_t i = 0; i < sizeof(fungeSpaceHashKey); i++)
+		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ (p[i])];
+
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
 #endif
