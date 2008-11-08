@@ -396,39 +396,59 @@ FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict i
 #endif
 }
 
-FUNGE_ATTR_FAST bool stackstack_begin(instructionPointer * restrict ip, fungeCell count, const fungeVector * restrict storageOffset)
+
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
+{
+	stack_prealloc_space(stack, count);
+	memset(&stack->entries[stack->top], 0, count * sizeof(fungeCell));
+	stack->top += count;
+}
+
+// This does an in-order bulk copy of count elements between two stacks.
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stack * restrict src, size_t count)
+{
+	stack_prealloc_space(dest, count);
+
+	// Figure out if we were asked to copy more items than actually exists:
+	if (count > src->top) {
+		// Push some initial zeros then.
+		size_t zero_count = count - src->top;
+		stack_zero_fill(dest, zero_count);
+		count -= zero_count;
+	}
+
+	// memcpy the rest.
+	memcpy(&dest->entries[dest->top], &src->entries[src->top - count], count*sizeof(fungeCell));
+	dest->top += count;
+}
+
+FUNGE_ATTR_FAST
+bool stackstack_begin(instructionPointer * restrict ip, fungeCell count, const fungeVector * restrict storageOffset)
 {
 	funge_stackstack *stackStack;
 	funge_stack      *TOSS, *SOSS;
-	fungeCell       * restrict entriesCopy = NULL;
 
 	assert(ip != NULL);
 	assert(storageOffset != NULL);
-
-	if (count > 0) {
-		entriesCopy = cf_malloc_noptr(sizeof(fungeCell) * (count + 1));
-		// Reflect on out of memory, do it here before we mess up stuff.
-		if (!entriesCopy) {
-			oom_stackstack(ip);
-			return false;
-		}
-	}
 
 	// Set up variables
 	stackStack = ip->stackstack;
 
 	TOSS = stack_create();
 	if (!TOSS) {
-		if (entriesCopy)
-			cf_free(entriesCopy);
+		oom_stackstack(ip);
 		return false;
 	}
 
 	// Extend by one
-	stackStack = (funge_stackstack*)cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
+	stackStack = cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
 	if (!stackStack) {
-		if (entriesCopy)
-			cf_free(entriesCopy);
+		if (TOSS)
+			stack_free(TOSS);
+		oom_stackstack(ip);
 		return false;
 	}
 	SOSS = stackStack->stacks[stackStack->current];
@@ -438,22 +458,20 @@ FUNGE_ATTR_FAST bool stackstack_begin(instructionPointer * restrict ip, fungeCel
 	stackStack->stacks[stackStack->current] = TOSS;
 
 	if (count > 0) {
-		fungeCell i = count;
-		while (i--)
-			entriesCopy[i] = stack_pop(SOSS);
-		for (i = 0; i < count; i++)
-			stack_push(TOSS, entriesCopy[i]);
+		stack_bulk_copy(TOSS, SOSS, count);
+		// Make it into a move.
+		if ((size_t)count > SOSS->top)
+			SOSS->top = 0;
+		else
+			SOSS->top -= count;
 	} else if (count < 0) {
-		while (count++)
-			stack_push(SOSS, 0);
+		stack_zero_fill(SOSS, -count);
 	}
 	stack_push_vector(SOSS, &ip->storageOffset);
 	ip->storageOffset.x = storageOffset->x;
 	ip->storageOffset.y = storageOffset->y;
 	ip->stack = TOSS;
 	ip->stackstack = stackStack;
-	if (entriesCopy)
-		cf_free(entriesCopy);
 	return true;
 }
 
@@ -463,18 +481,8 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell 
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;
 	fungeVector       storageOffset;
-	fungeCell        *restrict entriesCopy = NULL;
 
 	assert(ip != NULL);
-
-	if (count > 0) {
-		entriesCopy = cf_malloc_noptr(sizeof(fungeCell) * (count + 1));
-		// Reflect on out of memory, do it here before we mess up stuff.
-		if (!entriesCopy) {
-			oom_stackstack(ip);
-			return false;
-		}
-	}
 
 	// Set up variables
 	stackStack = ip->stackstack;
@@ -482,14 +490,10 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell 
 	SOSS = stackStack->stacks[stackStack->current - 1];
 	storageOffset = stack_pop_vector(SOSS);
 	if (count > 0) {
-		fungeCell i = count;
-		while (i--)
-			entriesCopy[i] = stack_pop(TOSS);
-		for (i = 0; i < count; i++)
-			stack_push(SOSS, entriesCopy[i]);
+		// Since TOSS is discarded there is no need to update it's top pointer.
+		stack_bulk_copy(SOSS, TOSS, count);
 	} else if (count < 0) {
-		while (count++)
-			stack_pop_discard(SOSS);
+		stack_pop_n_discard(SOSS, -count);
 	}
 	ip->storageOffset.x = storageOffset.x;
 	ip->storageOffset.y = storageOffset.y;
@@ -498,16 +502,13 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell 
 	// Make it one smaller
 	stackStack = (funge_stackstack*)cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size - 1) * sizeof(funge_stack*));
 	if (!stackStack) {
-		if (entriesCopy)
-			cf_free(entriesCopy);
+		oom_stackstack(ip);
 		return false;
 	}
 	stackStack->size--;
 	stackStack->current--;
 	ip->stackstack = stackStack;
 	stack_free(TOSS);
-	if (entriesCopy)
-		cf_free(entriesCopy);
 	return true;
 }
 
