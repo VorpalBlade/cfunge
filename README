@@ -24,6 +24,7 @@ REQUIRED:
    + GCC 3.4.6, 4.1.2, 4.2.1 and 4.3.2 are known to work, other versions may or
      may not work.
    + ICC 10.1 is known to work too.
+   + Open64 4.1 should work, but isn't recommended.
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 
