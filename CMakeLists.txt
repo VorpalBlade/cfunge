@@ -66,13 +66,22 @@ MACRO(CFUNGE_CHECK_CFLAG name flag)
 	ENDIF (_CHECKFLAG_${name})
 ENDMACRO(CFUNGE_CHECK_CFLAG)
 
-# Macro to check if a function is supported
+# Macro to check if a function is supported and add a define if not.
 MACRO(CFUNGE_CHECK_FUNC name)
 	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
 	IF (_CHECKFUNC_${name})
 		ADD_DEFINITIONS(-DHAVE_${name})
 	ENDIF (_CHECKFUNC_${name})
 ENDMACRO(CFUNGE_CHECK_FUNC)
+
+# Macro to check if a function is supported and error out if not.
+MACRO(CFUNGE_REQUIRE_FUNC name)
+	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
+	IF (NOT _CHECKFUNC_${name})
+		MESSAGE(FATAL_ERROR
+		        "Your system seems to be missing the function \"${name}\" which is required by cfunge.")
+	ENDIF (NOT _CHECKFUNC_${name})
+ENDMACRO(CFUNGE_REQUIRE_FUNC)
 
 
 
@@ -170,7 +179,23 @@ ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EX
 
 
 ################################################################################
-# Existance of functions
+# Existance of various functions
+
+# These are optional in POSIX.1-2001 but we need them.
+CFUNGE_REQUIRE_FUNC(mmap)
+CFUNGE_REQUIRE_FUNC(munmap)
+
+# These aren't optional in POSIX, but if someone tries this on a non POSIX
+# system they may be missing.
+CFUNGE_REQUIRE_FUNC(dup2)
+CFUNGE_REQUIRE_FUNC(fork)
+CFUNGE_REQUIRE_FUNC(socket)
+CFUNGE_REQUIRE_FUNC(regcomp)
+CFUNGE_REQUIRE_FUNC(rmdir)
+CFUNGE_REQUIRE_FUNC(mkdir)
+CFUNGE_REQUIRE_FUNC(gettimeofday)
+
+# For these we fall back on non-l version.
 SET(CMAKE_REQUIRED_LIBRARIES "-lm")
 CFUNGE_CHECK_FUNC(acosl)
 CFUNGE_CHECK_FUNC(asinl)
