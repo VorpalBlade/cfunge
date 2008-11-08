@@ -92,6 +92,7 @@ static inline bool fungespace_in_range(const fungeVector * restrict position)
 	return true;
 }
 
+
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
 {
@@ -115,6 +116,7 @@ fungespace_free(void)
 	mempool_teardown();
 }
 
+
 FUNGE_ATTR_FAST void
 fungespace_get_bounds_rect(fungeRect * restrict rect)
 {
@@ -124,6 +126,7 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x + 1;
 	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
 }
+
 
 FUNGE_ATTR_FAST fungeCell
 fungespace_get(const fungeVector * restrict position)
@@ -154,7 +157,6 @@ fungespace_get_offset(const fungeVector * restrict position,
 	// Offsets for static.
 	fungeUnsignedCell x, y;
 
-
 	assert(position != NULL);
 	assert(offset != NULL);
 
@@ -174,6 +176,7 @@ fungespace_get_offset(const fungeVector * restrict position,
 			return *result;
 	}
 }
+
 
 FUNGE_ATTR_FAST static inline void
 fungespace_set_no_bounds_update(fungeCell value,
@@ -202,6 +205,7 @@ fungespace_set_no_bounds_update(fungeCell value,
 	}
 }
 
+
 FUNGE_ATTR_FAST void
 fungespace_set(fungeCell value, const fungeVector * restrict position)
 {
@@ -218,6 +222,7 @@ fungespace_set(fungeCell value, const fungeVector * restrict position)
 			fspace.topLeftCorner.x = position->x;
 	}
 }
+
 
 FUNGE_ATTR_FAST static inline void
 fungespace_set_initial(fungeCell value, const fungeVector * restrict position)
@@ -555,7 +560,7 @@ fungespace_save_to_file(const char        * restrict filename,
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		fungeCell * towrite = cf_malloc((size->x * size->y + size->y) * sizeof(fungeCell));
+		fungeCell * restrict towrite = cf_malloc((size->x * size->y + size->y) * sizeof(fungeCell));
 		if (!towrite) {
 			fclose(file);
 			return false;
@@ -563,7 +568,7 @@ fungespace_save_to_file(const char        * restrict filename,
 		// Construct each line.
 		for (fungeCell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = size->x;
-			fungeCell * string = cf_malloc(size->x * sizeof(fungeCell));
+			fungeCell * restrict string = cf_malloc(size->x * sizeof(fungeCell));
 			if (!string) {
 				fclose(file);
 				return false;
@@ -578,9 +583,9 @@ fungespace_save_to_file(const char        * restrict filename,
 
 			if (lastspace > 0) {
 				for (ssize_t i = 0; i <= lastspace; i++) {
-					towrite[index] = string[i];
-					index++;
+					towrite[index+i] = string[i];
 				}
+				index += lastspace + 1;
 			}
 			cf_free(string);
 			towrite[index] = (fungeCell)'\n';
