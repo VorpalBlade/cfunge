@@ -25,9 +25,7 @@ MARK_AS_ADVANCED(
 	EXECUTABLE_OUTPUT_PATH
 	LIBRARY_OUTPUT_PATH
 	BOEHM_INCLUDE_DIR
-	BOEHM_CORD_INCLUDE_DIR
 	BOEHM_LIBRARY_GC
-	BOEHM_LIBRARY_CORD
 	USE_MUDFLAP
 	USE_WERROR
 	USE_VALGRIND
@@ -47,6 +45,7 @@ SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckFunctionExists)
+INCLUDE(CheckLibraryExists)
 
 SET(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
@@ -59,20 +58,32 @@ SET(MAN_INSTALL_PREFIX
 # Macros
 
 # Macro to check if a CFLAG is supported, and then add it
-MACRO(CFUNGE_CHECK_CFLAG name flag)
+macro(CFUNGE_CHECK_CFLAG name flag)
 	CHECK_C_COMPILER_FLAG(${flag} _CHECKFLAG_${name})
-	IF (_CHECKFLAG_${name})
-		ADD_DEFINITIONS(${flag})
-	ENDIF (_CHECKFLAG_${name})
-ENDMACRO(CFUNGE_CHECK_CFLAG)
+	if (_CHECKFLAG_${name})
+		add_definitions(${flag})
+	endif (_CHECKFLAG_${name})
+endmacro(CFUNGE_CHECK_CFLAG)
 
-# Macro to check if a function is supported and add a define if not.
-MACRO(CFUNGE_CHECK_FUNC name)
+# Macro to check if a library exists and have a function and add it to
+# libraries to link to target if it does.
+macro(CFUNGE_CHECK_LIBRARY_FUNC target library function location)
+	CHECK_LIBRARY_EXISTS(${library} ${function} ${location} _CHECKLIBFUNC_${library}_${function})
+	if (_CHECKLIBFUNC_${library}_${function})
+		set(HAVE_${library}_${function} true PARENT_SCOPE)
+		add_definitions(-DHAVE_${function})
+		TARGET_LINK_LIBRARIES(${target} ${library})
+	endif (_CHECKLIBFUNC_${library}_${function})
+endmacro(CFUNGE_CHECK_LIBRARY_FUNC)
+
+# Macro to check if a function is supported and add a define if yes.
+macro(CFUNGE_CHECK_FUNC name)
 	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
-	IF (_CHECKFUNC_${name})
-		ADD_DEFINITIONS(-DHAVE_${name})
-	ENDIF (_CHECKFUNC_${name})
-ENDMACRO(CFUNGE_CHECK_FUNC)
+	if (_CHECKFUNC_${name})
+		set(CFUNGE_HAVE_${name} true PARENT_SCOPE)
+		add_definitions(-DHAVE_${name})
+	endif (_CHECKFUNC_${name})
+endmacro(CFUNGE_CHECK_FUNC)
 
 # Macro to check if a function is supported and error out if not.
 MACRO(CFUNGE_REQUIRE_FUNC name)
@@ -94,20 +105,12 @@ IF(USE_GC)
 	FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
 		${BOEHMGC_INCLUDE_DIRS}
 	)
-	FIND_PATH(BOEHM_CORD_INCLUDE_DIR gc/cord.h
-		${BOEHMGC_INCLUDE_DIRS}
-	)
 
-	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc libgc
-		PATHS
-		${BOEHMGC_LIBRARY_DIRS}
-	)
-	FIND_LIBRARY(BOEHM_LIBRARY_CORD NAMES cord libcord
+	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc
 		PATHS
 		${BOEHMGC_LIBRARY_DIRS}
 	)
 	INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
-	INCLUDE_DIRECTORIES(${BOEHM_CORD_INCLUDE_DIR})
 	LINK_DIRECTORIES(${BOEHMGC_LIBRARY_DIRS})
 ELSE(USE_GC)
 	ADD_DEFINITIONS(-DDISABLE_GC)
@@ -194,6 +197,15 @@ CFUNGE_REQUIRE_FUNC(regcomp)
 CFUNGE_REQUIRE_FUNC(rmdir)
 CFUNGE_REQUIRE_FUNC(mkdir)
 CFUNGE_REQUIRE_FUNC(gettimeofday)
+
+# Some optional ones (in POSIX.1-2001) that can use optionally.
+# These are complex, they can be in libc (FreeBSD) or librt (Linux).
+
+CFUNGE_CHECK_FUNC(clock_gettime)
+if (NOT CFUNGE_HAVE_clock_gettime)
+	find_library(LIBRT_LOCATION
+	             NAMES rt)
+endif (NOT CFUNGE_HAVE_clock_gettime)
 
 # For these we fall back on non-l version.
 SET(CMAKE_REQUIRED_LIBRARIES "-lm")
@@ -314,7 +326,7 @@ TARGET_LINK_LIBRARIES(cfunge m)
 TARGET_LINK_LIBRARIES(cfunge ncurses)
 
 IF(USE_GC)
-	TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC} ${BOEHM_LIBRARY_CORD})
+	TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC})
 ENDIF(USE_GC)
 
 IF(USE_MUDFLAP)
@@ -322,6 +334,10 @@ IF(USE_MUDFLAP)
 	TARGET_LINK_LIBRARIES(cfunge mudflap)
 ENDIF(USE_MUDFLAP)
 
+if (NOT ${LIBRT_LOCATION} STREQUAL LIBRT_LOCATION-NOTFOUND)
+	get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
+	CFUNGE_CHECK_LIBRARY_FUNC(cfunge rt clock_gettime ${LIBRT_PATH})
+endif (NOT ${LIBRT_LOCATION} STREQUAL LIBRT_LOCATION-NOTFOUND)
 
 
 ################################################################################
