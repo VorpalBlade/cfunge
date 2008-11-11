@@ -32,7 +32,7 @@
 // everything look uggly in xterms at least!
 #define TERM_CAP_CORRECT
 
-static bool initialised = false;
+static bool term_initialised = false;
 
 #define valid(s) ((s != 0) && s != (char *)-1)
 
@@ -108,7 +108,7 @@ static void finger_TERM_go_up(instructionPointer * ip)
 #ifdef TERM_CAP_CORRECT
 static void finalise(void)
 {
-	if (!initialised)
+	if (!term_initialised)
 		return;
 	putp(exit_ca_mode);
 }
@@ -118,7 +118,7 @@ FUNGE_ATTR_FAST
 static inline bool initialise(void)
 {
 	int errret;
-	if (initialised)
+	if (term_initialised)
 		return true;
 
 	if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
@@ -128,7 +128,7 @@ static inline bool initialise(void)
 	putp(enter_ca_mode);
 	atexit(finalise);
 #endif
-	initialised = true;
+	term_initialised = true;
 	return true;
 }
 

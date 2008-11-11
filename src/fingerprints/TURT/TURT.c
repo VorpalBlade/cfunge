@@ -625,12 +625,12 @@ static void finger_TURT_query_bounds(instructionPointer * ip)
 	stack_push(ip->stack, TURT_MAX);
 }
 
-static bool initialised = false;
+static bool turt_initialised = false;
 
 static void initialise(void)
 {
-	if (!initialised) {
-		initialised = true;
+	if (!turt_initialised) {
+		turt_initialised = true;
 		filename = DEFAULT_FILENAME;
 		turt.movedWithoutDraw = true;
 		// To set up turt.sin/turt.cos.
