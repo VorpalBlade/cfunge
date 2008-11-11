@@ -23,18 +23,73 @@
 #include "../../stack.h"
 
 #include <stdint.h>
-#include <sys/time.h>
 #include <assert.h>
 
+// This code tries to select the best timer.
+
+#ifdef HAVE_clock_gettime
+#  include <unistd.h>
+#  include <time.h>
+typedef struct timespec timetype;
+typedef long res_type;
+
+// Select monotonic or realtime:
+#  if defined(_POSIX_MONOTONIC_CLOCK) && (_POSIX_MONOTONIC_CLOCK > 0)
+#    define TIMER_TYPE CLOCK_MONOTONIC
+#  else
+#    define TIMER_TYPE CLOCK_REALTIME
+#  endif
+
+#  define TIMERFUNC(x) clock_gettime(TIMER_TYPE, (x))
+
+#  define SECONDS_MUTIPLIER 1000000000
+#  define MICRO_TO_SMALL 1000
+
+#  define MSEC(x) ((x) / 1000)
+#  define MSEC_P(x) ((x)->tv_nsec / 1000)
+
+#  define SMALL_P(x) ((x)->tv_nsec)
+
+#  define ZERO_TIMETYPE(x) \
+	{ \
+		(x)->tv_sec = 0; \
+		(x)->tv_nsec = 0; \
+	}
+
+#else
+// Fallback on gettimeofday.
+#  include <sys/time.h>
+typedef struct timeval timetype;
+typedef suseconds_t res_type;
+
+#  define TIMERFUNC(x) gettimeofday((x), NULL)
+
+#  define SECONDS_MUTIPLIER 1000000
+#  define MICRO_TO_SMALL 1
+
+#  define MSEC(x) (x)
+#  define MSEC_P(x) ((x)->tv_usec)
+
+#  define SMALL_P(x) ((x)->tv_usec)
+
+#  define ZERO_TIMETYPE(x) \
+	{ \
+		(x)->tv_sec = 0; \
+		(x)->tv_usec = 0; \
+	}
+
+#endif
+
+
 /// The resolution.
-static suseconds_t resolution = 0;
+static res_type resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell get_difference(const struct timeval * before,
-                                       const struct timeval * after)
+static inline fungeCell get_difference(const timetype * restrict before,
+                                       const timetype * restrict after)
 {
 	return 1000000 * ((fungeCell)after->tv_sec - (fungeCell)before->tv_sec)
-	       + (fungeCell)after->tv_usec - (fungeCell)before->tv_usec;
+	       + MSEC((fungeCell)SMALL_P(after) - (fungeCell)SMALL_P(before));
 }
 
 /// This function checks that the IP got a non-null HRTI data pointer.
@@ -42,11 +97,10 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool check_ip_got_HRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {
-		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(struct timeval));
+		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(timetype));
 		if (!ip->fingerHRTItimestamp)
 			return false;
-		ip->fingerHRTItimestamp->tv_sec = 0;
-		ip->fingerHRTItimestamp->tv_usec = 0;
+		ZERO_TIMETYPE((timetype*)ip->fingerHRTItimestamp);
 	}
 	return true;
 }
@@ -59,8 +113,7 @@ static void finger_HRTI_erase_mark(instructionPointer * ip)
 		return;
 	}
 
-	ip->fingerHRTItimestamp->tv_sec = 0;
-	ip->fingerHRTItimestamp->tv_usec = 0;
+	ZERO_TIMETYPE((timetype*)ip->fingerHRTItimestamp);
 }
 
 /// G - Granularity
@@ -77,17 +130,17 @@ static void finger_HRTI_mark(instructionPointer * ip)
 		return;
 	}
 
-	gettimeofday(ip->fingerHRTItimestamp, NULL);
+	TIMERFUNC(ip->fingerHRTItimestamp);
 }
 
 /// T - Timer
 static void finger_HRTI_timer(instructionPointer * ip)
 {
-	if (!ip->fingerHRTItimestamp || (ip->fingerHRTItimestamp->tv_sec == 0)) {
+	if (!ip->fingerHRTItimestamp || (((timetype*)ip->fingerHRTItimestamp)->tv_sec == 0)) {
 		ip_reverse(ip);
 	} else {
-		struct timeval curTime;
-		gettimeofday(&curTime, NULL);
+		timetype curTime;
+		TIMERFUNC(&curTime);
 		stack_push(ip->stack, get_difference(ip->fingerHRTItimestamp, &curTime));
 	}
 }
@@ -95,24 +148,25 @@ static void finger_HRTI_timer(instructionPointer * ip)
 /// S - Second
 static void finger_HRTI_second(instructionPointer * ip)
 {
-	struct timeval curTime;
-	gettimeofday(&curTime, NULL);
-	stack_push(ip->stack, (fungeCell)curTime.tv_usec);
+	timetype curTime;
+	TIMERFUNC(&curTime);
+	stack_push(ip->stack, (fungeCell)MSEC_P(&curTime));
 }
 
 FUNGE_ATTR_FAST static inline bool setup_HRTI(instructionPointer * ip)
 {
 	// This bit is global
 	if (resolution == 0) {
-		struct timeval before;
-		struct timeval after;
+		timetype before;
+		timetype after;
 
-		gettimeofday(&before, NULL);
+		TIMERFUNC(&before);
 		do {
-			gettimeofday(&after, NULL);
-			resolution = 1000000 * (after.tv_sec - before.tv_sec) + after.tv_usec - before.tv_usec;
-		} while (resolution == 0);
+			TIMERFUNC(&after);
+			resolution = SECONDS_MUTIPLIER * (after.tv_sec - before.tv_sec) + SMALL_P(&after) - SMALL_P(&before);
+		} while (resolution < MICRO_TO_SMALL);
 	}
+	resolution = MSEC(resolution);
 	// Per IP, set up the data
 	return check_ip_got_HRTI(ip);
 }
