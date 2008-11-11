@@ -114,9 +114,9 @@ int main(int argc, char *argv[])
 
 #ifndef DISABLE_GC
 //	GC_find_leak = 1;
-//	atexit(&GC_gcollect);
 	GC_all_interior_pointers = 1;
 	GC_INIT();
+//	atexit(&GC_gcollect);
 #endif
 #ifdef FUZZ_TESTING
 	alarm(3);
