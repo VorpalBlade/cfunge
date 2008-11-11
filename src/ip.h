@@ -29,7 +29,6 @@
 #define _HAD_SRC_IP_H
 
 #include <sys/types.h>
-#include <sys/time.h>
 #include <stdint.h>
 
 #include "global.h"
@@ -73,7 +72,8 @@ typedef struct s_instructionPointer {
 	fungeCell                   ID;                     ///< The ID of this IP.
 	funge_stackstack          * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
-	struct timeval            * fingerHRTItimestamp;               ///< Data for fingerprint HRTI.
+	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
+	                                                    ///  We don't know what type here.
 } instructionPointer;
 #define ipDEFINED 1
 
