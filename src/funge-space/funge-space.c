@@ -96,6 +96,9 @@ static inline bool fungespace_in_range(const fungeVector * restrict position)
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
 {
+	// FIXME: Not sure the arguments are correct..
+	cf_mark_static_noptr(&static_space,
+	                     &static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
 	for (size_t i = 0; i < sizeof(static_space) / sizeof(fungeCell); i++)
 		static_space[i] = ' ';

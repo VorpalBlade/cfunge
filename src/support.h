@@ -76,6 +76,9 @@
 /// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           GC_STRDUP(x)
 
+/// Used to mark some static areas as containing no pointers.
+#  define cf_mark_static_noptr(min, max) GC_exclude_static_roots(min, max)
+
 #else
 
 /// If built with GC support this will malloc using GC.
@@ -99,6 +102,9 @@
 #  define gc_collect_full()      /* NO OP */
 /// Use this macro instead of plain strdup, or even better use cf_strndup.
 #  define cf_strdup(x)           strdup(x)
+
+/// Used to mark some static areas as containing no pointers.
+#  define cf_mark_static_noptr(min, max) /* NO OP */
 
 #endif
 
