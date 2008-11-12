@@ -40,7 +40,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/time.h>
+#ifdef HAVE_clock_gettime
+#  include <time.h>
+#else
+#  include <sys/time.h>
+#endif
 #include <assert.h>
 
 /**
@@ -645,6 +649,15 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 	}
 #endif
 	{
+#ifdef HAVE_clock_gettime
+		struct timespec tv;
+		if (clock_gettime(CLOCK_REALTIME, &tv)) {
+			perror("Couldn't get time of day?!");
+			exit(EXIT_FAILURE);
+		}
+		// Set up randomness
+		srandom(tv.tv_nsec);
+#else
 		struct timeval tv;
 		if (gettimeofday(&tv, NULL)) {
 			perror("Couldn't get time of day?!");
@@ -652,6 +665,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 		}
 		// Set up randomness
 		srandom(tv.tv_usec);
+#endif
 	}
 	interpreter_main_loop();
 }
