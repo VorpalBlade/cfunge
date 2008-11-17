@@ -451,7 +451,7 @@ fungespace_load(const char * restrict filename)
 FUNGE_ATTR_FAST void
 fungespace_load_string(const unsigned char * restrict program)
 {
-	load_string(program, strlen(program));
+	load_string(program, strlen((const char*)program));
 }
 #endif
 
