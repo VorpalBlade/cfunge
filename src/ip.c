@@ -30,6 +30,9 @@
 
 #include <assert.h>
 
+/// For concurrent funge: how many new IPs to allocate in one go?
+#define ALLOCCHUNKSIZE 1
+
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool ip_create_in_place(instructionPointer *me)
 {
@@ -207,12 +210,16 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	assert(*me != NULL);
 	assert(index <= (*me)->top);
 
-	// Grow
-	list = (ipList*)cf_realloc(*me, sizeof(ipList) + ((*me)->size + 1) * sizeof(instructionPointer));
-	if (!list)
-		return -1;
-	*me = list;
-	list->size++;
+	list = *me;
+
+	// Grow if needed
+	if (list->size <= (list->top + 1)) {
+		list = (ipList*)cf_realloc(*me, sizeof(ipList) + ((*me)->size + ALLOCCHUNKSIZE) * sizeof(instructionPointer));
+		if (!list)
+			return -1;
+		*me = list;
+		list->size+=ALLOCCHUNKSIZE;
+	}
 	/*
 	 *  Splitting examples.
 	 *
@@ -251,6 +258,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	return index - 1;
 }
 
+
 FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 {
 	ipList *list;
@@ -281,13 +289,22 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 			list->ips[i] = list->ips[i + 1];
 		}
 	}
-	// Shrink
-	list = (ipList*)cf_realloc(list, sizeof(ipList) + (list->size - 1) * sizeof(instructionPointer));
-	if (!list)
-		return -1;
-	*me = list;
+	// Set stack to be invalid in the top one. This should help catch any bugs
+	// related to this.
+	list->ips[list->top].stackstack = NULL;
+	list->ips[list->top].stack = NULL;
 	list->top--;
-	list->size--;
+	// TODO: Shrink if difference is large
+#if 0
+	if ((list->size - ALLOCCHUNKSIZE) > list->top) {
+		ipList *tmp;
+		tmp = (ipList*)cf_realloc(list, sizeof(ipList) + (list->size - ALLOCCHUNKSIZE) * sizeof(instructionPointer));
+		if (tmp) {
+			*me = tmp;
+			tmp->size-ALLOCCHUNKSIZE;
+		}
+	}
+#endif
 	return (index > 0) ? index - 1 : 0;
 }
 
