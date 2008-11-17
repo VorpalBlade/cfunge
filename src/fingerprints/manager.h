@@ -24,8 +24,8 @@
  * The fingerprint manager.
  */
 
-#ifndef _HAD_SRC_FINGERPRINTS_MANAGER_H
-#define _HAD_SRC_FINGERPRINTS_MANAGER_H
+#ifndef FUNGE_HAD_SRC_FINGERPRINTS_MANAGER_H
+#define FUNGE_HAD_SRC_FINGERPRINTS_MANAGER_H
 
 #include "../global.h"
 

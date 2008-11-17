@@ -24,8 +24,8 @@
  * if a certain environment variable should be visible in sandbox mode.
  */
 
-#ifndef _HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
-#define _HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
+#ifndef FUNGE_HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
+#define FUNGE_HAD_SRC_INSTRUCTIONS_SAFE_ENV_H
 
 #include "../global.h"
 #include <stdbool.h>

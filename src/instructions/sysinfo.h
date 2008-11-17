@@ -24,8 +24,8 @@
  * sysinfo.c contains the implementation of the y instruction.
  */
 
-#ifndef _HAD_SRC_INSTRUCTIONS_SYSINFO_H
-#define _HAD_SRC_INSTRUCTIONS_SYSINFO_H
+#ifndef FUNGE_HAD_SRC_INSTRUCTIONS_SYSINFO_H
+#define FUNGE_HAD_SRC_INSTRUCTIONS_SYSINFO_H
 
 #include "../global.h"
 #include "../stack.h"

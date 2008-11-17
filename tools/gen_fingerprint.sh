@@ -255,8 +255,8 @@ cat > "${FPRINT}.h" << EOF
 EOF
 
 
-addtoh "#ifndef _HAD_SRC_FINGERPRINTS_${FPRINT}_H"
-addtoh "#define _HAD_SRC_FINGERPRINTS_${FPRINT}_H"
+addtoh "#ifndef FUNGE_HAD_SRC_FINGERPRINTS_${FPRINT}_H"
+addtoh "#define FUNGE_HAD_SRC_FINGERPRINTS_${FPRINT}_H"
 
 cat >> "${FPRINT}.h" << EOF
 

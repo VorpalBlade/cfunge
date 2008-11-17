@@ -356,8 +356,8 @@ cat > "fingerprints.h" << EOF
 #  error "This is for use in manager.c only"
 #endif
 
-#ifndef _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
-#define _HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
+#ifndef FUNGE_HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
+#define FUNGE_HAD_SRC_FINGERPRINTS_FINGERPRINTS_H
 
 #include "../global.h"
 

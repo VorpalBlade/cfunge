@@ -24,8 +24,8 @@
  * Contains functions to access Funge-Space.
  */
 
-#ifndef _HAD_SRC_FUNGE_SPACE_H
-#define _HAD_SRC_FUNGE_SPACE_H
+#ifndef FUNGE_HAD_SRC_FUNGE_SPACE_H
+#define FUNGE_HAD_SRC_FUNGE_SPACE_H
 
 #include "../global.h"
 #include "../vector.h"
