@@ -30,8 +30,8 @@
  * For implementation details see comments in cfunge_mempool.c.
  */
 
-#ifndef _HAD_LIB_CFUNGE_MEMPOOL_H
-#define _HAD_LIB_CFUNGE_MEMPOOL_H
+#ifndef FUNGE_HAD_LIB_CFUNGE_MEMPOOL_H
+#define FUNGE_HAD_LIB_CFUNGE_MEMPOOL_H
 
 #include "../../src/global.h"
 #include "../../src/funge-space/funge-space.h"
