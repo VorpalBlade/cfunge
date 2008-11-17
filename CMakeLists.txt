@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-PROJECT(CFUNGE C)
+project(CFUNGE C)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
 	CMAKE_BACKWARDS_COMPATIBILITY
 	EXECUTABLE_OUTPUT_PATH
 	LIBRARY_OUTPUT_PATH
+	LIBRT_LOCATION
 	BOEHM_INCLUDE_DIR
 	BOEHM_LIBRARY_GC
 	USE_MUDFLAP
@@ -40,14 +41,14 @@ MARK_AS_ADVANCED(
 # if you want the full compiler output, uncomment the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
-SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
-INCLUDE(FindPkgConfig)
-INCLUDE(CheckCCompilerFlag)
-INCLUDE(CheckFunctionExists)
-INCLUDE(CheckLibraryExists)
+include(FindPkgConfig)
+include(CheckCCompilerFlag)
+include(CheckFunctionExists)
+include(CheckLibraryExists)
 
-SET(MAN_INSTALL_PREFIX
+set(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
 	CACHE PATH "Where to install man page."
 )
@@ -72,7 +73,7 @@ macro(CFUNGE_CHECK_LIBRARY_FUNC target library function location)
 	if (_CHECKLIBFUNC_${library}_${function})
 		set(HAVE_${library}_${function} true PARENT_SCOPE)
 		add_definitions(-DHAVE_${function})
-		TARGET_LINK_LIBRARIES(${target} ${library})
+		target_link_libraries(${target} ${library})
 	endif (_CHECKLIBFUNC_${library}_${function})
 endmacro(CFUNGE_CHECK_LIBRARY_FUNC)
 
@@ -86,89 +87,89 @@ macro(CFUNGE_CHECK_FUNC name)
 endmacro(CFUNGE_CHECK_FUNC)
 
 # Macro to check if a function is supported and error out if not.
-MACRO(CFUNGE_REQUIRE_FUNC name)
+macro(CFUNGE_REQUIRE_FUNC name)
 	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
-	IF (NOT _CHECKFUNC_${name})
-		MESSAGE(FATAL_ERROR
+	if (NOT _CHECKFUNC_${name})
+		message(FATAL_ERROR
 		        "Your system seems to be missing the function \"${name}\" which is required by cfunge.")
-	ENDIF (NOT _CHECKFUNC_${name})
-ENDMACRO(CFUNGE_REQUIRE_FUNC)
+	endif (NOT _CHECKFUNC_${name})
+endmacro(CFUNGE_REQUIRE_FUNC)
 
 
 
 ################################################################################
 # Boehm GC
-OPTION(USE_GC "If this is enabled, use Boehm-GC." OFF)
-IF(USE_GC)
+option(USE_GC "If this is enabled, use Boehm-GC." OFF)
+if(USE_GC)
 	pkg_check_modules(BOEHMGC REQUIRED bdw-gc>=7.0)
 
-	FIND_PATH(BOEHM_INCLUDE_DIR gc/gc.h
+	find_path(BOEHM_INCLUDE_DIR gc/gc.h
 		${BOEHMGC_INCLUDE_DIRS}
 	)
 
-	FIND_LIBRARY(BOEHM_LIBRARY_GC NAMES gc
+	find_library(BOEHM_LIBRARY_GC NAMES gc
 		PATHS
 		${BOEHMGC_LIBRARY_DIRS}
 	)
-	INCLUDE_DIRECTORIES(${BOEHM_INCLUDE_DIR})
-	LINK_DIRECTORIES(${BOEHMGC_LIBRARY_DIRS})
-ELSE(USE_GC)
-	ADD_DEFINITIONS(-DDISABLE_GC)
-ENDIF(USE_GC)
+	include_directories(${BOEHM_INCLUDE_DIR})
+	link_directories(${BOEHMGC_LIBRARY_DIRS})
+else(USE_GC)
+	add_definitions(-DDISABLE_GC)
+endif(USE_GC)
 
 
 
 ################################################################################
 # Other options
-OPTION(USE_64BIT "Should 64-bit data types be used (otherwise 32-bit)." ON)
-IF(USE_64BIT)
-	ADD_DEFINITIONS(-DUSE64)
-ELSE(USE_64BIT)
-	ADD_DEFINITIONS(-DUSE32)
-ENDIF(USE_64BIT)
+option(USE_64BIT "Should 64-bit data types be used (otherwise 32-bit)." ON)
+if(USE_64BIT)
+	add_definitions(-DUSE64)
+else(USE_64BIT)
+	add_definitions(-DUSE32)
+endif(USE_64BIT)
 
-OPTION(CONCURRENT_FUNGE "Enable support for concurrent funge." ON)
-IF(CONCURRENT_FUNGE)
-	ADD_DEFINITIONS(-DCONCURRENT_FUNGE)
-ENDIF(CONCURRENT_FUNGE)
+option(CONCURRENT_FUNGE "Enable support for concurrent funge." ON)
+if(CONCURRENT_FUNGE)
+	add_definitions(-DCONCURRENT_FUNGE)
+endif(CONCURRENT_FUNGE)
 
-OPTION(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
-IF(NOT ENABLE_TRACE)
-	ADD_DEFINITIONS(-DDISABLE_TRACE)
-ENDIF(NOT ENABLE_TRACE)
+option(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
+if(NOT ENABLE_TRACE)
+	add_definitions(-DDISABLE_TRACE)
+endif(NOT ENABLE_TRACE)
 
-OPTION(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
-IF(USE_MUDFLAP)
+option(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
+if(USE_MUDFLAP)
 	if (USE_GC)
-		MESSAGE(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
-	ENDIF (USE_GC)
-	ADD_DEFINITIONS(-fmudflap)
-ENDIF(USE_MUDFLAP)
+		message(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
+	endif (USE_GC)
+	add_definitions(-fmudflap)
+endif(USE_MUDFLAP)
 
-OPTION(USE_VALGRIND "Add special source annotations for the memory debugger valgrind (does not work with Boehm-GC)." OFF)
-IF(USE_VALGRIND)
+option(USE_VALGRIND "Add special source annotations for the memory debugger valgrind (does not work with Boehm-GC)." OFF)
+if(USE_VALGRIND)
 	if (USE_GC)
-		MESSAGE(FATAL_ERROR "You can't use valgrind and Boehm GC at the same time")
-	ENDIF (USE_GC)
-	ADD_DEFINITIONS(-DENABLE_VALGRIND)
-ENDIF(USE_VALGRIND)
+		message(FATAL_ERROR "You can't use valgrind and Boehm GC at the same time")
+	endif (USE_GC)
+	add_definitions(-DENABLE_VALGRIND)
+endif(USE_VALGRIND)
 
 
-OPTION(USE_WERROR "Should we build with -Werror" OFF)
-IF(USE_WERROR)
-	IF (CMAKE_COMPILER_IS_GNUCC)
+option(USE_WERROR "Should we build with -Werror" OFF)
+if(USE_WERROR)
+	if (CMAKE_COMPILER_IS_GNUCC)
 		CFUNGE_CHECK_CFLAG(Werror -Werror)
-	ENDIF (CMAKE_COMPILER_IS_GNUCC)
-ENDIF(USE_WERROR)
+	endif (CMAKE_COMPILER_IS_GNUCC)
+endif(USE_WERROR)
 
-OPTION(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though)." OFF)
-IF (HARDENED)
-	IF (CMAKE_COMPILER_IS_GNUCC)
+option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though)." OFF)
+if (HARDENED)
+	if (CMAKE_COMPILER_IS_GNUCC)
 		# Slows down though.
 		CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
-		ADD_DEFINITIONS(-DFORTIFY_SOURCE=2)
-	ENDIF (CMAKE_COMPILER_IS_GNUCC)
-ENDIF (HARDENED)
+		add_definitions(-DFORTIFY_SOURCE=2)
+	endif (CMAKE_COMPILER_IS_GNUCC)
+endif (HARDENED)
 
 
 
@@ -177,7 +178,7 @@ ENDIF (HARDENED)
 CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
 # Feature test macros for glibc headers.
 # Shouldn't hurt other systems.
-ADD_DEFINITIONS(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
+add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
 
 
 
@@ -199,7 +200,8 @@ CFUNGE_REQUIRE_FUNC(mkdir)
 CFUNGE_REQUIRE_FUNC(gettimeofday)
 
 # Some optional ones (in POSIX.1-2001) that can use optionally.
-# These are complex, they can be in libc (FreeBSD) or librt (Linux).
+# These are complex to check for since they can be in libc (FreeBSD) or
+# librt (Linux).
 
 CFUNGE_CHECK_FUNC(clock_gettime)
 if (NOT CFUNGE_HAVE_clock_gettime)
@@ -208,7 +210,7 @@ if (NOT CFUNGE_HAVE_clock_gettime)
 endif (NOT CFUNGE_HAVE_clock_gettime)
 
 # For these we fall back on non-l version.
-SET(CMAKE_REQUIRED_LIBRARIES "-lm")
+set(CMAKE_REQUIRED_LIBRARIES "-lm")
 CFUNGE_CHECK_FUNC(acosl)
 CFUNGE_CHECK_FUNC(asinl)
 CFUNGE_CHECK_FUNC(atanl)
@@ -223,7 +225,7 @@ CFUNGE_CHECK_FUNC(tanl)
 
 ################################################################################
 # Warnings
-IF (CMAKE_COMPILER_IS_GNUCC)
+if (CMAKE_COMPILER_IS_GNUCC)
 	# Not all GCC versions support all of these flags.
 	CFUNGE_CHECK_CFLAG(Wall                         -Wall)
 	CFUNGE_CHECK_CFLAG(Wextra                       -Wextra)
@@ -262,38 +264,33 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(Wmissing-include-dirs        -Wmissing-include-dirs)
 
 	# Maintainer flags. Gives lots of false positives.
-	#ADD_DEFINITIONS(-Wunreachable-code -fno-inline -fno-inline-functions-called-once -fno-inline-functions -fkeep-inline-functions -Wno-inline)
+	#add_definitions(-Wunreachable-code -fno-inline -fno-inline-functions-called-once -fno-inline-functions -fkeep-inline-functions -Wno-inline)
 	# Even more false positives
-	#ADD_DEFINITIONS(-Wunreachable-code)
-ENDIF (CMAKE_COMPILER_IS_GNUCC)
+	#add_definitions(-Wunreachable-code)
+endif (CMAKE_COMPILER_IS_GNUCC)
 
 
 
 ################################################################################
 # Stuff for debug/non-debug builds
 # No case insensitive string copmpare, lets convert to upper-case.
-STRING(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
-IF (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
-	ADD_DEFINITIONS(-DGC_DEBUG)
-	ADD_DEFINITIONS(-DDEBUG)
-ELSE (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
-	ADD_DEFINITIONS(-DNDEBUG)
-	REMOVE_DEFINITIONS(-DGC_DEBUG)
-	REMOVE_DEFINITIONS(-DDEBUG)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
+if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
+	add_definitions(-DGC_DEBUG)
+	add_definitions(-DDEBUG)
+else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
+	add_definitions(-DNDEBUG)
+	remove_definitions(-DGC_DEBUG)
+	remove_definitions(-DDEBUG)
 	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
 	CFUNGE_CHECK_CFLAG(fno-ident -fno-ident)
-ENDIF (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
+endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 
 
 
 ################################################################################
 # Includes
-INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/)
-INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/lib/libghthash/)
-INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/funge-space/)
-INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/instructions/)
-INCLUDE_DIRECTORIES(${CFUNGE_SOURCE_DIR}/src/fingerprints/)
-
+include_directories(${CFUNGE_SOURCE_DIR}/src/)
 
 
 ################################################################################
@@ -309,10 +306,10 @@ FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 	src/fingerprints/*/*.c
 )
 
-ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
+add_executable(cfunge ${CFUNGE_SOURCES})
 
 # This is disabled until I figure out how to detect if the flags are supported.
-#SET_TARGET_PROPERTIES(cfunge PROPERTIES
+#set_target_properties(cfunge PROPERTIES
 #	LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common"
 #)
 
@@ -322,27 +319,27 @@ ADD_EXECUTABLE(cfunge ${CFUNGE_SOURCES})
 # Linking libraries
 
 # Need -lm for some fingerprints.
-TARGET_LINK_LIBRARIES(cfunge m)
-TARGET_LINK_LIBRARIES(cfunge ncurses)
+target_link_libraries(cfunge m)
+target_link_libraries(cfunge ncurses)
 
-IF(USE_GC)
-	TARGET_LINK_LIBRARIES(cfunge ${BOEHM_LIBRARY_GC})
-ENDIF(USE_GC)
+if(USE_GC)
+	target_link_libraries(cfunge ${BOEHM_LIBRARY_GC})
+endif(USE_GC)
 
-IF(USE_MUDFLAP)
-	SET_TARGET_PROPERTIES(cfunge PROPERTIES LINK_FLAGS "-fmudflap")
-	TARGET_LINK_LIBRARIES(cfunge mudflap)
-ENDIF(USE_MUDFLAP)
+if(USE_MUDFLAP)
+	set_target_properties(cfunge PROPERTIES LINK_FLAGS "-fmudflap")
+	target_link_libraries(cfunge mudflap)
+endif(USE_MUDFLAP)
 
-if (NOT ${LIBRT_LOCATION} STREQUAL LIBRT_LOCATION-NOTFOUND)
+if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 	get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
 	CFUNGE_CHECK_LIBRARY_FUNC(cfunge rt clock_gettime ${LIBRT_PATH})
-endif (NOT ${LIBRT_LOCATION} STREQUAL LIBRT_LOCATION-NOTFOUND)
+endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 
 
 ################################################################################
 # Generate man page
-ADD_CUSTOM_TARGET(build-man
+add_custom_target(build-man
 	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in --include doc/cfunge-man-fingerprints.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
 	DEPENDS cfunge
 	WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
@@ -354,9 +351,9 @@ ADD_CUSTOM_TARGET(build-man
 
 ################################################################################
 # Installation
-INSTALL(TARGETS cfunge
+install(TARGETS cfunge
 	RUNTIME DESTINATION bin
 )
-INSTALL(FILES doc/cfunge.1
+install(FILES doc/cfunge.1
 	DESTINATION ${MAN_INSTALL_PREFIX}/man1
 )
