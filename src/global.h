@@ -24,12 +24,8 @@
  * Global defines. This file should be included everywhere.
  */
 
-#ifndef _HAD_SRC_GLOBAL_H
-#define _HAD_SRC_GLOBAL_H
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#ifndef FUNGE_HAD_SRC_GLOBAL_H
+#define FUNGE_HAD_SRC_GLOBAL_H
 
 /**
  * @defgroup compat Compiler/system compatibility defines.

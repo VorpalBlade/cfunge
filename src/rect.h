@@ -24,8 +24,8 @@
  * Definition of a rectangle in Funge-Space.
  */
 
-#ifndef _HAD_SRC_RECT_H
-#define _HAD_SRC_RECT_H
+#ifndef FUNGE_HAD_SRC_RECT_H
+#define FUNGE_HAD_SRC_RECT_H
 
 #include "global.h"
 

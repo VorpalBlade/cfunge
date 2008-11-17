@@ -24,8 +24,8 @@
  * Header for interpreter.c (that contains the main loop and parser).
  */
 
-#ifndef _HAD_SRC_INTERPRETER_H
-#define _HAD_SRC_INTERPRETER_H
+#ifndef FUNGE_HAD_SRC_INTERPRETER_H
+#define FUNGE_HAD_SRC_INTERPRETER_H
 
 #include <sys/types.h>
 #include <stdint.h>

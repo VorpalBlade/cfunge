@@ -22,8 +22,8 @@
  * @file
  * Definition of, and functions for, a Funge vector.
  */
-#ifndef _HAD_SRC_VECTOR_H
-#define _HAD_SRC_VECTOR_H
+#ifndef FUNGE_HAD_SRC_VECTOR_H
+#define FUNGE_HAD_SRC_VECTOR_H
 
 #include "global.h"
 #include <stdbool.h>

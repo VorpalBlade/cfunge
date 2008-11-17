@@ -24,8 +24,8 @@
  * Definition of, and functions for, a Funge stack.
  */
 
-#ifndef _HAD_SRC_STACK_H
-#define _HAD_SRC_STACK_H
+#ifndef FUNGE_HAD_SRC_STACK_H
+#define FUNGE_HAD_SRC_STACK_H
 
 #include <sys/types.h>
 #include <stdint.h>

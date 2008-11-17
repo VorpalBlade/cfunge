@@ -25,8 +25,8 @@
  * pointer list.
  */
 
-#ifndef _HAD_SRC_IP_H
-#define _HAD_SRC_IP_H
+#ifndef FUNGE_HAD_SRC_IP_H
+#define FUNGE_HAD_SRC_IP_H
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -81,7 +81,7 @@ typedef struct s_instructionPointer {
 /// Instruction pointer list. For concurrent Funge.
 typedef struct s_ipList {
 	size_t              size;      /**< Total size */
-	size_t              top;       /**< Top running one */
+	size_t              top;       /**< Top valid one */
 	size_t              highestID; /**< Currently highest ID, they are unique. */
 	/**
 	 * This array is slightly complex for speed reasons.

@@ -25,8 +25,8 @@
  * buffered as needed.
  */
 
-#ifndef _HAD_SRC_INPUT_H
-#define _HAD_SRC_INPUT_H
+#ifndef FUNGE_HAD_SRC_INPUT_H
+#define FUNGE_HAD_SRC_INPUT_H
 
 #include "global.h"
 #include <stdbool.h>

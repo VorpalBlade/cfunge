@@ -25,8 +25,8 @@
  */
 
 // This file contains global runtime settings
-#ifndef _HAD_SRC_SETTINGS_H
-#define _HAD_SRC_SETTINGS_H
+#ifndef FUNGE_HAD_SRC_SETTINGS_H
+#define FUNGE_HAD_SRC_SETTINGS_H
 
 #include <sys/types.h>
 #include <stdint.h>

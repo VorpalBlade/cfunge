@@ -29,8 +29,8 @@
  * defines to support different platforms and configurations.
  */
 
-#ifndef _HAD_SRC_SUPPORT_H
-#define _HAD_SRC_SUPPORT_H
+#ifndef FUNGE_HAD_SRC_SUPPORT_H
+#define FUNGE_HAD_SRC_SUPPORT_H
 
 #include <sys/types.h>
 #include <stdio.h>
