@@ -337,14 +337,6 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				break;
 			}
 
-			case 'p': {
-				fungeVector pos;
-				fungeCell a;
-				pos = stack_pop_vector(ip->stack);
-				a = stack_pop(ip->stack);
-				fungespace_set_offset(a, &pos, &ip->storageOffset);
-				break;
-			}
 			case 'g': {
 				fungeVector pos;
 				fungeCell a;
@@ -353,6 +345,15 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				stack_push(ip->stack, a);
 				break;
 			}
+			case 'p': {
+				fungeVector pos;
+				fungeCell a;
+				pos = stack_pop_vector(ip->stack);
+				a = stack_pop(ip->stack);
+				fungespace_set_offset(a, &pos, &ip->storageOffset);
+				break;
+			}
+
 			case '\'':
 				ip_forward(ip, 1);
 				stack_push(ip->stack, fungespace_get(&ip->position));
@@ -362,15 +363,14 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				fungespace_set(stack_pop(ip->stack), &ip->position);
 				break;
 
-
-			case 'n':
-				stack_clear(ip->stack);
-				break;
 			case '$':
 				stack_pop_discard(ip->stack);
 				break;
 			case '\\':
 				stack_swap_top(ip->stack);
+				break;
+			case 'n':
+				stack_clear(ip->stack);
 				break;
 
 			case ',': {
