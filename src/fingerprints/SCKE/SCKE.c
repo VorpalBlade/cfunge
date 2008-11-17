@@ -63,7 +63,7 @@ static void finger_SCKE_gethostbyname(instructionPointer * ip)
 error:
 	ip_reverse(ip);
 end:
-	stack_freeString(str);
+	stack_free_string(str);
 	if (result)
 		freeaddrinfo(result);
 }

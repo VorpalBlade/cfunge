@@ -156,7 +156,7 @@ static void finger_REXP_compile(instructionPointer * ip)
 		compiled_nosub = (flags & REG_NOSUB);
 	}
 
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 /// E - Execute regular expression on string
@@ -180,7 +180,7 @@ static void finger_REXP_execute(instructionPointer * ip)
 	} else {
 		ip_reverse(ip);
 	}
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 /// F - Free compiled regex buffer

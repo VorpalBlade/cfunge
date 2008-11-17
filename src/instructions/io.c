@@ -51,7 +51,7 @@ FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0') {
-			stack_freeString(filename);
+			stack_free_string(filename);
 			ip_reverse(ip);
 			return;
 		}
@@ -67,7 +67,7 @@ FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 			stack_push_vector(ip->stack, &size);
 			stack_push_vector(ip->stack, &offset);
 		}
-		stack_freeString(filename);
+		stack_free_string(filename);
 	}
 }
 
@@ -94,7 +94,7 @@ FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*filename == '\0' || size.x < 1 || size.y < 1) {
-			stack_freeString(filename);
+			stack_free_string(filename);
 			ip_reverse(ip);
 			return;
 		}
@@ -103,7 +103,7 @@ FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 		                             vector_create_ref(offset.x + ip->storageOffset.x, offset.y + ip->storageOffset.y),
 		                             &size, textfile))
 			ip_reverse(ip);
-		stack_freeString(filename);
+		stack_free_string(filename);
 	}
 
 }

@@ -120,7 +120,8 @@ FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void stack_push_string(funge_stack * restrict stack, const unsigned char * restrict str, size_t len);
 /**
  * Pop a 0"gnirts" and return a null-terminated string.
- * Use stack_freeString() to free the string.
+ * Use stack_free_string() to free the string. This is due to that a different
+ * allocation function may be used for these strings.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 unsigned char * stack_pop_string(funge_stack * restrict stack);
@@ -129,7 +130,7 @@ unsigned char * stack_pop_string(funge_stack * restrict stack);
  * Free a 0"gnirts" that was popped with stack_pop_string().
  * Do NOT use for stack_pop_sized_string().
  */
-#define stack_freeString(string) cf_free(string)
+#define stack_free_string(string) cf_free(string)
 
 /**
  * Pop a fixed number of chars from a stack.

@@ -240,7 +240,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 	} else {
 		stack_push(ip->stack, addr.s_addr);
 	}
-	stack_freeString(str);
+	stack_free_string(str);
 
 }
 

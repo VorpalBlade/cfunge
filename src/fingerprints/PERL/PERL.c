@@ -196,7 +196,7 @@ static void finger_PERL_eval(instructionPointer * ip)
 		stack_push(ip->stack, '\0');
 		stack_push_string(ip->stack, (unsigned char*)result, strlen(result));
 	}
-	stack_freeString(perlcode);
+	stack_free_string(perlcode);
 	free_nogc(result);
 }
 
@@ -217,7 +217,7 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 			stack_push(ip->stack, (fungeCell)i);
 		}
 	}
-	stack_freeString(perlcode);
+	stack_free_string(perlcode);
 	free_nogc(result);
 }
 

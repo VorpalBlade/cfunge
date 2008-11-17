@@ -210,7 +210,7 @@ static void finger_FPDP_fromascii(instructionPointer * ip)
 	str = (char*)stack_pop_string(ip->stack);
 	u.d = strtod(str, NULL);
 	pushDbl(ip);
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 static void finger_FPDP_print(instructionPointer * ip)

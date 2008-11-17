@@ -37,7 +37,7 @@ static void finger_DIRF_chdir(instructionPointer * ip)
 	}
 	if (chdir(str) != 0)
 		ip_reverse(ip);
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 static void finger_DIRF_mkdir(instructionPointer * ip)
@@ -50,7 +50,7 @@ static void finger_DIRF_mkdir(instructionPointer * ip)
 	}
 	if (mkdir(str, S_IRWXU) != 0)
 		ip_reverse(ip);
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 static void finger_DIRF_rmdir(instructionPointer * ip)
@@ -63,7 +63,7 @@ static void finger_DIRF_rmdir(instructionPointer * ip)
 	}
 	if (rmdir(str) != 0)
 		ip_reverse(ip);
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 

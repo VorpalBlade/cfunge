@@ -213,7 +213,7 @@ static void finger_FPSP_fromascii(instructionPointer * ip)
 	str = (char*)stack_pop_string(ip->stack);
 	a.f = strtof(str, NULL);
 	stack_push(ip->stack, a.i);
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 static void finger_FPSP_print(instructionPointer * ip)

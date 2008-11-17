@@ -130,7 +130,7 @@ static void finger_FILE_delete(instructionPointer * ip)
 		ip_reverse(ip);
 	}
 
-	stack_freeString(filename);
+	stack_free_string(filename);
 	return;
 }
 
@@ -269,7 +269,7 @@ static void finger_FILE_fopen(instructionPointer * ip)
 error:
 	ip_reverse(ip);
 end:
-	stack_freeString(filename);
+	stack_free_string(filename);
 }
 
 /// P - Put string to file (like c fputs)
@@ -288,7 +288,7 @@ static void finger_FILE_fputs(instructionPointer * ip)
 			ip_reverse(ip);
 		}
 	}
-	stack_freeString(str);
+	stack_free_string(str);
 }
 
 /// R - Read n bytes from file to i/o buffer

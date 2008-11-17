@@ -43,8 +43,8 @@ static void finger_STRN_append(instructionPointer * ip)
 	c = cf_realloc(top, top_len + strlen(bottom) + 1);
 	if (!c) {
 		ip_reverse(ip);
-		stack_freeString(top);
-		stack_freeString(bottom);
+		stack_free_string(top);
+		stack_free_string(bottom);
 		return;
 	}
 	memcpy(c + top_len, bottom, bottom_len);
@@ -52,7 +52,7 @@ static void finger_STRN_append(instructionPointer * ip)
 
 	stack_push_string(ip->stack, (unsigned char*)c, strlen(c));
 
-	stack_freeString(bottom);
+	stack_free_string(bottom);
 	cf_free(c);
 }
 
@@ -64,8 +64,8 @@ static void finger_STRN_compare(instructionPointer * ip)
 	a = stack_pop_string(ip->stack);
 	b = stack_pop_string(ip->stack);
 	stack_push(ip->stack, strcmp((char*)a, (char*)b));
-	stack_freeString(a);
-	stack_freeString(b);
+	stack_free_string(a);
+	stack_free_string(b);
 }
 
 /// D - Display a string
@@ -74,7 +74,7 @@ static void finger_STRN_display(instructionPointer * ip)
 	unsigned char * restrict s;
 	s = stack_pop_string(ip->stack);
 	fputs((char*)s, stdout);
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 /// F - Search for bottom string in upper string
@@ -91,8 +91,8 @@ static void finger_STRN_search(instructionPointer * ip)
 	} else {
 		stack_push(ip->stack, '\0');
 	}
-	stack_freeString(top);
-	stack_freeString(bottom);
+	stack_free_string(top);
+	stack_free_string(bottom);
 }
 
 /// G - Get string from specified position
@@ -163,13 +163,13 @@ static void finger_STRN_left(instructionPointer * ip)
 	s = stack_pop_string(ip->stack);
 	len = strlen((char*)s);
 	if (n < 0 || len < (size_t)n) {
-		stack_freeString(s);
+		stack_free_string(s);
 		ip_reverse(ip);
 		return;
 	}
 	stack_push(ip->stack, '\0');
 	stack_push_string(ip->stack, s, n - 1);
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 /// M - n characters starting at position p
@@ -181,18 +181,18 @@ static void finger_STRN_slice(instructionPointer * ip)
 	p = stack_pop(ip->stack);
 	s = (char*)stack_pop_string(ip->stack);
 	if (p < 0 || n < 0) {
-		stack_freeString(s);
+		stack_free_string(s);
 		ip_reverse(ip);
 		return;
 	}
 	if (strlen(s) < (size_t)(p + n)) {
-		stack_freeString(s);
+		stack_free_string(s);
 		ip_reverse(ip);
 		return;
 	}
 	s[p+n] = '\0';
 	stack_push_string(ip->stack, (unsigned char*)s + p, strlen(s + p));
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 /// N - Get length of string
@@ -204,27 +204,25 @@ static void finger_STRN_length(instructionPointer * ip)
 	len = strlen((char*)s);
 	stack_push_string(ip->stack, s, len);
 	stack_push(ip->stack, len);
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 /// P - Put string at specified position
 static void finger_STRN_put(instructionPointer * ip)
 {
-	unsigned char *s;
+	fungeCell value;
 	fungeVector pos;
-	size_t len;
 
 	pos = stack_pop_vector(ip->stack);
 	pos.x += ip->storageOffset.x;
 	pos.y += ip->storageOffset.y;
-	s   = stack_pop_string(ip->stack);
-	len = strlen((char*)s);
 
-	for (size_t i = 0; i < len + 1; i++) {
-		fungespace_set(s[i], &pos);
+	// This doesn't cast to char, but is faster and uses less memory.
+	do {
+		value = stack_pop(ip->stack);
+		fungespace_set(value, &pos);
 		pos.x += 1;
-	}
-	stack_freeString(s);
+	} while (value != 0);
 }
 
 /// R - Rightmost n characters of string
@@ -237,12 +235,12 @@ static void finger_STRN_right(instructionPointer * ip)
 	s = stack_pop_string(ip->stack);
 	len = strlen((char*)s);
 	if (n < 0 || len < (size_t)n) {
-		stack_freeString(s);
+		stack_free_string(s);
 		ip_reverse(ip);
 		return;
 	}
 	stack_push_string(ip->stack, s + (len - n), n);
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 /// S - String representation of a number
@@ -264,7 +262,7 @@ static void finger_STRN_atoi(instructionPointer * ip)
 	unsigned char *s;
 	s = stack_pop_string(ip->stack);
 	stack_push(ip->stack, atoi((char*)s));
-	stack_freeString(s);
+	stack_free_string(s);
 }
 
 bool finger_STRN_load(instructionPointer * ip)
