@@ -23,6 +23,7 @@
 ###########################################################################
 
 # Generate a fingerprint template.
+# This must be run from top source directory.
 
 # Error to fail with for old bash.
 fail_old_bash() {
@@ -43,39 +44,34 @@ elif [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -eq 32 && "${BASH_VERSINFO[2]}"
 	fail_old_bash
 fi
 
+if [[ ! -d src/fingerprints ]]; then
+	echo "ERROR: Run from top source directory please." >&2
+	exit 1
+fi
+
 set -e
+
+if [[ ! -f tools/fprint_funcs.sh ]]; then
+	echo "ERROR: Couldn't find tools/fprint_funcs.sh." >&2
+	exit 1
+fi
+source tools/fprint_funcs.sh
+if [[ $? -ne 0 ]]; then
+	echo "ERROR: Couldn't load tools/fprint_funcs.sh." >&2
+	exit 1
+fi
 
 # Variables
 FPRINT=""
-URL=""
-SAFE=""
-CONDITION=""
-OPCODES=""
-DESCRIPTION=""
+fp_URL=""
+fp_SAFE=""
+fp_CONDITION=""
+fp_OPCODES=""
+fp_DESCRIPTION=""
 
-OPCODES=""
-OPCODE_NAMES=()
-OPCODE_DESC=()
-
-# This must be run from top source directory.
-
-die() {
-	echo "ERROR: $1" >&2
-	exit 1
-}
-
-progress() {
-	echo " * ${1}..."
-}
-status() {
-	echo "   ${1}"
-}
-
-
-# Char to decimal
-ord() {
-	printf -v "$1" '%d' "'$2"
-}
+fp_OPCODES=""
+fp_OPCODE_NAMES=()
+fp_OPCODE_DESC=()
 
 if [[ -z $1 ]]; then
 	echo "ERROR: Please provide finger print name!" >&2
@@ -86,22 +82,7 @@ else
 fi
 
 progress "Sanity checking parameters"
-if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
-	status "Fingerprint name $FPRINT ok style."
-# Yes those (space, / and \) break stuff...
-# You got to create stuff on your own if you need those, and not include that
-# in any function names or filenames.
-elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
-	status "Fingerprint name $FPRINT probably ok (but not common style)."
-	status "Make sure each char is in the ASCII range 0-254."
-	status "Note that alphanumeric (upper case only) fingerprint names are strongly prefered."
-else
-	die "Not valid format for fingerprint name."
-fi
-
-if [[ ! -d src/fingerprints ]]; then
-	die "Run from top source directory please."
-fi
+checkfprint "$FPRINT"
 
 if [[ -e src/fingerprints/$FPRINT ]]; then
 	die "A fingerprint with that name already exists"
@@ -112,122 +93,17 @@ progress "Looking for spec file"
 if [[ -f "src/fingerprints/${FPRINT}.spec" ]]; then
 	status "Good, spec file found."
 else
-	die "Sorry you need a spec file for the fingerprint. It should be placed at src/fingerprints/${FPRINT}.spec"
+	die "Sorry, but you need a spec file for the fingerprint." \
+	    "Either you misspelled the parameter to this script, or you misspelled" \
+	    "the spec file. Or you forgot to create a spec file." \
+	    "If you didn't typo the name on the command line to this script then" \
+	    "the spec file should be placed at src/fingerprints/${FPRINT}.spec"
 fi
 
+cd "src/fingerprints" || die "Couldn't change directory to src/fingerprints"
 
 progress "Parsing spec file"
-IFS=$'\n'
-
-# First line is %fingerprint-spec 1.[23]
-# (1.2 is still supported).
-exec 4<"src/fingerprints/${FPRINT}.spec"
-read -ru 4 line
-if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[23]$ ]]; then
-	die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2 and 1.3 are supported)."
-fi
-
-
-# 0: pre-"begin instrs"
-# 1: "begin-instrs"
-parsestate=0
-
-
-while read -ru 4 line; do
-	if [[ "$line" =~ ^# ]]; then
-		continue
-	fi
-	if [[ $parsestate == 0 ]]; then
-		IFS=':' read -rd $'\n' type data <<< "$line" || true
-		case $type in
-			"%fprint")
-				if [[ "$FPRINT" != "$data" ]]; then
-					die "fprint field doesn't match spec file name."
-				fi
-				;;
-			"%url")
-				URL="$data"
-				;;
-			"%f108-uri")
-				# We don't need to care about this here.
-				;;
-			"%condition")
-				CONDITION="$data"
-				;;
-			"%alias")
-				echo "Note: This script doesn't handle %alias, you got to add that on your own." >&2
-				;;
-			"%desc")
-				DESCRIPTION="$data"
-				;;
-			"%safe")
-				SAFE="$data"
-				;;
-			"%begin-instrs")
-				parsestate=1
-				;;
-			"#"*)
-				# A comment, ignore
-				;;
-			*)
-				die "Unknown entry $type found."
-				;;
-		esac
-	else
-		if [[ "$line" == "%end" ]]; then
-			break
-		fi
-		# Parse instruction lines.
-		IFS=$' \t' read -rd $'\n' instr name desc <<< "$line"
-
-		OPCODES+="$instr"
-		ord number "${instr:0:1}"
-		OPCODE_NAMES[$number]="$name"
-		OPCODE_DESC[$number]="$desc"
-	fi
-done
-
-unset IFS
-
-status "Done parsing."
-
-exec 4<&-
-
-progress "Validating the parsed data"
-
-if [[ "$URL" ]]; then
-	status "%url: Good, not empty"
-else
-	die "%url is not given or is empty."
-fi
-
-if [[ "$DESCRIPTION" ]]; then
-	status "%desc: Good, not empty"
-else
-	die "%desc is not given or is empty."
-fi
-
-if [[ ( "$SAFE" == "true" ) || ( "$SAFE" == "false" ) ]]; then
-	status "%safe: OK"
-else
-	die "%safe must be either true or false."
-fi
-
-if [[ "$OPCODES" =~ ^[A-Z]+$ ]]; then
-	# Check that they are sorted.
-	previousnr=0
-	for (( i = 0; i < ${#OPCODES}; i++ )); do
-		ord number "${OPCODES:$i:1}"
-		if [[ $previousnr -ge $number ]]; then
-			die "Instructions not sorted or there are duplicates"
-		else
-			previousnr=$number
-		fi
-	done
-	status "Instructions: OK"
-else
-	die "The opcodes are not valid. The must be in the range A-Z"
-fi
+parse_spec "${FPRINT}"
 
 addtoh() {
 	echo "$1" >> "${FPRINT}.h"
@@ -239,8 +115,8 @@ addtoc() {
 
 
 progress "Creating directory"
-mkdir "src/fingerprints/$FPRINT" || die "mkdir failed"
-cd "src/fingerprints/$FPRINT"
+mkdir "$FPRINT" || die "mkdir failed"
+cd "$FPRINT" || die "cd to src/fingerprints/$FPRINT failed"
 
 progress "Creating header file"
 cat > "${FPRINT}.h" << EOF
@@ -278,14 +154,14 @@ cat >> "${FPRINT}.h" << EOF
 
 EOF
 
-if [[ "$CONDITION" ]]; then
-	addtoh "#  if $CONDITION"
+if [[ "$fp_CONDITION" ]]; then
+	addtoh "#  if $fp_CONDITION"
 fi
 
-addtoh "bool Finger${FPRINT}load(instructionPointer * ip);"
+addtoh "bool finger_${FPRINT}_load(instructionPointer * ip);"
 
-if [[ "$CONDITION" ]]; then
-	addtoh "#  endif  /* $CONDITION */"
+if [[ "$fp_CONDITION" ]]; then
+	addtoh "#  endif  /* $fp_CONDITION */"
 fi
 
 addtoh ""
@@ -321,8 +197,8 @@ cat > "${FPRINT}.c" << EOF
 EOF
 addtoc "#include \"${FPRINT}.h\""
 
-if [[ "$CONDITION" ]]; then
-	addtoc "#if $CONDITION"
+if [[ "$fp_CONDITION" ]]; then
+	addtoc "#if $fp_CONDITION"
 fi
 
 cat >> "${FPRINT}.c" << EOF
@@ -332,10 +208,10 @@ cat >> "${FPRINT}.c" << EOF
 
 EOF
 
-for (( i = 0; i < ${#OPCODES}; i++ )); do
-	ord number "${OPCODES:$i:1}"
-	addtoc "/// ${OPCODES:$i:1} - ${OPCODE_DESC[$number]}"
-	addtoc "static void finger_${FPRINT}_${OPCODE_NAMES[$number]}(instructionPointer * ip)"
+for (( i = 0; i < ${#fp_OPCODES}; i++ )); do
+	ord number "${fp_OPCODES:$i:1}"
+	addtoc "/// ${fp_OPCODES:$i:1} - ${fp_OPCODE_DESC[$number]}"
+	addtoc "static void finger_${FPRINT}_${fp_OPCODE_NAMES[$number]}(instructionPointer * ip)"
 	addtoc '{'
 	addtoc '}'
 	addtoc ''
@@ -345,9 +221,9 @@ done
 
 addtoc "bool finger_${FPRINT}_load(instructionPointer * ip)"
 addtoc '{'
-for (( i = 0; i < ${#OPCODES}; i++ )); do
-	ord number "${OPCODES:$i:1}"
-	addtoc "	manager_add_opcode(${FPRINT},  '${OPCODES:$i:1}', ${OPCODE_NAMES[$number]})"
+for (( i = 0; i < ${#fp_OPCODES}; i++ )); do
+	ord number "${fp_OPCODES:$i:1}"
+	addtoc "	manager_add_opcode(${FPRINT}, '${fp_OPCODES:$i:1}', ${fp_OPCODE_NAMES[$number]})"
 done
 
 cat >> "${FPRINT}.c" << EOF
@@ -355,8 +231,8 @@ cat >> "${FPRINT}.c" << EOF
 }
 EOF
 
-if [[ "$CONDITION" ]]; then
-	addtoc "#endif /* $CONDITION */"
+if [[ "$fp_CONDITION" ]]; then
+	addtoc "#endif /* $fp_CONDITION */"
 fi
 
 status "File creation done"

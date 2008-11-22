@@ -23,6 +23,7 @@
 ###########################################################################
 
 # Generate the fingerprint list
+# This must be run from top source directory.
 
 # Error to fail with for old bash.
 fail_old_bash() {
@@ -43,38 +44,21 @@ elif [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -eq 32 && "${BASH_VERSINFO[2]}"
 	fail_old_bash
 fi
 
+if [[ ! -d src/fingerprints ]]; then
+	echo "ERROR: Run from top source directory please." >&2
+	exit 1
+fi
+
 set -e
 
-# This must be run from top source directory.
-
-die() {
-	echo "ERROR: $1" >&2
+if [[ ! -f tools/fprint_funcs.sh ]]; then
+	echo "ERROR: Couldn't find tools/fprint_funcs.sh." >&2
 	exit 1
-}
-
-progress() {
-	echo " * ${1}..."
-}
-progresslvl2() {
-	echo "   * ${1}..."
-}
-
-status() {
-	echo "   ${1}"
-}
-statuslvl2() {
-	echo "     ${1}"
-}
-
-
-# Char to decimal
-ord() {
-	printf -v "$1" '%d' "'$2"
-}
-
-
-if [[ ! -d src/fingerprints ]]; then
-	die "Run from top source directory please."
+fi
+source tools/fprint_funcs.sh
+if [[ $? -ne 0 ]]; then
+	echo "ERROR: Couldn't load tools/fprint_funcs.sh." >&2
+	exit 1
 fi
 
 addtolist() {
@@ -84,25 +68,10 @@ addtoman() {
 	echo "$1" >> "doc/cfunge-man-fingerprints.in"
 }
 
-# $1 is fingerprint name
-# Returns if ok, otherwise it dies.
-checkfprint() {
-	local FPRINT="$1"
-	if [[ $FPRINT =~ ^[A-Z0-9]{4}$ ]]; then
-		status "Fingerprint name $FPRINT ok style."
-	elif [[ $FPRINT =~ ^[^\ /\\]{4}$ ]]; then
-		status "Fingerprint name $FPRINT probably ok (but not common style)."
-		status "Make sure each char is in the ASCII range 0-254."
-		status "Note that alphanumeric (upper case only) fingerprint names are strongly preferred."
-	else
-		die "Not valid format for fingerprint name."
-	fi
-}
-
 GENERATE_MAN=
 
 # This is used internally to generate a list for man page.
-if [[ $1 ]]; then
+if [[ $# -gt 0 ]]; then
 	case $1 in
 		"-man")
 			GENERATE_MAN=yes
@@ -132,15 +101,10 @@ genfprintinfo() {
 	local FPRINT="$1"
 
 	# Variables
-	local URL=""
-	local F108_URI="NULL"
-	local CONDITION=""
-	local SAFE=""
-	local OPCODES=""
-	local DESCRIPTION=""
-	local MYALIASES=()
-
-	local OPCODES=""
+	local fp_URL fp_SAFE fp_OPCODES fp_DESCRIPTION
+	local fp_F108_URI fp_CONDITION
+	local fp_ALIASES
+	local fp_OPCODE_NAMES fp_OPCODE_DESC
 
 	progress "Processing $FPRINT"
 
@@ -157,116 +121,7 @@ genfprintinfo() {
 	else
 		die "Sorry you need a spec file for the fingerprint. It should be placed at src/fingerprints/${FPRINT}.spec"
 	fi
-
-
-	progresslvl2 "Parsing spec file"
-	IFS=$'\n'
-	local line type data instr name desc number
-	# First line is %fingerprint-spec 1.[23]
-	# (1.2 is still supported).
-	exec 4<"${FPRINT}.spec"
-	read -ru 4 line
-	if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[23]$ ]]; then
-		die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2 and 1.3 are supported)."
-	fi
-
-	# 0: pre-"begin instrs"
-	# 1: "begin-instrs"
-	local parsestate=0
-
-
-	while read -ru 4 line; do
-		if [[ "$line" =~ ^# ]]; then
-			continue
-		fi
-		if [[ $parsestate == 0 ]]; then
-			IFS=':' read -rd $'\n' type data <<< "$line" || true
-			case $type in
-				"%fprint")
-					if [[ "$FPRINT" != "$data" ]]; then
-						die "fprint is spec file doesn't match."
-					fi
-					;;
-				"%url")
-					URL="$data"
-					;;
-				"%f108-uri")
-					F108_URI="\"$data\""
-					;;
-				"%condition")
-					CONDITION="$data"
-					;;
-				"%alias")
-					MYALIASES+=( "$data" )
-					;;
-				"%desc")
-					DESCRIPTION="$data"
-					;;
-				"%safe")
-					SAFE="$data"
-					;;
-				"%begin-instrs")
-					parsestate=1
-					;;
-				"#"*)
-					# A comment, ignore
-					;;
-				*)
-					die "Unknown entry $type found in ${FPRINT}."
-					;;
-			esac
-		else
-			if [[ "$line" == "%end" ]]; then
-				break
-			fi
-			# Parse instruction lines.
-			IFS=$'\t' read -rd $'\n' instr name desc <<< "$line"
-
-			OPCODES+="$instr"
-		fi
-	done
-
-	unset IFS
-
-	statuslvl2 "Done parsing."
-
-	exec 4<&-
-
-	progresslvl2 "Validating the parsed data"
-
-	if [[ "$URL" ]]; then
-		statuslvl2 "%url: Good, not empty"
-	else
-		die "%url is not given or is empty."
-	fi
-
-	if [[ "$DESCRIPTION" ]]; then
-		statuslvl2 "%desc: Good, not empty"
-	else
-		die "%desc is not given or is empty."
-	fi
-
-	if [[ ( "$SAFE" == "true" ) || ( "$SAFE" == "false" ) ]]; then
-		statuslvl2 "%safe: OK"
-	else
-		die "%safe must be either true or false."
-	fi
-
-	if [[ "$OPCODES" =~ ^[A-Z]+$ ]]; then
-		# Check that they are sorted.
-		local previousnr=0
-		for (( i = 0; i < ${#OPCODES}; i++ )); do
-			ord number "${OPCODES:$i:1}"
-			if [[ $previousnr -ge $number ]]; then
-				die "Instructions not sorted or there are duplicates"
-			else
-				previousnr=$number
-			fi
-		done
-		statuslvl2 "Instructions: OK"
-	else
-		die "The opcodes are not valid. The must be in the range A-Z"
-	fi
+	parse_spec "${FPRINT}"
 
 	progresslvl2 "Generating data for list"
 	local FPRINTHEX='0x'
@@ -279,21 +134,21 @@ genfprintinfo() {
 	if [[ $GENERATE_MAN ]]; then
 		MANENTRY1[$FPRINTHEX]="${FPRINT}"
 		# Fix this if we need to escape anything else.
-		MANENTRY2[$FPRINTHEX]="${DESCRIPTION//-/\\-}"
-		if [[ "${SAFE}" == "false" ]]; then
+		MANENTRY2[$FPRINTHEX]="${fp_DESCRIPTION//-/\\-}"
+		if [[ "${fp_SAFE}" == "false" ]]; then
 			MANENTRY2[$FPRINTHEX]+=" (not available in sandbox mode)"
 		fi
 	else
-		[[ "$CONDITION" ]] && ENTRYL1_cond[$FPRINTHEX]="#if $CONDITION"
-		ENTRYL2[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
-		ENTRYL3[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
-		ENTRYL4[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
-		[[ $CONDITION ]] && ENTRYL5_cond[$FPRINTHEX]="#endif"
+		[[ "$fp_CONDITION" ]] && ENTRYL1_cond[$FPRINTHEX]="#if $fp_CONDITION"
+		ENTRYL2[$FPRINTHEX]="	// ${FPRINT} - ${fp_DESCRIPTION}"
+		ENTRYL3[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${fp_F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${fp_OPCODES}\","
+		ENTRYL4[$FPRINTHEX]="	  .url = \"${fp_URL}\", .safe = ${fp_SAFE} },"
+		[[ "$fp_CONDITION" ]] && ENTRYL5_cond[$FPRINTHEX]="#endif"
 		statuslvl2 "Done"
-		if [[ ${!MYALIASES[*]} ]]; then
+		if [[ ${!fp_ALIASES[*]} ]]; then
 			progresslvl2 "Generating aliases..."
 			local myalias
-			for myalias in "${MYALIASES[@]}"; do
+			for myalias in "${fp_ALIASES[@]}"; do
 				checkfprint "$myalias"
 				local ALIASHEX='0x'
 				for (( i = 0; i < ${#myalias}; i++ )); do
@@ -301,11 +156,11 @@ genfprintinfo() {
 					ALIASHEX+="$hex"
 				done
 				ENTRIES+=("$ALIASHEX")
-				[[ "$CONDITION" ]] && ENTRYL1_cond[$ALIASHEX]="#if $CONDITION"
-				ENTRYL2[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
-				ENTRYL3[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
-				ENTRYL4[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
-				[[ "$CONDITION" ]] && ENTRYL5_cond[$ALIASHEX]="#endif"
+				[[ "$fp_CONDITION" ]] && ENTRYL1_cond[$ALIASHEX]="#if $fp_CONDITION"
+				ENTRYL2[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${fp_DESCRIPTION}"
+				ENTRYL3[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${fp_F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${fp_OPCODES}\","
+				ENTRYL4[$ALIASHEX]="	  .url = \"${fp_URL}\", .safe = ${fp_SAFE} },"
+				[[ "$fp_CONDITION" ]] && ENTRYL5_cond[$ALIASHEX]="#endif"
 			done
 		fi
 	fi
