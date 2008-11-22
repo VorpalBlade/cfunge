@@ -24,16 +24,23 @@
 
 # Generate a fingerprint template.
 
-# Check bash version. We need at least 3.1
-# Lets not use anything like =~ here because
-# that may not work on old bash versions.
-if [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -lt 31 ]]; then
+# Error to fail with for old bash.
+fail_old_bash() {
 	echo "Sorry your bash version is too old!"
-	echo "You need at least version 3.1 of bash."
+	echo "You need at least version 3.2.10 of bash"
 	echo "Please install a newer version:"
-	echo " * Either use your distro's packages."
+	echo " * Either use your distro's packages"
 	echo " * Or see http://www.gnu.org/software/bash/"
 	exit 2
+}
+
+# Check bash version. We need at least 3.2.10
+# Lets not use anything like =~ here because
+# that may not work on old bash versions.
+if [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -lt 32 ]]; then
+	fail_old_bash
+elif [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -eq 32 && "${BASH_VERSINFO[2]}" -lt 10 ]]; then
+	fail_old_bash
 fi
 
 set -e
@@ -42,6 +49,7 @@ set -e
 FPRINT=""
 URL=""
 SAFE=""
+CONDITION=""
 OPCODES=""
 DESCRIPTION=""
 
@@ -111,12 +119,14 @@ fi
 progress "Parsing spec file"
 IFS=$'\n'
 
-# First line is %fingerprint-spec 1.2
+# First line is %fingerprint-spec 1.[23]
+# (1.2 is still supported).
 exec 4<"src/fingerprints/${FPRINT}.spec"
 read -ru 4 line
-if [[ "$line" != "%fingerprint-spec 1.2" ]]; then
-	die "Either the spec file is not a fingerprint spec, or it is not version 1.2 of the format."
+if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[23]$ ]]; then
+	die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2 and 1.3 are supported)."
 fi
+
 
 # 0: pre-"begin instrs"
 # 1: "begin-instrs"
@@ -139,7 +149,10 @@ while read -ru 4 line; do
 				URL="$data"
 				;;
 			"%f108-uri")
-				# We don't need to care about this.
+				# We don't need to care about this here.
+				;;
+			"%condition")
+				CONDITION="$data"
 				;;
 			"%alias")
 				echo "Note: This script doesn't handle %alias, you got to add that on your own." >&2
@@ -165,7 +178,7 @@ while read -ru 4 line; do
 			break
 		fi
 		# Parse instruction lines.
-		IFS=$'\t' read -rd $'\n' instr name desc <<< "$line"
+		IFS=$' \t' read -rd $'\n' instr name desc <<< "$line"
 
 		OPCODES+="$instr"
 		ord number "${instr:0:1}"
@@ -254,9 +267,9 @@ cat > "${FPRINT}.h" << EOF
 
 EOF
 
-
 addtoh "#ifndef FUNGE_HAD_SRC_FINGERPRINTS_${FPRINT}_H"
 addtoh "#define FUNGE_HAD_SRC_FINGERPRINTS_${FPRINT}_H"
+
 
 cat >> "${FPRINT}.h" << EOF
 
@@ -265,7 +278,15 @@ cat >> "${FPRINT}.h" << EOF
 
 EOF
 
+if [[ "$CONDITION" ]]; then
+	addtoh "#  if $CONDITION"
+fi
+
 addtoh "bool Finger${FPRINT}load(instructionPointer * ip);"
+
+if [[ "$CONDITION" ]]; then
+	addtoh "#  endif  /* $CONDITION */"
+fi
 
 addtoh ""
 addtoh "#endif"
@@ -299,6 +320,11 @@ cat > "${FPRINT}.c" << EOF
 
 EOF
 addtoc "#include \"${FPRINT}.h\""
+
+if [[ "$CONDITION" ]]; then
+	addtoc "#if $CONDITION"
+fi
+
 cat >> "${FPRINT}.c" << EOF
 #include "../../stack.h"
 
@@ -328,6 +354,10 @@ cat >> "${FPRINT}.c" << EOF
 	return true;
 }
 EOF
+
+if [[ "$CONDITION" ]]; then
+	addtoc "#endif /* $CONDITION */"
+fi
 
 status "File creation done"
 echo

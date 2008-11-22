@@ -1,10 +1,11 @@
 cfunge use a special file format to generate fingerprints from.
 The format is quite simple. An example follows:
 
-%fingerprint-spec 1.2
+%fingerprint-spec 1.3
 %fprint:TEST
 %url:http://example.com/desc/test.html
 %f108-uri:http://example.com/test
+%condition:defined(HAVE_foo) && !defined(__FOOBAR)
 %desc:This is a test of the fingerprint spec file system.
 %safe:true
 %alias:FOOO
@@ -15,7 +16,7 @@ A	foobar	Description
 B	quux	Other Description
 %end
 
-The first line should always be "%fingerprint-spec 1.2" (or in future versions,
+The first line should always be "%fingerprint-spec 1.3" (or in future versions,
 possibly higher numbers).
 
 Note:
@@ -26,6 +27,9 @@ After that fprint, url, desc, safe and alias can follow in any order.
  * fprint is the fingerprint name
  * url is the url for more info on the fingerprint (docs and such)
  * f108-uri is an optional Funge-108 URI for the fingerprint.
+ * condition is an optional C preprocessor condition. If the line exists it will
+   be used as an #if condition to enable or disable this fingerprint at compile
+   time. It is up to you to make sure the condition is sane and valid C.
  * desc is a short one line description. Less than 60 chars is definitly
    recommended.
  * safe can be either true or false, true indicates it is safe in sandbox mode
@@ -41,8 +45,9 @@ After that, to indicate that the instruction list begins, use %begin-instrs
 The instruction list must be sorted and contain no duplicates.
 
 Each line in this section consists of:
-<instruction> a tab <name for function> a tab <short description>
+<instruction> whitespace <name for function> whitespace <short description>
 
+ * Whitespace consists of one or more tabs and/or spaces.
  * The instruction must be in the range A-Z.
  * The name should be a valid name to use in a C function name (it is currently
    not sanity checked).

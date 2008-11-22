@@ -24,16 +24,23 @@
 
 # Generate the fingerprint list
 
-# Check bash version. We need at least 3.1
-# Lets not use anything like =~ here because
-# that may not work on old bash versions.
-if [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -lt 31 ]]; then
+# Error to fail with for old bash.
+fail_old_bash() {
 	echo "Sorry your bash version is too old!"
-	echo "You need at least version 3.1 of bash."
+	echo "You need at least version 3.2.10 of bash"
 	echo "Please install a newer version:"
-	echo " * Either use your distro's packages."
+	echo " * Either use your distro's packages"
 	echo " * Or see http://www.gnu.org/software/bash/"
 	exit 2
+}
+
+# Check bash version. We need at least 3.2.10
+# Lets not use anything like =~ here because
+# that may not work on old bash versions.
+if [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -lt 32 ]]; then
+	fail_old_bash
+elif [[ "${BASH_VERSINFO[0]}${BASH_VERSINFO[1]}" -eq 32 && "${BASH_VERSINFO[2]}" -lt 10 ]]; then
+	fail_old_bash
 fi
 
 set -e
@@ -113,9 +120,11 @@ if [[ $GENERATE_MAN ]]; then
 	MANENTRY1=()
 	MANENTRY2=()
 else
-	ENTRYL1=()
+	ENTRYL1_cond=()
 	ENTRYL2=()
 	ENTRYL3=()
+	ENTRYL4=()
+	ENTRYL5_cond=()
 fi
 
 # $1 = fprint name
@@ -125,6 +134,7 @@ genfprintinfo() {
 	# Variables
 	local URL=""
 	local F108_URI="NULL"
+	local CONDITION=""
 	local SAFE=""
 	local OPCODES=""
 	local DESCRIPTION=""
@@ -152,11 +162,12 @@ genfprintinfo() {
 	progresslvl2 "Parsing spec file"
 	IFS=$'\n'
 	local line type data instr name desc number
-	# First line is %fingerprint-spec 1.2
+	# First line is %fingerprint-spec 1.[23]
+	# (1.2 is still supported).
 	exec 4<"${FPRINT}.spec"
 	read -ru 4 line
-	if [[ "$line" != "%fingerprint-spec 1.2" ]]; then
-		die "Either the spec file is not a fingerprint spec, or it is not version 1.2 of the format."
+	if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[23]$ ]]; then
+		die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2 and 1.3 are supported)."
 	fi
 
 	# 0: pre-"begin instrs"
@@ -181,6 +192,9 @@ genfprintinfo() {
 					;;
 				"%f108-uri")
 					F108_URI="\"$data\""
+					;;
+				"%condition")
+					CONDITION="$data"
 					;;
 				"%alias")
 					MYALIASES+=( "$data" )
@@ -270,9 +284,11 @@ genfprintinfo() {
 			MANENTRY2[$FPRINTHEX]+=" (not available in sandbox mode)"
 		fi
 	else
-		ENTRYL1[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
-		ENTRYL2[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
-		ENTRYL3[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+		[[ "$CONDITION" ]] && ENTRYL1_cond[$FPRINTHEX]="#if $CONDITION"
+		ENTRYL2[$FPRINTHEX]="	// ${FPRINT} - ${DESCRIPTION}"
+		ENTRYL3[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${OPCODES}\","
+		ENTRYL4[$FPRINTHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+		[[ $CONDITION ]] && ENTRYL5_cond[$FPRINTHEX]="#endif"
 		statuslvl2 "Done"
 		if [[ ${!MYALIASES[*]} ]]; then
 			progresslvl2 "Generating aliases..."
@@ -285,9 +301,11 @@ genfprintinfo() {
 					ALIASHEX+="$hex"
 				done
 				ENTRIES+=("$ALIASHEX")
-				ENTRYL1[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
-				ENTRYL2[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
-				ENTRYL3[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+				[[ "$CONDITION" ]] && ENTRYL1_cond[$ALIASHEX]="#if $CONDITION"
+				ENTRYL2[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${DESCRIPTION}"
+				ENTRYL3[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${OPCODES}\","
+				ENTRYL4[$ALIASHEX]="	  .url = \"${URL}\", .safe = ${SAFE} },"
+				[[ "$CONDITION" ]] && ENTRYL5_cond[$ALIASHEX]="#endif"
 			done
 		fi
 	fi
@@ -394,9 +412,11 @@ done
 # I really hate aliases...
 SORTEDENTRIES=( $(IFS=$'\n'; echo "${ENTRIES[*]}" | sort -n) )
 for entry in "${SORTEDENTRIES[@]}"; do
-	addtolist "${ENTRYL1[$entry]}"
+	[[ ${ENTRYL1_cond[$entry]} ]] && addtolist "${ENTRYL1_cond[$entry]}"
 	addtolist "${ENTRYL2[$entry]}"
 	addtolist "${ENTRYL3[$entry]}"
+	addtolist "${ENTRYL4[$entry]}"
+	[[ ${ENTRYL5_cond[$entry]} ]] && addtolist "${ENTRYL5_cond[$entry]}"
 done
 
 
