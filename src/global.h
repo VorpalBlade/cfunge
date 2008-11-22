@@ -91,8 +91,8 @@
 
 /*@}*/
 
-#include "support.h"
 #include <stdlib.h>
+#include "support.h"
 #include <stdint.h>
 #include <inttypes.h>
 

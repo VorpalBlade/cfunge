@@ -47,6 +47,7 @@ include(FindPkgConfig)
 include(CheckCCompilerFlag)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
+include(CheckIncludeFile)
 
 set(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
@@ -94,6 +95,15 @@ macro(CFUNGE_REQUIRE_FUNC name)
 		        "Your system seems to be missing the function \"${name}\" which is required by cfunge.")
 	endif (NOT _CHECKFUNC_${name})
 endmacro(CFUNGE_REQUIRE_FUNC)
+
+# Macro to ensure that a specific system header exists; will error out if not.
+macro(CFUNGE_REQUIRE_INCLUDE name)
+	CHECK_INCLUDE_FILE(${name} _CHECKINCLUDE_${name})
+	if (NOT _CHECKINCLUDE_${name})
+		message(FATAL_ERROR
+		        "Your system seems to be missing the header \"${name}\" which is required by cfunge.")
+	endif (NOT _CHECKINCLUDE_${name})
+endmacro(CFUNGE_REQUIRE_INCLUDE)
 
 
 
@@ -176,9 +186,24 @@ endif (HARDENED)
 ################################################################################
 # Compiler defines.
 CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
-# Feature test macros for glibc headers.
-# Shouldn't hurt other systems.
-add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED)
+# Feature test macros for exposing relevant definitions in headers.
+add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
+
+
+
+################################################################################
+# Check that certain system headers exist.
+
+# These are C99 required ones
+CFUNGE_REQUIRE_INCLUDE(stddef.h)
+CFUNGE_REQUIRE_INCLUDE(stdbool.h)
+CFUNGE_REQUIRE_INCLUDE(stdint.h)
+CFUNGE_REQUIRE_INCLUDE(limits.h)
+CFUNGE_REQUIRE_INCLUDE(inttypes.h)
+
+# POSIX.1-2001 requires these:
+CFUNGE_REQUIRE_INCLUDE(unistd.h)
+CFUNGE_REQUIRE_INCLUDE(fcntl.h)
 
 
 
@@ -193,6 +218,7 @@ CFUNGE_REQUIRE_FUNC(munmap)
 # system they may be missing.
 CFUNGE_REQUIRE_FUNC(dup2)
 CFUNGE_REQUIRE_FUNC(fork)
+CFUNGE_REQUIRE_FUNC(fcntl)
 CFUNGE_REQUIRE_FUNC(socket)
 CFUNGE_REQUIRE_FUNC(regcomp)
 CFUNGE_REQUIRE_FUNC(rmdir)
@@ -208,6 +234,14 @@ if (NOT CFUNGE_HAVE_clock_gettime)
 	find_library(LIBRT_LOCATION
 	             NAMES rt)
 endif (NOT CFUNGE_HAVE_clock_gettime)
+
+# random() and srandom() are XSI extensions, we fall back on rand/srand if
+# they aren't available.
+CFUNGE_CHECK_FUNC(random)
+CFUNGE_CHECK_FUNC(srandom)
+
+# However we require the XSI extension strdup():
+CFUNGE_REQUIRE_FUNC(strdup)
 
 # For these we fall back on non-l version.
 set(CMAKE_REQUIRED_LIBRARIES "-lm")
@@ -245,6 +279,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(Wpacked                      -Wpacked)
 	CFUNGE_CHECK_CFLAG(Wredundant-decls             -Wredundant-decls)
 	CFUNGE_CHECK_CFLAG(Wfloat-equal                 -Wfloat-equal)
+	# =2 is best on 4.1.2, but not on 4.3... Figure out a fix for this.
 	CFUNGE_CHECK_CFLAG(Wstrict-aliasing_2           -Wstrict-aliasing=2)
 	CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
 	CFUNGE_CHECK_CFLAG(Wdisabled-optimization       -Wdisabled-optimization)
@@ -293,6 +328,7 @@ endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 include_directories(${CFUNGE_SOURCE_DIR}/src/)
 
 
+
 ################################################################################
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
@@ -335,6 +371,7 @@ if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 	get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
 	CFUNGE_CHECK_LIBRARY_FUNC(cfunge rt clock_gettime ${LIBRT_PATH})
 endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
+
 
 
 ################################################################################

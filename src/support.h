@@ -179,8 +179,7 @@ ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 #endif /* _POSIX_THREAD_SAFE_FUNCTIONS */
 /*@}*/
 
-// Yep, crap.
-#ifdef __WIN32__
+#if !defined(HAVE_random) || !defined(HAVE_srandom)
 #  define random rand
 #  define srandom srand
 #endif
