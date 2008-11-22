@@ -10,6 +10,7 @@ Future
  * Several more fingerprints
  * Better hash library.
  * Rewrite TURT to use events, to handle lines on top of dots.
+ * Handle Funge-108 fingerprint URIs.
 
 Ideas for future
 ----------------

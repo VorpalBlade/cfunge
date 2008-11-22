@@ -31,11 +31,16 @@ REQUIRED:
  * cfunge requires IEC 60559 floating-point arithmetic (please see Annex F in
    ISO/IEC 9899 for more details.)
 
- * A POSIX system. Linux 2.6.25 is known to work, so is FreeBSD 7.0. Windows may
-   or may not work, but I won't fix any bugs that can't be reproduced on a POSIX
-   system, except if someone else provides a patch. Patches for Windows are
-   welcome only if they don't mess up source too much (anything using Win32/64
-   specific API(s) counts as messing up).
+ * A POSIX.1-2001 system with the memory mapped file option. It also needs the
+   function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
+   strdup() and memory mapped files are mandatory and part of the base.)
+   Operating systems known to work:
+   + Linux 2.6.25 (with glibc 2.6.1) and later (earlier versions unknown).
+   + FreeBSD 6.3 or later (earlier versions unknown).
+   + Mac OS X (unknown version) has been reported to work but I don't have it
+     myself and thus can't test it.
+   Windows most likely won't work. Nor do I plan to support it. Cygwin may work,
+   but you are on your own if it doesn't.
 
  * Ncurses (http://www.gnu.org/software/ncurses/), used for the TERM
    fingerprint. This is most likely already installed.

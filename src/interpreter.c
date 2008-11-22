@@ -459,6 +459,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 
 			case '(':
 			case ')': {
+				// TODO: Handle Funge-108 style too.
 				fungeCell fpsize = stack_pop(ip->stack);
 				// Check for sanity (because we won't have any fingerprints
 				// outside such a range. This prevents long lockups here.
