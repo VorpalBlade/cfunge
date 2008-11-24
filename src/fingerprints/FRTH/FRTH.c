@@ -37,6 +37,10 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 	fungeCell u;
 	size_t s;
 	u = stack_pop(ip->stack);
+	if (u < 0) {
+		ip_reverse(ip);
+		return;
+	}
 	s = ip->stack->top;
 
 	if (u >= (fungeCell)s) {
@@ -81,6 +85,11 @@ static void finger_FRTH_forth_pick(instructionPointer * ip)
 	fungeCell s;
 	u = stack_pop(ip->stack);
 	s = (fungeCell)ip->stack->top;
+
+	if (u < 0) {
+		ip_reverse(ip);
+		return;
+	}
 
 	if (u >= s) {
 		stack_push(ip->stack, 0);
