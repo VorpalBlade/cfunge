@@ -53,7 +53,7 @@ static inline fungeCell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (sockets[i] == NULL)
-			return i;
+			return (fungeCell)i;
 	}
 	// No free one, extend array..
 	{
@@ -64,7 +64,7 @@ static inline fungeCell findNextfree_handle(void)
 		for (size_t i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			sockets[i] = NULL;
 		maxHandle += ALLOCCHUNK;
-		return (maxHandle - ALLOCCHUNK);
+		return (fungeCell)(maxHandle - ALLOCCHUNK);
 	}
 }
 
@@ -136,7 +136,8 @@ static void finger_SOCK_accept(instructionPointer * ip)
 	{
 		FungeSockAddr addr;
 		socklen_t addrlen = sizeof(addr.in);
-		int as, i;
+		int as;
+		fungeCell i;
 
 		addr.in.sin_addr.s_addr = 0;
 		addr.in.sin_port = 0;
@@ -155,7 +156,7 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		sockets[i]->family = sockets[s]->family;
 
 		stack_push(ip->stack, addr.in.sin_port);
-		stack_push(ip->stack, addr.in.sin_addr.s_addr);
+		stack_push(ip->stack, (fungeCell)addr.in.sin_addr.s_addr);
 		stack_push(ip->stack, i);
 	}
 	return;
@@ -238,7 +239,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 	if (inet_pton(AF_INET, str, &addr) != 1) {
 		ip_reverse(ip);
 	} else {
-		stack_push(ip->stack, addr.s_addr);
+		stack_push(ip->stack, (fungeCell)addr.s_addr);
 	}
 	stack_free_string(str);
 
@@ -266,7 +267,7 @@ invalid:
 static void finger_SOCK_listen(instructionPointer * ip)
 {
 	fungeCell s = stack_pop(ip->stack);
-	int n = stack_pop(ip->stack);
+	int n = (int)stack_pop(ip->stack);
 
 	if (!valid_handle(s))
 		goto error;
@@ -287,7 +288,7 @@ static void finger_SOCK_setopt(instructionPointer * ip)
 	fungeCell s = stack_pop(ip->stack);
 	fungeCell t = stack_pop(ip->stack);
 
-	val = stack_pop(ip->stack);
+	val = (int)stack_pop(ip->stack);
 
 	if (!valid_handle(s))
 		goto error;
@@ -319,18 +320,22 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	unsigned char *buffer = NULL;
 	ssize_t got;
 	fungeCell s   = stack_pop(ip->stack);
-	size_t    len = stack_pop(ip->stack);
+	fungeCell len = stack_pop(ip->stack);
 
 	fungeVector v = stack_pop_vector(ip->stack);
-	v.x += ip->storageOffset.x;
-	v.y += ip->storageOffset.y;
+
+	if (len < 0)
+		goto error;
 
 	if (!valid_handle(s))
 		goto error;
 
-	buffer = cf_malloc_noptr(len * sizeof(unsigned char));
+	v.x += ip->storageOffset.x;
+	v.y += ip->storageOffset.y;
 
-	got = recv(sockets[s]->fd, buffer, len, 0);
+	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
+
+	got = recv(sockets[s]->fd, buffer, (size_t)len, 0);
 
 	stack_push(ip->stack, got);
 
@@ -394,21 +399,25 @@ static void finger_SOCK_write(instructionPointer * ip)
 	unsigned char *buffer = NULL;
 	ssize_t sent;
 	fungeCell s   = stack_pop(ip->stack);
-	size_t    len = stack_pop(ip->stack);
+	fungeCell len = stack_pop(ip->stack);
 
 	fungeVector v = stack_pop_vector(ip->stack);
-	v.x += ip->storageOffset.x;
-	v.y += ip->storageOffset.y;
+
+	if (len < 0)
+		goto error;
 
 	if (!valid_handle(s))
 		goto error;
 
-	buffer = cf_malloc_noptr(len * sizeof(unsigned char));
+	v.x += ip->storageOffset.x;
+	v.y += ip->storageOffset.y;
 
-	for (size_t i = 0; i < len; ++i)
-		buffer[i] = fungespace_get(vector_create_ref(v.x + i, v.y));
+	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
 
-	sent = send(sockets[s]->fd, buffer, len, 0);
+	for (size_t i = 0; i < (size_t)len; ++i)
+		buffer[i] = (unsigned char)fungespace_get(vector_create_ref(v.x + (fungeCell)i, v.y));
+
+	sent = send(sockets[s]->fd, buffer, (size_t)len, 0);
 
 	stack_push(ip->stack, sent);
 

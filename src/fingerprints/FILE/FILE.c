@@ -46,7 +46,7 @@ static inline fungeCell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
-			return i;
+			return (fungeCell)i;
 	}
 	// No free one, extend array..
 	{
@@ -57,7 +57,7 @@ static inline fungeCell findNextfree_handle(void)
 		for (size_t i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			handles[i] = NULL;
 		maxHandle += ALLOCCHUNK;
-		return (maxHandle - ALLOCCHUNK);
+		return (fungeCell)(maxHandle - ALLOCCHUNK);
 	}
 }
 
@@ -309,17 +309,17 @@ static void finger_FILE_fread(instructionPointer * ip)
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = calloc_nogc(n, sizeof(unsigned char));
+		unsigned char * restrict buf = calloc_nogc((size_t)n, sizeof(unsigned char));
 		if (!buf) {
 			ip_reverse(ip);
 			return;
 		}
 
-		if (fread(buf, sizeof(unsigned char), n, fp) != (size_t)n) {
+		if (fread(buf, sizeof(unsigned char), (size_t)n, fp) != (size_t)n) {
 			if (ferror(fp)) {
 				clearerr(fp);
 				ip_reverse(ip);
-				cf_free(buf);
+				free_nogc(buf);
 				return;
 			} else {
 				assert(feof(fp));
@@ -389,18 +389,18 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = cf_malloc_noptr(n * sizeof(char));
+		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(char));
 
 		for (fungeCell i = 0; i < n; i++) {
-			buf[i] = fungespace_get(vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
+			buf[i] = (unsigned char)fungespace_get(vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
-		if (fwrite(buf, sizeof(unsigned char), n, fp) != (size_t)n) {
+		if (fwrite(buf, sizeof(unsigned char), (size_t)n, fp) != (size_t)n) {
 			if (ferror(fp)) {
 				clearerr(fp);
 				ip_reverse(ip);
 			}
 		}
-		cf_free(buf);
+		free_nogc(buf);
 	}
 }
 
