@@ -25,13 +25,13 @@
 /// Used to handle "0-25" and "A-Z"
 /// @return Returns 0 for invalid, otherwise A-Z
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-static inline char pop_stack_spec(instructionPointer * ip)
+static inline unsigned char pop_stack_spec(instructionPointer * ip)
 {
 	fungeCell n = stack_pop(ip->stack);
 	if (n < 0) return 0;
-	else if (n <= 25) return 'A' + n;
+	else if (n <= 25) return (unsigned char)((fungeCell)'A' + n);
 	else if (n < 'A') return 0;
-	else if (n <= 'Z') return n;
+	else if (n <= 'Z') return (unsigned char)n;
 	else return 0;
 }
 
@@ -44,8 +44,8 @@ static void do_reflect(instructionPointer * ip)
 /// X - Swap two semantics
 static void finger_FING_swap(instructionPointer * ip)
 {
-	char first = pop_stack_spec(ip);
-	char second = pop_stack_spec(ip);
+	unsigned char first = pop_stack_spec(ip);
+	unsigned char second = pop_stack_spec(ip);
 	if (first == 0 || second == 0) {
 		ip_reverse(ip);
 	} else {
@@ -64,7 +64,7 @@ static void finger_FING_swap(instructionPointer * ip)
 /// Y - Drop semantic
 static void finger_FING_drop(instructionPointer * ip)
 {
-	char opcode = pop_stack_spec(ip);
+	unsigned char opcode = pop_stack_spec(ip);
 	if (opcode == 0) {
 		ip_reverse(ip);
 	} else {
@@ -75,8 +75,8 @@ static void finger_FING_drop(instructionPointer * ip)
 /// Z - Push source semantic onto dst
 static void finger_FING_push(instructionPointer * ip)
 {
-	char dst = pop_stack_spec(ip);
-	char src = pop_stack_spec(ip);
+	unsigned char dst = pop_stack_spec(ip);
+	unsigned char src = pop_stack_spec(ip);
 	if (src == 0 || dst == 0) {
 		ip_reverse(ip);
 	} else {

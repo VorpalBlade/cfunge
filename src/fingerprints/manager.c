@@ -103,7 +103,7 @@ static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * 
 
 /// Add an entry to an OP code stack.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprintOpcode func)
+bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Check if we need to realloc.
@@ -122,7 +122,7 @@ bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprin
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode)
+fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned char opcode)
 {
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	if (stack->top == 0) {
@@ -211,7 +211,7 @@ static inline ssize_t find_fingerprint(const fungeCell fingerprint)
 			// so no need to search more.
 			if (setting_enable_sandbox && !ImplementedFingerprints[i].safe)
 				return FPRINT_NOTFOUND;
-			return i;
+			return (ssize_t)i;
 		}
 	}
 	return FPRINT_NOTFOUND;
@@ -255,7 +255,8 @@ FUNGE_ATTR_FAST void manager_list(void)
 		// This hack is here to reconstruct the name from the fingerprint.
 		// It will probably break if char isn't 8 bits.
 		fungeCell fprint = ImplementedFingerprints[i].fprint;
-		char fprintname[5] = { fprint >> 24, fprint >> 16, fprint >> 8, fprint, '\0'};
+		char fprintname[5] = { (char)(fprint >> 24), (char)(fprint >> 16),
+		                       (char)(fprint >> 8), (char)fprint, '\0'};
 
 		printf("0x%x %s%s %s\n",
 		       (unsigned)fprint,

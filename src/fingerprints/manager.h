@@ -71,7 +71,7 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
  * @param func Function pointer to routine implementing the instruction.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprintOpcode func);
+bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func);
 /**
  * Pop an opcode from an stack returning it.
  * @param ip IP to pop opcode for.
@@ -79,7 +79,7 @@ bool opcode_stack_push(instructionPointer * restrict ip, char opcode, fingerprin
  * @return A function pointer.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, char opcode);
+fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned char opcode);
 
 /**
  * Initialise opcode stacks for IP

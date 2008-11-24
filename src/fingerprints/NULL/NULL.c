@@ -28,7 +28,7 @@ static void finger_NULL_reverse(instructionPointer * ip)
 
 bool finger_NULL_load(instructionPointer * ip)
 {
-	for (char c = 'A'; c < 'Z'; c++)
+	for (unsigned char c = 'A'; c < 'Z'; c++)
 		if (!opcode_stack_push(ip, c, &finger_NULL_reverse))
 			return false;
 	return true;
