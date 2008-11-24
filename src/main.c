@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 		// for later reuse by y instruction.
 		if (argc > 1) {
 			fungeargc = argc - optind;
-			fungeargv = (char**)cf_malloc(fungeargc * sizeof(char*));
+			fungeargv = (char**)cf_malloc((size_t)fungeargc * sizeof(char*));
 			if (!fungeargv) {
 				perror("Couldn't allocate space for command line arguments");
 				abort();

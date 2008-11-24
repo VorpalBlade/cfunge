@@ -60,7 +60,7 @@ ret_getint input_getint(fungeCell * restrict value, int base);
  * @return True if we got a char, false if we got EOF and should reflect.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool input_getchar(fungeCell * chr);
+bool input_getchar(fungeCell * restrict chr);
 
 /**
  * For use in input some fingerprints.

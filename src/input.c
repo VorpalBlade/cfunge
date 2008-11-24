@@ -58,12 +58,12 @@ FUNGE_ATTR_FAST static inline void discard_line(void)
 }
 
 
-FUNGE_ATTR_FAST bool input_getchar(fungeCell * chr)
+FUNGE_ATTR_FAST bool input_getchar(fungeCell * restrict chr)
 {
 	unsigned char tmp;
 	if (!get_line())
 		return false;
-	tmp = *lastline_current;
+	tmp = *((unsigned char*)lastline_current);
 	lastline_current++;
 	if (lastline_current && (*lastline_current == '\0'))
 		discard_line();

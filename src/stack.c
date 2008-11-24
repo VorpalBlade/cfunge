@@ -223,7 +223,7 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsig
 	{
 		const size_t top = stack->top + len;
 		for (ssize_t i = len; i >= 0; i--)
-			stack->entries[top - i] = str[i];
+			stack->entries[top - (size_t)i] = str[i];
 		stack->top += len + 1;
 	}
 }
@@ -252,7 +252,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict sta
 		return NULL;
 
 	for (size_t i = 0; i < len; i++) {
-		x[i] = stack_pop(stack);
+		x[i] = (unsigned char)stack_pop(stack);
 	}
 	x[len + 1] = '\0';
 	return x;
@@ -458,14 +458,14 @@ bool stackstack_begin(instructionPointer * restrict ip, fungeCell count, const f
 	stackStack->stacks[stackStack->current] = TOSS;
 
 	if (count > 0) {
-		stack_bulk_copy(TOSS, SOSS, count);
+		stack_bulk_copy(TOSS, SOSS, (size_t)count);
 		// Make it into a move.
 		if ((size_t)count > SOSS->top)
 			SOSS->top = 0;
 		else
-			SOSS->top -= count;
+			SOSS->top -= (size_t)count;
 	} else if (count < 0) {
-		stack_zero_fill(SOSS, -count);
+		stack_zero_fill(SOSS, (size_t)(-count));
 	}
 	stack_push_vector(SOSS, &ip->storageOffset);
 	ip->storageOffset.x = storageOffset->x;
@@ -491,9 +491,9 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell 
 	storageOffset = stack_pop_vector(SOSS);
 	if (count > 0) {
 		// Since TOSS is discarded there is no need to update it's top pointer.
-		stack_bulk_copy(SOSS, TOSS, count);
+		stack_bulk_copy(SOSS, TOSS, (size_t)count);
 	} else if (count < 0) {
-		stack_pop_n_discard(SOSS, -count);
+		stack_pop_n_discard(SOSS, (size_t)(-count));
 	}
 	ip->storageOffset.x = storageOffset.x;
 	ip->storageOffset.y = storageOffset.y;

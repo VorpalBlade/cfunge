@@ -377,7 +377,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 			case ',': {
 				fungeCell a = stack_pop(ip->stack);
 				// Reverse on failed output/input
-				if (FUNGE_EXPECT(cf_putchar_maybe_locked(a) != (unsigned char)a, false))
+				if (FUNGE_EXPECT(cf_putchar_maybe_locked((int)a) != (unsigned char)a, false))
 					ip_reverse(ip);
 				break;
 			}
@@ -467,7 +467,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				if (fpsize < 1) {
 					ip_reverse(ip);
 				} else if (FUNGE_EXPECT(setting_disable_fingerprints, false)) {
-					stack_pop_n_discard(ip->stack, fpsize);
+					stack_pop_n_discard(ip->stack, (size_t)fpsize);
 					ip_reverse(ip);
 				} else {
 					fungeCell fprint = 0;
@@ -658,7 +658,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 			exit(EXIT_FAILURE);
 		}
 		// Set up randomness
-		srandom(tv.tv_nsec);
+		srandom((unsigned int)tv.tv_nsec);
 #else
 		struct timeval tv;
 		if (gettimeofday(&tv, NULL)) {
@@ -666,7 +666,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 			exit(EXIT_FAILURE);
 		}
 		// Set up randomness
-		srandom(tv.tv_usec);
+		srandom((unsigned int)tv.tv_usec);
 #endif
 	}
 	interpreter_main_loop();

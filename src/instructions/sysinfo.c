@@ -235,12 +235,12 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			break;
 		}
 		case si_stack_count: // Number of stacks on stack stack
-			stack_push(pushStack, ip->stackstack->size);
+			stack_push(pushStack, (fungeCell)ip->stackstack->size);
 			break;
 		case si_stack_sizes: // Number of elements on all stacks
 			for (size_t i = 0; i < ip->stackstack->current; i++)
-				stack_push(pushStack, ip->stackstack->stacks[i]->top);
-			stack_push(pushStack, TOSSSize);
+				stack_push(pushStack, (fungeCell)ip->stackstack->stacks[i]->top);
+			stack_push(pushStack, (fungeCell)TOSSSize);
 			break;
 		case si_argc: // Command line arguments (count) (108 specific)
 			stack_push(pushStack, fungeargc);
@@ -269,7 +269,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 					i++;
 				}
 			}
-			stack_push(pushStack, environ_count);
+			stack_push(pushStack, (fungeCell)environ_count);
 			break;
 		case si_env: { // Environment variables
 			size_t i = 0;
@@ -337,7 +337,7 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 		}
 		// Find out if we should act as pick or not...
 		if (tmp->top > (size_t)request) {
-			stack_push(ip->stack, tmp->entries[tmp->top - request]);
+			stack_push(ip->stack, tmp->entries[tmp->top - (size_t)request]);
 		} else {
 			// Act as pick
 			stack_push(ip->stack, stack_get_index(ip->stack, request - tmp->top));

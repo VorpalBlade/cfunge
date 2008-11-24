@@ -124,7 +124,7 @@ FUNGE_ATTR_FAST void ip_free(instructionPointer * restrict ip)
 }
 #endif
 
-FUNGE_ATTR_FAST inline void ip_forward(instructionPointer * restrict ip, int_fast64_t steps)
+FUNGE_ATTR_FAST inline void ip_forward(instructionPointer * restrict ip, fungeCell steps)
 {
 	assert(ip != NULL);
 	ip->position.x += ip->delta.x * steps;

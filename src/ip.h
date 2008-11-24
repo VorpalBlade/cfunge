@@ -118,7 +118,7 @@ void ip_free(instructionPointer * restrict ip);
  * probably want to set a temp delta instead and take +/- one step for now.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_forward(instructionPointer * restrict ip, int_fast64_t steps);
+void ip_forward(instructionPointer * restrict ip, fungeCell steps);
 
 /**
  * Mirror IP direction.
