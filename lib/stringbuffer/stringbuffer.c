@@ -140,7 +140,7 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
         }
 
         if (n > -1) {
-            size = n+1;         /* precisely what is needed */
+            size = (size_t)(n+1);         /* precisely what is needed */
         } else {
             size *= 2;          /* twice the old size */
         }

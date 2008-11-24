@@ -309,7 +309,7 @@ const char * genxGetVersion(void);
 /*@}*/
 
 #ifdef GENX_INTERNAL
-FUNGE_ATTR_FAST void genxSetCharProps(char * p);
+FUNGE_ATTR_FAST void genxSetCharProps(char * restrict p);
 #endif
 
 #endif /* GENX_H */

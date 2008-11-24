@@ -14,19 +14,18 @@
 #include "genx.h"
 #include <string.h>
 
-FUNGE_ATTR_FAST static inline void charProp(char * p, int c, int prop)
+FUNGE_ATTR_FAST static inline void charProp(char * restrict p, int c, char prop)
 {
 	p[c] |= prop;
 }
 
-FUNGE_ATTR_FAST static inline void rangeProp(char * p, int start, int end, int prop)
+FUNGE_ATTR_FAST static inline void rangeProp(char * restrict p, int start, int end, char prop)
 {
-	int i;
-	for (i = start; i <= end; i++)
+	for (int i = start; i <= end; i++)
 		p[i] |= prop;
 }
 
-FUNGE_ATTR_FAST void genxSetCharProps(char * p)
+FUNGE_ATTR_FAST void genxSetCharProps(char * restrict p)
 {
 
 	memset(p, 0, 0xffff);
