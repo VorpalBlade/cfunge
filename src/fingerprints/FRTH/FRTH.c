@@ -57,8 +57,8 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 		memcpy(elems, ip->stack->entries, sizeof(fungeCell) * ip->stack->top);
 		xu = elems[s - (u+1)];
 
-		stack_pop_n_discard(ip->stack, u + 1);
-		for (size_t i = s - u; i < s; i++) {
+		stack_pop_n_discard(ip->stack, (size_t)(u + 1));
+		for (size_t i = s - (size_t)u; i < s; i++) {
 			stack_push(ip->stack, elems[i]);
 		}
 		stack_push(ip->stack, xu);
@@ -94,7 +94,7 @@ static void finger_FRTH_forth_pick(instructionPointer * ip)
 	if (u >= s) {
 		stack_push(ip->stack, 0);
 	} else {
-		fungeCell i = stack_get_index(ip->stack, s - u);
+		fungeCell i = stack_get_index(ip->stack, (size_t)(s - u));
 		stack_push(ip->stack, i);
 	}
 }

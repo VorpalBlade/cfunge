@@ -109,7 +109,7 @@ static void finger_BASE_input_base(instructionPointer * ip)
 	fflush(stdout);
 
 	while (gotint == rgi_noint) {
-		gotint = input_getint(&a, base);
+		gotint = input_getint(&a, (int)base);
 	}
 	if (gotint == rgi_success) {
 		stack_push(ip->stack, a);

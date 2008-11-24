@@ -55,7 +55,7 @@ static void finger_REFC_reference(instructionPointer * ip)
 	referencesTop++;
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
-	stack_push(ip->stack, referencesTop);
+	stack_push(ip->stack, (fungeCell)referencesTop);
 }
 
 static void finger_REFC_dereference(instructionPointer * ip)

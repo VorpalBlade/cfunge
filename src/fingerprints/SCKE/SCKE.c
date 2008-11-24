@@ -57,7 +57,7 @@ static void finger_SCKE_gethostbyname(instructionPointer * ip)
 
 	{
 		struct sockaddr_in *addr = (struct sockaddr_in*)result->ai_addr;
-		stack_push(ip->stack, addr->sin_addr.s_addr);
+		stack_push(ip->stack, (fungeCell)addr->sin_addr.s_addr);
 	}
 	goto end;
 error:

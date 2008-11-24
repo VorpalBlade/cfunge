@@ -79,7 +79,7 @@ static inline int getInt(tc c)
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline unsigned int getDec(tc c)
 {
-	return abs(c) % 10000;
+	return (unsigned int)(abs(c) % 10000);
 }
 
 typedef struct Point {
@@ -195,14 +195,14 @@ static inline void move(tc distance)
 		nx = TURT_MAX;
 	else if (nx < TURT_MIN)
 		nx = TURT_MIN;
-	turt.p.x = nx;
+	turt.p.x = (tc)nx;
 
 	ny = turt.p.y + dy;
 	if (ny > TURT_MAX)
 		ny = TURT_MAX;
 	else if (ny < TURT_MIN)
 		ny = TURT_MIN;
-	turt.p.y = ny;
+	turt.p.y = (tc)ny;
 
 	// a -> ... -> z is equivalent to a -> z if not drawing
 	if (turt.penDown) {
@@ -363,7 +363,7 @@ static void finger_TURT_query_heading(instructionPointer * ip)
 /// B - Back (distance in pixels)
 static void finger_TURT_back(instructionPointer * ip)
 {
-	move(-stack_pop(ip->stack));
+	move((tc)-stack_pop(ip->stack));
 }
 
 /// C - Pen Colour (24-bit RGB)
@@ -395,7 +395,7 @@ static void finger_TURT_query_pen(instructionPointer * ip)
 /// F - Forward (distance in pixels)
 static void finger_TURT_forward(instructionPointer * ip)
 {
-	move(stack_pop(ip->stack));
+	move((tc)stack_pop(ip->stack));
 }
 
 /// H - Set Heading (angle in degrees, relative to 0deg, east)
@@ -610,8 +610,8 @@ static void finger_TURT_teleport(instructionPointer * ip)
 {
 	tryAddPoint();
 
-	turt.p.y = stack_pop(ip->stack);
-	turt.p.x = stack_pop(ip->stack);
+	turt.p.y = (tc)stack_pop(ip->stack);
+	turt.p.x = (tc)stack_pop(ip->stack);
 
 	turt.movedWithoutDraw = true;
 }
