@@ -337,7 +337,7 @@ static inline int do_mmap(const char * restrict filename, unsigned char **maddr,
 		goto error;
 	}
 
-	len = sb.st_size;
+	len = (size_t)sb.st_size;
 	*length = len;
 	// An empty file isn't an error, but we can't mmap it.
 	if (len == 0) {
@@ -545,7 +545,7 @@ fungespace_save_to_file(const char        * restrict filename,
 		// Microoptimising! Remove this if it bothers you.
 		// However it also makes it possible to error out early.
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
-		if (posix_fallocate(fileno(file), 0, size->y * size->x) != 0) {
+		if (posix_fallocate(fileno(file), 0, (off_t)(size->y * size->x)) != 0) {
 			fclose(file);
 			return false;
 		}
@@ -554,7 +554,7 @@ fungespace_save_to_file(const char        * restrict filename,
 		for (fungeCell y = offset->y; y < maxy; y++) {
 			for (fungeCell x = offset->x; x < maxx; x++) {
 				value = fungespace_get(vector_create_ref(x, y));
-				cf_putc_unlocked(value, file);
+				cf_putc_unlocked((int)value, file);
 			}
 			cf_putc_unlocked('\n', file);
 		}
@@ -563,15 +563,15 @@ fungespace_save_to_file(const char        * restrict filename,
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		fungeCell * restrict towrite = cf_malloc((size->x * size->y + size->y) * sizeof(fungeCell));
+		fungeCell * restrict towrite = cf_malloc((size_t)(size->x * size->y + size->y) * sizeof(fungeCell));
 		if (!towrite) {
 			fclose(file);
 			return false;
 		}
 		// Construct each line.
 		for (fungeCell y = offset->y; y < maxy; y++) {
-			ssize_t lastspace = size->x;
-			fungeCell * restrict string = cf_malloc(size->x * sizeof(fungeCell));
+			ssize_t lastspace = (ssize_t)size->x;
+			fungeCell * restrict string = cf_malloc((size_t)size->x * sizeof(fungeCell));
 			if (!string) {
 				fclose(file);
 				return false;
@@ -606,7 +606,7 @@ fungespace_save_to_file(const char        * restrict filename,
 				// Why the cast? To allow GCC to optimise better, by being able to
 				// check if the loop is infinite or not.
 				for (size_t i = 0; i <= (size_t)lastnewline; i++) {
-					cf_putc_unlocked(towrite[i], file);
+					cf_putc_unlocked((int)towrite[i], file);
 				}
 			}
 			cf_funlockfile(file);
