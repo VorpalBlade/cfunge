@@ -27,6 +27,8 @@
 #ifndef FUNGE_HAD_SRC_STACK_H
 #define FUNGE_HAD_SRC_STACK_H
 
+#include "global.h"
+
 #include <sys/types.h>
 #include <stdint.h>
 
@@ -184,8 +186,7 @@ funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
 
 /**
  * Begin a new stack on the stack-stack.
- * @param ip Instruction pointer this is for.
- * @param me What stack-stack to operate on.
+ * @param ip Instruction pointer (will operate on it's stack stack).
  * @param count How many items to copy over.
  * @param storageOffset New storage offset.
  */
@@ -195,8 +196,7 @@ bool stackstack_begin(struct s_instructionPointer * restrict ip,
                      const fungeVector * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
- * @param ip Instruction pointer this is for.
- * @param me What stack-stack to operate on.
+ * @param ip Instruction pointer (will operate on it's stack stack).
  * @param count How many items to copy over.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST

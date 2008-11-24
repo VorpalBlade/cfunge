@@ -27,10 +27,11 @@
 #ifndef FUNGE_HAD_SRC_INTERPRETER_H
 #define FUNGE_HAD_SRC_INTERPRETER_H
 
+#include "global.h"
+
 #include <sys/types.h>
 #include <stdint.h>
 
-#include "global.h"
 #include "vector.h"
 #include "stack.h"
 #include "ip.h"

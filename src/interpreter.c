@@ -99,7 +99,8 @@ FUNGE_ATTR_FAST inline void if_north_south(instructionPointer * restrict ip)
 #  define ReturnIfCon(x) (x); return
 #endif
 
-
+/// Generate a case for use in execute_instruction() that pushes a number on
+/// the stack.
 #define PUSHVAL(x, y) \
 	case (x): \
 		stack_push(ip->stack, (fungeCell)y); \
