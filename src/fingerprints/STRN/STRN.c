@@ -162,13 +162,13 @@ static void finger_STRN_left(instructionPointer * ip)
 	n = stack_pop(ip->stack);
 	s = stack_pop_string(ip->stack);
 	len = strlen((char*)s);
-	if (n < 0 || len < (size_t)n) {
+	if (n <= 0 || len < (size_t)n) {
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
 	}
 	stack_push(ip->stack, '\0');
-	stack_push_string(ip->stack, s, n - 1);
+	stack_push_string(ip->stack, s, (size_t)(n - 1));
 	stack_free_string(s);
 }
 
@@ -203,7 +203,7 @@ static void finger_STRN_length(instructionPointer * ip)
 	s = stack_pop_string(ip->stack);
 	len = strlen((char*)s);
 	stack_push_string(ip->stack, s, len);
-	stack_push(ip->stack, len);
+	stack_push(ip->stack, (fungeCell)len);
 	stack_free_string(s);
 }
 
@@ -239,7 +239,7 @@ static void finger_STRN_right(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	stack_push_string(ip->stack, s + (len - n), n);
+	stack_push_string(ip->stack, s + (len - (size_t)n), (size_t)n);
 	stack_free_string(s);
 }
 
