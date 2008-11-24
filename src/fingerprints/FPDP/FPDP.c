@@ -38,8 +38,8 @@ static double d;
 
 FUNGE_ATTR_FAST static inline void popDbl(instructionPointer * restrict ip)
 {
-	u.i.low = stack_pop(ip->stack);
-	u.i.high = stack_pop(ip->stack);
+	u.i.low = (int32_t)stack_pop(ip->stack);
+	u.i.high = (int32_t)stack_pop(ip->stack);
 }
 FUNGE_ATTR_FAST static inline void pushDbl(instructionPointer * restrict ip)
 {

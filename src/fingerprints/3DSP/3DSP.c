@@ -47,7 +47,7 @@ FUNGE_ATTR_FAST
 static inline float pop_float(instructionPointer * restrict ip)
 {
 	floatint u;
-	u.i = stack_pop(ip->stack);
+	u.i = (int32_t)stack_pop(ip->stack);
 	return u.f;
 }
 
@@ -118,7 +118,7 @@ static inline void readMatrix(const instructionPointer * restrict ip,
 	for (fungeCell x = 0; x < 4; ++x) {
 		for (fungeCell y = 0; y < 4; ++y) {
 			floatint u;
-			u.i = fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
+			u.i = (int32_t)fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
 		}
 	}

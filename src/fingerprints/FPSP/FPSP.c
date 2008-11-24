@@ -40,8 +40,8 @@ typedef union u_floatint {
 static void finger_FPSP_add(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = stack_pop(ip->stack);
-	b.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
+	b.i = (int32_t)stack_pop(ip->stack);
 	b.f += a.f;
 	stack_push(ip->stack, b.i);
 }
@@ -49,8 +49,8 @@ static void finger_FPSP_add(instructionPointer * ip)
 static void finger_FPSP_sub(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = stack_pop(ip->stack);
-	b.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
+	b.i = (int32_t)stack_pop(ip->stack);
 	b.f -= a.f;
 	stack_push(ip->stack, b.i);
 }
@@ -58,8 +58,8 @@ static void finger_FPSP_sub(instructionPointer * ip)
 static void finger_FPSP_mul(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = stack_pop(ip->stack);
-	b.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
+	b.i = (int32_t)stack_pop(ip->stack);
 	b.f *= a.f;
 	stack_push(ip->stack, b.i);
 }
@@ -67,8 +67,8 @@ static void finger_FPSP_mul(instructionPointer * ip)
 static void finger_FPSP_div(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = stack_pop(ip->stack);
-	b.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
+	b.i = (int32_t)stack_pop(ip->stack);
 	b.f /= a.f;
 	stack_push(ip->stack, b.i);
 }
@@ -76,7 +76,7 @@ static void finger_FPSP_div(instructionPointer * ip)
 static void finger_FPSP_sqrt(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = sqrtf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -87,7 +87,7 @@ static void finger_FPSP_sqrt(instructionPointer * ip)
 static void finger_FPSP_sin(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = sinf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -95,7 +95,7 @@ static void finger_FPSP_sin(instructionPointer * ip)
 static void finger_FPSP_cos(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = cosf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -103,7 +103,7 @@ static void finger_FPSP_cos(instructionPointer * ip)
 static void finger_FPSP_tan(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = tanf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -111,7 +111,7 @@ static void finger_FPSP_tan(instructionPointer * ip)
 static void finger_FPSP_asin(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = asinf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -119,7 +119,7 @@ static void finger_FPSP_asin(instructionPointer * ip)
 static void finger_FPSP_acos(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = acosf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -127,7 +127,7 @@ static void finger_FPSP_acos(instructionPointer * ip)
 static void finger_FPSP_atan(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = atanf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -138,7 +138,7 @@ static void finger_FPSP_atan(instructionPointer * ip)
 static void finger_FPSP_ln(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = logf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -146,7 +146,7 @@ static void finger_FPSP_ln(instructionPointer * ip)
 static void finger_FPSP_log10(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = log10f(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -154,7 +154,7 @@ static void finger_FPSP_log10(instructionPointer * ip)
 static void finger_FPSP_exp(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = expf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -165,7 +165,7 @@ static void finger_FPSP_exp(instructionPointer * ip)
 static void finger_FPSP_neg(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f *= -1;
 	stack_push(ip->stack, a.i);
 }
@@ -173,7 +173,7 @@ static void finger_FPSP_neg(instructionPointer * ip)
 static void finger_FPSP_abs(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	a.f = fabsf(a.f);
 	stack_push(ip->stack, a.i);
 }
@@ -181,8 +181,8 @@ static void finger_FPSP_abs(instructionPointer * ip)
 static void finger_FPSP_pow(instructionPointer * ip)
 {
 	floatint a, b;
-	a.i = stack_pop(ip->stack);
-	b.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
+	b.i = (int32_t)stack_pop(ip->stack);
 	b.f = powf(b.f, a.f);
 	stack_push(ip->stack, b.i);
 }
@@ -202,7 +202,7 @@ static void finger_FPSP_fromint(instructionPointer * ip)
 static void finger_FPSP_toint(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	stack_push(ip->stack, (fungeCell)a.f);
 }
 
@@ -219,7 +219,7 @@ static void finger_FPSP_fromascii(instructionPointer * ip)
 static void finger_FPSP_print(instructionPointer * ip)
 {
 	floatint a;
-	a.i = stack_pop(ip->stack);
+	a.i = (int32_t)stack_pop(ip->stack);
 	printf("%f ", a.f);
 }
 
