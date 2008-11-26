@@ -10,11 +10,29 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r471)
+Changes since last release (r520)
 ---------------------------------
 These are important changes since last release:
  * cfunge now depend on cmake 2.6 (or later).
  * Man page have been extended.
+ * List of fingerprints in man page is now auto generated.
+ * Some code has been rewritten to allow GCC and ICC to auto-vectorise it.
+ * Stack-stack begin/end is now a lot faster, it now uses memcpy().
+ * Fixed a rare memory corruption bug in PERL.
+ * Added various checks at configuration time to check that needed functions
+   exist.
+ * Pushing a string on the stack is now a lot faster.
+ * For POSIX.1-2008 compatiblity use clock_gettime() when available. Fall back
+   on gettimeofday().
+ * Avoid reallocing the IP list in concurrent Funge all the time.
+ * Updated fingerprint spec format (now 1.3), allow fingerprints to be disabled
+   at compile time based on defines.
+ * If the XSI functions random and srandom aren't available, fall back on
+   rand and srand.
+ * Fixed a crash bug in FRTH when calling L or P with negative arguments.
+ * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
+   found thanks to this.
+
 
 0.3.3
 -----
