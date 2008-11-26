@@ -90,7 +90,6 @@ static char * run_perl(const char * restrict perlcode)
 			// Build argument list.
 			// Strdup to avoid the read only string warning.
 			// No need to free in child.
-			// TODO: Check that the allocations worked.
 			char * arguments[] = {
 				strdup_nogc("perl"),
 				strdup_nogc("-e"),
@@ -98,6 +97,10 @@ static char * run_perl(const char * restrict perlcode)
 				strdup_nogc(perlcode),
 				NULL
 			};
+			if (!arguments[0] || !arguments[1] || !arguments[2]
+			    || !arguments[3]) {
+				_Exit(2);
+			}
 
 			// Do the FD stuff.
 			// Close unused end
