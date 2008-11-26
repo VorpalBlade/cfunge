@@ -277,9 +277,8 @@ static inline void freeResources(void)
 {
 	Path* p = pic.pathBeg;
 	if (p) {
-		Path* next;
 		while (p) {
-			next = p->next;
+			Path* next = p->next;
 			free(p);
 			p = next;
 		}
