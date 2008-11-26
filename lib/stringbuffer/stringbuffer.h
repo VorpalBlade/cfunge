@@ -28,7 +28,7 @@
  * for the total string length.
  *
  * Usage is:
- * <code>
+ * <pre>
  * StringBuffer *sb = stringbuffer_new();
  * stringbuffer_append_string(sb, "abc");
  * stringbuffer_append_string(sb, "def");
@@ -36,7 +36,7 @@
  * char *str = stringbuffer_finish(sb)
  * ... use str
  * free(str);
- * </code>
+ * </pre>
  *
  */
 
