@@ -265,14 +265,14 @@ int genxNextUnicodeChar(constUtf8 * sp);
  *  one of GENX_SUCCESS, GENX_BAD_UTF8, or GENX_NON_XML_CHARACTER
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-genxStatus genxCheckText(genxWriter w, constUtf8 s);
+genxStatus genxCheckText(const genxWriter restrict w, constUtf8 s);
 
 /**
  * Return character status, the OR of GENX_XML_CHAR,
  *  GENX_LETTER, and GENX_NAMECHAR
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-int genxCharClass(genxWriter w, int c);
+int genxCharClass(const genxWriter restrict w, int c);
 
 /**
  * Silently wipe any non-XML characters out of a chunk of text.
@@ -284,7 +284,7 @@ int genxCharClass(genxWriter w, int c);
  * @returns true if any changes were made.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-int genxScrubText(genxWriter w, constUtf8 in, utf8 out);
+int genxScrubText(const genxWriter restrict w, constUtf8 in, utf8 out);
 
 /**
  * Return a specific error message.
@@ -292,13 +292,13 @@ int genxScrubText(genxWriter w, constUtf8 in, utf8 out);
  * @param status What status to look up.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-const char * genxGetErrorMessage(genxWriter w, genxStatus status);
+const char * genxGetErrorMessage(const genxWriter restrict w, genxStatus status);
 /**
  * Return last error message.
  * @param w The genxWriter in question.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-const char * genxLastErrorMessage(genxWriter w);
+const char * genxLastErrorMessage(const genxWriter restrict w);
 
 /**
  * Return version of genx.

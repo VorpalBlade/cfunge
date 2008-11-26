@@ -20,8 +20,8 @@
 #define False 0
 #define STRLEN_XMLNS_COLON 6
 
-typedef void * (* genxAlloc)(void * userData, size_t bytes);
-typedef void (* genxDealloc)(void * userData, void * data);
+// typedef void * (* genxAlloc)(void * userData, size_t bytes);
+// typedef void (* genxDealloc)(void * userData, void * data);
 
 /**
  * writer state
@@ -38,7 +38,7 @@ typedef enum {
 /**
  * generic pointer list
  */
-typedef struct {
+typedef struct genx_plist {
 	genxWriter writer;
 	ssize_t    count;
 	size_t     space;
@@ -48,7 +48,7 @@ typedef struct {
 /**
  * text collector, for attribute values
  */
-typedef struct {
+typedef struct genx_collector {
 	utf8   buf;
 	size_t used;
 	size_t space;
@@ -119,8 +119,8 @@ struct genxWriter_rec {
 	plist                    stack;
 	struct genxAttribute_rec arec;
 	const char *             etext[100];
-	genxAlloc                alloc;
-	genxDealloc              dealloc;
+// 	genxAlloc                alloc;
+// 	genxDealloc              dealloc;
 };
 
 /*******************************
@@ -144,6 +144,7 @@ static genxStatus addAttribute(genxAttribute a, constUtf8 valuestr);
 /*******************************
  * private memory utilities
  */
+#if 0
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
 static inline void * allocate(size_t bytes)
 {
@@ -155,11 +156,14 @@ static inline void deallocate(void * data)
 {
 	free(data);
 }
+#endif
+#define allocate(___bytes) malloc(___bytes)
+#define deallocate(___ptr) free(___ptr)
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static utf8 copy(constUtf8 from)
+static utf8 copy(constUtf8 restrict from)
 {
-	utf8 temp;
+	utf8 restrict temp;
 	size_t len = strlen((const char *) from);
 
 	if ((temp = (utf8) allocate(len + 1)) == NULL)
@@ -170,7 +174,7 @@ static utf8 copy(constUtf8 from)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static genxStatus initCollector(collector * c)
+static genxStatus initCollector(collector * restrict c)
 {
 	c->space = 100;
 	if ((c->buf = (utf8) allocate(c->space)) == NULL)
@@ -195,17 +199,17 @@ static genxStatus growCollector(collector * c, size_t size)
 	return GENX_SUCCESS;
 }
 
-FUNGE_ATTR_FAST static void startCollect(collector * c)
+FUNGE_ATTR_FAST static inline void startCollect(collector * c)
 {
 	c->used = 0;
 }
-FUNGE_ATTR_FAST static void endCollect(collector * c)
+FUNGE_ATTR_FAST static inline void endCollect(collector * c)
 {
 	c->buf[c->used] = 0;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
+static genxStatus collectString(genxWriter w, collector * restrict c, constUtf8 restrict string)
 {
 	size_t sl = strlen((const char *) string);
 
@@ -223,7 +227,7 @@ static genxStatus collectString(genxWriter w, collector * c, constUtf8 string)
  * private list utilities
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static genxStatus initPlist(genxWriter w, plist * pl)
+static genxStatus initPlist(genxWriter w, plist * restrict pl)
 {
 	pl->writer = w;
 	pl->count = 0;
@@ -250,8 +254,13 @@ static Boolean checkExpand(plist * restrict pl)
 	newlist = (void **) allocate(pl->space * sizeof(void *));
 	if (newlist == NULL)
 		return False;
-	for (ssize_t i = 0; i < pl->count; i++)
-		newlist[i] = pl->pointers[i];
+	// This is to allow vectorising.
+	{
+		const ssize_t count = pl->count;
+		void ** restrict oldlist = pl->pointers;
+		for (ssize_t i = 0; i < count; i++)
+			newlist[i] = oldlist[i];
+	}
 	deallocate(pl->pointers);
 	pl->pointers = newlist;
 
@@ -475,7 +484,7 @@ malformed:
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline Boolean isXMLChar(genxWriter w, int c)
+static inline Boolean isXMLChar(const genxWriter restrict w, int c)
 {
 	if (c < 0)
 		return False;
@@ -486,7 +495,7 @@ static inline Boolean isXMLChar(genxWriter w, int c)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline Boolean isLetter(genxWriter w, int c)
+static inline Boolean isLetter(const genxWriter restrict w, int c)
 {
 	if (c < 0 || c > 0xffff)
 		return False;
@@ -495,7 +504,7 @@ static inline Boolean isLetter(genxWriter w, int c)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline Boolean isNameChar(genxWriter w, int c)
+static inline Boolean isNameChar(const genxWriter restrict w, int c)
 {
 	if (c < 0 || c > 0xffff)
 		return False;
@@ -525,8 +534,8 @@ genxWriter genxNew(void)
 		return NULL;
 
 	w->status = GENX_SUCCESS;
-	w->alloc = NULL;
-	w->dealloc = NULL;
+// 	w->alloc = NULL;
+// 	w->dealloc = NULL;
 	w->userData = NULL;
 	w->sequence = SEQUENCE_NO_DOC;
 
@@ -675,7 +684,7 @@ FUNGE_ATTR_FAST void genxDispose(genxWriter w)
 /*
  * scan a buffer and report problems with UTF-8 encoding or non-XML characters
  */
-FUNGE_ATTR_FAST genxStatus genxCheckText(genxWriter w, constUtf8 s)
+FUNGE_ATTR_FAST genxStatus genxCheckText(const genxWriter restrict w, constUtf8 s)
 {
 	while (*s) {
 		int c = genxNextUnicodeChar(&s);
@@ -691,7 +700,7 @@ FUNGE_ATTR_FAST genxStatus genxCheckText(genxWriter w, constUtf8 s)
 /*
  * Purify some text
  */
-FUNGE_ATTR_FAST int genxScrubText(genxWriter w, constUtf8 in, utf8 restrict out)
+FUNGE_ATTR_FAST int genxScrubText(const genxWriter restrict w, constUtf8 in, utf8 restrict out)
 {
 	int problems = 0;
 	constUtf8 last = in;
@@ -720,7 +729,7 @@ FUNGE_ATTR_FAST int genxScrubText(genxWriter w, constUtf8 in, utf8 restrict out)
 /*
  * check one character
  */
-FUNGE_ATTR_FAST int genxCharClass(genxWriter w, int c)
+FUNGE_ATTR_FAST int genxCharClass(const genxWriter restrict w, int c)
 {
 	int ret = 0;
 
@@ -755,11 +764,11 @@ static genxStatus checkNCName(genxWriter w, constUtf8 name)
 	return GENX_SUCCESS;
 }
 
-FUNGE_ATTR_FAST const char * genxGetErrorMessage(genxWriter w, genxStatus status)
+FUNGE_ATTR_FAST const char * genxGetErrorMessage(const genxWriter restrict w, genxStatus status)
 {
 	return w->etext[status];
 }
-FUNGE_ATTR_FAST const char * genxLastErrorMessage(genxWriter w)
+FUNGE_ATTR_FAST const char * genxLastErrorMessage(const genxWriter restrict w)
 {
 	return w->etext[w->status];
 }
