@@ -10,7 +10,7 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r520)
+Changes since last release (r526)
 ---------------------------------
 These are important changes since last release:
  * cfunge now depend on cmake 2.6 (or later).
@@ -32,6 +32,7 @@ These are important changes since last release:
  * Fixed a crash bug in FRTH when calling L or P with negative arguments.
  * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
    found thanks to this.
+ * Ncurses is now an optional dependency, detected at compile time.
 
 
 0.3.3
