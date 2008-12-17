@@ -41,7 +41,7 @@
 #if defined(__GNUC__) && (__GNUC__ >= 3) && !defined(__INTEL_COMPILER)
 /// Give GCC a hint about the most common outcome.
 /// Please do not add this unless you have profiled.
-#  define FUNGE_EXPECT(expr, outcome) __builtin_expect(expr,outcome)
+#  define FUNGE_EXPECT(expr, outcome) __builtin_expect((expr),(outcome))
 #else
 /// Give GCC a hint about the most common outcome.
 /// Please do not add this unless you have profiled.

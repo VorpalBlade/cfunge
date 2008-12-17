@@ -24,6 +24,7 @@
 
 
 /**
+ * @file
  * Mempools are used for allocating Funge-space s_hash_entry.
  * Since cfunge is single-threaded they are static, and have no locking.
  *
