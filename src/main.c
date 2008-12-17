@@ -61,6 +61,18 @@ static void print_features(void)
 	puts(" * This binary does not use Boehm GC.");
 #endif
 
+#ifdef DEBUG
+	puts(" * This binary is a debug build.");
+#endif
+
+#ifndef NDEBUG
+	puts(" * This binary is compiled with asserts.");
+#endif
+
+#ifdef ENABLE_VALGRIND
+	puts(" * This binary is compiled with valgrind debugging annotations.");
+#endif
+
 #if defined(USE64)
 	puts(" * Cell size is 64 bits (8 bytes).");
 #elif defined(USE32)

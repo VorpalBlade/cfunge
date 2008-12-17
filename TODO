@@ -4,6 +4,8 @@ Before next release
 -------------------
  * Test
    * For i: Check that binary mode works.
+ * Free if too large gap and test the IP code after the change to avoid
+   realloc() every time.
 
 Future
 ------
