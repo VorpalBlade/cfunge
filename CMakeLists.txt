@@ -352,11 +352,27 @@ add_executable(cfunge ${CFUNGE_SOURCES})
 
 
 ################################################################################
+# Check for ncurses - needs to be done late due to libraries.
+# Quite a mess yes.
+set(CURSES_NEED_NCURSES TRUE)
+find_package(Curses)
+CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
+if (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+	# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
+	# builds as it contains the full path to ncurses.so
+	target_link_libraries(cfunge ncurses)
+	add_definitions(-DHAVE_NCURSES)
+else (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+	message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
+endif(CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+
+
+
+################################################################################
 # Linking libraries
 
 # Need -lm for some fingerprints.
 target_link_libraries(cfunge m)
-target_link_libraries(cfunge ncurses)
 
 if(USE_GC)
 	target_link_libraries(cfunge ${BOEHM_LIBRARY_GC})

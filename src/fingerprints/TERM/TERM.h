@@ -25,6 +25,10 @@
 #include "../../global.h"
 #include "../manager.h"
 
+#if defined(HAVE_NCURSES)
+
 bool finger_TERM_load(instructionPointer * ip);
+
+#endif /* defined(HAVE_NCURSES) */
 
 #endif

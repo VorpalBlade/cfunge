@@ -20,6 +20,8 @@
  */
 
 #include "TERM.h"
+#if defined(HAVE_NCURSES)
+
 #include "../../stack.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -145,3 +147,5 @@ bool finger_TERM_load(instructionPointer * ip)
 	manager_add_opcode(TERM,  'U', go_up)
 	return true;
 }
+
+#endif /* defined(HAVE_NCURSES) */

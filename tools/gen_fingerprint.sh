@@ -155,13 +155,13 @@ cat >> "${FPRINT}.h" << EOF
 EOF
 
 if [[ "$fp_CONDITION" ]]; then
-	addtoh "#  if $fp_CONDITION"
+	addtoh "#if $fp_CONDITION"
 fi
 
 addtoh "bool finger_${FPRINT}_load(instructionPointer * ip);"
 
 if [[ "$fp_CONDITION" ]]; then
-	addtoh "#  endif  /* $fp_CONDITION */"
+	addtoh "#endif /* $fp_CONDITION */"
 fi
 
 addtoh ""

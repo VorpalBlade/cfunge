@@ -148,9 +148,11 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// SUBR - Subroutine extension
 	{ .fprint = 0x53554252, .uri = NULL, .loader = &finger_SUBR_load, .opcodes = "ACJOR",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = true },
+#if defined(HAVE_NCURSES)
 	// TERM - Terminal control functions
 	{ .fprint = 0x5445524d, .uri = NULL, .loader = &finger_TERM_load, .opcodes = "CDGHLSU",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = true },
+#endif
 	// TIME - Time and Date functions
 	{ .fprint = 0x54494d45, .uri = NULL, .loader = &finger_TIME_load, .opcodes = "DFGHLMOSWY",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = true },
