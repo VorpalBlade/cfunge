@@ -36,6 +36,7 @@
 #include "3DSP/3DSP.h"
 #include "BASE/BASE.h"
 #include "CPLI/CPLI.h"
+#include "DATE/DATE.h"
 #include "DIRF/DIRF.h"
 #include "FILE/FILE.h"
 #include "FING/FING.h"
@@ -85,6 +86,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// CPLI - Complex Integer extension
 	{ .fprint = 0x43504c49, .uri = NULL, .loader = &finger_CPLI_load, .opcodes = "ADMOSV",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = true },
+	// DATE - Date Functions
+	{ .fprint = 0x44415445, .uri = NULL, .loader = &finger_DATE_load, .opcodes = "ACDJTWY",
+	  .url = "http://rcfunge98.com/rcsfingers.html#DATE", .safe = true },
 	// DIRF - Directory functions extension
 	{ .fprint = 0x44495246, .uri = NULL, .loader = &finger_DIRF_load, .opcodes = "CMR",
 	  .url = "http://www.rcfunge98.com/rcsfingers.html", .safe = false },
