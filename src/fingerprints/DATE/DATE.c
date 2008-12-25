@@ -42,6 +42,7 @@ typedef struct ymd {
 
 static int month_length(const ymd * restrict date);
 
+/// Pop a struct ymd.
 static bool pop_ymd(instructionPointer * restrict ip, ymd * restrict result)
 {
 	result->day = stack_pop(ip->stack);
@@ -60,6 +61,7 @@ static bool pop_ymd(instructionPointer * restrict ip, ymd * restrict result)
 	return true;
 }
 
+/// Push a struct ymd.
 static void push_ymd(instructionPointer * restrict ip, const ymd * restrict result)
 {
 	stack_push(ip->stack, result->year);
@@ -68,8 +70,10 @@ static void push_ymd(instructionPointer * restrict ip, const ymd * restrict resu
 
 }
 
+/// Check if year is a leap year.
 static bool is_leap_year(fungeCell y)
 {
+	// Handle year 0
 	if (y < 0) y++;
 	if (y%4 == 0) {
 		if (y%400 == 0)
@@ -81,7 +85,8 @@ static bool is_leap_year(fungeCell y)
 	return false;
 }
 
-// This ignores day
+/// Compute Length of the month for the given year.
+/// @note This funtion ignores day
 static int month_length(const ymd * restrict date)
 {
 	switch (date->month) {
@@ -104,7 +109,9 @@ static int month_length(const ymd * restrict date)
 
 static fungeCell ymd_to_julian(const ymd * restrict date)
 {
+	// Based on: http://en.wikipedia.org/wiki/Julian_day#Calculation
 	fungeCell Y = date->year;
+	// Handle year 0
 	if (Y<0)
 		Y++;
 	{
@@ -119,7 +126,7 @@ static fungeCell ymd_to_julian(const ymd * restrict date)
 
 static void julian_to_ymd(ymd * restrict result, fungeCell date)
 {
-	// http://www.hermetic.ch/cal_stud/jdn.htm#comp
+	// Based on: http://www.hermetic.ch/cal_stud/jdn.htm#comp
 	// We need floorl() here, not integer rounding, since we want to round
 	// downwards all the time, not towards 0.
 	int64_t l, n, i, j;
@@ -133,6 +140,7 @@ static void julian_to_ymd(ymd * restrict result, fungeCell date)
 	l = floorl(j/11.0);
 	result->month = j + 2 - 12 * l;
 	result->year = 100 * ( n - 49 ) + i + l;
+	// Handle year 0
 	if (result->year <= 0) result->year--;
 }
 
