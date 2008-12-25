@@ -124,10 +124,13 @@ void ip_forward(instructionPointer * restrict ip, fungeCell steps);
  * Mirror IP direction.
  */
 #define ip_reverse(ip) \
-	{ \
+	do { \
 		(ip)->delta.x *= -1; \
 		(ip)->delta.y *= -1; \
-	}
+	} while(0)
+// I don't like the do { ... } while(0) hack at all..
+// but it is needed.
+
 /// Turn the IP left as [ would do.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_turn_left(instructionPointer * restrict ip);
