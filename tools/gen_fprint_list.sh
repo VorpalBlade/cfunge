@@ -3,7 +3,7 @@
 ###########################################################################
 #                                                                         #
 #  cfunge - a conformant Befunge93/98/08 interpreter in C                 #
-#  Copyright (C) 2008  Arvid Norlander                                    #
+#  Copyright (C) 2008-2009  Arvid Norlander                                    #
 #                                                                         #
 #  This program is free software: you can redistribute it and/or modify   #
 #  it under the terms of the GNU General Public License as published by   #
@@ -205,7 +205,7 @@ cat > "fingerprints.h" << EOF
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - a conformant Befunge93/98/08 interpreter in C.
- * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
