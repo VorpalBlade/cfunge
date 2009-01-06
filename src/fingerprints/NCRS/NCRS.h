@@ -19,22 +19,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FUNGE_HAD_SRC_FINGERPRINTS_TERM_H
-#define FUNGE_HAD_SRC_FINGERPRINTS_TERM_H
+#ifndef FUNGE_HAD_SRC_FINGERPRINTS_NCRS_H
+#define FUNGE_HAD_SRC_FINGERPRINTS_NCRS_H
 
 #include "../../global.h"
 #include "../manager.h"
 
 #if defined(HAVE_NCURSES)
 
-bool finger_TERM_load(instructionPointer * ip);
+bool finger_NCRS_load(instructionPointer * ip);
 
-// Used by NCRS to be specific to check coordinate ncurses state changes
-#ifdef FUNGE_EXTENDS_TERM
-
-void finger_TERM_fix_before_NCRS_init(void);
-void finger_TERM_fix_after_NCRS_teardown(void);
-
+// Used by TERM to be specific to check coordinate ncurses state changes
+#ifdef FUNGE_EXTENDS_NCRS
+bool finger_NCRS_need_setupterm(void);
 #endif
 
 #endif /* defined(HAVE_NCURSES) */

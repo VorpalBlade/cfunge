@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - a conformant Befunge93/98/08 interpreter in C.
- * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
 #include "INDV/INDV.h"
 #include "JSTR/JSTR.h"
 #include "MODU/MODU.h"
+#include "NCRS/NCRS.h"
 #include "NULL/NULL.h"
 #include "ORTH/ORTH.h"
 #include "PERL/PERL.h"
@@ -122,6 +123,11 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// MODU - Modulo Arithmetic
 	{ .fprint = 0x4d4f4455, .uri = NULL, .loader = &finger_MODU_load, .opcodes = "MRU",
 	  .url = "http://catseye.tc/projects/funge98/library/MODU.html", .safe = true },
+#if defined(HAVE_NCURSES)
+	// NCRS - ncurses extension
+	{ .fprint = 0x4e435253, .uri = NULL, .loader = &finger_NCRS_load, .opcodes = "BCEGIKMNPRSU",
+	  .url = "http://www.imaginaryrobots.net/projects/funge/myexts.txt", .safe = true },
+#endif
 	// NULL - Null Fingerprint
 	{ .fprint = 0x4e554c4c, .uri = NULL, .loader = &finger_NULL_load, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/NULL.html", .safe = true },

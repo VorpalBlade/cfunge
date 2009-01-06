@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - a conformant Befunge93/98/08 interpreter in C.
- * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define FUNGE_EXTENDS_NCRS
+#define FUNGE_EXTENDS_TERM
 #include "TERM.h"
+
 #if defined(HAVE_NCURSES)
 
 #include "../../stack.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include <curses.h>
 #include <term.h>
+
+#include "../NCRS/NCRS.h"
 
 // Define this if you want the correct but uggly
 // use of enter_ca_mode/exit_ca_mode. It makes
@@ -110,9 +116,16 @@ static void finger_TERM_go_up(instructionPointer * ip)
 #ifdef TERM_CAP_CORRECT
 static void finalise(void)
 {
+	int errret;
 	if (!term_initialised)
 		return;
+	// Check that cur_term is valid, it may not be after using NCRS.
+	// If it isn't valid, try to re-set it.
+	if (!cur_term)
+		if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
+			return;
 	putp(exit_ca_mode);
+	del_curterm(cur_term);
 }
 #endif
 
@@ -123,9 +136,10 @@ static inline bool initialise(void)
 	if (term_initialised)
 		return true;
 
-	if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
-		return false;
-
+	if (finger_NCRS_need_setupterm()) {
+		if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
+			return false;
+	}
 #ifdef TERM_CAP_CORRECT
 	putp(enter_ca_mode);
 	atexit(finalise);
@@ -133,6 +147,27 @@ static inline bool initialise(void)
 	term_initialised = true;
 	return true;
 }
+
+void finger_TERM_fix_before_NCRS_init(void)
+{
+	if (!term_initialised)
+		return;
+	assert(cur_term != NULL);
+	del_curterm(cur_term);
+	cur_term = NULL;
+}
+
+void finger_TERM_fix_after_NCRS_teardown(void)
+{
+	int errret;
+	if (!term_initialised)
+		return;
+	assert(cur_term == NULL);
+	// Now terminal is invalid, redo setupterm()
+	if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
+		return;
+}
+
 
 bool finger_TERM_load(instructionPointer * ip)
 {
