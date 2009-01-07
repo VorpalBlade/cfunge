@@ -212,13 +212,13 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {
-		long int i = strtol(result, NULL, 10);
-		if ((i == LONG_MIN) || (i == LONG_MAX)) {
-			if (errno == ERANGE)
-				stack_push(ip->stack, -1);
-		} else {
+		long int i;
+		errno = 0;
+		i = strtol(result, NULL, 10);
+		if (errno == ERANGE)
+			stack_push(ip->stack, -1);
+		else
 			stack_push(ip->stack, (fungeCell)i);
-		}
 	}
 	stack_free_string(perlcode);
 	free_nogc(result);
