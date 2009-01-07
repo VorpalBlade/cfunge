@@ -171,7 +171,7 @@ static void finger_NCRS_goto_xy(instructionPointer * ip)
 {
 	fungeVector v = stack_pop_vector(ip->stack);
 	NCRS_VALIDATE_STATE();
-	if (wmove(ncrs_window, v.y, v.x) == ERR)
+	if (wmove(ncrs_window, (int)v.y, (int)v.x) == ERR)
 		ip_reverse(ip);
 }
 

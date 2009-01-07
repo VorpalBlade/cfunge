@@ -541,7 +541,6 @@ fungespace_save_to_file(const char        * restrict filename,
 		return false;
 
 	if (!textfile) {
-		fungeCell value;
 		// Microoptimising! Remove this if it bothers you.
 		// However it also makes it possible to error out early.
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
@@ -553,7 +552,7 @@ fungespace_save_to_file(const char        * restrict filename,
 		cf_flockfile(file);
 		for (fungeCell y = offset->y; y < maxy; y++) {
 			for (fungeCell x = offset->x; x < maxx; x++) {
-				value = fungespace_get(vector_create_ref(x, y));
+				fungeCell value = fungespace_get(vector_create_ref(x, y));
 				cf_putc_unlocked((int)value, file);
 			}
 			cf_putc_unlocked('\n', file);
