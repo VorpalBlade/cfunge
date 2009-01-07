@@ -179,12 +179,12 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST ipList* iplist_create(void)
 {
-	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer));
+	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer[ALLOCCHUNKSIZE]));
 	if (!tmp)
 		return NULL;
 	if (!ip_create_in_place(&tmp->ips[0]))
 		return NULL;
-	tmp->size = 1;
+	tmp->size = ALLOCCHUNKSIZE;
 	tmp->top = 0;
 	tmp->highestID = 0;
 	return tmp;
@@ -214,7 +214,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 
 	// Grow if needed
 	if (list->size <= (list->top + 1)) {
-		list = (ipList*)cf_realloc(*me, sizeof(ipList) + ((*me)->size + ALLOCCHUNKSIZE) * sizeof(instructionPointer));
+		list = (ipList*)cf_realloc(*me, sizeof(ipList) + sizeof(instructionPointer[(*me)->size + ALLOCCHUNKSIZE]));
 		if (!list)
 			return -1;
 		*me = list;
