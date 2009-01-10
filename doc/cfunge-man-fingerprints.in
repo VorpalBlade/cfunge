@@ -10,6 +10,9 @@ I/O for numbers in other bases
 CPLI
 Complex Integer extension
 .TP
+DATE
+Date Functions
+.TP
 DIRF
 Directory functions extension (not available in sandbox mode)
 .TP
@@ -42,6 +45,9 @@ Read and write strings in Funge\-Space
 .TP
 MODU
 Modulo Arithmetic
+.TP
+NCRS
+ncurses extension
 .TP
 NULL
 Null Fingerprint
