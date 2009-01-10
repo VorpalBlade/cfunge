@@ -36,8 +36,19 @@ die() {
 	local emsg
 	for emsg in "$@"; do
 		echo "ERROR: $emsg" >&2
+		echo -ne '\a' >&2
 	done
 	exit 1
+}
+
+warn() {
+	local emsg
+	for emsg in "$@"; do
+		echo "WARNING: $emsg" >&2
+		echo -ne '\a' >&2
+	done
+	echo -ne '\a' >&2
+	sleep 5
 }
 
 progress() {
@@ -84,7 +95,7 @@ checkfprint() {
 # This will set/change these globals:
 #   Strings:
 #     fp_URL              Fingerprint URL
-#     fp_F108_URI         URI for Funge-108
+#     fp_F109_URI         URI for Funge-109
 #     fp_CONDITION        #if condition for compilation.
 #     fp_SAFE             Safe for sandbox mode (true/false)
 #     fp_OPCODES          Defined opcodes.
@@ -101,7 +112,7 @@ parse_spec() {
 	local FPRINT="$1"
 	# Variables
 	fp_URL=""
-	fp_F108_URI="NULL"
+	fp_F109_URI="NULL"
 	fp_CONDITION=""
 	fp_SAFE=""
 	fp_OPCODES=""
@@ -117,14 +128,14 @@ parse_spec() {
 	progresslvl2 "Opening spec file"
 	IFS=$'\n'
 	local line type data instr name desc number
-	# First line is %fingerprint-spec 1.[23]
+	# First line is %fingerprint-spec 1.[234]
 	# (1.2 is still supported).
 	exec 4<"${FPRINT}.spec" || die "Couldn't open spec file for reading on FD 4."
 	statuslvl2 "Success."
 	progresslvl2 "Parsing spec file"
 	read -ru 4 line
-	if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[23]$ ]]; then
-		die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2 and 1.3 are currently supported)."
+	if ! [[ "$line" =~ ^%fingerprint-spec\ 1\.[234]$ ]]; then
+		die "Either the spec file is not a fingerprint spec, or it is not a supported version (1.2, 1.3 and 1.4 are currently supported)."
 	fi
 
 	# 0: pre-"begin instrs"
@@ -147,7 +158,11 @@ parse_spec() {
 					fp_URL="$data"
 					;;
 				"%f108-uri")
-					fp_F108_URI="\"$data\""
+					warn "%f108-uri is deprecated. Replace with %f109-uri and update spec format to 1.4."
+					fp_F109_URI="\"$data\""
+					;;
+				"%f109-uri")
+					fp_F109_URI="\"$data\""
 					;;
 				"%condition")
 					fp_CONDITION="$data"

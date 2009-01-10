@@ -102,7 +102,7 @@ genfprintinfo() {
 
 	# Variables
 	local fp_URL fp_SAFE fp_OPCODES fp_DESCRIPTION
-	local fp_F108_URI fp_CONDITION
+	local fp_F109_URI fp_CONDITION
 	local fp_ALIASES
 	local fp_OPCODE_NAMES fp_OPCODE_DESC
 
@@ -141,7 +141,7 @@ genfprintinfo() {
 	else
 		[[ "$fp_CONDITION" ]] && ENTRYL1_cond[$FPRINTHEX]="#if $fp_CONDITION"
 		ENTRYL2[$FPRINTHEX]="	// ${FPRINT} - ${fp_DESCRIPTION}"
-		ENTRYL3[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${fp_F108_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${fp_OPCODES}\","
+		ENTRYL3[$FPRINTHEX]="	{ .fprint = ${FPRINTHEX}, .uri = ${fp_F109_URI}, .loader = &finger_${FPRINT}_load, .opcodes = \"${fp_OPCODES}\","
 		ENTRYL4[$FPRINTHEX]="	  .url = \"${fp_URL}\", .safe = ${fp_SAFE} },"
 		[[ "$fp_CONDITION" ]] && ENTRYL5_cond[$FPRINTHEX]="#endif"
 		statuslvl2 "Done"
@@ -158,7 +158,7 @@ genfprintinfo() {
 				ENTRIES+=("$ALIASHEX")
 				[[ "$fp_CONDITION" ]] && ENTRYL1_cond[$ALIASHEX]="#if $fp_CONDITION"
 				ENTRYL2[$ALIASHEX]="	// ${myalias} - Alias for ${FPRINT} - ${fp_DESCRIPTION}"
-				ENTRYL3[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${fp_F108_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${fp_OPCODES}\","
+				ENTRYL3[$ALIASHEX]="	{ .fprint = ${ALIASHEX}, .uri = ${fp_F109_URI}, .loader = &finger_${myalias}_load, .opcodes = \"${fp_OPCODES}\","
 				ENTRYL4[$ALIASHEX]="	  .url = \"${fp_URL}\", .safe = ${fp_SAFE} },"
 				[[ "$fp_CONDITION" ]] && ENTRYL5_cond[$ALIASHEX]="#endif"
 			done
