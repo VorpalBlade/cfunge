@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 ###########################################################################
 #                                                                         #
-#  cfunge - a conformant Befunge93/98/08 interpreter in C                 #
-#  Copyright (C) 2008-2009  Arvid Norlander                                    #
+#  cfunge - A standard-conforming Befunge93/98/109 interpreter in C.      #
+#  Copyright (C) 2008-2009  Arvid Norlander                               #
 #                                                                         #
 #  This program is free software: you can redistribute it and/or modify   #
 #  it under the terms of the GNU General Public License as published by   #
@@ -26,7 +26,7 @@
 # 1) uncomment the line:
 #      #define FUZZ_TESTING
 #    in global.h
-# 2) Enable LEAK_MODE in cmake, or valgrind will fail.
+# 2) Disable USE_GC in cmake, or valgrind will fail.
 # 4) make
 # 5) Run script from top source directory
 #    To test a specific fingerprint, run script with that fingerprint as
