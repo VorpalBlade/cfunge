@@ -1,4 +1,4 @@
-# cfunge - a conformant Befunge93/98/08 interpreter in C.
+# cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
 # Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -202,48 +202,66 @@ CFUNGE_REQUIRE_INCLUDE(limits.h)
 CFUNGE_REQUIRE_INCLUDE(inttypes.h)
 
 # POSIX.1-2001 requires these:
+CFUNGE_REQUIRE_INCLUDE(arpa/inet.h)
 CFUNGE_REQUIRE_INCLUDE(unistd.h)
 CFUNGE_REQUIRE_INCLUDE(fcntl.h)
+CFUNGE_REQUIRE_INCLUDE(netinet/in.h)
+CFUNGE_REQUIRE_INCLUDE(netinet/tcp.h)
+CFUNGE_REQUIRE_INCLUDE(sys/types.h)
+CFUNGE_REQUIRE_INCLUDE(sys/socket.h)
+CFUNGE_REQUIRE_INCLUDE(netdb.h)
+CFUNGE_REQUIRE_INCLUDE(regex.h)
+
+# Optional in POSIX, we need it
+CFUNGE_REQUIRE_INCLUDE(sys/mman.h)
 
 
 
 ################################################################################
 # Existance of various functions
+# Some are sanity checks (required in standards), some are required by cfunge
+# but optional in standards, some are optionally used by cfunge.
+#
+# All those in the second category are optional in POSIX.1-2001 but required in
+# POSIX.1-2008
+#
+# We don't check functions that exist in C89.
 
-# These are optional in POSIX.1-2001 but we need them.
-CFUNGE_REQUIRE_FUNC(mmap)
-CFUNGE_REQUIRE_FUNC(munmap)
-
-# These aren't optional in POSIX, but if someone tries this on a non POSIX
-# system they may be missing.
+# Sanity checks: Required by POSIX.1-2001.
 CFUNGE_REQUIRE_FUNC(dup2)
-CFUNGE_REQUIRE_FUNC(fork)
 CFUNGE_REQUIRE_FUNC(fcntl)
-CFUNGE_REQUIRE_FUNC(socket)
+CFUNGE_REQUIRE_FUNC(fork)
+CFUNGE_REQUIRE_FUNC(gettimeofday)
+CFUNGE_REQUIRE_FUNC(mkdir)
 CFUNGE_REQUIRE_FUNC(regcomp)
 CFUNGE_REQUIRE_FUNC(rmdir)
-CFUNGE_REQUIRE_FUNC(mkdir)
-CFUNGE_REQUIRE_FUNC(gettimeofday)
+# Sanity checks: Some networking functions (required by POSIX.1-2001)
+CFUNGE_REQUIRE_FUNC(getaddrinfo)
+CFUNGE_REQUIRE_FUNC(freeaddrinfo)
+CFUNGE_REQUIRE_FUNC(poll)
+CFUNGE_REQUIRE_FUNC(socket)
 
-# Some optional ones (in POSIX.1-2001) that can use optionally.
-# These are complex to check for since they can be in libc (FreeBSD) or
-# librt (Linux).
+# Required: These are optional in POSIX.1-2001 but we need them.
+CFUNGE_REQUIRE_FUNC(mmap)
+CFUNGE_REQUIRE_FUNC(munmap)
+# Required: We require the XSI extension strdup():
+CFUNGE_REQUIRE_FUNC(strdup)
 
+# Optional: Some optional ones (in POSIX.1-2001) that we use if found.
+#  random() and srandom() are XSI extensions, we fall back on rand/srand if they
+#  aren't available.
+CFUNGE_CHECK_FUNC(random)
+CFUNGE_CHECK_FUNC(srandom)
+#  clock_gettime is complex to check for since it can be in libc (FreeBSD) or in
+#  librt (Linux). Part of the check is near the end of the file.
 CFUNGE_CHECK_FUNC(clock_gettime)
 if (NOT CFUNGE_HAVE_clock_gettime)
 	find_library(LIBRT_LOCATION
 	             NAMES rt)
 endif (NOT CFUNGE_HAVE_clock_gettime)
 
-# random() and srandom() are XSI extensions, we fall back on rand/srand if
-# they aren't available.
-CFUNGE_CHECK_FUNC(random)
-CFUNGE_CHECK_FUNC(srandom)
-
-# However we require the XSI extension strdup():
-CFUNGE_REQUIRE_FUNC(strdup)
-
-# For these we fall back on non-l version.
+# Optional: C99 requires these but we fall back on double versions since many
+# sysems still lack the long double versions.
 set(CMAKE_REQUIRED_LIBRARIES "-lm")
 CFUNGE_CHECK_FUNC(acosl)
 CFUNGE_CHECK_FUNC(asinl)
@@ -394,7 +412,7 @@ endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 ################################################################################
 # Generate man page
 add_custom_target(build-man
-	help2man -N "--name=A fast Befunge93/98/108 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in --include doc/cfunge-man-fingerprints.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
+	help2man -N "--name=A fast Befunge93/98/109 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in --include doc/cfunge-man-fingerprints.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
 	DEPENDS cfunge
 	WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
 	COMMENT "Generating man page..."
