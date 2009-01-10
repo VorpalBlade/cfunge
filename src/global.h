@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -162,7 +162,7 @@ typedef uint32_t fungeUnsignedCell;
 #  define FUNGE_OLD_HANDPRINT 0x4346554e
 #endif
 #ifndef FUNGE_NEW_HANDPRINT
-/// Funge-108 Handprint: An URL.
+/// Funge-109 Handprint: An URL.
 #  define FUNGE_NEW_HANDPRINT "http://kuonet.org/~anmaster/cfunge"
 #endif
 #ifdef FUNGEHANDPRINT

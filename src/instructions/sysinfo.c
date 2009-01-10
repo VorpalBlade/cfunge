@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ extern char **environ;
 #define FUNGE_FLAGS_INPUT      0x02
 #define FUNGE_FLAGS_OUTPUT     0x04
 #define FUNGE_FLAGS_EXECUTE    0x08
-#define FUNGE_FLAGS_STD108     0x20
+#define FUNGE_FLAGS_STD109     0x20
 
 #define FUNGE_FLAGS_NOTSANDBOX FUNGE_FLAGS_INPUT | FUNGE_FLAGS_OUTPUT | FUNGE_FLAGS_EXECUTE
 
@@ -81,12 +81,12 @@ typedef enum SysInfoRequests {
 	si_hour_minute_second,
 	si_stack_count,
 	si_stack_sizes,
-	si_argc, // Funge-108
+	si_argc, // Funge-109
 	si_argv,
-	si_env_count, // Funge-108
+	si_env_count, // Funge-109
 	si_env,
-	// Funge-108
-	si_handprint108,
+	// Funge-109
+	si_handprint109,
 	si_basic_data_unit,
 	si_cell_size_in_unit
 } SysInfoRequests;
@@ -114,7 +114,7 @@ static const SysInfoRequests Funge98Requests[] = {
 	si_env
 };
 
-static const SysInfoRequests Funge108Requests[] = {
+static const SysInfoRequests Funge109Requests[] = {
 	si_flags,
 	si_cell_size,
 	si_handprint98,
@@ -137,7 +137,7 @@ static const SysInfoRequests Funge108Requests[] = {
 	si_argv,
 	si_env_count,
 	si_env,
-	si_handprint108,
+	si_handprint109,
 	si_basic_data_unit,
 	si_cell_size_in_unit
 };
@@ -159,8 +159,8 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 				// i, o and =
 				tmp |= FUNGE_FLAGS_NOTSANDBOX;
 			}
-			if (setting_current_standard == stdver108)
-				tmp |= FUNGE_FLAGS_STD108;
+			if (setting_current_standard == stdver109)
+				tmp |= FUNGE_FLAGS_STD109;
 			stack_push(pushStack, tmp);
 			break;
 		}
@@ -242,7 +242,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 				stack_push(pushStack, (fungeCell)ip->stackstack->stacks[i]->top);
 			stack_push(pushStack, (fungeCell)TOSSSize);
 			break;
-		case si_argc: // Command line arguments (count) (108 specific)
+		case si_argc: // Command line arguments (count) (109 specific)
 			stack_push(pushStack, fungeargc);
 			break;
 		case si_argv: // Command line arguments
@@ -252,7 +252,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 				stack_push_string(pushStack, (const unsigned char*)fungeargv[i], strlen(fungeargv[i]));
 			}
 			break;
-		case si_env_count: // Environment variables (count) (108 specific)
+		case si_env_count: // Environment variables (count) (109 specific)
 			// Check if result is cached.
 			if (environ_count == 0) {
 				size_t i = 0;
@@ -290,15 +290,15 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 
 			break;
 		}
-		case si_handprint108: // 1 0"gnirts" with Funge-108 URI (global env) (108 specific)
+		case si_handprint109: // 1 0"gnirts" with Funge-109 URI (global env) (109 specific)
 			// Bytes
 			stack_push_string(pushStack, (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
 			break;
-		case si_basic_data_unit: // 1 cell containing type of basic data unit used for cells (global env) (108 specific)
+		case si_basic_data_unit: // 1 cell containing type of basic data unit used for cells (global env) (109 specific)
 			// Bytes
 			stack_push(pushStack, 2);
 			break;
-		case si_cell_size_in_unit: // 1 cell containing cell size in the unit returned by request 21. (global env) (108 specific)
+		case si_cell_size_in_unit: // 1 cell containing cell size in the unit returned by request 21. (global env) (109 specific)
 			stack_push(pushStack, sizeof(fungeCell) * CHAR_BIT);
 			break;
 #ifndef NDEBUG
@@ -316,9 +316,9 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 	TOSSSize = ip->stack->top;
 	// Negative or 0: push all
 	if (request <= 0) {
-		if (setting_current_standard == stdver108) {
-			for (int i = sizeof(Funge108Requests) / sizeof(si_flags) - 1; i >= 0; i--)
-				push_request(Funge108Requests[i], ip, ip->stack);
+		if (setting_current_standard == stdver109) {
+			for (int i = sizeof(Funge109Requests) / sizeof(si_flags) - 1; i >= 0; i--)
+				push_request(Funge109Requests[i], ip, ip->stack);
 		} else {
 			for (int i = sizeof(Funge98Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge98Requests[i], ip, ip->stack);
@@ -328,9 +328,9 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 		push_request(request, ip, ip->stack);
 	} else {
 		funge_stack * restrict tmp = stack_create();
-		if (setting_current_standard == stdver108) {
-			for (int i = sizeof(Funge108Requests) / sizeof(si_flags) - 1; i >= 0; i--)
-				push_request(Funge108Requests[i], ip, tmp);
+		if (setting_current_standard == stdver109) {
+			for (int i = sizeof(Funge109Requests) / sizeof(si_flags) - 1; i >= 0; i--)
+				push_request(Funge109Requests[i], ip, tmp);
 		} else {
 			for (int i = sizeof(Funge98Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge98Requests[i], ip, tmp);

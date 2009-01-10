@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@
 
 typedef struct s_ImplementedFingerprintEntry {
 	const fungeCell         fprint;   /**< Fingerprint. */
-	const char            * uri;      /**< URI, used for Funge-108. */
+	const char            * uri;      /**< URI, used for Funge-109. */
 	const fingerprintLoader loader;   /**< Loader function pointer. */
 	const char            * opcodes;  /**< Sorted string with all implemented opcodes. */
 	const char            * url;      /**< URL, used to show links for more info about fingerprints. */

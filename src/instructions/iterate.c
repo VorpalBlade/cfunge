@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -90,25 +90,25 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 		fungeCell kInstr;
 		// Note that:
 		//   * Instruction executes *at* k
-		//   * In Funge-108 we skip over the cell we executed
+		//   * In Funge-109 we skip over the cell we executed
 		//     (if position or delta didn't change).
 		//   * In Funge-98 we don't do that.
 
-		// This is used in case of spaces and with Funge-108
+		// This is used in case of spaces and with Funge-109
 		fungeVector oldpos = ip->position;
-		// And this is for knowing where to move past (in 108)
+		// And this is for knowing where to move past (in 109)
 		fungeVector posinstr;
 		// Fetch instruction
 		ip_forward(ip, 1);
 		kInstr = fungespace_get(&ip->position);
 
 		// We should reach past any spaces and ;; pairs and execute first
-		// instruction we find. This is unclear/undef in 98 but defined in 108.
+		// instruction we find. This is unclear/undef in 98 but defined in 109.
 		if (kInstr == ' ' || kInstr == ';') {
 			kInstr = find_next_instr(ip, kInstr);
 		}
 
-		// First store pos where we got to restore to to "move past" instruction in Funge-108.
+		// First store pos where we got to restore to to "move past" instruction in Funge-109.
 		posinstr = ip->position;
 		// Then go back and execute it at k...
 		ip->position = oldpos;
@@ -125,7 +125,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 				break;
 			default: {
 				// Ok we got to execute it!
-				// Storing second part of the current IP state (for Funge-108)
+				// Storing second part of the current IP state (for Funge-109)
 				ipDelta olddelta = ip->delta;
 
 				// This horrible kludge is needed because iplist_duplicate_ip
@@ -167,9 +167,9 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 				if (kInstr == 't')
 					ip = &((*IPList)->ips[oldindex]);
 #endif
-				// If delta and ip did not change, move forward in Funge-108.
+				// If delta and ip did not change, move forward in Funge-109.
 				// ...unless we are recursive, to cause correct behaviour...
-				if (setting_current_standard == stdver108 && !isRecursive) {
+				if (setting_current_standard == stdver109 && !isRecursive) {
 					if (olddelta.x == ip->delta.x
 					    && olddelta.y == ip->delta.y
 					    && oldpos.x == ip->position.x

@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ static void print_help(void)
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
 	puts(" -S           Enable sandbox mode (see README for details).");
-	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 108).");
+	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 109).");
 	puts(" -t level     Use given trace level. Default 0.");
 	puts(" -V           Show version information and exit.");
 	puts(" -W           Show warnings.");
@@ -155,8 +155,8 @@ int main(int argc, char *argv[])
 					setting_current_standard = stdver93;
 				else if (strncmp(optarg, "98", 2) == 0)
 					setting_current_standard = stdver98;
-				else if (strncmp(optarg, "108", 3) == 0)
-					setting_current_standard = stdver108;
+				else if (strncmp(optarg, "109", 3) == 0)
+					setting_current_standard = stdver109;
 				else {
 					fprintf(stderr, "%s is not valid for -s.\n", optarg);
 					return EXIT_FAILURE;

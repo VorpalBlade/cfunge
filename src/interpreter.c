@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -460,7 +460,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 
 			case '(':
 			case ')': {
-				// TODO: Handle Funge-108 style too.
+				// TODO: Handle Funge-109 style too.
 				fungeCell fpsize = stack_pop(ip->stack);
 				// Check for sanity (because we won't have any fingerprints
 				// outside such a range. This prevents long lockups here.

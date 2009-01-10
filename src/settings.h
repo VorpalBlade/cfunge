@@ -1,6 +1,6 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
- * cfunge - a conformant Befunge93/98/08 interpreter in C.
+ * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
  * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@
 /// @note
 /// Out of order to make default initialise to 0.
 /// (A few bytes smaller binary that way, The standard one should always be 0)
-typedef enum { stdver98 = 0, stdver93 = 1, stdver108 = 2 } standardVersion;
+typedef enum { stdver98 = 0, stdver93 = 1, stdver109 = 2 } standardVersion;
 
 /// What version we should simulate.
 /// Affects space processing.
