@@ -31,11 +31,13 @@
 # 5) Run script from top source directory
 #    To test a specific fingerprint, run script with that fingerprint as
 #    the parameter. Otherwise no fingerprints are tested (just core).
-# Note that this script has only been tried on Gentoo Linux 2.6.24 x86_64!
+# Note that this script has only been tried on Gentoo Linux 2.6.27 x86_64!
 # I got no idea if it works elsewhere.
 #
-# Note that input/output is not tested, -S is used. I think you could test
-# I/O in a chroot though.
+# Note that input/output isn't tested (this script is meant to be run
+# non-interactively) and sandbox mode is used (for safety). You can modify the
+# script to test in non-sandbox mode if you run fuzz testing in a chroot. How
+# is left as an exercise for the reader.
 #
 # Another note: this script doesn't do much sanity checking on command line
 # parameters
@@ -58,43 +60,91 @@ die() {
 	exit 1
 }
 
+error() {
+	die "ERROR: $1"
+}
+
+# Return exit code for signal name
+#  $1 Out variable
+#  $2 Signal name.
+get_exit_code()
+{
+	local signum retval
+	signum=$(kill -l "$2")
+	retval=$(( 128 + signum ))
+	printf -v "$1" '%s' "$retval"
+}
+
+# Set up exit code info, to be used in checkerror() later.
+RET_ABRT=
+RET_ALRM=
+RET_BUS=
+RET_INT=
+RET_KILL=
+RET_SEGV=
+
+get_exit_code RET_ABRT SIGABRT
+get_exit_code RET_ALRM SIGALRM
+get_exit_code RET_BUS SIGBUS
+get_exit_code RET_INT SIGINT
+get_exit_code RET_KILL SIGKILL
+get_exit_code RET_SEGV SIGSEGV
+
+# Check return code and decide if we should end the script or continue.
 checkerror() {
-	# Most likely Ctrl-C, or q instruction
-	if [[ $1 -eq 130 ]]; then
-		echo " * Exit code was $1, ctrl c or q"
-		return
-	# ulimit or q
-	elif [[ $1 -eq 137 ]]; then
-		echo " * Exit code was $1, ulimit or q"
-		return
-	# SIGALARM or q
-	elif [[ $1 -eq 142 ]]; then
-		echo " * Exit code was $1, alarm"
-		return
-	# Ok, definitely
-	elif [[ $1 -eq 0 ]]; then
+	# Ok
+	if [[ $1 -eq 0 ]]; then
 		echo " * Exit code was $1, ok"
 		return
+	# Most likely Ctrl-C
+	elif [[ $1 -eq $RET_INT ]]; then
+		die " * Exit code was $1 (SIGINT), most likely ctrl-c"
 	# abort(), or maybe just "*** glibc detected ***" ones
-	elif [[ $1 -eq 134 ]]; then
-		die  " * Exit code was 134, probably abort!"
-	# SIGSEGV or q
-	elif [[ $1 -eq 139 ]]; then
-		die  " * Exit code was 139, probably segfault!"
-	# Unknown, but in not likely bad range.
-	elif [[ $1 -lt 127 ]]; then
-		echo " * Exit code was $1, probably ok"
-	else
-		die  " * Exit code was $1, probably issues there!"
+	elif [[ $1 -eq $RET_BUS ]]; then
+		die " * Exit code was $1 (SIGBUS). This is very bad."
+	elif [[ $1 -eq $RET_ABRT ]]; then
+		die " * Exit code was $1 (SIGABRT). This is usually bad."
+	# Ok: ulimit
+	elif [[ $1 -eq $RET_KILL ]]; then
+		echo -e "\a * Exit code was $1 (SIGKILL): Hopefully due to ulimits. It"
+		echo -e '\a   could also be caused by something else. Will continue after'
+		echo -e '\a   waiting for 5 seconds to allow you to abort script if you'
+		echo -e '\a   see anything indicating it is not due to ulimits.'
+		sleep 5
 		return
+	# SIGSEGV or q
+	elif [[ $1 -eq $RET_SEGV ]]; then
+		die  " * Exit code was $1 (SIGSEGV). This is very bad."
+	# Ok: SIGALRM
+	elif [[ $1 -eq $RET_ALRM ]]; then
+		echo " * Exit code was $1 (SIGALRM). This is OK."
+		return
+	# Unknown
+	else
+		die  " * Exit code was $1 (unknown), probably issues there!"
 	fi
 }
 
 if [[ ! -d src/fingerprints ]]; then
-	die "Run from top source directory please."
+	error "Run from top source directory please."
 fi
 if [[ ! -f ./cfunge ]]; then
-	die "There must be a copy of the binary in the top source directory."
+	error "There must be a copy of the binary in the top source directory."
+fi
+if ./cfunge -f | grep -q 'This binary uses Boehm GC'; then
+	error "This script doesn't work if cfunge was built against Bohem-GC. Please disable USE_GC in cmake and recompile."
+fi
+if ! ./cfunge -f | grep -q 'This is a fuzz testing build and thus not standard-conforming.'; then
+	error "cfunge was built without fuzz testing support. Please see instructions at the top of this script for how to fix."
+fi
+
+HAS_VALGRIND=
+if hash valgrind >/dev/null 2>&1; then
+	HAS_VALGRIND=1
+else
+	echo -e '\aWarning: You lack valgrind, if possible please install it.'
+	echo -e '\aFor now, will continue without valgrind.'
+	sleep 2
 fi
 
 # List of additional fingerprint instructions to test.
@@ -109,7 +159,9 @@ createfingerprint() {
 if [[ $1 ]]; then
 	echo "Will test fingerprint ${1}."
 	FPRINT=$1
-	FPRINTINSTRS=$(grep Finger${1}load src/fingerprints/fingerprints.h | grep -Eo '"[A-Z]+"' | tr -d '"')
+	# TODO: This should use *.spec parsing really... Parsing fingerprints.h is
+	# legacy code.
+	FPRINTINSTRS=$(grep finger_${1}_load src/fingerprints/fingerprints.h | grep -Eo '"[A-Z]+"' | tr -d '"')
 fi
 
 # This does not test fingerprints loaded randomly for the simple reason that it is very unlikely any will load.
@@ -128,7 +180,13 @@ while true; do
 	echo " * Running free standing"
 	(./cfunge -S fuzz.tmp); checkerror "$?"
 
-	echo " * Running under valgrind"
-	(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
-	grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from 1\)" valgnd.output || die "Valgrind issues!"
+	if [[ $HAS_VALGRIND ]]; then
+		echo " * Running under valgrind"
+		(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
+		grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from 1\)" valgnd.output || die "Valgrind detected issues!"
+	else
+		echo " * Skipping run under valgrind due to valgrind not being found"
+	fi
+
+	echo
 done

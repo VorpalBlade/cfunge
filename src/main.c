@@ -81,6 +81,12 @@ static void print_features(void)
 	puts(" * Err, this shouldn't happen, it seems cell size is not known...");
 #endif
 
+#ifdef FUZZ_TESTING
+	// We use this to warn users and to do sanity checking in the fuzz testing
+	// script.
+	puts(" ! This is a fuzz testing build and thus not standard-conforming.");
+#endif
+
 	cf_putchar_maybe_locked('\n');
 	// This call does not return.
 	manager_list();
