@@ -447,7 +447,6 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(fungeCell opcode, instructionPoi
 				}
 				break;
 
-
 			case 'i':
 				run_file_input(ip);
 				break;
