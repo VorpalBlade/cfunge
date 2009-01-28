@@ -168,7 +168,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 					ip = &((*IPList)->ips[oldindex]);
 #endif
 				// If delta and ip did not change, move forward in Funge-109.
-				// ...unless we are recursive, to cause correct behaviour...
+				// ...unless we are recursive, to ensure correct behaviour...
 				if (setting_current_standard == stdver109 && !isRecursive) {
 					if (olddelta.x == ip->delta.x
 					    && olddelta.y == ip->delta.y
