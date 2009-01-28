@@ -127,7 +127,7 @@ static Drawing pic;
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline Path* create_path(Point a, bool b, uint32_t c)
 {
-	Path* p = malloc(sizeof(Path));
+	Path* p = cf_malloc(sizeof(Path));
 	if (!p)
 		return NULL;
 	p->next = NULL;
@@ -140,6 +140,7 @@ static inline Path* create_path(Point a, bool b, uint32_t c)
 FUNGE_ATTR_FAST
 static inline void addPath(Point pt, bool penDown, uint32_t colour)
 {
+	// FIXME: Handle OOM
 	Path* p = create_path(pt, penDown, colour);
 
 	if (pic.pathBeg == NULL)
@@ -247,7 +248,8 @@ static inline void addPoint(void)
 	}
 
 	pic.dots_size++;
-	pic.dots = realloc(pic.dots, pic.dots_size * sizeof(Dot));
+	// FIXME: Handle OOM.
+	pic.dots = cf_realloc(pic.dots, pic.dots_size * sizeof(Dot));
 	pic.dots[pic.dots_size - 1].p = turt.p;
 	pic.dots[pic.dots_size - 1].colour = turt.colour;
 	newDraw();
@@ -279,14 +281,14 @@ static inline void freeResources(void)
 	if (p) {
 		while (p) {
 			Path* next = p->next;
-			free(p);
+			cf_free(p);
 			p = next;
 		}
-		free(p);
+		cf_free(p);
 	}
 	pic.pathBeg = NULL;
 	pic.path = NULL;
-	free(pic.dots);
+	cf_free(pic.dots);
 	pic.dots = NULL;
 	pic.dots_size = 0;
 }
