@@ -25,7 +25,10 @@
 #include <stdint.h>
 #include <assert.h>
 
-// This code tries to select the best timer.
+// This code tries to select the best timer:
+//  1. clock_gettime() with CLOCK_MONOTONIC
+//  2. clock_gettime() with CLOCK_REALTIME
+//  3. gettimeofday()
 
 #ifdef HAVE_clock_gettime
 #  include <unistd.h>
@@ -92,9 +95,9 @@ static inline fungeCell get_difference(const timetype * restrict before,
 	       + MSEC((fungeCell)SMALL_P(after) - (fungeCell)SMALL_P(before));
 }
 
-/// This function checks that the IP got a non-null HRTI data pointer.
+/// This function checks that the IP have a non-null HRTI data pointer.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline bool check_ip_got_HRTI(instructionPointer * ip)
+static inline bool check_ip_have_HRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {
 		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(timetype));
@@ -108,7 +111,7 @@ static inline bool check_ip_got_HRTI(instructionPointer * ip)
 /// E - Erase Mark
 static void finger_HRTI_erase_mark(instructionPointer * ip)
 {
-	if (!check_ip_got_HRTI(ip)) {
+	if (!check_ip_have_HRTI(ip)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -125,7 +128,7 @@ static void finger_HRTI_granularity(instructionPointer * ip)
 /// M - Mark
 static void finger_HRTI_mark(instructionPointer * ip)
 {
-	if (!check_ip_got_HRTI(ip)) {
+	if (!check_ip_have_HRTI(ip)) {
 		ip_reverse(ip);
 		return;
 	}
@@ -168,7 +171,7 @@ FUNGE_ATTR_FAST static inline bool setup_HRTI(instructionPointer * ip)
 	}
 	resolution = MSEC(resolution);
 	// Per IP, set up the data
-	return check_ip_got_HRTI(ip);
+	return check_ip_have_HRTI(ip);
 }
 
 bool finger_HRTI_load(instructionPointer * ip)
