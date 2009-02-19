@@ -205,7 +205,7 @@ static inline ssize_t find_fingerprint(const fungeCell fingerprint)
 		if (fingerprint <= ImplementedFingerprints[i].fprint) {
 			// Then it is larger... as in "not found"
 			if (fingerprint != ImplementedFingerprints[i].fprint)
-				return -1;
+				return FPRINT_NOTFOUND;
 			// If we run in a sandbox, can fingerprint be loaded?
 			// If not: break, as we know we found the right fingerprint,
 			// so no need to search more.
