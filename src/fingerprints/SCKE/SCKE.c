@@ -31,6 +31,11 @@
 #include <netdb.h>
 #include <poll.h>
 
+/* Handle systems missing this. */
+#ifndef AI_ADDRCONFIG
+#  define AI_ADDRCONFIG 0
+#endif
+
 /// H - Get address by hostname
 static void finger_SCKE_gethostbyname(instructionPointer * ip)
 {
