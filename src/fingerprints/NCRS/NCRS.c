@@ -28,11 +28,16 @@
 
 #include <stdio.h>
 
+#include "../TERM/TERM.h"
+
 #include <ncurses.h>
 #include <term.h>
 
-#include "../TERM/TERM.h"
-
+#if defined(__OpenBSD__)
+// OpenBSD's ncurses sucks hard, it redefines bool.
+#  undef bool
+#  define bool _Bool
+#endif
 
 #define NCRS_VALIDATE_STATE() if (!ncrs_valid_state) { ip_reverse(ip); return; }
 

@@ -30,10 +30,16 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "../NCRS/NCRS.h"
+
 #include <curses.h>
 #include <term.h>
 
-#include "../NCRS/NCRS.h"
+#if defined(__OpenBSD__)
+// OpenBSD's ncurses sucks hard, it redefines bool.
+#  undef bool
+#  define bool _Bool
+#endif
 
 // Define this if you want the correct but uggly
 // use of enter_ca_mode/exit_ca_mode. It makes
