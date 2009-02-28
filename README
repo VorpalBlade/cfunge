@@ -35,10 +35,14 @@ REQUIRED:
    function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
    strdup() and memory mapped files are mandatory and part of the base.)
    Operating systems known to work:
-   + Linux 2.6.25 (with glibc 2.6.1) and later (earlier versions unknown).
+   + Linux 2.6.25 (with glibc 2.6.1) and later (earlier versions unknown but
+     will probably work unless very old).
    + FreeBSD 6.3 or later (earlier versions unknown).
    + Mac OS X (unknown version) has been reported to work but I don't have it
      myself and thus can't test it.
+   + OpenBSD 4.4 (sparc64): I have not managed to get cmake 2.6 to compile on
+     OpenBSD, but I did manage to build cfunge by hand, required some strange
+     workarounds and defines.
    Windows most likely won't work. Nor do I plan to support it. Cygwin may work,
    but you are on your own if it doesn't.
 
