@@ -143,7 +143,7 @@ static void finger_REXP_compile(instructionPointer * ip)
 		regfree(&compiled_regex);
 
 	flags = translate_flags_C(stack_pop(ip->stack));
-	str = (char*)stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack, NULL);
 
 	compret = regcomp(&compiled_regex, str, flags);
 
@@ -172,7 +172,7 @@ static void finger_REXP_execute(instructionPointer * ip)
 	}
 
 	flags = translate_flags_E(stack_pop(ip->stack));
-	str = (char*)stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack, NULL);
 
 	execret = regexec(&compiled_regex, str, MATCHSIZE, matches, flags);
 	if (execret == 0) {

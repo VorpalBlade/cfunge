@@ -74,7 +74,7 @@ static void finger_ORTH_put(instructionPointer * ip)
 // output string
 static void finger_ORTH_output_string(instructionPointer * ip)
 {
-	char * restrict str = (char*)stack_pop_string(ip->stack);
+	char * restrict str = (char*)stack_pop_string(ip->stack, NULL);
 	// puts add newline, we therefore do fputs on stdout
 	fputs(str, stdout);
 	stack_free_string(str);

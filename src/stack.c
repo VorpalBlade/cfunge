@@ -193,6 +193,18 @@ FUNGE_ATTR_FAST inline fungeCell stack_get_index(const funge_stack * restrict st
 	}
 }
 
+FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)
+{
+	assert(stack != NULL);
+	// TODO: Maybe scan two cells at once if we are using 32-bit cells on a
+	// 64-bit system?
+	for (size_t i = stack->top; i > 0; i--) {
+		if (stack->entries[i - 1] == 0)
+			return stack->top - i;
+	}
+	return stack->top;
+}
+
 
 /********************************
  * Push and pop for data types. *
@@ -228,7 +240,7 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsig
 	}
 }
 
-FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack)
+FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, size_t * restrict len)
 {
 	fungeCell c;
 	size_t index = 0;
@@ -242,6 +254,8 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack)
 		index++;
 	}
 	buf[index] = '\0';
+	if (len)
+		*len = index;
 	return buf;
 }
 

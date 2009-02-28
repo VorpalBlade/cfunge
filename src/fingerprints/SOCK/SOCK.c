@@ -235,7 +235,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 	char * restrict str;
 	struct in_addr addr;
 
-	str = (char*)stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack, NULL);
 	if (inet_pton(AF_INET, str, &addr) != 1) {
 		ip_reverse(ip);
 	} else {

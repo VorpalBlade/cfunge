@@ -222,7 +222,7 @@ static void finger_NCRS_refresh(instructionPointer * ip)
 /// S - Write string at cursor
 static void finger_NCRS_write(instructionPointer * ip)
 {
-	unsigned char* str = stack_pop_string(ip->stack);
+	unsigned char* str = stack_pop_string(ip->stack, NULL);
 	NCRS_VALIDATE_STATE();
 	if (waddstr(ncrs_window, (char*)str) == ERR)
 		ip_reverse(ip);

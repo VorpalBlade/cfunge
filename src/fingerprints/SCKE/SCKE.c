@@ -44,7 +44,7 @@ static void finger_SCKE_gethostbyname(instructionPointer * ip)
 	struct addrinfo *result = NULL;
 	int retval;
 
-	str = (char*)stack_pop_string(ip->stack);
+	str = (char*)stack_pop_string(ip->stack, NULL);
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;

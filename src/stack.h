@@ -103,6 +103,14 @@ fungeCell stack_peek(const funge_stack * restrict stack);
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 fungeCell stack_get_index(const funge_stack * restrict stack, size_t index);
 
+/**
+ * Find length of string on stack. Scans for first 0 from the top. Returns
+ * length excluding the 0.
+ * @param stack Pointer to stack to operate on.
+ */
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+size_t stack_strlen(const funge_stack * restrict stack);
+
 
 
 /**
@@ -124,9 +132,11 @@ void stack_push_string(funge_stack * restrict stack, const unsigned char * restr
  * Pop a 0"gnirts" and return a null-terminated string.
  * Use stack_free_string() to free the string. This is due to that a different
  * allocation function may be used for these strings.
+ * @param stack A pointer to the stack in question.
+ * @param len If non-NULL, the string length is stored in this variable.
  */
-FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-unsigned char * stack_pop_string(funge_stack * restrict stack);
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED __attribute__((nonnull(1))) FUNGE_ATTR_FAST
+unsigned char * stack_pop_string(funge_stack * restrict stack, size_t * restrict len);
 
 /**
  * Free a 0"gnirts" that was popped with stack_pop_string().

@@ -47,7 +47,7 @@ FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 		fungeVector size;
 
 		// Pop stuff.
-		filename = (char*)stack_pop_string(ip->stack);
+		filename = (char*)stack_pop_string(ip->stack, NULL);
 
 		// Sanity test!
 		if (*filename == '\0') {
@@ -87,7 +87,7 @@ FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 		fungeVector size;
 
 		// Pop stuff.
-		filename = (char*)stack_pop_string(ip->stack);
+		filename = (char*)stack_pop_string(ip->stack, NULL);
 		textfile = (bool)(stack_pop(ip->stack) & 1);
 		offset = stack_pop_vector(ip->stack);
 		size = stack_pop_vector(ip->stack);

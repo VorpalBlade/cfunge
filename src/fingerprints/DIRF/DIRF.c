@@ -30,8 +30,9 @@
 static void finger_DIRF_chdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = (char*)stack_pop_string(ip->stack);
-	if (strlen(str) < 1) {
+	size_t len;
+	str = (char*)stack_pop_string(ip->stack, &len);
+	if (len < 1) {
 		ip_reverse(ip);
 		return;
 	}
@@ -43,8 +44,9 @@ static void finger_DIRF_chdir(instructionPointer * ip)
 static void finger_DIRF_mkdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = (char*)stack_pop_string(ip->stack);
-	if (strlen(str) < 1) {
+	size_t len;
+	str = (char*)stack_pop_string(ip->stack, &len);
+	if (len < 1) {
 		ip_reverse(ip);
 		return;
 	}
@@ -56,8 +58,9 @@ static void finger_DIRF_mkdir(instructionPointer * ip)
 static void finger_DIRF_rmdir(instructionPointer * ip)
 {
 	char * restrict str;
-	str = (char*)stack_pop_string(ip->stack);
-	if (strlen(str) < 1) {
+	size_t len;
+	str = (char*)stack_pop_string(ip->stack, &len);
+	if (len < 1) {
 		ip_reverse(ip);
 		return;
 	}

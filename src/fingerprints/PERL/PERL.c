@@ -191,7 +191,7 @@ static char * run_perl(const char * restrict perlcode)
 static void finger_PERL_eval(instructionPointer * ip)
 {
 	char * restrict result;
-	char * restrict perlcode = (char*)stack_pop_string(ip->stack);
+	char * restrict perlcode = (char*)stack_pop_string(ip->stack, NULL);
 	result = run_perl(perlcode);
 	if (result == NULL) {
 		ip_reverse(ip);
@@ -207,7 +207,7 @@ static void finger_PERL_eval(instructionPointer * ip)
 static void finger_PERL_int_eval(instructionPointer * ip)
 {
 	char * restrict result;
-	char * restrict perlcode = (char*)stack_pop_string(ip->stack);
+	char * restrict perlcode = (char*)stack_pop_string(ip->stack, NULL);
 	result = run_perl(perlcode);
 	if (result == NULL) {
 		ip_reverse(ip);
