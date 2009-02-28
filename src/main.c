@@ -37,6 +37,8 @@
 
 char **fungeargv = NULL;
 int fungeargc = 0;
+// Use a larger buffer for stdout in fully buffered mode.
+static char cfun_iobuf[BUFSIZ*4];
 
 // These are NOT worth inlineing, even though only called once.
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
@@ -97,6 +99,7 @@ static void print_help(void)
 {
 	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
+	puts(" -b           Use fully buffered output (default is system default for stdout).");
 	puts(" -F           Disable all fingerprints.");
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
@@ -142,8 +145,11 @@ int main(int argc, char *argv[])
 	// We detect socket issues in other ways.
 	signal(SIGPIPE, SIG_IGN);
 
-	while ((opt = getopt(argc, argv, "+FfhSs:t:VW")) != -1) {
+	while ((opt = getopt(argc, argv, "+bFfhSs:t:VW")) != -1) {
 		switch (opt) {
+			case 'b':
+				setvbuf(stdout, cfun_iobuf, _IOFBF, sizeof(cfun_iobuf));
+				break;
 			case 'F':
 				setting_disable_fingerprints = true;
 				break;
