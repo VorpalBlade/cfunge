@@ -10,7 +10,7 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r526)
+Changes since last release (r556)
 ---------------------------------
 These are important changes since last release:
  * cfunge now depend on cmake 2.6 (or later).
@@ -22,7 +22,7 @@ These are important changes since last release:
  * Added various checks at configuration time to check that needed functions
    exist.
  * Pushing a string on the stack is now a lot faster.
- * For POSIX.1-2008 compatiblity use clock_gettime() when available. Fall back
+ * For POSIX.1-2008 compatibility use clock_gettime() when available. Fall back
    on gettimeofday().
  * Avoid reallocing the IP list in concurrent Funge all the time.
  * Updated fingerprint spec format (now 1.3), allow fingerprints to be disabled
@@ -33,6 +33,21 @@ These are important changes since last release:
  * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
    found thanks to this.
  * Ncurses is now an optional dependency, detected at compile time.
+ * It is now Funge-109 (since Funge-108 wasn't finished in time).
+ * Fingerprint spec updated to 1.4.
+ * Optimised N in STRN.
+ * Made stack_pop_string() optionally return string length, avoiding some
+   pointless strlen() calls (since stack_pop_string() already has to know the
+   length).
+ * Added a flag (-b) for fully buffered output, this halves the sys time for
+   mycology and removes about 20% of the wall clock time.
+ * Added some workarounds for OpenBSD (missing AI_ADDRCONFIG, ncurses redefining
+   bool).
+ * Made the fuzz testing script more portable.
+
+Added fingerprints:
+ * DATE Date Functions
+ * NCRS Ncurses Extension
 
 
 0.3.3

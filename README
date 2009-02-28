@@ -115,6 +115,7 @@ Short descriptions of implemented fingerprints:
  3DSP 3D space manipulation extension
  BASE I/O for numbers in other bases
  CPLI Complex Integer extension
+ DATE Date Functions
  DIRF Directory functions extension
  FILE File I/O functions
  FING Operate on single fingerprint semantics
@@ -126,6 +127,7 @@ Short descriptions of implemented fingerprints:
  INDV Pointer functions
  JSTR Read and write strings in Funge-Space
  MODU Modulo Arithmetic Extension
+ NCRS Ncurses Extension
  NULL Funge-98 Null Fingerprint
  ORTH Orthogonal Easement Library
  PERL Generic Interface to the Perl Language
