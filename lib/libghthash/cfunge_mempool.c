@@ -103,7 +103,8 @@ static inline memory_block *mempool_get_next_free(void);
 
 
 FUNGE_ATTR_FAST
-bool mempool_setup(void) {
+bool mempool_setup(void)
+{
 	assert(pools == NULL);
 	pools = calloc_nogc(1, sizeof(pool_header));
 	if (!pools)
@@ -117,7 +118,8 @@ bool mempool_setup(void) {
 
 
 FUNGE_ATTR_FAST
-void mempool_teardown(void) {
+void mempool_teardown(void)
+{
 	if (!pools)
 		return;
 	for (size_t i = 0; i < pools_size; i++) {
@@ -129,7 +131,8 @@ void mempool_teardown(void) {
 
 
 FUNGE_ATTR_FAST
-memorypool_data *mempool_alloc(void) {
+memorypool_data *mempool_alloc(void)
+{
 	memory_block *block = freelist_get();
 	if (!block)
 		block = mempool_get_next_free();
@@ -140,7 +143,8 @@ memorypool_data *mempool_alloc(void) {
 
 
 FUNGE_ATTR_FAST
-void mempool_free(memorypool_data *ptr) {
+void mempool_free(memorypool_data *ptr)
+{
 	freelist_add((memory_block*)ptr);
 }
 
@@ -149,7 +153,8 @@ void mempool_free(memorypool_data *ptr) {
 
 /// Setup a mempool, allocating it's block.
 FUNGE_ATTR_FAST
-static inline bool initialise_mempool(pool_header *pool) {
+static inline bool initialise_mempool(pool_header *pool)
+{
 	pool->base = malloc_nogc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
 	if (!pool->base)
 		return false;
@@ -160,7 +165,8 @@ static inline bool initialise_mempool(pool_header *pool) {
 
 /// Tear down a mempool, freeing it's block.
 FUNGE_ATTR_FAST
-static inline void clear_mempool(pool_header *pool) {
+static inline void clear_mempool(pool_header *pool)
+{
 	if (!pool)
 		return;
 	if (pool->base)
@@ -170,8 +176,9 @@ static inline void clear_mempool(pool_header *pool) {
 
 /// Adds a new memory pool at the end of the array.
 FUNGE_ATTR_FAST
-static inline bool add_mempool(void) {
-	pool_header *pools_new = realloc_nogc(pools, sizeof(pool_header) * (pools_size+1));
+static inline bool add_mempool(void)
+{
+	pool_header *pools_new = realloc_nogc(pools, sizeof(pool_header) * (pools_size + 1));
 	if (!pools_new)
 		return false;
 	VALGRIND_MOVE_MEMPOOL(pools, pools_new);
@@ -187,7 +194,8 @@ static inline bool add_mempool(void) {
 
 /// Add a block to the list of free blocks.
 FUNGE_ATTR_FAST
-static inline void freelist_add(memory_block *memblock) {
+static inline void freelist_add(memory_block *memblock)
+{
 	memblock->next_free = free_list;
 	free_list = memblock;
 	VALGRIND_MEMPOOL_FREE(pools, memblock);
@@ -195,7 +203,8 @@ static inline void freelist_add(memory_block *memblock) {
 
 /// Try to get a block from the free block list.
 FUNGE_ATTR_FAST
-static inline memory_block *freelist_get(void) {
+static inline memory_block *freelist_get(void)
+{
 	if (!free_list) {
 		return NULL;
 	} else {
@@ -209,7 +218,8 @@ static inline memory_block *freelist_get(void) {
 /// Get memory from the first mempool with blocks free at the end.
 /// Will call add_mempool() if no blocks are free in the last mempool.
 FUNGE_ATTR_FAST
-static inline memory_block *mempool_get_next_free(void) {
+static inline memory_block *mempool_get_next_free(void)
+{
 	pool_header* pool = &pools[pools_size-1];
 
 	if ((pool->first_free - pool->base) >= (intptr_t)(POOL_ARRAY_COUNT - 1)) {

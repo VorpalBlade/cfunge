@@ -52,8 +52,8 @@
 
 typedef struct fungeSpace {
 	/// These two form a rectangle for the program size
-	funge_vector       topLeftCorner;
-	funge_vector       bottomRightCorner;
+	funge_vector      topLeftCorner;
+	funge_vector      bottomRightCorner;
 	/// And this is the hash table.
 	ght_hash_table_t *entries;
 	/// Used during loading to handle 0,0 not being least point.
@@ -139,7 +139,7 @@ fungespace_get(const funge_vector * restrict position)
 	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
-	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		return static_space[STATIC_COORD(x,y)];
 	} else {
 		tmp = (funge_cell*)ght_get(fspace.entries, position);
@@ -169,7 +169,7 @@ fungespace_get_offset(const funge_vector * restrict position,
 	x = (funge_unsigned_cell)tmp.x + FUNGESPACE_STATIC_OFFSET_X;
 	y = (funge_unsigned_cell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
 
-	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		return static_space[STATIC_COORD(x,y)];
 	} else {
 		result = (funge_cell*)ght_get(fspace.entries, &tmp);
@@ -189,7 +189,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
-	if (FUNGESPACE_RANGE_CHECK(x,y)) {
+	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		static_space[STATIC_COORD(x,y)] = value;
 	} else {
 		if (value == ' ') {
