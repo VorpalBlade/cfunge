@@ -46,7 +46,7 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 	if (u >= (fungeCell)s) {
 		stack_push(ip->stack, 0);
 	} else {
-		fungeCell * elems;
+		fungeCell * restrict elems;
 		fungeCell xu;
 
 		elems = cf_malloc_noptr(sizeof(fungeCell) * ip->stack->top);
