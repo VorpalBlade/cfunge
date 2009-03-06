@@ -171,7 +171,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			stack_push(pushStack, FUNGE_OLD_HANDPRINT);
 			break;
 		case si_version: // Version
-			stack_push(pushStack, FUNGEVERSION);
+			stack_push(pushStack, CFUNGE_VERSION_Y);
 			break;
 		case si_operating_paradigm: // Operating paradigm
 			if (setting_enable_sandbox) {
