@@ -37,9 +37,6 @@
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
-/// Type of IP delta.
-typedef funge_vector ipDelta;
-
 /// IP mode: code.
 #define ipmCODE 0x0
 /// IP mode: string.
@@ -62,7 +59,7 @@ struct s_fungeOpcodeStack;
 typedef struct s_instructionPointer {
 	funge_stack               * stack;         ///< Pointer to top stack.
 	funge_vector                position;      ///< Current position.
-	ipDelta                     delta;         ///< Current delta.
+	funge_vector                delta;         ///< Current delta.
 	funge_vector                storageOffset; ///< The storage offset for current IP.
 	ipMode                      mode;          ///< String or code mode.
 	// "Full" bool for very often checked flags.
@@ -144,7 +141,7 @@ void ip_forward(instructionPointer * restrict ip, funge_cell steps);
 
 /// Set delta of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta);
+void ip_set_delta(instructionPointer * restrict ip, const funge_vector * restrict delta);
 /// Set position of an IP to a new vector. Will wrap if needed (based on current delta).
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_position(instructionPointer * restrict ip, const funge_vector * restrict position);

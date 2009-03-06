@@ -132,7 +132,7 @@ FUNGE_ATTR_FAST inline void ip_forward(instructionPointer * restrict ip, funge_c
 	fungespace_wrap(&ip->position, &ip->delta);
 }
 
-FUNGE_ATTR_FAST inline void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta)
+FUNGE_ATTR_FAST inline void ip_set_delta(instructionPointer * restrict ip, const funge_vector * restrict delta)
 {
 	assert(ip != NULL);
 	assert(delta != NULL);

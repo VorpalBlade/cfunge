@@ -126,7 +126,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 			default: {
 				// Ok we got to execute it!
 				// Storing second part of the current IP state (for Funge-109)
-				ipDelta olddelta = ip->delta;
+				funge_vector olddelta = ip->delta;
 
 				// This horrible kludge is needed because iplist_duplicate_ip
 				// calls realloc so IP pointer may end up invalid. A horrible

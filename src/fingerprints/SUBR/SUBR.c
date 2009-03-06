@@ -28,7 +28,7 @@
 
 #define ALLOCCHUNK 8
 
-static const ipDelta SUBRnewDelta = { .x = 1, .y = 0 };
+static const funge_vector SUBRnewDelta = { .x = 1, .y = 0 };
 
 /// A - Change to absolute addressing
 static void finger_SUBR_absolute(instructionPointer * ip)
