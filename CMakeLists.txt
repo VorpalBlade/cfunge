@@ -174,11 +174,9 @@ endif(USE_WERROR)
 
 option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though)." OFF)
 if (HARDENED)
-	if (CMAKE_COMPILER_IS_GNUCC)
-		# Slows down though.
-		CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
-		add_definitions(-DFORTIFY_SOURCE=2)
-	endif (CMAKE_COMPILER_IS_GNUCC)
+	add_definitions(-D_FORTIFY_SOURCE=2)
+	# Slows down though.
+	CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
 endif (HARDENED)
 
 
