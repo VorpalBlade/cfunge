@@ -32,10 +32,11 @@
  * Compatibility stuff to support systems lacking some functions of features.
  */
 /*@{*/
-#if !defined(__GNUC__) && !defined(__INTEL_COMPILER)
-#  undef __attribute__
+#ifdef __GNUC__
+#  define FUNGE_ATTR(x) __attribute__(x)
+#else
 /// Make non-GCC compilers happy.
-#  define  __attribute__(x)  /* NO-OP */
+#  define FUNGE_ATTR(x)  /* NO-OP */
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ >= 3) && !defined(__INTEL_COMPILER)
@@ -59,7 +60,7 @@
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  ifdef __i386__
 /// Used to select fast calling convention on platforms that need it.
-#    define  FUNGE_ATTR_FAST __attribute__((regparm(3)))
+#    define  FUNGE_ATTR_FAST FUNGE_ATTR((regparm(3)))
 #  else
 /// Used to select fast calling convention on platforms that need it.
 #    define  FUNGE_ATTR_FAST /* NO-OP */
@@ -70,15 +71,15 @@
 #endif
 
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
-#  define FUNGE_ATTR_CONST         __attribute__((const))
-#  define FUNGE_ATTR_ALWAYS_INLINE __attribute__((always_inline))
-#  define FUNGE_ATTR_MALLOC        __attribute__((malloc))
-#  define FUNGE_ATTR_NOINLINE      __attribute__((noinline))
-#  define FUNGE_ATTR_NONNULL       __attribute__((nonnull))
-#  define FUNGE_ATTR_NORET         __attribute__((noreturn))
-#  define FUNGE_ATTR_PURE          __attribute__((pure))
-#  define FUNGE_ATTR_UNUSED        __attribute__((unused))
-#  define FUNGE_ATTR_WARN_UNUSED   __attribute__((warn_unused_result))
+#  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
+#  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
+#  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
+#  define FUNGE_ATTR_NOINLINE      FUNGE_ATTR((noinline))
+#  define FUNGE_ATTR_NONNULL       FUNGE_ATTR((nonnull))
+#  define FUNGE_ATTR_NORET         FUNGE_ATTR((noreturn))
+#  define FUNGE_ATTR_PURE          FUNGE_ATTR((pure))
+#  define FUNGE_ATTR_UNUSED        FUNGE_ATTR((unused))
+#  define FUNGE_ATTR_WARN_UNUSED   FUNGE_ATTR((warn_unused_result))
 #else
 #  define FUNGE_ATTR_CONST         /* NO-OP */
 #  define FUNGE_ATTR_ALWAYS_INLINE /* NO-OP */
@@ -169,9 +170,22 @@ typedef uint32_t fungeUnsignedCell;
 #  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"
 #endif
 /// Version, for -V.
-#define APPVERSION  "0.3.3"
+#define CFUNGE_APPVERSION  "0.3.3"
 /// For y instruction.
-#define FUNGEVERSION 33
+#define CFUNGE_VERSION_Y 33
+
+/**
+ * For third party code.
+ * The format is 0xaabbccdd, where:
+ *  - aa is major
+ *  - bb is minor
+ *  - cc is micro
+ *  - dd is 0 for releases, and has a non-zero value for development versions
+ *    after said release. Usually it will be 01, but it may be more if some
+ *    major API breakage happened.
+ *  This define was introduced between 0.3.3 and 0.3.4.
+ */
+#define CFUNGE_VERSION 0x00030301
 
 // Define if you use fuzz testing script.
 //#define FUZZ_TESTING

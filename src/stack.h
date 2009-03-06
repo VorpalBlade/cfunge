@@ -135,7 +135,7 @@ void stack_push_string(funge_stack * restrict stack, const unsigned char * restr
  * @param stack A pointer to the stack in question.
  * @param len If non-NULL, the string length is stored in this variable.
  */
-FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED __attribute__((nonnull(1))) FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR((nonnull(1))) FUNGE_ATTR_FAST
 unsigned char * stack_pop_string(funge_stack * restrict stack, size_t * restrict len);
 
 /**
@@ -150,7 +150,7 @@ unsigned char * stack_pop_string(funge_stack * restrict stack, size_t * restrict
  * @param len The number of chars to pop.
  * @return Result returned as null-terminated string.
  */
-FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 unsigned char * stack_pop_sized_string(funge_stack * restrict stack, size_t len);
 /// Clear all items from a stack.
 #define stack_clear(stack) { stack->top = 0; }

@@ -250,8 +250,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 		return NULL;
 
 	while ((c = stack_pop(stack)) != '\0') {
-		buf[index] = (unsigned char)c;
-		index++;
+		buf[index++] = (unsigned char)c;
 	}
 	buf[index] = '\0';
 	if (len)

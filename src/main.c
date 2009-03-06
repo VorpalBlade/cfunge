@@ -118,7 +118,7 @@ static void print_help(void)
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
 static void print_version(void)
 {
-	printf("cfunge %s\n", APPVERSION);
+	puts("cfunge " CFUNGE_APPVERSION);
 	puts("Copyright (C) 2008-2009 Arvid Norlander.");
 	puts("This is free software.  You may redistribute copies of it under the terms of");
 	puts("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.");
