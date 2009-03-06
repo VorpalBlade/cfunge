@@ -57,7 +57,7 @@ static void print_features(void)
 	puts(" - Tracing using -t <level> option is disabled.");
 #endif
 
-#ifndef DISABLE_GC
+#ifdef CFUN_USE_GC
 	puts(" * This binary uses Boehm GC.");
 #else
 	puts(" * This binary does not use Boehm GC.");
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 {
 	int opt;
 
-#ifndef DISABLE_GC
+#ifdef CFUN_USE_GC
 //	GC_find_leak = 1;
 	GC_all_interior_pointers = 1;
 	GC_INIT();

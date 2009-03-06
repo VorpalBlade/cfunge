@@ -123,8 +123,7 @@ if(USE_GC)
 	)
 	include_directories(${BOEHM_INCLUDE_DIR})
 	link_directories(${BOEHMGC_LIBRARY_DIRS})
-else(USE_GC)
-	add_definitions(-DDISABLE_GC)
+	add_definitions(-DCFUN_USE_GC)
 endif(USE_GC)
 
 

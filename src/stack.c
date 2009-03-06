@@ -404,7 +404,7 @@ FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict i
 		        ip->position.x, ip->position.y);
 	}
 	// Lets hope.
-#ifndef DISABLE_GC
+#ifdef CFUN_USE_GC
 	gc_collect_full();
 #endif
 }

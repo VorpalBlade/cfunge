@@ -51,9 +51,7 @@ FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 
 		// Sanity test!
 		if (*command == '\0') {
-#ifdef DISABLE_GC
-			cf_free(command);
-#endif
+			stack_free_string(command);
 			stack_push(ip->stack, FUNGE_NOCOMMAND);
 			return;
 		}
@@ -65,8 +63,6 @@ FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 		} else {
 			stack_push(ip->stack, (fungeCell)retval);
 		}
-#ifdef DISABLE_GC
-		cf_free(command);
-#endif
+		stack_free_string(command);
 	}
 }

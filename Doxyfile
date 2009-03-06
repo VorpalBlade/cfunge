@@ -1070,7 +1070,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = USE64 CONCURRENT_FUNGE DISABLE_GC \
+PREDEFINED             = USE64 CONCURRENT_FUNGE \
                          FUNGE_ATTR_FAST= \
                          FUNGE_ATTR_CONST= \
                          FUNGE_ATTR_ALWAYS_INLINE= \
@@ -1081,7 +1081,7 @@ PREDEFINED             = USE64 CONCURRENT_FUNGE DISABLE_GC \
                          FUNGE_ATTR_PURE= \
                          FUNGE_ATTR_UNUSED= \
                          FUNGE_ATTR_WARN_UNUSED= \
-                         __attribute__= \
+                         FUNGE_ATTR= \
                          FUNGE_SB_PRINTF= \
                          HAVE_random=1 HAVE_srandom=1
 

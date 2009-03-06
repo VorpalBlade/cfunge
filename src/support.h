@@ -39,7 +39,7 @@
 
 // GC may cause threading to happen...
 // ...but without threading we can avoid locking for some stuff.
-#ifndef DISABLE_GC
+#ifdef CFUN_USE_GC
 #  define NEED_LOCKED
 #else
 #  undef NEED_LOCKED
@@ -50,7 +50,7 @@
  * These should be used when allocating memory
  */
 /*@{*/
-#ifndef DISABLE_GC
+#ifdef CFUN_USE_GC
 
 #  include <gc/gc.h>
 
