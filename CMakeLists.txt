@@ -33,9 +33,9 @@ mark_as_advanced(
 )
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-#set(CMAKE_MODULE_PATH
-#	${CMAKE_SOURCE_DIR}/cmake/Modules
-#)
+set(CMAKE_MODULE_PATH
+	${CMAKE_SOURCE_DIR}/cmake/modules
+)
 
 
 # if you want the full compiler output, uncomment the following line
@@ -43,67 +43,25 @@ mark_as_advanced(
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
+# Common cmake macros
 include(FindPkgConfig)
 include(CheckCCompilerFlag)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(CheckIncludeFile)
 
+# Cfunge specific macros.
+include(CfungeCheckCflag)
+include(CfungeCheckFunction)
+include(CfungeRequireFunction)
+include(CfungeRequireInclude)
+include(CfungeCheckLibraryFunction)
+include(CfungeCheckLinkerFlag)
+
 set(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
 	CACHE PATH "Where to install man page."
 )
-
-
-
-################################################################################
-# Macros
-
-# Macro to check if a CFLAG is supported, and then add it
-macro(CFUNGE_CHECK_CFLAG name flag)
-	CHECK_C_COMPILER_FLAG(${flag} _CHECKFLAG_${name})
-	if (_CHECKFLAG_${name})
-		add_definitions(${flag})
-	endif (_CHECKFLAG_${name})
-endmacro(CFUNGE_CHECK_CFLAG)
-
-# Macro to check if a library exists and have a function and add it to
-# libraries to link to target if it does.
-macro(CFUNGE_CHECK_LIBRARY_FUNC target library function location)
-	CHECK_LIBRARY_EXISTS(${library} ${function} ${location} _CHECKLIBFUNC_${library}_${function})
-	if (_CHECKLIBFUNC_${library}_${function})
-		set(HAVE_${library}_${function} true PARENT_SCOPE)
-		add_definitions(-DHAVE_${function})
-		target_link_libraries(${target} ${library})
-	endif (_CHECKLIBFUNC_${library}_${function})
-endmacro(CFUNGE_CHECK_LIBRARY_FUNC)
-
-# Macro to check if a function is supported and add a define if yes.
-macro(CFUNGE_CHECK_FUNC name)
-	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
-	if (_CHECKFUNC_${name})
-		set(CFUNGE_HAVE_${name} true PARENT_SCOPE)
-		add_definitions(-DHAVE_${name})
-	endif (_CHECKFUNC_${name})
-endmacro(CFUNGE_CHECK_FUNC)
-
-# Macro to check if a function is supported and error out if not.
-macro(CFUNGE_REQUIRE_FUNC name)
-	CHECK_FUNCTION_EXISTS(${name} _CHECKFUNC_${name})
-	if (NOT _CHECKFUNC_${name})
-		message(FATAL_ERROR
-		        "Your system seems to be missing the function \"${name}\" which is required by cfunge.")
-	endif (NOT _CHECKFUNC_${name})
-endmacro(CFUNGE_REQUIRE_FUNC)
-
-# Macro to ensure that a specific system header exists; will error out if not.
-macro(CFUNGE_REQUIRE_INCLUDE name)
-	CHECK_INCLUDE_FILE(${name} _CHECKINCLUDE_${name})
-	if (NOT _CHECKINCLUDE_${name})
-		message(FATAL_ERROR
-		        "Your system seems to be missing the header \"${name}\" which is required by cfunge.")
-	endif (NOT _CHECKINCLUDE_${name})
-endmacro(CFUNGE_REQUIRE_INCLUDE)
 
 
 
@@ -162,7 +120,6 @@ if(USE_VALGRIND)
 	endif (USE_GC)
 	add_definitions(-DENABLE_VALGRIND)
 endif(USE_VALGRIND)
-
 
 option(USE_WERROR "Should we build with -Werror" OFF)
 if(USE_WERROR)
@@ -225,33 +182,33 @@ CFUNGE_REQUIRE_INCLUDE(sys/mman.h)
 # We don't check functions that exist in C89.
 
 # Sanity checks: Required by POSIX.1-2001.
-CFUNGE_REQUIRE_FUNC(dup2)
-CFUNGE_REQUIRE_FUNC(fcntl)
-CFUNGE_REQUIRE_FUNC(fork)
-CFUNGE_REQUIRE_FUNC(gettimeofday)
-CFUNGE_REQUIRE_FUNC(mkdir)
-CFUNGE_REQUIRE_FUNC(regcomp)
-CFUNGE_REQUIRE_FUNC(rmdir)
+CFUNGE_REQUIRE_FUNCTION(dup2)
+CFUNGE_REQUIRE_FUNCTION(fcntl)
+CFUNGE_REQUIRE_FUNCTION(fork)
+CFUNGE_REQUIRE_FUNCTION(gettimeofday)
+CFUNGE_REQUIRE_FUNCTION(mkdir)
+CFUNGE_REQUIRE_FUNCTION(regcomp)
+CFUNGE_REQUIRE_FUNCTION(rmdir)
 # Sanity checks: Some networking functions (required by POSIX.1-2001)
-CFUNGE_REQUIRE_FUNC(getaddrinfo)
-CFUNGE_REQUIRE_FUNC(freeaddrinfo)
-CFUNGE_REQUIRE_FUNC(poll)
-CFUNGE_REQUIRE_FUNC(socket)
+CFUNGE_REQUIRE_FUNCTION(getaddrinfo)
+CFUNGE_REQUIRE_FUNCTION(freeaddrinfo)
+CFUNGE_REQUIRE_FUNCTION(poll)
+CFUNGE_REQUIRE_FUNCTION(socket)
 
 # Required: These are optional in POSIX.1-2001 but we need them.
-CFUNGE_REQUIRE_FUNC(mmap)
-CFUNGE_REQUIRE_FUNC(munmap)
+CFUNGE_REQUIRE_FUNCTION(mmap)
+CFUNGE_REQUIRE_FUNCTION(munmap)
 # Required: We require the XSI extension strdup():
-CFUNGE_REQUIRE_FUNC(strdup)
+CFUNGE_REQUIRE_FUNCTION(strdup)
 
 # Optional: Some optional ones (in POSIX.1-2001) that we use if found.
 #  random() and srandom() are XSI extensions, we fall back on rand/srand if they
 #  aren't available.
-CFUNGE_CHECK_FUNC(random)
-CFUNGE_CHECK_FUNC(srandom)
+CFUNGE_CHECK_FUNCTION(random)
+CFUNGE_CHECK_FUNCTION(srandom)
 #  clock_gettime is complex to check for since it can be in libc (FreeBSD) or in
 #  librt (Linux). Part of the check is near the end of the file.
-CFUNGE_CHECK_FUNC(clock_gettime)
+CFUNGE_CHECK_FUNCTION(clock_gettime)
 if (NOT CFUNGE_HAVE_clock_gettime)
 	find_library(LIBRT_LOCATION
 	             NAMES rt)
@@ -260,16 +217,16 @@ endif (NOT CFUNGE_HAVE_clock_gettime)
 # Optional: C99 requires these but we fall back on double versions since many
 # sysems still lack the long double versions.
 set(CMAKE_REQUIRED_LIBRARIES "-lm")
-CFUNGE_CHECK_FUNC(acosl)
-CFUNGE_CHECK_FUNC(asinl)
-CFUNGE_CHECK_FUNC(atanl)
-CFUNGE_CHECK_FUNC(cosl)
-CFUNGE_CHECK_FUNC(floorl)
-CFUNGE_CHECK_FUNC(powl)
-CFUNGE_CHECK_FUNC(roundl)
-CFUNGE_CHECK_FUNC(sinl)
-CFUNGE_CHECK_FUNC(sqrtl)
-CFUNGE_CHECK_FUNC(tanl)
+CFUNGE_CHECK_FUNCTION(acosl)
+CFUNGE_CHECK_FUNCTION(asinl)
+CFUNGE_CHECK_FUNCTION(atanl)
+CFUNGE_CHECK_FUNCTION(cosl)
+CFUNGE_CHECK_FUNCTION(floorl)
+CFUNGE_CHECK_FUNCTION(powl)
+CFUNGE_CHECK_FUNCTION(roundl)
+CFUNGE_CHECK_FUNCTION(sinl)
+CFUNGE_CHECK_FUNCTION(sqrtl)
+CFUNGE_CHECK_FUNCTION(tanl)
 
 
 
@@ -361,9 +318,9 @@ FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 add_executable(cfunge ${CFUNGE_SOURCES})
 
 # This is disabled until I figure out how to detect if the flags are supported.
-#set_target_properties(cfunge PROPERTIES
-#	LINK_FLAGS "-Wl,-O1,--as-needed,--warn-common"
-#)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_O1 -Wl,-O1)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_as-needed -Wl,--as-needed)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_warn-common -Wl,--warn-common)
 
 
 
@@ -401,7 +358,7 @@ endif(USE_MUDFLAP)
 
 if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 	get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
-	CFUNGE_CHECK_LIBRARY_FUNC(cfunge rt clock_gettime ${LIBRT_PATH})
+	CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge rt clock_gettime ${LIBRT_PATH})
 endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 
 
