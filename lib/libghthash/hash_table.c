@@ -416,7 +416,7 @@ int ght_insert(ght_hash_table_t * restrict p_ht,
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_ATTR_FAST
 funge_cell *ght_get(ght_hash_table_t * restrict p_ht,
-                   const fungeSpaceHashKey * restrict p_key_data)
+                    const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -441,8 +441,8 @@ funge_cell *ght_get(ght_hash_table_t * restrict p_ht,
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_ATTR_FAST
 funge_cell ght_replace(ght_hash_table_t * restrict p_ht,
-                      funge_cell p_entry_data,
-                      const fungeSpaceHashKey * restrict p_key_data)
+                       funge_cell p_entry_data,
+                       const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_e;
 	ght_hash_key_t key;
@@ -475,7 +475,7 @@ funge_cell ght_replace(ght_hash_table_t * restrict p_ht,
    returned (and NOT free'd). */
 FUNGE_ATTR_FAST
 funge_cell ght_remove(ght_hash_table_t * restrict p_ht,
-                     const fungeSpaceHashKey * restrict p_key_data)
+                      const fungeSpaceHashKey * restrict p_key_data)
 {
 	ght_hash_entry_t *p_out;
 	ght_hash_key_t key;

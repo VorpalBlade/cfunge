@@ -169,7 +169,7 @@ static utf8 copy(constUtf8 restrict from)
 	if ((temp = (utf8) allocate(len + 1)) == NULL)
 		return NULL;
 	memcpy(temp, from, len);
-	temp[len]='\0';
+	temp[len] = '\0';
 	return temp;
 }
 
