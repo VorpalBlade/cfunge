@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
-inline bool vector_is_cardinal(const fungeVector * restrict v)
+inline bool vector_is_cardinal(const funge_vector * restrict v)
 {
 	// Due to unsigned this can't overflow in the addition below.
 	funge_unsigned_cell x = (funge_unsigned_cell)ABS(v->x);

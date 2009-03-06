@@ -32,7 +32,7 @@
 
 typedef struct sFungeFileHandle {
 	FILE      * file;
-	fungeVector buffvect; // IO buffer in Funge-Space
+	funge_vector buffvect; // IO buffer in Funge-Space
 } FungeFileHandle;
 
 #define ALLOCCHUNK 2
@@ -231,7 +231,7 @@ static void finger_FILE_fopen(instructionPointer * ip)
 {
 	char * restrict filename;
 	funge_cell mode;
-	fungeVector vect;
+	funge_vector vect;
 	funge_cell h;
 
 	filename = (char*)stack_pop_string(ip->stack, NULL);

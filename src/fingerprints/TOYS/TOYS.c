@@ -67,7 +67,7 @@ static void finger_TOYS_pair_of_shoes(instructionPointer * ip)
 /// C - bracelet (Low order copy)
 static void finger_TOYS_bracelet(instructionPointer * ip)
 {
-	fungeVector t, d, o;
+	funge_vector t, d, o;
 	t = stack_pop_vector(ip->stack);
 	d = stack_pop_vector(ip->stack);
 	o = stack_pop_vector(ip->stack);
@@ -105,7 +105,7 @@ static void finger_TOYS_pitchfork_head(instructionPointer * ip)
 /// F - calipers (Write matrix to funge space from stack)
 static void finger_TOYS_calipers(instructionPointer * ip)
 {
-	fungeVector t;
+	funge_vector t;
 	funge_cell i, j;
 
 	t = stack_pop_vector(ip->stack);
@@ -122,7 +122,7 @@ static void finger_TOYS_calipers(instructionPointer * ip)
 /// G - counterclockwise (Read matrix from funge space onto stack)
 static void finger_TOYS_counterclockwise(instructionPointer * ip)
 {
-	fungeVector o;
+	funge_vector o;
 	funge_cell i, j;
 
 	o = stack_pop_vector(ip->stack);
@@ -179,7 +179,7 @@ static void finger_TOYS_fishhook(instructionPointer * ip)
 /// K - scissors (High order copy)
 static void finger_TOYS_scissors(instructionPointer * ip)
 {
-	fungeVector t, d, o;
+	funge_vector t, d, o;
 	t = stack_pop_vector(ip->stack);
 	d = stack_pop_vector(ip->stack);
 	o = stack_pop_vector(ip->stack);
@@ -211,7 +211,7 @@ static void finger_TOYS_corner(instructionPointer * ip)
 /// M - kittycat (Low order move)
 static void finger_TOYS_kittycat(instructionPointer * ip)
 {
-	fungeVector t, d, o;
+	funge_vector t, d, o;
 	t = stack_pop_vector(ip->stack);
 	d = stack_pop_vector(ip->stack);
 	o = stack_pop_vector(ip->stack);
@@ -290,7 +290,7 @@ static void finger_TOYS_can_opener(instructionPointer * ip)
 /// S - chicane (memset on funge space)
 static void finger_TOYS_chicane(instructionPointer * ip)
 {
-	fungeVector d, o;
+	funge_vector d, o;
 	funge_cell c;
 	o = stack_pop_vector(ip->stack);
 	d = stack_pop_vector(ip->stack);
@@ -335,7 +335,7 @@ static void finger_TOYS_tumbler(instructionPointer * ip)
 /// V - dixiecup (High order move)
 static void finger_TOYS_dixiecup(instructionPointer * ip)
 {
-	fungeVector t, d, o;
+	funge_vector t, d, o;
 	t = stack_pop_vector(ip->stack);
 	d = stack_pop_vector(ip->stack);
 	o = stack_pop_vector(ip->stack);
@@ -359,7 +359,7 @@ static void finger_TOYS_dixiecup(instructionPointer * ip)
 /// W - television antenna (Atomic g/wait and try again/reverse)
 static void finger_TOYS_television_antenna(instructionPointer * ip)
 {
-	fungeVector vect;
+	funge_vector vect;
 	funge_cell v, c;
 	vect = stack_pop_vector(ip->stack);
 	v = stack_pop(ip->stack);

@@ -193,7 +193,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				// won't work for j.
 				funge_cell jumps = stack_pop(ip->stack);
 				if (jumps != 0) {
-					fungeVector tmp;
+					funge_vector tmp;
 					tmp.x = ip->delta.x;
 					tmp.y = ip->delta.y;
 					ip->delta.y *= jumps;
@@ -226,7 +226,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				ip_turn_right(ip);
 				break;
 			case 'x': {
-				fungeVector pos;
+				funge_vector pos;
 				pos = stack_pop_vector(ip->stack);
 				ip_set_delta(ip, & pos);
 				break;
@@ -339,7 +339,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			}
 
 			case 'g': {
-				fungeVector pos;
+				funge_vector pos;
 				funge_cell a;
 				pos = stack_pop_vector(ip->stack);
 				a = fungespace_get_offset(&pos, &ip->storageOffset);
@@ -347,7 +347,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			}
 			case 'p': {
-				fungeVector pos;
+				funge_vector pos;
 				funge_cell a;
 				pos = stack_pop_vector(ip->stack);
 				a = stack_pop(ip->stack);
@@ -415,7 +415,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 
 			case '{': {
 				funge_cell count;
-				fungeVector pos;
+				funge_vector pos;
 				count = stack_pop(ip->stack);
 				ip_forward(ip, 1);
 				pos.x = ip->position.x;

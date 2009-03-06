@@ -174,7 +174,7 @@ static void finger_NCRS_toggle_keypad(instructionPointer * ip)
 /// M - Move cursor to x,y
 static void finger_NCRS_goto_xy(instructionPointer * ip)
 {
-	fungeVector v = stack_pop_vector(ip->stack);
+	funge_vector v = stack_pop_vector(ip->stack);
 	NCRS_VALIDATE_STATE();
 	if (wmove(ncrs_window, (int)v.y, (int)v.x) == ERR)
 		ip_reverse(ip);

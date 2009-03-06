@@ -38,7 +38,7 @@
 #include "funge-space/funge-space.h"
 
 /// Type of IP delta.
-typedef fungeVector ipDelta;
+typedef funge_vector ipDelta;
 
 /// IP mode: code.
 #define ipmCODE 0x0
@@ -60,17 +60,17 @@ struct s_fungeOpcodeStack;
 /// Fields of the style fingerXXXX* are for fingerprint per-IP data.
 /// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
-	funge_stack                * stack;         ///< Pointer to top stack.
-	fungeVector                 position;      ///< Current position.
+	funge_stack               * stack;         ///< Pointer to top stack.
+	funge_vector                position;      ///< Current position.
 	ipDelta                     delta;         ///< Current delta.
-	fungeVector                 storageOffset; ///< The storage offset for current IP.
+	funge_vector                storageOffset; ///< The storage offset for current IP.
 	ipMode                      mode;          ///< String or code mode.
 	// "Full" bool for very often checked flags.
 	bool                        needMove;      ///< Should ip_forward be called at end of main loop. Is reset to true each time.
 	bool                        stringLastWasSpace;     ///< Used in string mode for SGML style spaces.
 	// Bitfield for uncommon flags
 	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
-	funge_cell                   ID;                     ///< The ID of this IP.
+	funge_cell                  ID;                     ///< The ID of this IP.
 	funge_stackstack          * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
@@ -134,12 +134,12 @@ void ip_forward(instructionPointer * restrict ip, funge_cell steps);
 /// Turn the IP left as [ would do.
 #define ip_turn_left(m_ip) \
 	do { \
-		(m_ip)->delta  = (fungeVector) { (m_ip)->delta.y, -(m_ip)->delta.x }; \
+		(m_ip)->delta  = (funge_vector) { (m_ip)->delta.y, -(m_ip)->delta.x }; \
 	} while(0)
 /// Turn the IP right as ] would do.
 #define ip_turn_right(m_ip) \
 	do { \
-		(m_ip)->delta  = (fungeVector) { -(m_ip)->delta.y, (m_ip)->delta.x }; \
+		(m_ip)->delta  = (funge_vector) { -(m_ip)->delta.y, (m_ip)->delta.x }; \
 	} while(0)
 
 /// Set delta of an IP to a new vector.
@@ -147,17 +147,17 @@ FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta);
 /// Set position of an IP to a new vector. Will wrap if needed (based on current delta).
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_set_position(instructionPointer * restrict ip, const fungeVector * restrict position);
+void ip_set_position(instructionPointer * restrict ip, const funge_vector * restrict position);
 
 // To make things simpler.
 /// Set IP delta to west.
-#define ip_go_west(m_ip)  do { (m_ip)->delta = (fungeVector) {-1, 0}; } while(0)
+#define ip_go_west(m_ip)  do { (m_ip)->delta = (funge_vector) {-1, 0}; } while(0)
 /// Set IP delta to east.
-#define ip_go_east(m_ip)  do { (m_ip)->delta = (fungeVector) {1, 0}; } while(0)
+#define ip_go_east(m_ip)  do { (m_ip)->delta = (funge_vector) {1, 0}; } while(0)
 /// Set IP delta to north.
-#define ip_go_north(m_ip) do { (m_ip)->delta = (fungeVector) {0, -1}; } while(0)
+#define ip_go_north(m_ip) do { (m_ip)->delta = (funge_vector) {0, -1}; } while(0)
 /// Set IP delta to south.
-#define ip_go_south(m_ip) do { (m_ip)->delta = (fungeVector) {0, 1}; } while(0)
+#define ip_go_south(m_ip) do { (m_ip)->delta = (funge_vector) {0, 1}; } while(0)
 
 #ifdef CONCURRENT_FUNGE
 /**

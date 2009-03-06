@@ -29,23 +29,23 @@
 #include <stdbool.h>
 
 /// A vector in Funge-Space
-typedef struct s_fungeVector {
+typedef struct s_funge_vector {
 	funge_cell x; ///< You should be able to guess what this is.
 	funge_cell y; ///< You should be able to guess what this is.
-} fungeVector;
+} funge_vector;
 
 /// Useful to create a vector in a list of parameter for example.
 /// The vector is created on the stack.
 /// @param a This should be the x value.
 /// @param b This should be the y value.
 /// @return A pointer to a vector allocated on the stack, so no need to free it.
-#define vector_create_ref(a, b) (& (fungeVector) { .x = (a), .y = (b) })
+#define vector_create_ref(a, b) (& (funge_vector) { .x = (a), .y = (b) })
 
 /**
  * Checks if vector is cardinal (as in ^>v<).
  * @param v The vector to check.
  */
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
-bool vector_is_cardinal(const fungeVector * restrict v);
+bool vector_is_cardinal(const funge_vector * restrict v);
 
 #endif

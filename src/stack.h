@@ -43,9 +43,9 @@ struct s_instructionPointer;
 /// A Funge stack.
 /// @warning Don't access directly, use functions and macros below.
 typedef struct funge_stack {
-	size_t         size; ///< This is current size of the array entries.
-	size_t         top;  /**< This is current top item in stack (may not be last item).
-	                          Note: One-indexed, as 0 = empty stack. */
+	size_t         size;  ///< This is current size of the array entries.
+	size_t         top;   /**< This is current top item in stack (may not be last item).
+	                           Note: One-indexed, as 0 = empty stack. */
 	funge_cell *entries;  ///< Pointer to entries.
 } funge_stack;
 
@@ -53,7 +53,7 @@ typedef struct funge_stack {
 typedef struct funge_stackstack {
 	size_t         size;     ///< This is number of elements in stacks.
 	size_t         current;  ///< Top stack and current stack.
-	funge_stack   * stacks[]; ///< Array of pointers to stacks.
+	funge_stack  * stacks[]; ///< Array of pointers to stacks.
 } funge_stackstack;
 
 /**
@@ -117,12 +117,12 @@ size_t stack_strlen(const funge_stack * restrict stack);
  * Push a vector.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_push_vector(funge_stack * restrict stack, const fungeVector * restrict value);
+void stack_push_vector(funge_stack * restrict stack, const funge_vector * restrict value);
 /**
  * Pop a vector.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-fungeVector stack_pop_vector(funge_stack * restrict stack);
+funge_vector stack_pop_vector(funge_stack * restrict stack);
 /**
  * Push a null-terminated string to a 0"gnirts".
  */
@@ -203,7 +203,7 @@ funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_begin(struct s_instructionPointer * restrict ip,
                      funge_cell count,
-                     const fungeVector * restrict storageOffset);
+                     const funge_vector * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
  * @param ip Instruction pointer (will operate on it's stack stack).

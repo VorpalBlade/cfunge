@@ -322,7 +322,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	funge_cell s   = stack_pop(ip->stack);
 	funge_cell len = stack_pop(ip->stack);
 
-	fungeVector v = stack_pop_vector(ip->stack);
+	funge_vector v = stack_pop_vector(ip->stack);
 
 	if (len < 0)
 		goto error;
@@ -401,7 +401,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	funge_cell s   = stack_pop(ip->stack);
 	funge_cell len = stack_pop(ip->stack);
 
-	fungeVector v = stack_pop_vector(ip->stack);
+	funge_vector v = stack_pop_vector(ip->stack);
 
 	if (len < 0)
 		goto error;

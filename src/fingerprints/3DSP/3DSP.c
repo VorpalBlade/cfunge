@@ -100,7 +100,7 @@ static inline double vector_length(const double vec[3])
 
 FUNGE_ATTR_FAST
 static inline void writeMatrix(const instructionPointer * restrict ip,
-                               const fungeVector * restrict fV, const double m[16])
+                               const funge_vector * restrict fV, const double m[16])
 {
 	for (funge_cell i = 0; i < 4; ++i) {
 		for (funge_cell j = 0; j < 4; ++j) {
@@ -113,7 +113,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 
 FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
-                              const fungeVector * restrict fV, double m[16])
+                              const funge_vector * restrict fV, double m[16])
 {
 	for (funge_cell x = 0; x < 4; ++x) {
 		for (funge_cell y = 0; y < 4; ++y) {
@@ -247,7 +247,7 @@ static void finger_3DSP_normalise(instructionPointer * ip)
 /// P - Copy a matrix
 static void finger_3DSP_matrix_copy(instructionPointer * ip)
 {
-	fungeVector fs, ft;
+	funge_vector fs, ft;
 
 	fs = stack_pop_vector(ip->stack);
 	ft = stack_pop_vector(ip->stack);
@@ -271,7 +271,7 @@ static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 	double s, c;
 	double angle = pop_float(ip);
 	funge_cell axis = stack_pop(ip->stack);
-	fungeVector fV = stack_pop_vector(ip->stack);
+	funge_vector fV = stack_pop_vector(ip->stack);
 
 	if (!(axis >= 1 && axis <= 3)) {
 		ip_reverse(ip);
@@ -315,7 +315,7 @@ static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 static void finger_3DSP_matrix_scale(instructionPointer * ip)
 {
 	double v[3];
-	fungeVector fV;
+	funge_vector fV;
 	pop_vec(ip, v);
 	fV = stack_pop_vector(ip->stack);
 	{
@@ -331,7 +331,7 @@ static void finger_3DSP_matrix_scale(instructionPointer * ip)
 static void finger_3DSP_matrix_translate(instructionPointer * ip)
 {
 	double v[3];
-	fungeVector fV;
+	funge_vector fV;
 	pop_vec(ip, v);
 	fV = stack_pop_vector(ip->stack);
 
@@ -378,7 +378,7 @@ static void finger_3DSP_map(instructionPointer * ip)
 /// X - Transform a vector using transformation matrix
 static void finger_3DSP_transform(instructionPointer * ip)
 {
-	fungeVector fm;
+	funge_vector fm;
 	double v[4];
 	double m[16];
 	double r[4];
@@ -397,7 +397,7 @@ static void finger_3DSP_transform(instructionPointer * ip)
 /// Y - Multiply two matrices
 static void finger_3DSP_matrix_mul(instructionPointer * ip)
 {
-	fungeVector ft, fa, fb;
+	funge_vector ft, fa, fb;
 	double a[16], b[16], r[16];
 
 	fb = stack_pop_vector(ip->stack);

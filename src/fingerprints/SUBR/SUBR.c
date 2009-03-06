@@ -40,7 +40,7 @@ static void finger_SUBR_absolute(instructionPointer * ip)
 static void finger_SUBR_call(instructionPointer * ip)
 {
 	funge_cell n;
-	fungeVector pos;
+	funge_vector pos;
 	funge_stack *tmpstack;
 
 	n = stack_pop(ip->stack);
@@ -75,7 +75,7 @@ static void finger_SUBR_call(instructionPointer * ip)
 /// J - Jump
 static void finger_SUBR_jump(instructionPointer * ip)
 {
-	fungeVector pos;
+	funge_vector pos;
 
 	pos = stack_pop_vector(ip->stack);
 	// Stupid to change a fingerprint after it is published.
@@ -98,8 +98,8 @@ static void finger_SUBR_relative(instructionPointer * ip)
 static void finger_SUBR_return(instructionPointer * ip)
 {
 	funge_cell n;
-	fungeVector pos;
-	fungeVector vec;
+	funge_vector pos;
+	funge_vector vec;
 	funge_stack *tmpstack;
 
 	n = stack_pop(ip->stack);

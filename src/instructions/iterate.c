@@ -95,9 +95,9 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 		//   * In Funge-98 we don't do that.
 
 		// This is used in case of spaces and with Funge-109
-		fungeVector oldpos = ip->position;
+		funge_vector oldpos = ip->position;
 		// And this is for knowing where to move past (in 109)
-		fungeVector posinstr;
+		funge_vector posinstr;
 		// Fetch instruction
 		ip_forward(ip, 1);
 		kInstr = fungespace_get(&ip->position);

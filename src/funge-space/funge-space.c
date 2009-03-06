@@ -52,8 +52,8 @@
 
 typedef struct fungeSpace {
 	/// These two form a rectangle for the program size
-	fungeVector       topLeftCorner;
-	fungeVector       bottomRightCorner;
+	funge_vector       topLeftCorner;
+	funge_vector       bottomRightCorner;
 	/// And this is the hash table.
 	ght_hash_table_t *entries;
 	/// Used during loading to handle 0,0 not being least point.
@@ -83,7 +83,7 @@ static funge_cell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
  * Check if position is in range.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline bool fungespace_in_range(const fungeVector * restrict position)
+static inline bool fungespace_in_range(const funge_vector * restrict position)
 {
 	if ((position->x > fspace.bottomRightCorner.x) || (position->x < fspace.topLeftCorner.x))
 		return false;
@@ -132,7 +132,7 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 
 
 FUNGE_ATTR_FAST funge_cell
-fungespace_get(const fungeVector * restrict position)
+fungespace_get(const funge_vector * restrict position)
 {
 	funge_cell *tmp;
 	// Offsets for static.
@@ -152,10 +152,10 @@ fungespace_get(const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST funge_cell
-fungespace_get_offset(const fungeVector * restrict position,
-                      const fungeVector * restrict offset)
+fungespace_get_offset(const funge_vector * restrict position,
+                      const funge_vector * restrict offset)
 {
-	fungeVector tmp;
+	funge_vector tmp;
 	funge_cell *result;
 	// Offsets for static.
 	funge_unsigned_cell x, y;
@@ -183,7 +183,7 @@ fungespace_get_offset(const fungeVector * restrict position,
 
 FUNGE_ATTR_FAST static inline void
 fungespace_set_no_bounds_update(funge_cell value,
-                                const fungeVector * restrict position)
+                                const funge_vector * restrict position)
 {
 	// Offsets for static.
 	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
@@ -210,7 +210,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 
 
 FUNGE_ATTR_FAST void
-fungespace_set(funge_cell value, const fungeVector * restrict position)
+fungespace_set(funge_cell value, const funge_vector * restrict position)
 {
 	assert(position != NULL);
 	fungespace_set_no_bounds_update(value, position);
@@ -228,7 +228,7 @@ fungespace_set(funge_cell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST static inline void
-fungespace_set_initial(funge_cell value, const fungeVector * restrict position)
+fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 {
 	assert(position != NULL);
 	fungespace_set_no_bounds_update(value, position);
@@ -247,8 +247,8 @@ fungespace_set_initial(funge_cell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST void
-fungespace_set_offset(funge_cell value, const fungeVector * restrict position,
-                      const fungeVector * restrict offset)
+fungespace_set_offset(funge_cell value, const funge_vector * restrict position,
+                      const funge_vector * restrict offset)
 {
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -258,8 +258,8 @@ fungespace_set_offset(funge_cell value, const fungeVector * restrict position,
 
 
 FUNGE_ATTR_FAST void
-fungespace_wrap(fungeVector * restrict position,
-                const fungeVector * restrict delta)
+fungespace_wrap(funge_vector * restrict position,
+                const funge_vector * restrict delta)
 {
 	if (!fungespace_in_range(position)) {
 		// Quick and dirty if cardinal.
@@ -457,8 +457,8 @@ fungespace_load_string(const unsigned char * restrict program)
 
 FUNGE_ATTR_FAST bool
 fungespace_load_at_offset(const char        * restrict filename,
-                          const fungeVector * restrict offset,
-                          fungeVector       * restrict size,
+                          const funge_vector * restrict offset,
+                          funge_vector       * restrict size,
                           bool binary)
 {
 	unsigned char *addr;
@@ -523,8 +523,8 @@ fungespace_load_at_offset(const char        * restrict filename,
 
 FUNGE_ATTR_FAST bool
 fungespace_save_to_file(const char        * restrict filename,
-                        const fungeVector * restrict offset,
-                        const fungeVector * restrict size,
+                        const funge_vector * restrict offset,
+                        const funge_vector * restrict size,
                         bool textfile)
 {
 	FILE * file;

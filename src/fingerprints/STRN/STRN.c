@@ -99,7 +99,7 @@ static void finger_STRN_get(instructionPointer * ip)
 	fungeRect bounds;
 	StringBuffer *sb;
 	char *s;
-	fungeVector pos;
+	funge_vector pos;
 
 	fungespace_get_bounds_rect(&bounds);
 	pos = stack_pop_vector(ip->stack);
@@ -204,7 +204,7 @@ static void finger_STRN_length(instructionPointer * ip)
 static void finger_STRN_put(instructionPointer * ip)
 {
 	funge_cell value;
-	fungeVector pos;
+	funge_vector pos;
 
 	pos = stack_pop_vector(ip->stack);
 	pos.x += ip->storageOffset.x;

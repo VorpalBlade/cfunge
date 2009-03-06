@@ -55,14 +55,14 @@ static void finger_ORTH_bit_xor(instructionPointer * ip)
 // ortho get
 static void finger_ORTH_get(instructionPointer * ip)
 {
-	fungeVector v = stack_pop_vector(ip->stack);
+	funge_vector v = stack_pop_vector(ip->stack);
 	stack_push(ip->stack, fungespace_get(vector_create_ref(v.y, v.x)));
 }
 
 // ortho put
 static void finger_ORTH_put(instructionPointer * ip)
 {
-	fungeVector v;
+	funge_vector v;
 	funge_cell c;
 
 	v = stack_pop_vector(ip->stack);

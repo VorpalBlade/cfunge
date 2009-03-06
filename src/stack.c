@@ -210,20 +210,20 @@ FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)
  * Push and pop for data types. *
  ********************************/
 
-FUNGE_ATTR_FAST void stack_push_vector(funge_stack * restrict stack, const fungeVector * restrict value)
+FUNGE_ATTR_FAST void stack_push_vector(funge_stack * restrict stack, const funge_vector * restrict value)
 {
 	// TODO: Optimise
 	stack_push(stack, value->x);
 	stack_push(stack, value->y);
 }
 
-FUNGE_ATTR_FAST fungeVector stack_pop_vector(funge_stack * restrict stack)
+FUNGE_ATTR_FAST funge_vector stack_pop_vector(funge_stack * restrict stack)
 {
 	// TODO: Optimise
 	funge_cell x, y;
 	y = stack_pop(stack);
 	x = stack_pop(stack);
-	return (fungeVector) { .x = x, .y = y };
+	return (funge_vector) { .x = x, .y = y };
 }
 
 FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsigned char * restrict str, size_t len)
@@ -439,7 +439,7 @@ static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stac
 }
 
 FUNGE_ATTR_FAST
-bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const fungeVector * restrict storageOffset)
+bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const funge_vector * restrict storageOffset)
 {
 	funge_stackstack *stackStack;
 	funge_stack      *TOSS, *SOSS;
@@ -493,7 +493,7 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 {
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;
-	fungeVector       storageOffset;
+	funge_vector       storageOffset;
 
 	assert(ip != NULL);
 

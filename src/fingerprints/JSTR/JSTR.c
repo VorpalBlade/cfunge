@@ -26,7 +26,7 @@
 static void finger_JSTR_push_n(instructionPointer * ip)
 {
 	funge_cell n;
-	fungeVector pos, delta;
+	funge_vector pos, delta;
 
 	n     = stack_pop(ip->stack);
 	pos   = stack_pop_vector(ip->stack);
@@ -52,7 +52,7 @@ static void finger_JSTR_push_n(instructionPointer * ip)
 static void finger_JSTR_pop_n(instructionPointer * ip)
 {
 	funge_cell n;
-	fungeVector pos, delta;
+	funge_vector pos, delta;
 
 	n     = stack_pop(ip->stack);
 	pos   = stack_pop_vector(ip->stack);
