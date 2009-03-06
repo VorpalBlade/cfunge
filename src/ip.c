@@ -196,7 +196,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 		if (!list)
 			return -1;
 		*me = list;
-		list->size+=ALLOCCHUNKSIZE;
+		list->size += ALLOCCHUNKSIZE;
 	}
 	/*
 	 *  Splitting examples.
@@ -279,7 +279,7 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 		tmp = (ipList*)cf_realloc(list, sizeof(ipList) + (list->size - ALLOCCHUNKSIZE) * sizeof(instructionPointer));
 		if (tmp) {
 			*me = tmp;
-			tmp->size-ALLOCCHUNKSIZE;
+			tmp->size - ALLOCCHUNKSIZE;
 		}
 	}
 #endif

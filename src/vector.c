@@ -28,7 +28,7 @@ inline bool vector_is_cardinal(const funge_vector * restrict v)
 	// Due to unsigned this can't overflow in the addition below.
 	funge_unsigned_cell x = (funge_unsigned_cell)ABS(v->x);
 	funge_unsigned_cell y = (funge_unsigned_cell)ABS(v->y);
-	if ((x+y) != 1)
+	if ((x + y) != 1)
 		return false;
 	if (x && y)
 		return false;

@@ -231,7 +231,7 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsig
 	assert(str != NULL);
 	assert(stack != NULL);
 	// Increment it once or it won't work
-	stack_prealloc_space(stack, len+1);
+	stack_prealloc_space(stack, len + 1);
 	{
 		const size_t top = stack->top + len;
 		for (ssize_t i = len; i >= 0; i--)

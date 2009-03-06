@@ -92,7 +92,7 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // Return value is last index used in string.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline ptrdiff_t parse_int(const char * restrict s,
-                                 funge_cell * restrict value, funge_cell base)
+                                  funge_cell * restrict value, funge_cell base)
 {
 	funge_cell result = 0;
 	size_t i;
@@ -151,7 +151,7 @@ FUNGE_ATTR_FAST ret_getint input_getint(funge_cell * restrict value, int base)
 		found = true;
 		// Ok, we found it, lets convert it.
 		endptr = lastline_current + parse_int(lastline_current, value,
-		                                     (funge_cell)base);
+		                                      (funge_cell)base);
 		break;
 	} while (*(lastline_current++) != '\0');
 	// Discard rest of line if it is just newline, otherwise keep it.

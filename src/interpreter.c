@@ -560,13 +560,13 @@ static inline void interpreter_main_loop(void)
 #    ifndef DISABLE_TRACE
 			if (FUNGE_EXPECT(setting_trace_level > 8, false)) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-						i, IPList->ips[i].ID,
-						IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
+				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
+				        IPList->ips[i].position.y, (char)opcode, opcode);
 				stack_print_top(IPList->ips[i].stack);
 			} else if (FUNGE_EXPECT(setting_trace_level > 3, false)) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-						i, IPList->ips[i].ID,
-						IPList->ips[i].position.x, IPList->ips[i].position.y, (char)opcode, opcode);
+				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
+				        IPList->ips[i].position.y, (char)opcode, opcode);
 			} else if (FUNGE_EXPECT(setting_trace_level > 2, false))
 				fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
