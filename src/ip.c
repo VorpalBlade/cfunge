@@ -132,28 +132,6 @@ FUNGE_ATTR_FAST inline void ip_forward(instructionPointer * restrict ip, fungeCe
 	fungespace_wrap(&ip->position, &ip->delta);
 }
 
-FUNGE_ATTR_FAST inline void ip_turn_right(instructionPointer * restrict ip)
-{
-	fungeCell tmpX;
-
-	assert(ip != NULL);
-
-	tmpX        = ip->delta.x;
-	ip->delta.x = -ip->delta.y;
-	ip->delta.y = tmpX;
-}
-
-FUNGE_ATTR_FAST inline void ip_turn_left(instructionPointer * restrict ip)
-{
-	fungeCell tmpX;
-
-	assert(ip != NULL);
-
-	tmpX        = ip->delta.x;
-	ip->delta.x = ip->delta.y;
-	ip->delta.y = -tmpX;
-}
-
 FUNGE_ATTR_FAST inline void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta)
 {
 	assert(ip != NULL);

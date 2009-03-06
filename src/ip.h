@@ -123,20 +123,25 @@ void ip_forward(instructionPointer * restrict ip, fungeCell steps);
 /**
  * Mirror IP direction.
  */
-#define ip_reverse(ip) \
+#define ip_reverse(m_ip) \
 	do { \
-		(ip)->delta.x *= -1; \
-		(ip)->delta.y *= -1; \
+		(m_ip)->delta.x *= -1; \
+		(m_ip)->delta.y *= -1; \
 	} while(0)
 // I don't like the do { ... } while(0) hack at all..
 // but it is needed.
 
 /// Turn the IP left as [ would do.
-FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_turn_left(instructionPointer * restrict ip);
+#define ip_turn_left(m_ip) \
+	do { \
+		(m_ip)->delta  = (fungeVector) { (m_ip)->delta.y, -(m_ip)->delta.x }; \
+	} while(0)
 /// Turn the IP right as ] would do.
-FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_turn_right(instructionPointer * restrict ip);
+#define ip_turn_right(m_ip) \
+	do { \
+		(m_ip)->delta  = (fungeVector) { -(m_ip)->delta.y, (m_ip)->delta.x }; \
+	} while(0)
+
 /// Set delta of an IP to a new vector.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_delta(instructionPointer * restrict ip, const ipDelta * restrict delta);
@@ -146,13 +151,13 @@ void ip_set_position(instructionPointer * restrict ip, const fungeVector * restr
 
 // To make things simpler.
 /// Set IP delta to west.
-#define ip_go_west(ip)  ip_set_delta(ip, vector_create_ref(-1,  0))
+#define ip_go_west(m_ip)  do { (m_ip)->delta = (fungeVector) {-1, 0}; } while(0)
 /// Set IP delta to east.
-#define ip_go_east(ip)  ip_set_delta(ip, vector_create_ref( 1,  0))
+#define ip_go_east(m_ip)  do { (m_ip)->delta = (fungeVector) {1, 0}; } while(0)
 /// Set IP delta to north.
-#define ip_go_north(ip) ip_set_delta(ip, vector_create_ref( 0, -1))
+#define ip_go_north(m_ip) do { (m_ip)->delta = (fungeVector) {0, -1}; } while(0)
 /// Set IP delta to south.
-#define ip_go_south(ip) ip_set_delta(ip, vector_create_ref( 0,  1))
+#define ip_go_south(m_ip) do { (m_ip)->delta = (fungeVector) {0, 1}; } while(0)
 
 #ifdef CONCURRENT_FUNGE
 /**
