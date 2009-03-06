@@ -31,7 +31,7 @@
 /// A - add
 static void finger_CPLI_add(instructionPointer * ip)
 {
-	fungeCell ar, ai, br, bi;
+	funge_cell ar, ai, br, bi;
 	bi = stack_pop(ip->stack);
 	br = stack_pop(ip->stack);
 	ai = stack_pop(ip->stack);
@@ -43,7 +43,7 @@ static void finger_CPLI_add(instructionPointer * ip)
 /// D - div
 static void finger_CPLI_div(instructionPointer * ip)
 {
-	fungeCell ar, ai, br, bi, denom;
+	funge_cell ar, ai, br, bi, denom;
 	bi = stack_pop(ip->stack);
 	br = stack_pop(ip->stack);
 	ai = stack_pop(ip->stack);
@@ -61,7 +61,7 @@ static void finger_CPLI_div(instructionPointer * ip)
 /// M - mul
 static void finger_CPLI_mul(instructionPointer * ip)
 {
-	fungeCell ar, ai, br, bi;
+	funge_cell ar, ai, br, bi;
 	bi = stack_pop(ip->stack);
 	br = stack_pop(ip->stack);
 	ai = stack_pop(ip->stack);
@@ -73,7 +73,7 @@ static void finger_CPLI_mul(instructionPointer * ip)
 /// O - out
 static void finger_CPLI_out(instructionPointer * ip)
 {
-	fungeCell r, i;
+	funge_cell r, i;
 	i = stack_pop(ip->stack);
 	r = stack_pop(ip->stack);
 	printf("%" FUNGECELLPRI, r);
@@ -85,7 +85,7 @@ static void finger_CPLI_out(instructionPointer * ip)
 /// S - sub
 static void finger_CPLI_sub(instructionPointer * ip)
 {
-	fungeCell ar, ai, br, bi;
+	funge_cell ar, ai, br, bi;
 	bi = stack_pop(ip->stack);
 	br = stack_pop(ip->stack);
 	ai = stack_pop(ip->stack);
@@ -97,12 +97,12 @@ static void finger_CPLI_sub(instructionPointer * ip)
 /// V - abs
 static void finger_CPLI_abs(instructionPointer * ip)
 {
-	fungeCell r, i;
+	funge_cell r, i;
 	long double tmp;
 	i = stack_pop(ip->stack);
 	r = stack_pop(ip->stack);
 	tmp = sqrtl((long double)(r * r + i * i));
-	stack_push(ip->stack, (fungeCell)tmp);
+	stack_push(ip->stack, (funge_cell)tmp);
 }
 
 bool finger_CPLI_load(instructionPointer * ip)

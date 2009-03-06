@@ -112,7 +112,7 @@ static void finger_STRN_get(instructionPointer * ip)
 	sb = stringbuffer_new();
 
 	while (true) {
-		fungeCell val;
+		funge_cell val;
 		val = fungespace_get(&pos);
 		stringbuffer_append_char(sb, val);
 		if (pos.x < bounds.x || pos.x > bounds.x + bounds.w) {
@@ -154,7 +154,7 @@ static void finger_STRN_input(instructionPointer * ip)
 /// L - Leftmost n characters of string
 static void finger_STRN_left(instructionPointer * ip)
 {
-	fungeCell n;
+	funge_cell n;
 	size_t len;
 	unsigned char *s;
 	n = stack_pop(ip->stack);
@@ -172,7 +172,7 @@ static void finger_STRN_left(instructionPointer * ip)
 /// M - n characters starting at position p
 static void finger_STRN_slice(instructionPointer * ip)
 {
-	fungeCell n, p;
+	funge_cell n, p;
 	char *s;
 	size_t slen;
 	n = stack_pop(ip->stack);
@@ -197,13 +197,13 @@ static void finger_STRN_slice(instructionPointer * ip)
 /// N - Get length of string
 static void finger_STRN_length(instructionPointer * ip)
 {
-	stack_push(ip->stack, (fungeCell)stack_strlen(ip->stack));
+	stack_push(ip->stack, (funge_cell)stack_strlen(ip->stack));
 }
 
 /// P - Put string at specified position
 static void finger_STRN_put(instructionPointer * ip)
 {
-	fungeCell value;
+	funge_cell value;
 	fungeVector pos;
 
 	pos = stack_pop_vector(ip->stack);
@@ -221,7 +221,7 @@ static void finger_STRN_put(instructionPointer * ip)
 /// R - Rightmost n characters of string
 static void finger_STRN_right(instructionPointer * ip)
 {
-	fungeCell n;
+	funge_cell n;
 	size_t len;
 	unsigned char *s;
 	n = stack_pop(ip->stack);
@@ -239,7 +239,7 @@ static void finger_STRN_right(instructionPointer * ip)
 static void finger_STRN_itoa(instructionPointer * ip)
 {
 	char *s;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	StringBuffer *sb = stringbuffer_new();
 
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);

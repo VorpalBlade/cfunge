@@ -30,7 +30,7 @@
 
 static void finger_ORTH_bit_and(instructionPointer * ip)
 {
-	fungeCell x, y;
+	funge_cell x, y;
 	x = stack_pop(ip->stack);
 	y = stack_pop(ip->stack);
 	stack_push(ip->stack, x & y);
@@ -38,7 +38,7 @@ static void finger_ORTH_bit_and(instructionPointer * ip)
 
 static void finger_ORTH_bit_or(instructionPointer * ip)
 {
-	fungeCell x, y;
+	funge_cell x, y;
 	x = stack_pop(ip->stack);
 	y = stack_pop(ip->stack);
 	stack_push(ip->stack, x | y);
@@ -46,7 +46,7 @@ static void finger_ORTH_bit_or(instructionPointer * ip)
 
 static void finger_ORTH_bit_xor(instructionPointer * ip)
 {
-	fungeCell x, y;
+	funge_cell x, y;
 	x = stack_pop(ip->stack);
 	y = stack_pop(ip->stack);
 	stack_push(ip->stack, x ^ y);
@@ -63,7 +63,7 @@ static void finger_ORTH_get(instructionPointer * ip)
 static void finger_ORTH_put(instructionPointer * ip)
 {
 	fungeVector v;
-	fungeCell c;
+	funge_cell c;
 
 	v = stack_pop_vector(ip->stack);
 	c = stack_pop(ip->stack);

@@ -192,7 +192,7 @@ static void finger_FPDP_pow(instructionPointer * ip)
 
 static void finger_FPDP_fromint(instructionPointer * ip)
 {
-	fungeCell i;
+	funge_cell i;
 	i = stack_pop(ip->stack);
 	u.d = (double)i;
 	pushDbl(ip);
@@ -201,7 +201,7 @@ static void finger_FPDP_fromint(instructionPointer * ip)
 static void finger_FPDP_toint(instructionPointer * ip)
 {
 	popDbl(ip);
-	stack_push(ip->stack, (fungeCell)u.d);
+	stack_push(ip->stack, (funge_cell)u.d);
 }
 
 static void finger_FPDP_fromascii(instructionPointer * ip)

@@ -42,11 +42,11 @@ static size_t maxHandle = 0;
 
 /// Used by allocate_handle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell findNextfree_handle(void)
+static inline funge_cell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
-			return (fungeCell)i;
+			return (funge_cell)i;
 	}
 	// No free one, extend array..
 	{
@@ -57,16 +57,16 @@ static inline fungeCell findNextfree_handle(void)
 		for (size_t i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			handles[i] = NULL;
 		maxHandle += ALLOCCHUNK;
-		return (fungeCell)(maxHandle - ALLOCCHUNK);
+		return (funge_cell)(maxHandle - ALLOCCHUNK);
 	}
 }
 
 /// Get a new handle to use for a file, also allocates buffer for it.
 /// @return Handle, or -1 on failure
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell allocate_handle(void)
+static inline funge_cell allocate_handle(void)
 {
-	fungeCell h;
+	funge_cell h;
 
 	h = findNextfree_handle();
 	if (h < 0)
@@ -80,7 +80,7 @@ static inline fungeCell allocate_handle(void)
 
 /// Free a handle. fclose() the file before calling this.
 FUNGE_ATTR_FAST
-static inline void free_handle(fungeCell h)
+static inline void free_handle(funge_cell h)
 {
 	if (!handles[h])
 		return;
@@ -94,7 +94,7 @@ static inline void free_handle(fungeCell h)
 
 /// Checks if handle is valid.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool valid_handle(fungeCell h)
+static inline bool valid_handle(funge_cell h)
 {
 	if ((h < 0) || ((size_t)h >= maxHandle) || (!handles[h])) {
 		return false;
@@ -106,7 +106,7 @@ static inline bool valid_handle(fungeCell h)
 /// C - Close a file
 static void finger_FILE_fclose(instructionPointer * ip)
 {
-	fungeCell h;
+	funge_cell h;
 
 	h = stack_pop(ip->stack);
 	if (!valid_handle(h)) {
@@ -138,7 +138,7 @@ static void finger_FILE_delete(instructionPointer * ip)
 /// G - Get string from file (like c fgets)
 static void finger_FILE_fgets(instructionPointer * ip)
 {
-	fungeCell h;
+	funge_cell h;
 	FILE * fp;
 
 	h = stack_peek(ip->stack);
@@ -196,7 +196,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 			str = stringbuffer_finish(sb);
 			len = strlen(str);
 			stack_push_string(ip->stack, (unsigned char*)str, len);
-			stack_push(ip->stack, (fungeCell)len);
+			stack_push(ip->stack, (funge_cell)len);
 			free_nogc(str);
 			return;
 		}
@@ -206,7 +206,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 /// L - Get current location in file
 static void finger_FILE_ftell(instructionPointer * ip)
 {
-	fungeCell h;
+	funge_cell h;
 	long pos;
 
 	h = stack_peek(ip->stack);
@@ -223,16 +223,16 @@ static void finger_FILE_ftell(instructionPointer * ip)
 		return;
 	}
 
-	stack_push(ip->stack, (fungeCell)pos);
+	stack_push(ip->stack, (funge_cell)pos);
 }
 
 /// O - Open a file (Va = i/o buffer vector)
 static void finger_FILE_fopen(instructionPointer * ip)
 {
 	char * restrict filename;
-	fungeCell mode;
+	funge_cell mode;
 	fungeVector vect;
-	fungeCell h;
+	funge_cell h;
 
 	filename = (char*)stack_pop_string(ip->stack, NULL);
 	mode = stack_pop(ip->stack);
@@ -276,7 +276,7 @@ end:
 static void finger_FILE_fputs(instructionPointer * ip)
 {
 	char * restrict str;
-	fungeCell h;
+	funge_cell h;
 
 	str = (char*)stack_pop_string(ip->stack, NULL);
 	h = stack_peek(ip->stack);
@@ -294,7 +294,7 @@ static void finger_FILE_fputs(instructionPointer * ip)
 /// R - Read n bytes from file to i/o buffer
 static void finger_FILE_fread(instructionPointer * ip)
 {
-	fungeCell n, h;
+	funge_cell n, h;
 
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
@@ -326,7 +326,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 			}
 		}
 
-		for (fungeCell i = 0; i < n; i++) {
+		for (funge_cell i = 0; i < n; i++) {
 			fungespace_set(buf[i], vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		free_nogc(buf);
@@ -336,7 +336,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 /// S - Seek to position in file
 static void finger_FILE_fseek(instructionPointer * ip)
 {
-	fungeCell n, m, h;
+	funge_cell n, m, h;
 
 	n = stack_pop(ip->stack);
 	m = stack_pop(ip->stack);
@@ -374,7 +374,7 @@ static void finger_FILE_fseek(instructionPointer * ip)
 /// W - Write n bytes from i/o buffer to file
 static void finger_FILE_fwrite(instructionPointer * ip)
 {
-	fungeCell n, h;
+	funge_cell n, h;
 
 	n = stack_pop(ip->stack);
 	h = stack_peek(ip->stack);
@@ -391,7 +391,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 		FILE * fp = handles[h]->file;
 		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(char));
 
-		for (fungeCell i = 0; i < n; i++) {
+		for (funge_cell i = 0; i < n; i++) {
 			buf[i] = (unsigned char)fungespace_get(vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
 		}
 		if (fwrite(buf, sizeof(unsigned char), (size_t)n, fp) != (size_t)n) {

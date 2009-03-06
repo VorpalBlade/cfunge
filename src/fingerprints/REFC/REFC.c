@@ -36,7 +36,7 @@ static size_t referencesSize = 0;
 
 static void finger_REFC_reference(instructionPointer * ip)
 {
-	fungeCell x, y;
+	funge_cell x, y;
 	y = stack_pop(ip->stack);
 	x = stack_pop(ip->stack);
 	if (referencesSize == referencesTop + 1) {
@@ -55,12 +55,12 @@ static void finger_REFC_reference(instructionPointer * ip)
 	referencesTop++;
 	references[referencesTop].x = x;
 	references[referencesTop].y = y;
-	stack_push(ip->stack, (fungeCell)referencesTop);
+	stack_push(ip->stack, (funge_cell)referencesTop);
 }
 
 static void finger_REFC_dereference(instructionPointer * ip)
 {
-	fungeCell ref;
+	funge_cell ref;
 	ref = stack_pop(ip->stack);
 	if ((ref <= 0) || ((size_t)ref > referencesTop)) {
 		ip_reverse(ip);

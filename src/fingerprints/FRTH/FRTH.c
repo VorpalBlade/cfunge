@@ -27,14 +27,14 @@
 /// D - Push depth of stack to tos
 static void finger_FRTH_stack_size(instructionPointer * ip)
 {
-	stack_push(ip->stack, (fungeCell)ip->stack->top);
+	stack_push(ip->stack, (funge_cell)ip->stack->top);
 }
 
 /// L - Forth Roll command
 static void finger_FRTH_forth_roll(instructionPointer * ip)
 {
 	// FIXME: Move most of this functionality into stack.c
-	fungeCell u;
+	funge_cell u;
 	size_t s;
 	u = stack_pop(ip->stack);
 	if (u < 0) {
@@ -43,18 +43,18 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 	}
 	s = ip->stack->top;
 
-	if (u >= (fungeCell)s) {
+	if (u >= (funge_cell)s) {
 		stack_push(ip->stack, 0);
 	} else {
-		fungeCell * restrict elems;
-		fungeCell xu;
+		funge_cell * restrict elems;
+		funge_cell xu;
 
-		elems = cf_malloc_noptr(sizeof(fungeCell) * ip->stack->top);
+		elems = cf_malloc_noptr(sizeof(funge_cell) * ip->stack->top);
 		if (!elems) {
 			ip_reverse(ip);
 			return;
 		}
-		memcpy(elems, ip->stack->entries, sizeof(fungeCell) * ip->stack->top);
+		memcpy(elems, ip->stack->entries, sizeof(funge_cell) * ip->stack->top);
 		xu = elems[s - (u+1)];
 
 		stack_pop_n_discard(ip->stack, (size_t)(u + 1));
@@ -69,7 +69,7 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 /// O - Forth Over command
 static void finger_FRTH_forth_over(instructionPointer * ip)
 {
-	fungeCell a, b;
+	funge_cell a, b;
 	b = stack_pop(ip->stack);
 	a = stack_pop(ip->stack);
 
@@ -81,10 +81,10 @@ static void finger_FRTH_forth_over(instructionPointer * ip)
 /// P - Forth Pick command
 static void finger_FRTH_forth_pick(instructionPointer * ip)
 {
-	fungeCell u;
-	fungeCell s;
+	funge_cell u;
+	funge_cell s;
 	u = stack_pop(ip->stack);
-	s = (fungeCell)ip->stack->top;
+	s = (funge_cell)ip->stack->top;
 
 	if (u < 0) {
 		ip_reverse(ip);
@@ -94,7 +94,7 @@ static void finger_FRTH_forth_pick(instructionPointer * ip)
 	if (u >= s) {
 		stack_push(ip->stack, 0);
 	} else {
-		fungeCell i = stack_get_index(ip->stack, (size_t)(s - u));
+		funge_cell i = stack_get_index(ip->stack, (size_t)(s - u));
 		stack_push(ip->stack, i);
 	}
 }
@@ -102,7 +102,7 @@ static void finger_FRTH_forth_pick(instructionPointer * ip)
 /// R - Forth Rot command
 static void finger_FRTH_forth_rot(instructionPointer * ip)
 {
-	fungeCell a, b, c;
+	funge_cell a, b, c;
 	c = stack_pop(ip->stack);
 	b = stack_pop(ip->stack);
 	a = stack_pop(ip->stack);

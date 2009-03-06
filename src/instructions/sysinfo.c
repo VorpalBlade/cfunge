@@ -147,11 +147,11 @@ static size_t environ_count = 0;
 
 // Push a single request value.
 // pushStack is stack to push on.
-FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer * restrict ip, funge_stack * restrict pushStack)
+FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer * restrict ip, funge_stack * restrict pushStack)
 {
 	switch (request) {
 		case si_flags: { // Flags
-			fungeCell tmp = 0x0;
+			funge_cell tmp = 0x0;
 #ifdef CONCURRENT_FUNGE
 			tmp |= FUNGE_FLAGS_CONCURRENT;
 #endif
@@ -165,7 +165,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			break;
 		}
 		case si_cell_size: // Cell size
-			stack_push(pushStack, sizeof(fungeCell));
+			stack_push(pushStack, sizeof(funge_cell));
 			break;
 		case si_handprint98: // Handprint
 			stack_push(pushStack, FUNGE_OLD_HANDPRINT);
@@ -183,9 +183,9 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			break;
 		case si_path_separator: // Path separator
 #ifdef __WIN32__
-			stack_push(pushStack, (fungeCell)'\\');
+			stack_push(pushStack, (funge_cell)'\\');
 #else
-			stack_push(pushStack, (fungeCell)'/');
+			stack_push(pushStack, (funge_cell)'/');
 #endif
 			break;
 		case si_vector_size: // Scalars / vector
@@ -223,7 +223,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			stack_push(pushStack, (fungeCell)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
+			stack_push(pushStack, (funge_cell)(curTime->tm_year * 256 * 256 + (curTime->tm_mon + 1) * 256 + curTime->tm_mday));
 			break;
 		}
 		case si_hour_minute_second: { // Time (hour * 256 * 256) + (minute * 256) + (second)
@@ -231,23 +231,23 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			struct tm *curTime;
 			now = time(NULL);
 			curTime = gmtime(&now);
-			stack_push(pushStack, (fungeCell)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
+			stack_push(pushStack, (funge_cell)(curTime->tm_hour * 256 * 256 + curTime->tm_min * 256 + curTime->tm_sec));
 			break;
 		}
 		case si_stack_count: // Number of stacks on stack stack
-			stack_push(pushStack, (fungeCell)ip->stackstack->size);
+			stack_push(pushStack, (funge_cell)ip->stackstack->size);
 			break;
 		case si_stack_sizes: // Number of elements on all stacks
 			for (size_t i = 0; i < ip->stackstack->current; i++)
-				stack_push(pushStack, (fungeCell)ip->stackstack->stacks[i]->top);
-			stack_push(pushStack, (fungeCell)TOSSSize);
+				stack_push(pushStack, (funge_cell)ip->stackstack->stacks[i]->top);
+			stack_push(pushStack, (funge_cell)TOSSSize);
 			break;
 		case si_argc: // Command line arguments (count) (109 specific)
 			stack_push(pushStack, fungeargc);
 			break;
 		case si_argv: // Command line arguments
-			stack_push(pushStack, (fungeCell)'\0');
-			stack_push(pushStack, (fungeCell)'\0');
+			stack_push(pushStack, (funge_cell)'\0');
+			stack_push(pushStack, (funge_cell)'\0');
 			for (int i = fungeargc - 1; i >= 0; i--) {
 				stack_push_string(pushStack, (const unsigned char*)fungeargv[i], strlen(fungeargv[i]));
 			}
@@ -257,7 +257,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			if (environ_count == 0) {
 				size_t i = 0;
 				while (true) {
-					if (!environ[i] || *environ[i] == (fungeCell)'\0')
+					if (!environ[i] || *environ[i] == (funge_cell)'\0')
 						break;
 					if (setting_enable_sandbox) {
 						if (!check_env_is_safe(environ[i])) {
@@ -269,14 +269,14 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 					i++;
 				}
 			}
-			stack_push(pushStack, (fungeCell)environ_count);
+			stack_push(pushStack, (funge_cell)environ_count);
 			break;
 		case si_env: { // Environment variables
 			size_t i = 0;
-			stack_push(pushStack, (fungeCell)'\0');
+			stack_push(pushStack, (funge_cell)'\0');
 
 			while (true) {
-				if (!environ[i] || *environ[i] == (fungeCell)'\0')
+				if (!environ[i] || *environ[i] == (funge_cell)'\0')
 					break;
 				if (setting_enable_sandbox) {
 					if (!check_env_is_safe(environ[i])) {
@@ -299,7 +299,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 			stack_push(pushStack, 2);
 			break;
 		case si_cell_size_in_unit: // 1 cell containing cell size in the unit returned by request 21. (global env) (109 specific)
-			stack_push(pushStack, sizeof(fungeCell) * CHAR_BIT);
+			stack_push(pushStack, sizeof(funge_cell) * CHAR_BIT);
 			break;
 #ifndef NDEBUG
 		default:
@@ -311,7 +311,7 @@ FUNGE_ATTR_FAST static void push_request(fungeCell request, instructionPointer *
 
 FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 {
-	fungeCell request = stack_pop(ip->stack);
+	funge_cell request = stack_pop(ip->stack);
 	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
 	// Negative or 0: push all

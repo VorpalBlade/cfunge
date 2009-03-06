@@ -218,7 +218,7 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 		if (errno == ERANGE)
 			stack_push(ip->stack, -1);
 		else
-			stack_push(ip->stack, (fungeCell)i);
+			stack_push(ip->stack, (funge_cell)i);
 	}
 	stack_free_string(perlcode);
 	free_nogc(result);

@@ -102,8 +102,8 @@ FUNGE_ATTR_FAST
 static inline void writeMatrix(const instructionPointer * restrict ip,
                                const fungeVector * restrict fV, const double m[16])
 {
-	for (fungeCell i = 0; i < 4; ++i) {
-		for (fungeCell j = 0; j < 4; ++j) {
+	for (funge_cell i = 0; i < 4; ++i) {
+		for (funge_cell j = 0; j < 4; ++j) {
 			floatint u;
 			u.f = (float)m[4*j + i];
 			fungespace_set_offset(u.i, vector_create_ref(fV->x + i, fV->y + j), &ip->storageOffset);
@@ -115,8 +115,8 @@ FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
                               const fungeVector * restrict fV, double m[16])
 {
-	for (fungeCell x = 0; x < 4; ++x) {
-		for (fungeCell y = 0; y < 4; ++y) {
+	for (funge_cell x = 0; x < 4; ++x) {
+		for (funge_cell y = 0; y < 4; ++y) {
 			floatint u;
 			u.i = (int32_t)fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
@@ -258,8 +258,8 @@ static void finger_3DSP_matrix_copy(instructionPointer * ip)
 	ft.y += ip->storageOffset.y;
 
 
-	for (fungeCell x = 0; x < 4; ++x)
-		for (fungeCell y = 0; y < 4; ++y) {
+	for (funge_cell x = 0; x < 4; ++x)
+		for (funge_cell y = 0; y < 4; ++y) {
 			fungespace_set(fungespace_get(vector_create_ref(fs.x + x, fs.y + y)),
 			               vector_create_ref(ft.x + x, ft.y + y));
 		}
@@ -270,7 +270,7 @@ static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 {
 	double s, c;
 	double angle = pop_float(ip);
-	fungeCell axis = stack_pop(ip->stack);
+	funge_cell axis = stack_pop(ip->stack);
 	fungeVector fV = stack_pop_vector(ip->stack);
 
 	if (!(axis >= 1 && axis <= 3)) {
@@ -409,8 +409,8 @@ static void finger_3DSP_matrix_mul(instructionPointer * ip)
 
 	mulMatrices(b, a, r);
 
-	for (fungeCell x = 0; x < 4; ++x)
-		for (fungeCell y = 0; y < 4; ++y) {
+	for (funge_cell x = 0; x < 4; ++x)
+		for (funge_cell y = 0; y < 4; ++y) {
 			floatint u;
 			u.f = (float)r[y*4 + x];
 			fungespace_set_offset(u.i, vector_create_ref(ft.x + x, ft.y + y), &ip->storageOffset);

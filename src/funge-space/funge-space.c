@@ -77,7 +77,7 @@ static fungeSpace fspace = {
 	(((rx) < FUNGESPACE_STATIC_X) && ((ry) < FUNGESPACE_STATIC_Y))
 #define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
 
-static fungeCell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
+static funge_cell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
 
 /**
  * Check if position is in range.
@@ -100,7 +100,7 @@ fungespace_create(void)
 	cf_mark_static_noptr(&static_space,
 	                     &static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
-	for (size_t i = 0; i < sizeof(static_space) / sizeof(fungeCell); i++)
+	for (size_t i = 0; i < sizeof(static_space) / sizeof(funge_cell); i++)
 		static_space[i] = ' ';
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (!fspace.entries)
@@ -131,34 +131,34 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 }
 
 
-FUNGE_ATTR_FAST fungeCell
+FUNGE_ATTR_FAST funge_cell
 fungespace_get(const fungeVector * restrict position)
 {
-	fungeCell *tmp;
+	funge_cell *tmp;
 	// Offsets for static.
-	fungeUnsignedCell x = (fungeUnsignedCell)position->x + FUNGESPACE_STATIC_OFFSET_X;
-	fungeUnsignedCell y = (fungeUnsignedCell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
+	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
+	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x,y)) {
 		return static_space[STATIC_COORD(x,y)];
 	} else {
-		tmp = (fungeCell*)ght_get(fspace.entries, position);
+		tmp = (funge_cell*)ght_get(fspace.entries, position);
 		if (!tmp)
-			return (fungeCell)' ';
+			return (funge_cell)' ';
 		else
 			return *tmp;
 	}
 }
 
 
-FUNGE_ATTR_FAST fungeCell
+FUNGE_ATTR_FAST funge_cell
 fungespace_get_offset(const fungeVector * restrict position,
                       const fungeVector * restrict offset)
 {
 	fungeVector tmp;
-	fungeCell *result;
+	funge_cell *result;
 	// Offsets for static.
-	fungeUnsignedCell x, y;
+	funge_unsigned_cell x, y;
 
 	assert(position != NULL);
 	assert(offset != NULL);
@@ -166,15 +166,15 @@ fungespace_get_offset(const fungeVector * restrict position,
 	tmp.x = position->x + offset->x;
 	tmp.y = position->y + offset->y;
 
-	x = (fungeUnsignedCell)tmp.x + FUNGESPACE_STATIC_OFFSET_X;
-	y = (fungeUnsignedCell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
+	x = (funge_unsigned_cell)tmp.x + FUNGESPACE_STATIC_OFFSET_X;
+	y = (funge_unsigned_cell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x,y)) {
 		return static_space[STATIC_COORD(x,y)];
 	} else {
-		result = (fungeCell*)ght_get(fspace.entries, &tmp);
+		result = (funge_cell*)ght_get(fspace.entries, &tmp);
 		if (!result)
-			return (fungeCell)' ';
+			return (funge_cell)' ';
 		else
 			return *result;
 	}
@@ -182,12 +182,12 @@ fungespace_get_offset(const fungeVector * restrict position,
 
 
 FUNGE_ATTR_FAST static inline void
-fungespace_set_no_bounds_update(fungeCell value,
+fungespace_set_no_bounds_update(funge_cell value,
                                 const fungeVector * restrict position)
 {
 	// Offsets for static.
-	fungeUnsignedCell x = (fungeUnsignedCell)position->x + FUNGESPACE_STATIC_OFFSET_X;
-	fungeUnsignedCell y = (fungeUnsignedCell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
+	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
+	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x,y)) {
 		static_space[STATIC_COORD(x,y)] = value;
@@ -196,8 +196,8 @@ fungespace_set_no_bounds_update(fungeCell value,
 			ght_remove(fspace.entries, position);
 		} else {
 			// Reuse cell if it exists
-			fungeCell *tmp;
-			if ((tmp = (fungeCell*)ght_get(fspace.entries, position)) != NULL) {
+			funge_cell *tmp;
+			if ((tmp = (funge_cell*)ght_get(fspace.entries, position)) != NULL) {
 				*tmp = value;
 			} else {
 				if (ght_insert(fspace.entries, value, position) == -1) {
@@ -210,7 +210,7 @@ fungespace_set_no_bounds_update(fungeCell value,
 
 
 FUNGE_ATTR_FAST void
-fungespace_set(fungeCell value, const fungeVector * restrict position)
+fungespace_set(funge_cell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
 	fungespace_set_no_bounds_update(value, position);
@@ -228,7 +228,7 @@ fungespace_set(fungeCell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST static inline void
-fungespace_set_initial(fungeCell value, const fungeVector * restrict position)
+fungespace_set_initial(funge_cell value, const fungeVector * restrict position)
 {
 	assert(position != NULL);
 	fungespace_set_no_bounds_update(value, position);
@@ -247,7 +247,7 @@ fungespace_set_initial(fungeCell value, const fungeVector * restrict position)
 
 
 FUNGE_ATTR_FAST void
-fungespace_set_offset(fungeCell value, const fungeVector * restrict position,
+fungespace_set_offset(funge_cell value, const fungeVector * restrict position,
                       const fungeVector * restrict offset)
 {
 	assert(position != NULL);
@@ -299,8 +299,8 @@ void fungespace_dump(void)
 	if (!fspace.entries)
 		return;
 	fprintf(stderr, "Fungespace follows:\n");
-	for (fungeCell y = 0; y <= fspace.bottomRightCorner.y; y++) {
-		for (fungeCell x = 0; x <= fspace.bottomRightCorner.x; x++)
+	for (funge_cell y = 0; y <= fspace.bottomRightCorner.y; y++) {
+		for (funge_cell x = 0; x <= fspace.bottomRightCorner.x; x++)
 			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
 		fprintf(stderr, "\n");
 	}
@@ -394,8 +394,8 @@ static inline void load_string(const unsigned char * restrict program,
 {
 	bool lastwascr = false;
 	// Row in fungespace
-	fungeCell y = 0;
-	fungeCell x = 0;
+	funge_cell y = 0;
+	funge_cell x = 0;
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
@@ -416,7 +416,7 @@ static inline void load_string(const unsigned char * restrict program,
 					x = 0;
 					y++;
 				}
-				fungespace_set_initial((fungeCell)program[i], vector_create_ref(x, y));
+				fungespace_set_initial((funge_cell)program[i], vector_create_ref(x, y));
 				x++;
 				break;
 		}
@@ -467,8 +467,8 @@ fungespace_load_at_offset(const char        * restrict filename,
 
 	bool lastwascr = false;
 
-	fungeCell y = 0;
-	fungeCell x = 0;
+	funge_cell y = 0;
+	funge_cell x = 0;
 	assert(filename != NULL);
 	assert(offset != NULL);
 	assert(size != NULL);
@@ -486,7 +486,7 @@ fungespace_load_at_offset(const char        * restrict filename,
 	for (size_t i = 0; i < length; i++) {
 		if (binary) {
 			if (addr[i] != ' ')
-				fungespace_set_offset((fungeCell)addr[i], vector_create_ref(x, y), offset);
+				fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
 			x++;
 		} else {
 			switch (addr[i]) {
@@ -508,7 +508,7 @@ fungespace_load_at_offset(const char        * restrict filename,
 						y++;
 					}
 					if (addr[i] != ' ')
-						fungespace_set_offset((fungeCell)addr[i], vector_create_ref(x, y), offset);
+						fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
 					x++;
 					break;
 			}
@@ -529,8 +529,8 @@ fungespace_save_to_file(const char        * restrict filename,
 {
 	FILE * file;
 
-	fungeCell maxy = offset->y + size->y;
-	fungeCell maxx = offset->x + size->x;
+	funge_cell maxy = offset->y + size->y;
+	funge_cell maxx = offset->x + size->x;
 
 	assert(filename != NULL);
 	assert(offset != NULL);
@@ -550,9 +550,9 @@ fungespace_save_to_file(const char        * restrict filename,
 		}
 #endif
 		cf_flockfile(file);
-		for (fungeCell y = offset->y; y < maxy; y++) {
-			for (fungeCell x = offset->x; x < maxx; x++) {
-				fungeCell value = fungespace_get(vector_create_ref(x, y));
+		for (funge_cell y = offset->y; y < maxy; y++) {
+			for (funge_cell x = offset->x; x < maxx; x++) {
+				funge_cell value = fungespace_get(vector_create_ref(x, y));
 				cf_putc_unlocked((int)value, file);
 			}
 			cf_putc_unlocked('\n', file);
@@ -562,20 +562,20 @@ fungespace_save_to_file(const char        * restrict filename,
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		fungeCell * restrict towrite = cf_malloc((size_t)(size->x * size->y + size->y) * sizeof(fungeCell));
+		funge_cell * restrict towrite = cf_malloc((size_t)(size->x * size->y + size->y) * sizeof(funge_cell));
 		if (!towrite) {
 			fclose(file);
 			return false;
 		}
 		// Construct each line.
-		for (fungeCell y = offset->y; y < maxy; y++) {
+		for (funge_cell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = (ssize_t)size->x;
-			fungeCell * restrict string = cf_malloc((size_t)size->x * sizeof(fungeCell));
+			funge_cell * restrict string = cf_malloc((size_t)size->x * sizeof(funge_cell));
 			if (!string) {
 				fclose(file);
 				return false;
 			}
-			for (fungeCell x = offset->x; x < maxx; x++) {
+			for (funge_cell x = offset->x; x < maxx; x++) {
 				string[x-offset->x] = fungespace_get(vector_create_ref(x, y));
 			}
 
@@ -590,7 +590,7 @@ fungespace_save_to_file(const char        * restrict filename,
 				index += lastspace + 1;
 			}
 			cf_free(string);
-			towrite[index] = (fungeCell)'\n';
+			towrite[index] = (funge_cell)'\n';
 			index++;
 		}
 		// Remove trailing newlines.

@@ -217,19 +217,19 @@ static inline void move(tc distance)
 
 // helpers...
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline long double toRad(fungeCell c)
+static inline long double toRad(funge_cell c)
 {
 	return (M_PI / 180.0) * c;
 }
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell toDeg(long double r)
+static inline funge_cell toDeg(long double r)
 {
 	long double d = roundl((180.0 / M_PI) * r);
-	return (fungeCell)d;
+	return (funge_cell)d;
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline uint32_t toRGB(fungeCell c)
+static inline uint32_t toRGB(funge_cell c)
 {
 	return (uint32_t)(c & ((1 << 24) - 1));
 }
@@ -378,7 +378,7 @@ static void finger_TURT_pen_colour(instructionPointer * ip)
 static void finger_TURT_show_display(instructionPointer * ip)
 {
 	// What display? We don't have one as far as I know?
-	fungeCell a;
+	funge_cell a;
 	a = stack_pop(ip->stack);
 	switch (a) {
 		case 0:  break;
@@ -581,7 +581,7 @@ static void finger_TURT_clear_paper(instructionPointer * ip)
 /// P - Pen Position (0 = up, 1 = down)
 static void finger_TURT_pen_position(instructionPointer * ip)
 {
-	fungeCell a;
+	funge_cell a;
 	a = stack_pop(ip->stack);
 	switch (a) {
 		case 0:

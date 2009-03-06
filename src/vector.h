@@ -30,8 +30,8 @@
 
 /// A vector in Funge-Space
 typedef struct s_fungeVector {
-	fungeCell x; ///< You should be able to guess what this is.
-	fungeCell y; ///< You should be able to guess what this is.
+	funge_cell x; ///< You should be able to guess what this is.
+	funge_cell y; ///< You should be able to guess what this is.
 } fungeVector;
 
 /// Useful to create a vector in a list of parameter for example.

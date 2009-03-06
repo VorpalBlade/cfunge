@@ -70,7 +70,7 @@ typedef struct s_instructionPointer {
 	bool                        stringLastWasSpace;     ///< Used in string mode for SGML style spaces.
 	// Bitfield for uncommon flags
 	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
-	fungeCell                   ID;                     ///< The ID of this IP.
+	funge_cell                   ID;                     ///< The ID of this IP.
 	funge_stackstack          * stackstack;             ///< The stack stack.
 	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
 	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
@@ -118,7 +118,7 @@ void ip_free(instructionPointer * restrict ip);
  * probably want to set a temp delta instead and take +/- one step for now.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_forward(instructionPointer * restrict ip, fungeCell steps);
+void ip_forward(instructionPointer * restrict ip, funge_cell steps);
 
 /**
  * Mirror IP direction.

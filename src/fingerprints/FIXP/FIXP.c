@@ -73,25 +73,25 @@ static void finger_FIXP_and(instructionPointer * ip)
 static void finger_FIXP_acos(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * acosl((long double)n / 10000) * FUNGE_180_PI);
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// C - cos
 static void finger_FIXP_cos(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * cosl(((long double)n / 10000) * FUNGE_PI_180));
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 
 }
 
 /// D - rand
 static void finger_FIXP_rand(instructionPointer * ip)
 {
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 
 	// No one said this had to be uniform, did they?
 	if (n == 0)
@@ -104,18 +104,18 @@ static void finger_FIXP_rand(instructionPointer * ip)
 static void finger_FIXP_sin(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * sinl(((long double)n / 10000) * FUNGE_PI_180));
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// J - asin
 static void finger_FIXP_asin(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * asinl((long double)n / 10000) * FUNGE_180_PI);
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// N - neg
@@ -133,33 +133,33 @@ static void finger_FIXP_or(instructionPointer * ip)
 /// P - mulpi
 static void finger_FIXP_mulpi(instructionPointer * ip)
 {
-	stack_push(ip->stack, (fungeCell)(M_PI * stack_pop(ip->stack)));
+	stack_push(ip->stack, (funge_cell)(M_PI * stack_pop(ip->stack)));
 }
 
 /// Q - sqrt
 static void finger_FIXP_sqrt(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(sqrtl((long double)n));
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// R - pow
 static void finger_FIXP_pow(instructionPointer * ip)
 {
 	long double d;
-	fungeCell a, b;
+	funge_cell a, b;
 	b = stack_pop(ip->stack);
 	a = stack_pop(ip->stack);
 	d = roundl(powl((long double)a, (long double)b));
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// S - signbit
 static void finger_FIXP_signbit(instructionPointer * ip)
 {
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	stack_push(ip->stack, n > 0 ? 1 : (n < 0 ? -1 : 0));
 }
 
@@ -167,18 +167,18 @@ static void finger_FIXP_signbit(instructionPointer * ip)
 static void finger_FIXP_tan(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * tanl(((long double)n / 10000) * FUNGE_PI_180));
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// U - atan
 static void finger_FIXP_atan(instructionPointer * ip)
 {
 	long double d;
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	d = roundl(10000 * atanl((long double)n / 10000)  * FUNGE_180_PI);
-	stack_push(ip->stack, (fungeCell)d);
+	stack_push(ip->stack, (funge_cell)d);
 }
 
 /// V - abs

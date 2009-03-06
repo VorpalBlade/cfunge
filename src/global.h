@@ -107,18 +107,18 @@
 /*@{*/
 #if defined(USE64)
 /// The type of the data cells (64-bit version).
-typedef int64_t  fungeCell;
-/// As fungeCell, but unsigned (64-bit version).
-typedef uint64_t fungeUnsignedCell;
+typedef int64_t  funge_cell;
+/// As funge_cell, but unsigned (64-bit version).
+typedef uint64_t funge_unsigned_cell;
 /// Generic printf code to use.
 #  define FUNGECELLPRI PRId64
 /// Printf code for octal output.
 #  define FUNGECELLoctPRI PRIo64
 /// Printf code for hexdecimal output.
 #  define FUNGECELLhexPRI PRIx64
-/// Max value for fungeCell
+/// Max value for funge_cell
 #  define FUNGECELL_MIN INT64_MIN
-/// Min value for fungeCell
+/// Min value for funge_cell
 #  define FUNGECELL_MAX INT64_MAX
 
 /**
@@ -130,18 +130,18 @@ typedef uint64_t fungeUnsignedCell;
 
 #elif defined(USE32)
 /// The type of the data cells (32-bit version).
-typedef int32_t fungeCell;
-/// As fungeCell, but unsigned (32-bit version).
-typedef uint32_t fungeUnsignedCell;
+typedef int32_t funge_cell;
+/// As funge_cell, but unsigned (32-bit version).
+typedef uint32_t funge_unsigned_cell;
 /// Generic printf code to use.
 #  define FUNGECELLPRI PRId32
 /// Printf code for octal output.
 #  define FUNGECELLoctPRI PRIo32
 /// Printf code for hexdecimal output.
 #  define FUNGECELLhexPRI PRIx32
-/// Max value for fungeCell
+/// Max value for funge_cell
 #  define FUNGECELL_MIN INT32_MIN
-/// Min value for fungeCell
+/// Min value for funge_cell
 #  define FUNGECELL_MAX INT32_MAX
 
 /**

@@ -37,7 +37,7 @@
 #endif
 
 #ifndef DISABLE_TRACE
-static inline void print_trace(fungeCell iters, fungeCell kInstr)
+static inline void print_trace(funge_cell iters, funge_cell kInstr)
 {
 	if (setting_trace_level > 5)
 		fprintf(stderr, "  * In k: iteration: %" FUNGECELLPRI " instruction: %c (%" FUNGECELLPRI ")\n",
@@ -46,7 +46,7 @@ static inline void print_trace(fungeCell iters, fungeCell kInstr)
 #endif
 
 /// This moves IP to next instruction, with respect to ;, space and current delta.
-static inline fungeCell find_next_instr(instructionPointer * restrict ip, fungeCell kInstr)
+static inline funge_cell find_next_instr(instructionPointer * restrict ip, funge_cell kInstr)
 {
 	bool injump = false;
 	if (kInstr == ';')
@@ -75,9 +75,9 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, ipList ** IPL
 FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecursive)
 #endif
 {
-	fungeCell iters = stack_pop(ip->stack);
+	funge_cell iters = stack_pop(ip->stack);
 	if (iters == 0) {
-		fungeCell kInstr;
+		funge_cell kInstr;
 		// Skip past next instruction.
 		ip_forward(ip, 1);
 		kInstr = fungespace_get(&ip->position);
@@ -87,7 +87,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 	} else if (iters < 0) {
 		ip_reverse(ip);
 	} else {
-		fungeCell kInstr;
+		funge_cell kInstr;
 		// Note that:
 		//   * Instruction executes *at* k
 		//   * In Funge-109 we skip over the cell we executed

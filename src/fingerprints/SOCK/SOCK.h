@@ -35,7 +35,7 @@ typedef struct FungeSocketHandle {
 } FungeSocketHandle;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h);
+FungeSocketHandle* finger_SOCK_LookupHandle(funge_cell h);
 
 #endif
 

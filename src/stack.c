@@ -39,7 +39,7 @@ FUNGE_ATTR_FAST funge_stack * stack_create(void)
 	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
 	if (FUNGE_EXPECT(tmp == NULL, false))
 		return NULL;
-	tmp->entries = (fungeCell*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(fungeCell));
+	tmp->entries = (funge_cell*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(funge_cell));
 	if (FUNGE_EXPECT(tmp->entries == NULL, false)) {
 		cf_free(tmp);
 		return NULL;
@@ -68,7 +68,7 @@ static inline funge_stack * stack_duplicate(const funge_stack * old)
 	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
 	if (FUNGE_EXPECT(tmp == NULL, false))
 		return NULL;
-	tmp->entries = (fungeCell*)cf_malloc_noptr((old->top + 1) * sizeof(fungeCell));
+	tmp->entries = (funge_cell*)cf_malloc_noptr((old->top + 1) * sizeof(funge_cell));
 	if (FUNGE_EXPECT(tmp->entries == NULL, false)) {
 		cf_free(tmp);
 		return NULL;
@@ -77,7 +77,7 @@ static inline funge_stack * stack_duplicate(const funge_stack * old)
 	tmp->top = old->top;
 	// Not sure if memcpy() on 0 is well defined, so lets be careful.
 	if (tmp->top != 0)
-		memcpy(tmp->entries, old->entries, sizeof(fungeCell) * tmp->top);
+		memcpy(tmp->entries, old->entries, sizeof(funge_cell) * tmp->top);
 	return tmp;
 }
 #endif
@@ -100,7 +100,7 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 		size_t newsize = stack->size + minfree;
 		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
 		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
-		stack->entries = (fungeCell*)cf_realloc(stack->entries, newsize * sizeof(fungeCell));
+		stack->entries = (funge_cell*)cf_realloc(stack->entries, newsize * sizeof(funge_cell));
 		if (FUNGE_EXPECT(!stack->entries, false)) {
 			stack_oom();
 		}
@@ -109,7 +109,7 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void stack_push_no_check(funge_stack * restrict stack, fungeCell value)
+static inline void stack_push_no_check(funge_stack * restrict stack, funge_cell value)
 {
 	// This should only be used if that is true...
 	assert(stack->top < stack->size);
@@ -117,14 +117,14 @@ static inline void stack_push_no_check(funge_stack * restrict stack, fungeCell v
 	stack->top++;
 }
 
-FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, fungeCell value)
+FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, funge_cell value)
 {
 	assert(stack != NULL);
 	assert(stack->top <= stack->size);
 
 	// Do we need to realloc?
 	if (FUNGE_EXPECT(stack->top == stack->size, false)) {
-		stack->entries = (fungeCell*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fungeCell));
+		stack->entries = (funge_cell*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(funge_cell));
 		if (FUNGE_EXPECT(!stack->entries, false)) {
 			stack_oom();
 		}
@@ -134,7 +134,7 @@ FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, fungeCell value)
 	stack->top++;
 }
 
-FUNGE_ATTR_FAST inline fungeCell stack_pop(funge_stack * restrict stack)
+FUNGE_ATTR_FAST inline funge_cell stack_pop(funge_stack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -168,7 +168,7 @@ FUNGE_ATTR_FAST void stack_pop_n_discard(funge_stack * restrict stack, size_t n)
 }
 
 
-FUNGE_ATTR_FAST inline fungeCell stack_peek(const funge_stack * restrict stack)
+FUNGE_ATTR_FAST inline funge_cell stack_peek(const funge_stack * restrict stack)
 {
 	assert(stack != NULL);
 
@@ -180,7 +180,7 @@ FUNGE_ATTR_FAST inline fungeCell stack_peek(const funge_stack * restrict stack)
 }
 
 
-FUNGE_ATTR_FAST inline fungeCell stack_get_index(const funge_stack * restrict stack, size_t index)
+FUNGE_ATTR_FAST inline funge_cell stack_get_index(const funge_stack * restrict stack, size_t index)
 {
 	assert(stack != NULL);
 
@@ -220,7 +220,7 @@ FUNGE_ATTR_FAST void stack_push_vector(funge_stack * restrict stack, const funge
 FUNGE_ATTR_FAST fungeVector stack_pop_vector(funge_stack * restrict stack)
 {
 	// TODO: Optimise
-	fungeCell x, y;
+	funge_cell x, y;
 	y = stack_pop(stack);
 	x = stack_pop(stack);
 	return (fungeVector) { .x = x, .y = y };
@@ -242,7 +242,7 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsig
 
 FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, size_t * restrict len)
 {
-	fungeCell c;
+	funge_cell c;
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
 	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
@@ -278,7 +278,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict sta
 FUNGE_ATTR_FAST void stack_dup_top(funge_stack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
-	fungeCell tmp = stack_peek(stack);
+	funge_cell tmp = stack_peek(stack);
 	stack_push(stack, tmp);
 	// If it was empty, push a second zero.
 	if (stack->top == 1)
@@ -288,7 +288,7 @@ FUNGE_ATTR_FAST void stack_dup_top(funge_stack * restrict stack)
 FUNGE_ATTR_FAST void stack_swap_top(funge_stack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
-	fungeCell a, b;
+	funge_cell a, b;
 	// Well this have to work logically...
 	a = stack_pop(stack);
 	b = stack_pop(stack);
@@ -415,7 +415,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
 {
 	stack_prealloc_space(stack, count);
-	memset(&stack->entries[stack->top], 0, count * sizeof(fungeCell));
+	memset(&stack->entries[stack->top], 0, count * sizeof(funge_cell));
 	stack->top += count;
 }
 
@@ -434,12 +434,12 @@ static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stac
 	}
 
 	// memcpy the rest.
-	memcpy(&dest->entries[dest->top], &src->entries[src->top - count], count*sizeof(fungeCell));
+	memcpy(&dest->entries[dest->top], &src->entries[src->top - count], count*sizeof(funge_cell));
 	dest->top += count;
 }
 
 FUNGE_ATTR_FAST
-bool stackstack_begin(instructionPointer * restrict ip, fungeCell count, const fungeVector * restrict storageOffset)
+bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const fungeVector * restrict storageOffset)
 {
 	funge_stackstack *stackStack;
 	funge_stack      *TOSS, *SOSS;
@@ -489,7 +489,7 @@ bool stackstack_begin(instructionPointer * restrict ip, fungeCell count, const f
 }
 
 
-FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell count)
+FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell count)
 {
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;
@@ -526,7 +526,7 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, fungeCell 
 }
 
 
-FUNGE_ATTR_FAST void stackstack_transfer(fungeCell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS)
+FUNGE_ATTR_FAST void stackstack_transfer(funge_cell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS)
 {
 	assert(TOSS != NULL);
 	assert(SOSS != NULL);

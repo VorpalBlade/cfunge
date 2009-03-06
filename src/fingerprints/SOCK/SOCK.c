@@ -49,11 +49,11 @@ static size_t maxHandle = 0;
 
 /// Used by allocate_handle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell findNextfree_handle(void)
+static inline funge_cell findNextfree_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (sockets[i] == NULL)
-			return (fungeCell)i;
+			return (funge_cell)i;
 	}
 	// No free one, extend array..
 	{
@@ -64,16 +64,16 @@ static inline fungeCell findNextfree_handle(void)
 		for (size_t i = maxHandle; i < (maxHandle + ALLOCCHUNK); i++)
 			sockets[i] = NULL;
 		maxHandle += ALLOCCHUNK;
-		return (fungeCell)(maxHandle - ALLOCCHUNK);
+		return (funge_cell)(maxHandle - ALLOCCHUNK);
 	}
 }
 
 /// Get a new handle to use for a file, also allocates buffer for it.
 /// @return Handle, or -1 on failure
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell allocate_handle(void)
+static inline funge_cell allocate_handle(void)
 {
-	fungeCell h;
+	funge_cell h;
 
 	h = findNextfree_handle();
 	if (h < 0)
@@ -87,7 +87,7 @@ static inline fungeCell allocate_handle(void)
 
 /// Free a handle. fclose() the file before calling this.
 FUNGE_ATTR_FAST
-static inline void free_handle(fungeCell h)
+static inline void free_handle(funge_cell h)
 {
 	if (!sockets[h])
 		return;
@@ -97,7 +97,7 @@ static inline void free_handle(fungeCell h)
 
 /// Checks if handle is valid.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool valid_handle(fungeCell h)
+static inline bool valid_handle(funge_cell h)
 {
 	if ((h < 0) || ((size_t)h >= maxHandle) || (!sockets[h])) {
 		return false;
@@ -107,7 +107,7 @@ static inline bool valid_handle(fungeCell h)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-FungeSocketHandle* finger_SOCK_LookupHandle(fungeCell h)
+FungeSocketHandle* finger_SOCK_LookupHandle(funge_cell h)
 {
 	if (!valid_handle(h))
 		return NULL;
@@ -128,7 +128,7 @@ static inline int popFam(instructionPointer * ip)
 /// A - Accept a connection
 static void finger_SOCK_accept(instructionPointer * ip)
 {
-	fungeCell s = stack_pop(ip->stack);
+	funge_cell s = stack_pop(ip->stack);
 
 	if (!valid_handle(s))
 		goto error;
@@ -137,7 +137,7 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		FungeSockAddr addr;
 		socklen_t addrlen = sizeof(addr.in);
 		int as;
-		fungeCell i;
+		funge_cell i;
 
 		addr.in.sin_addr.s_addr = 0;
 		addr.in.sin_port = 0;
@@ -156,7 +156,7 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		sockets[i]->family = sockets[s]->family;
 
 		stack_push(ip->stack, addr.in.sin_port);
-		stack_push(ip->stack, (fungeCell)addr.in.sin_addr.s_addr);
+		stack_push(ip->stack, (funge_cell)addr.in.sin_addr.s_addr);
 		stack_push(ip->stack, i);
 	}
 	return;
@@ -170,7 +170,7 @@ static void finger_SOCK_bind(instructionPointer * ip)
 	uint32_t  address = (uint32_t)stack_pop(ip->stack);
 	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
 	int       fam     = popFam(ip);
-	fungeCell s       = stack_pop(ip->stack);
+	funge_cell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
 	if (!valid_handle(s))
@@ -202,7 +202,7 @@ static void finger_SOCK_open(instructionPointer * ip)
 	uint32_t  address = (uint32_t)stack_pop(ip->stack);
 	uint16_t  port    = (uint16_t)stack_pop(ip->stack);
 	int       fam     = popFam(ip);
-	fungeCell s       = stack_pop(ip->stack);
+	funge_cell s       = stack_pop(ip->stack);
 	FungeSockAddr addr;
 
 	if (!valid_handle(s))
@@ -239,7 +239,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 	if (inet_pton(AF_INET, str, &addr) != 1) {
 		ip_reverse(ip);
 	} else {
-		stack_push(ip->stack, (fungeCell)addr.s_addr);
+		stack_push(ip->stack, (funge_cell)addr.s_addr);
 	}
 	stack_free_string(str);
 
@@ -248,7 +248,7 @@ static void finger_SOCK_fromascii(instructionPointer * ip)
 /// K - Kill a connection
 static void finger_SOCK_kill(instructionPointer * ip)
 {
-	fungeCell s       = stack_pop(ip->stack);
+	funge_cell s       = stack_pop(ip->stack);
 	if (!valid_handle(s))
 		goto invalid;
 	shutdown(sockets[s]->fd, SHUT_RDWR);
@@ -266,7 +266,7 @@ invalid:
 /// L - Set a socket to listening mode (n=backlog size)
 static void finger_SOCK_listen(instructionPointer * ip)
 {
-	fungeCell s = stack_pop(ip->stack);
+	funge_cell s = stack_pop(ip->stack);
 	int n = (int)stack_pop(ip->stack);
 
 	if (!valid_handle(s))
@@ -285,8 +285,8 @@ static void finger_SOCK_setopt(instructionPointer * ip)
 	int val;
 	int o;
 
-	fungeCell s = stack_pop(ip->stack);
-	fungeCell t = stack_pop(ip->stack);
+	funge_cell s = stack_pop(ip->stack);
+	funge_cell t = stack_pop(ip->stack);
 
 	val = (int)stack_pop(ip->stack);
 
@@ -319,8 +319,8 @@ static void finger_SOCK_receive(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t got;
-	fungeCell s   = stack_pop(ip->stack);
-	fungeCell len = stack_pop(ip->stack);
+	funge_cell s   = stack_pop(ip->stack);
+	funge_cell len = stack_pop(ip->stack);
 
 	fungeVector v = stack_pop_vector(ip->stack);
 
@@ -373,7 +373,7 @@ static void finger_SOCK_create(instructionPointer * ip)
 		goto error;
 
 	{
-		fungeCell h = allocate_handle();
+		funge_cell h = allocate_handle();
 		if (h == -1) {
 			goto error;
 		}
@@ -398,8 +398,8 @@ static void finger_SOCK_write(instructionPointer * ip)
 {
 	unsigned char *buffer = NULL;
 	ssize_t sent;
-	fungeCell s   = stack_pop(ip->stack);
-	fungeCell len = stack_pop(ip->stack);
+	funge_cell s   = stack_pop(ip->stack);
+	funge_cell len = stack_pop(ip->stack);
 
 	fungeVector v = stack_pop_vector(ip->stack);
 
@@ -415,7 +415,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
 
 	for (size_t i = 0; i < (size_t)len; ++i)
-		buffer[i] = (unsigned char)fungespace_get(vector_create_ref(v.x + (fungeCell)i, v.y));
+		buffer[i] = (unsigned char)fungespace_get(vector_create_ref(v.x + (funge_cell)i, v.y));
 
 	sent = send(sockets[s]->fd, buffer, (size_t)len, 0);
 

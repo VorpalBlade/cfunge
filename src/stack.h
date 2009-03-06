@@ -46,7 +46,7 @@ typedef struct funge_stack {
 	size_t         size; ///< This is current size of the array entries.
 	size_t         top;  /**< This is current top item in stack (may not be last item).
 	                          Note: One-indexed, as 0 = empty stack. */
-	fungeCell *entries;  ///< Pointer to entries.
+	funge_cell *entries;  ///< Pointer to entries.
 } funge_stack;
 
 /// A Funge stack-stack.
@@ -72,12 +72,12 @@ void stack_free(funge_stack * stack);
  * Push a item on the stack.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_push(funge_stack * restrict stack, fungeCell value);
+void stack_push(funge_stack * restrict stack, funge_cell value);
 /**
  * Pop item from stack.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-fungeCell stack_pop(funge_stack * restrict stack);
+funge_cell stack_pop(funge_stack * restrict stack);
 /**
  * Pop one item and discard it.
  */
@@ -92,7 +92,7 @@ void stack_pop_n_discard(funge_stack * restrict stack, size_t n);
  * Stack peek.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-fungeCell stack_peek(const funge_stack * restrict stack);
+funge_cell stack_peek(const funge_stack * restrict stack);
 /**
  * Get an element from a specific position (counting from stack base).
  * Will return 0 if element isn't valid.
@@ -101,7 +101,7 @@ fungeCell stack_peek(const funge_stack * restrict stack);
  * @param index What index to operate on.
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-fungeCell stack_get_index(const funge_stack * restrict stack, size_t index);
+funge_cell stack_get_index(const funge_stack * restrict stack, size_t index);
 
 /**
  * Find length of string on stack. Scans for first 0 from the top. Returns
@@ -202,7 +202,7 @@ funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_begin(struct s_instructionPointer * restrict ip,
-                     fungeCell count,
+                     funge_cell count,
                      const fungeVector * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
@@ -211,7 +211,7 @@ bool stackstack_begin(struct s_instructionPointer * restrict ip,
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_end(struct s_instructionPointer * restrict ip,
-                   fungeCell count);
+                   funge_cell count);
 /**
  * Transfer items from one stack to another (not in order).
  * Used for u instruction.
@@ -220,6 +220,6 @@ bool stackstack_end(struct s_instructionPointer * restrict ip,
  * @param SOSS Pointer to second stack on the stack-stack.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stackstack_transfer(fungeCell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS);
+void stackstack_transfer(funge_cell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS);
 
 #endif

@@ -199,7 +199,7 @@ FUNGE_ATTR_FAST bool manager_duplicate(const instructionPointer * restrict oldip
  * -1 means not found.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline ssize_t find_fingerprint(const fungeCell fingerprint)
+static inline ssize_t find_fingerprint(const funge_cell fingerprint)
 {
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		if (fingerprint <= ImplementedFingerprints[i].fprint) {
@@ -217,7 +217,7 @@ static inline ssize_t find_fingerprint(const fungeCell fingerprint)
 	return FPRINT_NOTFOUND;
 }
 
-FUNGE_ATTR_FAST bool manager_load(instructionPointer * restrict ip, fungeCell fingerprint)
+FUNGE_ATTR_FAST bool manager_load(instructionPointer * restrict ip, funge_cell fingerprint)
 {
 	ssize_t index = find_fingerprint(fingerprint);
 	if (index == FPRINT_NOTFOUND) {
@@ -234,7 +234,7 @@ FUNGE_ATTR_FAST bool manager_load(instructionPointer * restrict ip, fungeCell fi
 	}
 }
 
-FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, fungeCell fingerprint)
+FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, funge_cell fingerprint)
 {
 	ssize_t index = find_fingerprint(fingerprint);
 	if (index == -1)
@@ -254,7 +254,7 @@ FUNGE_ATTR_FAST void manager_list(void)
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {
 		// This hack is here to reconstruct the name from the fingerprint.
 		// It will probably break if char isn't 8 bits.
-		fungeCell fprint = ImplementedFingerprints[i].fprint;
+		funge_cell fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[5] = { (char)(fprint >> 24), (char)(fprint >> 16),
 		                       (char)(fprint >> 8), (char)fprint, '\0'};
 

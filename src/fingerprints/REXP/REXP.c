@@ -63,7 +63,7 @@ static regmatch_t matches[MATCHSIZE];
 #define FUNGE_REG_NOTEOL 2
 
 FUNGE_ATTR_FAST
-static inline int translate_flags_C(fungeCell flags)
+static inline int translate_flags_C(funge_cell flags)
 {
 	int ret = 0;
 	if (flags & FUNGE_REG_EXTENDED)
@@ -78,7 +78,7 @@ static inline int translate_flags_C(fungeCell flags)
 }
 
 FUNGE_ATTR_FAST
-static inline int translate_flags_E(fungeCell flags)
+static inline int translate_flags_E(funge_cell flags)
 {
 	int ret = 0;
 	if (flags & FUNGE_REG_NOTBOL)

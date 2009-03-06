@@ -27,9 +27,9 @@
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 static inline unsigned char pop_stack_spec(instructionPointer * ip)
 {
-	fungeCell n = stack_pop(ip->stack);
+	funge_cell n = stack_pop(ip->stack);
 	if (n < 0) return 0;
-	else if (n <= 25) return (unsigned char)((fungeCell)'A' + n);
+	else if (n <= 25) return (unsigned char)((funge_cell)'A' + n);
 	else if (n < 'A') return 0;
 	else if (n <= 'Z') return (unsigned char)n;
 	else return 0;

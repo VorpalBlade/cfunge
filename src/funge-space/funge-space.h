@@ -56,7 +56,7 @@ void fungespace_free(void);
  * @return The value for that position.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-fungeCell fungespace_get(const fungeVector * restrict position);
+funge_cell fungespace_get(const fungeVector * restrict position);
 /**
  * Get a cell, with an offset. Mostly used to handle storage offset.
  * @param position The place in Funge-Space to get the value for.
@@ -64,7 +64,7 @@ fungeCell fungespace_get(const fungeVector * restrict position);
  * @return The value for that position after adding offset.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-fungeCell fungespace_get_offset(const fungeVector * restrict position,
+funge_cell fungespace_get_offset(const fungeVector * restrict position,
                                 const fungeVector * restrict offset);
 /**
  * Set a cell.
@@ -72,7 +72,7 @@ fungeCell fungespace_get_offset(const fungeVector * restrict position,
  * @param position The place in Funge-Space to set the value for.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void fungespace_set(fungeCell value,
+void fungespace_set(funge_cell value,
                     const fungeVector * restrict position);
 /**
  * Set a cell, with an offset. Mostly used to handle storage offset.
@@ -81,7 +81,7 @@ void fungespace_set(fungeCell value,
  * @param offset An additional offset to add to the position.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void fungespace_set_offset(fungeCell value,
+void fungespace_set_offset(funge_cell value,
                            const fungeVector * restrict position,
                            const fungeVector * restrict offset);
 /**

@@ -59,9 +59,9 @@ FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 		retval = system(command);
 		// POSIX says we may only use WEXITSTATUS if WIFEXITED returns true...
 		if (WIFEXITED(retval)) {
-			stack_push(ip->stack, (fungeCell)WEXITSTATUS(retval));
+			stack_push(ip->stack, (funge_cell)WEXITSTATUS(retval));
 		} else {
-			stack_push(ip->stack, (fungeCell)retval);
+			stack_push(ip->stack, (funge_cell)retval);
 		}
 		stack_free_string(command);
 	}

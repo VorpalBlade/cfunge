@@ -110,7 +110,7 @@ extern "C"
 	 * The structure for hash entries.
 	 */
 	typedef struct s_hash_entry {
-		fungeCell p_data;
+		funge_cell p_data;
 
 		struct s_hash_entry *p_next;
 		struct s_hash_entry *p_prev;
@@ -261,7 +261,7 @@ extern "C"
 	 * @return 0 if the element could be inserted, -1 otherwise.
 	 */
 	int ght_insert(ght_hash_table_t * restrict p_ht,
-	               fungeCell p_entry_data,
+	               funge_cell p_entry_data,
 	               const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
@@ -277,8 +277,8 @@ extern "C"
 	 *
 	 * @return a pointer to the <I>old</I> value or NULL if the operation failed.
 	 */
-	fungeCell ght_replace(ght_hash_table_t * restrict p_ht,
-	                      fungeCell p_entry_data,
+	funge_cell ght_replace(ght_hash_table_t * restrict p_ht,
+	                      funge_cell p_entry_data,
 	                      const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 
@@ -292,7 +292,7 @@ extern "C"
 	 *
 	 * @return a pointer to the found entry or NULL if no entry could be found.
 	 */
-	fungeCell *ght_get(ght_hash_table_t * restrict p_ht,
+	funge_cell *ght_get(ght_hash_table_t * restrict p_ht,
 	                   const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**
@@ -305,7 +305,7 @@ extern "C"
 	 *
 	 * @return a pointer to the removed entry or NULL if the entry could be found.
 	 */
-	fungeCell ght_remove(ght_hash_table_t * restrict p_ht,
+	funge_cell ght_remove(ght_hash_table_t * restrict p_ht,
 	                     const fungeSpaceHashKey * restrict p_key_data) FUNGE_ATTR_FAST;
 
 	/**

@@ -193,7 +193,7 @@ static void finger_FPSP_pow(instructionPointer * ip)
 static void finger_FPSP_fromint(instructionPointer * ip)
 {
 	floatint a;
-	fungeCell i;
+	funge_cell i;
 	i = stack_pop(ip->stack);
 	a.f = (float)i;
 	stack_push(ip->stack, a.i);
@@ -203,7 +203,7 @@ static void finger_FPSP_toint(instructionPointer * ip)
 {
 	floatint a;
 	a.i = (int32_t)stack_pop(ip->stack);
-	stack_push(ip->stack, (fungeCell)a.f);
+	stack_push(ip->stack, (funge_cell)a.f);
 }
 
 static void finger_FPSP_fromascii(instructionPointer * ip)

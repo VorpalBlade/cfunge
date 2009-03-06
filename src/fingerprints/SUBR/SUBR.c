@@ -39,7 +39,7 @@ static void finger_SUBR_absolute(instructionPointer * ip)
 /// C - Call
 static void finger_SUBR_call(instructionPointer * ip)
 {
-	fungeCell n;
+	funge_cell n;
 	fungeVector pos;
 	funge_stack *tmpstack;
 
@@ -58,7 +58,7 @@ static void finger_SUBR_call(instructionPointer * ip)
 
 	tmpstack = stack_create();
 
-	for (fungeCell i = 0; i < n; ++i)
+	for (funge_cell i = 0; i < n; ++i)
 		stack_push(tmpstack, stack_pop(ip->stack));
 
 	stack_push_vector(ip->stack, &ip->position);
@@ -97,7 +97,7 @@ static void finger_SUBR_relative(instructionPointer * ip)
 /// R - Return from call
 static void finger_SUBR_return(instructionPointer * ip)
 {
-	fungeCell n;
+	funge_cell n;
 	fungeVector pos;
 	fungeVector vec;
 	funge_stack *tmpstack;
@@ -110,7 +110,7 @@ static void finger_SUBR_return(instructionPointer * ip)
 
 	tmpstack = stack_create();
 
-	for (fungeCell i = 0; i < n; ++i)
+	for (funge_cell i = 0; i < n; ++i)
 		stack_push(tmpstack, stack_pop(ip->stack));
 
 	vec = stack_pop_vector(ip->stack);

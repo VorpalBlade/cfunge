@@ -65,7 +65,7 @@ static void finger_NCRS_beep(instructionPointer * ip)
 /// C - Clear all or part of the screen
 static void finger_NCRS_clear(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	switch (value) {
 		case 0:
@@ -88,7 +88,7 @@ static void finger_NCRS_clear(instructionPointer * ip)
 /// E - Set echo mode
 static void finger_NCRS_toggle_echo(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	switch (value) {
 		case 0:
@@ -107,12 +107,12 @@ static void finger_NCRS_toggle_echo(instructionPointer * ip)
 /// G - Get character
 static void finger_NCRS_get(instructionPointer * ip)
 {
-	fungeCell value;
+	funge_cell value;
 	NCRS_VALIDATE_STATE();
 	if ((value = wgetch(ncrs_window)) == ERR)
 		ip_reverse(ip);
 	else
-		stack_push(ip->stack, (fungeCell)value);
+		stack_push(ip->stack, (funge_cell)value);
 }
 
 /// I - Initialise and end curses mode
@@ -155,7 +155,7 @@ error:
 /// K - Set keypad mode
 static void finger_NCRS_toggle_keypad(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	switch (value) {
 		case 0:
@@ -183,7 +183,7 @@ static void finger_NCRS_goto_xy(instructionPointer * ip)
 /// N - Toggle input mode
 static void finger_NCRS_toggle_input(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	switch (value) {
 		case 0:
@@ -202,7 +202,7 @@ static void finger_NCRS_toggle_input(instructionPointer * ip)
 /// P - Put the character at cursor
 static void finger_NCRS_put(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	if (waddch(ncrs_window, (chtype)value) == ERR)
 		ip_reverse(ip);
@@ -232,7 +232,7 @@ static void finger_NCRS_write(instructionPointer * ip)
 /// U - Unget character
 static void finger_NCRS_unget(instructionPointer * ip)
 {
-	fungeCell value = stack_pop(ip->stack);
+	funge_cell value = stack_pop(ip->stack);
 	NCRS_VALIDATE_STATE();
 	if (ungetch((chtype)value) == ERR)
 		ip_reverse(ip);

@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <math.h>
 
-FUNGE_ATTR_FAST static void binary(fungeCell number)
+FUNGE_ATTR_FAST static void binary(funge_cell number)
 {
 	if (number > 0) {
 		binary(number >> 1);
@@ -36,7 +36,7 @@ FUNGE_ATTR_FAST static void binary(fungeCell number)
 
 static void finger_BASE_output_binary(instructionPointer * ip)
 {
-	fungeCell x;
+	funge_cell x;
 	x = stack_pop(ip->stack);
 	cf_flockfile(stdout);
 	binary(x);
@@ -46,16 +46,16 @@ static void finger_BASE_output_binary(instructionPointer * ip)
 
 static void finger_BASE_output_octal(instructionPointer * ip)
 {
-	fungeCell x;
+	funge_cell x;
 	x = stack_pop(ip->stack);
-	printf("%" FUNGECELLoctPRI " ", (fungeUnsignedCell)x);
+	printf("%" FUNGECELLoctPRI " ", (funge_unsigned_cell)x);
 }
 
 static void finger_BASE_output_hex(instructionPointer * ip)
 {
-	fungeCell x;
+	funge_cell x;
 	x = stack_pop(ip->stack);
-	printf("%" FUNGECELLhexPRI " ", (fungeUnsignedCell)x);
+	printf("%" FUNGECELLhexPRI " ", (funge_unsigned_cell)x);
 }
 
 #define anyLog(base, value) (log(value)/log(base))
@@ -64,7 +64,7 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 static void finger_BASE_output_base(instructionPointer * ip)
 {
-	fungeCell base, val;
+	funge_cell base, val;
 
 	base = stack_pop(ip->stack);
 	val = stack_pop(ip->stack);
@@ -96,9 +96,9 @@ static void finger_BASE_output_base(instructionPointer * ip)
 
 static void finger_BASE_input_base(instructionPointer * ip)
 {
-	fungeCell base;
+	funge_cell base;
 	ret_getint gotint = rgi_noint;
-	fungeCell a = 0;
+	funge_cell a = 0;
 
 	base = stack_pop(ip->stack);
 	if ((base < 1) || (base > 36)) {

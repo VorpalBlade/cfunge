@@ -50,17 +50,17 @@ typedef enum ret_getint {
  * @note The read integer is returned in the value parameter.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-ret_getint input_getint(fungeCell * restrict value, int base);
+ret_getint input_getint(funge_cell * restrict value, int base);
 
 /**
  * For use in input instruction ~ and in some fingerprints.
  * This uses a buffer and read in one line (if the buffer is empty,
  * otherwise it reuse the values from the old buffer).
- * @param chr Pointer to a fungeCell to return value in.
+ * @param chr Pointer to a funge_cell to return value in.
  * @return True if we got a char, false if we got EOF and should reflect.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool input_getchar(fungeCell * restrict chr);
+bool input_getchar(funge_cell * restrict chr);
 
 /**
  * For use in input some fingerprints.

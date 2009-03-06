@@ -62,7 +62,7 @@ static void finger_SCKE_gethostbyname(instructionPointer * ip)
 
 	{
 		struct sockaddr_in *addr = (struct sockaddr_in*)result->ai_addr;
-		stack_push(ip->stack, (fungeCell)addr->sin_addr.s_addr);
+		stack_push(ip->stack, (funge_cell)addr->sin_addr.s_addr);
 	}
 	goto end;
 error:
@@ -76,7 +76,7 @@ end:
 /// P - Peek for incoming data
 static void finger_SCKE_peek(instructionPointer * ip)
 {
-	fungeCell s = stack_pop(ip->stack);
+	funge_cell s = stack_pop(ip->stack);
 	FungeSocketHandle* handle = finger_SOCK_LookupHandle(s);
 	if (!handle)
 		goto error;

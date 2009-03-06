@@ -88,11 +88,11 @@ typedef suseconds_t res_type;
 static res_type resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline fungeCell get_difference(const timetype * restrict before,
+static inline funge_cell get_difference(const timetype * restrict before,
                                        const timetype * restrict after)
 {
-	return 1000000 * ((fungeCell)after->tv_sec - (fungeCell)before->tv_sec)
-	       + MSEC((fungeCell)SMALL_P(after) - (fungeCell)SMALL_P(before));
+	return 1000000 * ((funge_cell)after->tv_sec - (funge_cell)before->tv_sec)
+	       + MSEC((funge_cell)SMALL_P(after) - (funge_cell)SMALL_P(before));
 }
 
 /// This function checks that the IP have a non-null HRTI data pointer.
@@ -122,7 +122,7 @@ static void finger_HRTI_erase_mark(instructionPointer * ip)
 /// G - Granularity
 static void finger_HRTI_granularity(instructionPointer * ip)
 {
-	stack_push(ip->stack, (fungeCell)resolution);
+	stack_push(ip->stack, (funge_cell)resolution);
 }
 
 /// M - Mark
@@ -153,7 +153,7 @@ static void finger_HRTI_second(instructionPointer * ip)
 {
 	timetype curTime;
 	TIMERFUNC(&curTime);
-	stack_push(ip->stack, (fungeCell)MSEC_P(&curTime));
+	stack_push(ip->stack, (funge_cell)MSEC_P(&curTime));
 }
 
 FUNGE_ATTR_FAST static inline bool setup_HRTI(instructionPointer * ip)

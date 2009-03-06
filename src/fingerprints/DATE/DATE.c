@@ -35,9 +35,9 @@
 #endif
 
 typedef struct ymd {
-	fungeCell year;
-	fungeCell month;
-	fungeCell day;
+	funge_cell year;
+	funge_cell month;
+	funge_cell day;
 } ymd;
 
 static int month_length(const ymd * restrict date);
@@ -71,7 +71,7 @@ static void push_ymd(instructionPointer * restrict ip, const ymd * restrict resu
 }
 
 /// Check if year is a leap year.
-static bool is_leap_year(fungeCell y)
+static bool is_leap_year(funge_cell y)
 {
 	// Handle year 0
 	if (y < 0) y++;
@@ -107,10 +107,10 @@ static int month_length(const ymd * restrict date)
 	}
 }
 
-static fungeCell ymd_to_julian(const ymd * restrict date)
+static funge_cell ymd_to_julian(const ymd * restrict date)
 {
 	// Based on: http://en.wikipedia.org/wiki/Julian_day#Calculation
-	fungeCell Y = date->year;
+	funge_cell Y = date->year;
 	// Handle year 0
 	if (Y<0)
 		Y++;
@@ -124,7 +124,7 @@ static fungeCell ymd_to_julian(const ymd * restrict date)
 	}
 }
 
-static void julian_to_ymd(ymd * restrict result, fungeCell date)
+static void julian_to_ymd(ymd * restrict result, funge_cell date)
 {
 	// Based on: http://www.hermetic.ch/cal_stud/jdn.htm#comp
 	// We need floorl() here, not integer rounding, since we want to round
@@ -136,7 +136,7 @@ static void julian_to_ymd(ymd * restrict result, fungeCell date)
 	i = floorl((4000*(l+1))/1461001.0);
 	l = (int64_t)(l - floorl((1461*i)/4.0)+31);
 	j = floorl((80*l)/2447.0);
-	result->day = (fungeCell)(l - floorl((2447*j)/80.0));
+	result->day = (funge_cell)(l - floorl((2447*j)/80.0));
 	l = floorl(j/11.0);
 	result->month = j + 2 - 12 * l;
 	result->year = 100 * ( n - 49 ) + i + l;
@@ -147,12 +147,12 @@ static void julian_to_ymd(ymd * restrict result, fungeCell date)
 /// A - Add days to date
 static void finger_DATE_add_days(instructionPointer * ip)
 {
-	fungeCell days = stack_pop(ip->stack);
+	funge_cell days = stack_pop(ip->stack);
 	ymd date;
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		fungeCell jdn = ymd_to_julian(&date);
+		funge_cell jdn = ymd_to_julian(&date);
 		jdn += days;
 		julian_to_ymd(&date, jdn);
 		push_ymd(ip, &date);
@@ -162,7 +162,7 @@ static void finger_DATE_add_days(instructionPointer * ip)
 /// C - Convert Julian day to calendar date
 static void finger_DATE_jdn_to_ymd(instructionPointer * ip)
 {
-	fungeCell date = stack_pop(ip->stack);
+	funge_cell date = stack_pop(ip->stack);
 	ymd result;
 	julian_to_ymd(&result, date);
 	push_ymd(ip, &result);
@@ -177,8 +177,8 @@ static void finger_DATE_day_diff(instructionPointer * ip)
 	if (!pop_ymd(ip, &b))
 		return;
 	{
-		fungeCell a_days = ymd_to_julian(&a);
-		fungeCell b_days = ymd_to_julian(&b);
+		funge_cell a_days = ymd_to_julian(&a);
+		funge_cell b_days = ymd_to_julian(&b);
 		stack_push(ip->stack, b_days-a_days);
 	}
 }
@@ -195,15 +195,15 @@ static void finger_DATE_ymd_to_jdn(instructionPointer * ip)
 /// T - Year/day-of-year to full date
 static void finger_DATE_year_day_to_full(instructionPointer * ip)
 {
-	fungeCell doy  = stack_pop(ip->stack)+1;
-	fungeCell year = stack_pop(ip->stack);
+	funge_cell doy  = stack_pop(ip->stack)+1;
+	funge_cell year = stack_pop(ip->stack);
 	if (doy > (is_leap_year(year) ? 366 : 365)) {
 		ip_reverse(ip);
 		return;
 	}
 	{
-		fungeCell dom = doy;
-		fungeCell month = 0;
+		funge_cell dom = doy;
+		funge_cell month = 0;
 		// Iterate though months, break when less than a month.
 		for (int i = 0; i<12; i++) {
 			int mlength =  month_length(&(ymd){ .year = year, .month = i+1});
@@ -227,7 +227,7 @@ static void finger_DATE_week_day(instructionPointer * ip)
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		fungeCell jdn = ymd_to_julian(&date);
+		funge_cell jdn = ymd_to_julian(&date);
 		stack_push(ip->stack, jdn % 7);
 	}
 }
@@ -239,8 +239,8 @@ static void finger_DATE_year_day(instructionPointer * ip)
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		fungeCell jdn = ymd_to_julian(&date);
-		fungeCell jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1});
+		funge_cell jdn = ymd_to_julian(&date);
+		funge_cell jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1});
 		stack_push(ip->stack, jdn-jdn_start);
 	}
 }
