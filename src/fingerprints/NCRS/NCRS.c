@@ -118,7 +118,7 @@ static void finger_NCRS_get(instructionPointer * ip)
 /// I - Initialise and end curses mode
 static void finger_NCRS_init(instructionPointer * ip)
 {
-	if(stack_pop(ip->stack) == 1) {
+	if (stack_pop(ip->stack) == 1) {
 		// We can only initialise once per session.
 		if (!ncrs_initialised) {
 			// If TERM was used before, check to make sure we don't get a mem
@@ -127,7 +127,7 @@ static void finger_NCRS_init(instructionPointer * ip)
 			ncrs_screen = newterm(NULL, stdout, stdin);
 			if (!ncrs_screen) goto error;
 			set_term(ncrs_screen);
-			ncrs_window = newwin(0,0,0,0);
+			ncrs_window = newwin(0, 0, 0, 0);
 			if (!ncrs_window) goto error;
 			stdscr = ncrs_window;
 			ncrs_initialised = true;

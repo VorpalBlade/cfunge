@@ -59,11 +59,11 @@ static void finger_INDV_get_vec(instructionPointer * ip)
 {
 	funge_vector v = get_second_vector(ip);
 	stack_push_vector(ip->stack,
-		vector_create_ref(
-			fungespace_get(vector_create_ref(v.x + 1, v.y)),
-			fungespace_get(&v)
-		)
-	);
+	                  vector_create_ref(
+	                      fungespace_get(vector_create_ref(v.x + 1, v.y)),
+	                      fungespace_get(&v)
+	                  )
+	                 );
 }
 
 /// W - Write vector using indirect vector

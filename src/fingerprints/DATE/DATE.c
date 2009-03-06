@@ -75,10 +75,10 @@ static bool is_leap_year(funge_cell y)
 {
 	// Handle year 0
 	if (y < 0) y++;
-	if (y%4 == 0) {
-		if (y%400 == 0)
+	if (y % 4 == 0) {
+		if (y % 400 == 0)
 			return true;
-		if (y%100 == 0)
+		if (y % 100 == 0)
 			return false;
 		return true;
 	}
@@ -112,7 +112,7 @@ static funge_cell ymd_to_julian(const ymd * restrict date)
 	// Based on: http://en.wikipedia.org/wiki/Julian_day#Calculation
 	funge_cell Y = date->year;
 	// Handle year 0
-	if (Y<0)
+	if (Y < 0)
 		Y++;
 	{
 		long double a = floorl((14 - date->month) / 12.0);
@@ -139,7 +139,7 @@ static void julian_to_ymd(ymd * restrict result, funge_cell date)
 	result->day = (funge_cell)(l - floorl((2447*j)/80.0));
 	l = floorl(j/11.0);
 	result->month = j + 2 - 12 * l;
-	result->year = 100 * ( n - 49 ) + i + l;
+	result->year = 100 * (n - 49) + i + l;
 	// Handle year 0
 	if (result->year <= 0) result->year--;
 }
@@ -179,7 +179,7 @@ static void finger_DATE_day_diff(instructionPointer * ip)
 	{
 		funge_cell a_days = ymd_to_julian(&a);
 		funge_cell b_days = ymd_to_julian(&b);
-		stack_push(ip->stack, b_days-a_days);
+		stack_push(ip->stack, b_days - a_days);
 	}
 }
 
@@ -195,7 +195,7 @@ static void finger_DATE_ymd_to_jdn(instructionPointer * ip)
 /// T - Year/day-of-year to full date
 static void finger_DATE_year_day_to_full(instructionPointer * ip)
 {
-	funge_cell doy  = stack_pop(ip->stack)+1;
+	funge_cell doy  = stack_pop(ip->stack) + 1;
 	funge_cell year = stack_pop(ip->stack);
 	if (doy > (is_leap_year(year) ? 366 : 365)) {
 		ip_reverse(ip);
@@ -205,8 +205,8 @@ static void finger_DATE_year_day_to_full(instructionPointer * ip)
 		funge_cell dom = doy;
 		funge_cell month = 0;
 		// Iterate though months, break when less than a month.
-		for (int i = 0; i<12; i++) {
-			int mlength =  month_length(&(ymd){ .year = year, .month = i+1});
+		for (int i = 0; i < 12; i++) {
+			int mlength =  month_length(&(ymd){ .year = year, .month = i + 1 });
 			if ((dom - mlength) > 0) {
 				dom -= mlength;
 				month++;
@@ -214,7 +214,7 @@ static void finger_DATE_year_day_to_full(instructionPointer * ip)
 				break;
 		}
 		{
-			ymd date = { .year = year, .month = month+1, .day = dom };
+			ymd date = { .year = year, .month = month + 1, .day = dom };
 			push_ymd(ip, &date);
 		}
 	}
@@ -240,8 +240,8 @@ static void finger_DATE_year_day(instructionPointer * ip)
 		return;
 	{
 		funge_cell jdn = ymd_to_julian(&date);
-		funge_cell jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1});
-		stack_push(ip->stack, jdn-jdn_start);
+		funge_cell jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1 });
+		stack_push(ip->stack, jdn - jdn_start);
 	}
 }
 

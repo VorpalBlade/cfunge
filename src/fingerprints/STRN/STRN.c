@@ -36,7 +36,7 @@ static void finger_STRN_append(instructionPointer * ip)
 	size_t bottom_len;
 
 	top = (char*)stack_pop_string(ip->stack, &top_len);
-	bottom =  (char*)stack_pop_string(ip->stack, &bottom_len);
+	bottom = (char*)stack_pop_string(ip->stack, &bottom_len);
 
 	c = cf_realloc(top, top_len + strlen(bottom) + 1);
 	if (!c) {

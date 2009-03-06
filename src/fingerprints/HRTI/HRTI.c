@@ -89,7 +89,7 @@ static res_type resolution = 0;
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline funge_cell get_difference(const timetype * restrict before,
-                                       const timetype * restrict after)
+                                        const timetype * restrict after)
 {
 	return 1000000 * ((funge_cell)after->tv_sec - (funge_cell)before->tv_sec)
 	       + MSEC((funge_cell)SMALL_P(after) - (funge_cell)SMALL_P(before));

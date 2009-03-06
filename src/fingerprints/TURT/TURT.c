@@ -364,7 +364,7 @@ static void finger_TURT_query_heading(instructionPointer * ip)
 /// B - Back (distance in pixels)
 static void finger_TURT_back(instructionPointer * ip)
 {
-	move((tc)-stack_pop(ip->stack));
+	move((tc) - stack_pop(ip->stack));
 }
 
 /// C - Pen Colour (24-bit RGB)

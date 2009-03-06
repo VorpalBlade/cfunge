@@ -137,7 +137,7 @@ static char * run_perl(const char * restrict perlcode)
 					sb = stringbuffer_new();
 					if (!sb)
 						return NULL;
-					buf = calloc_nogc(STRINGALLOCCHUNK+1, sizeof(char));
+					buf = calloc_nogc(STRINGALLOCCHUNK + 1, sizeof(char));
 					if (!buf) {
 						stringbuffer_destroy(sb);
 						return NULL;
@@ -160,7 +160,7 @@ static char * run_perl(const char * restrict perlcode)
 								return NULL;
 							}
 						} else if (n > 0) {
-							buf[STRINGALLOCCHUNK]='\0';
+							buf[STRINGALLOCCHUNK] = '\0';
 							stringbuffer_append_string(sb, buf);
 							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
