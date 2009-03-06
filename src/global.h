@@ -60,14 +60,14 @@
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #  ifdef __i386__
 /// Used to select fast calling convention on platforms that need it.
-#    define  FUNGE_ATTR_FAST FUNGE_ATTR((regparm(3)))
+#    define FUNGE_ATTR_FAST FUNGE_ATTR((regparm(3)))
 #  else
 /// Used to select fast calling convention on platforms that need it.
-#    define  FUNGE_ATTR_FAST /* NO-OP */
+#    define FUNGE_ATTR_FAST /* NO-OP */
 #  endif
 #else
 /// Used to select fast calling convention on platforms that need it.
-#  define  FUNGE_ATTR_FAST /* NO-OP */
+#  define FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
