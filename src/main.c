@@ -192,23 +192,11 @@ int main(int argc, char *argv[])
 		fputs("Error: No file provided.\n", stderr);
 		return EXIT_FAILURE;
 	} else {
-		// Copy the rest to the variables in interpreter.c/interpreter.h
-		// for later reuse by y instruction.
-		if (argc > 1) {
-			fungeargc = argc - optind;
-			fungeargv = (char**)cf_malloc((size_t)fungeargc * sizeof(char*));
-			if (!fungeargv) {
-				perror("Couldn't allocate space for command line arguments");
-				abort();
-			}
-			for (int i = optind; i < argc; i++) {
-				fungeargv[i - optind] = cf_strdup(argv[i]);
-				if (fungeargv[i - optind] == NULL) {
-					perror("Couldn't store arguments in array and this even before file was loaded!\n");
-					abort();
-				}
-			}
-		}
+		// Copy a argument count and a pointer to argv[optind] for later reuse
+		// by the y instruction.
+		fungeargc = argc - optind;
+		fungeargv = &argv[optind];
+		// Run the actual interpreter.
 		interpreter_run(argv[optind]);
 	}
 }
