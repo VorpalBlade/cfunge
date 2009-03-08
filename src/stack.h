@@ -79,15 +79,10 @@ void stack_push(funge_stack * restrict stack, funge_cell value);
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 funge_cell stack_pop(funge_stack * restrict stack);
 /**
- * Pop one item and discard it.
- */
-FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_pop_discard(funge_stack * restrict stack);
-/**
  * Pop a number of items and discard them.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_pop_n_discard(funge_stack * restrict stack, size_t n);
+void stack_discard(funge_stack * restrict stack, size_t n);
 /**
  * Stack peek.
  */

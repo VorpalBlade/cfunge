@@ -144,17 +144,7 @@ FUNGE_ATTR_FAST inline funge_cell stack_pop(funge_stack * restrict stack)
 	return stack->entries[--stack->top];
 }
 
-FUNGE_ATTR_FAST void stack_pop_discard(funge_stack * restrict stack)
-{
-	assert(stack != NULL);
-
-	if (stack->top == 0)
-		return;
-
-	stack->top--;
-}
-
-FUNGE_ATTR_FAST void stack_pop_n_discard(funge_stack * restrict stack, size_t n)
+FUNGE_ATTR_FAST void stack_discard(funge_stack * restrict stack, size_t n)
 {
 	assert(stack != NULL);
 
@@ -506,7 +496,7 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 		// Since TOSS is discarded there is no need to update it's top pointer.
 		stack_bulk_copy(SOSS, TOSS, (size_t)count);
 	} else if (count < 0) {
-		stack_pop_n_discard(SOSS, (size_t)(-count));
+		stack_discard(SOSS, (size_t)(-count));
 	}
 	ip->storageOffset.x = storageOffset.x;
 	ip->storageOffset.y = storageOffset.y;

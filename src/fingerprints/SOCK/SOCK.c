@@ -359,7 +359,7 @@ static void finger_SOCK_create(instructionPointer * ip)
 	int type;
 	int fam;
 	// Protocol.
-	stack_pop_discard(ip->stack);
+	stack_discard(ip->stack, 1);
 
 	switch (stack_pop(ip->stack)) {
 		case 1: type = SOCK_DGRAM ; break;

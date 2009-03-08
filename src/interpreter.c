@@ -365,7 +365,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 
 			case '$':
-				stack_pop_discard(ip->stack);
+				stack_discard(ip->stack, 1);
 				break;
 			case '\\':
 				stack_swap_top(ip->stack);
@@ -466,7 +466,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				if (fpsize < 1) {
 					ip_reverse(ip);
 				} else if (FUNGE_EXPECT(setting_disable_fingerprints, false)) {
-					stack_pop_n_discard(ip->stack, (size_t)fpsize);
+					stack_discard(ip->stack, (size_t)fpsize);
 					ip_reverse(ip);
 				} else {
 					funge_cell fprint = 0;
