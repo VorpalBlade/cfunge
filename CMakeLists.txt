@@ -37,9 +37,6 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/cmake/modules
 )
 
-
-# if you want the full compiler output, uncomment the following line
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
@@ -128,7 +125,7 @@ if(USE_WERROR)
 	endif (CMAKE_COMPILER_IS_GNUCC)
 endif(USE_WERROR)
 
-option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though)." OFF)
+option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though) and some other features." OFF)
 if (HARDENED)
 	add_definitions(-D_FORTIFY_SOURCE=2)
 	# Slows down though.
@@ -317,10 +314,14 @@ FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
 
 add_executable(cfunge ${CFUNGE_SOURCES})
 
-# This is disabled until I figure out how to detect if the flags are supported.
-CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_O1 -Wl,-O1)
-CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_as-needed -Wl,--as-needed)
+# Try various nice linker flags.
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_O1          -Wl,-O1)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_as-needed   -Wl,--as-needed)
 CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_warn-common -Wl,--warn-common)
+if (HARDENED)
+	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_relro -Wl,-z,relro)
+	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_now   -Wl,-z,now)
+endif (HARDENED)
 
 
 
