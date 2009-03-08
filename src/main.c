@@ -35,7 +35,7 @@
 #include "settings.h"
 #include "fingerprints/manager.h"
 
-char **fungeargv = NULL;
+const char **fungeargv = NULL;
 int fungeargc = 0;
 // Use a larger buffer for stdout in fully buffered mode.
 static char cfun_iobuf[BUFSIZ*4];
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 		// Copy a argument count and a pointer to argv[optind] for later reuse
 		// by the y instruction.
 		fungeargc = argc - optind;
-		fungeargv = &argv[optind];
+		fungeargv = (const char**)&argv[optind];
 		// Run the actual interpreter.
 		interpreter_run(argv[optind]);
 	}

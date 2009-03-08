@@ -46,8 +46,11 @@
  * (They are declared in main.c by the way.)
  */
 /*@{*/
-/// Copy of argv array, don't modify.
-extern char **fungeargv;
+/// Points to program name argument of argv, don't modify.
+///
+/// Currently this points into the real argv of main(). Though that may change
+/// without prior notice.
+extern const char **fungeargv;
 /// Copy of argc, don't modify.
 extern int fungeargc;
 /*@}*/
