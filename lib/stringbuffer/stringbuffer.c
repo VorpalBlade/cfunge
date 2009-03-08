@@ -93,10 +93,12 @@ void stringbuffer_destroy(StringBuffer *sb) {
 }
 
 FUNGE_ATTR_FAST
-char *stringbuffer_finish(StringBuffer *sb) {
+char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length) {
     char *result;
 
     sb->buf[sb->pos] = '\0';
+    if (length)
+        *length = sb->pos;
     result = sb->buf;
     free(sb);
     return result;

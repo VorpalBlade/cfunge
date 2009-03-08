@@ -193,8 +193,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 		{
 			char * str;
 			size_t len;
-			str = stringbuffer_finish(sb);
-			len = strlen(str);
+			str = stringbuffer_finish(sb, &len);
 			stack_push_string(ip->stack, (unsigned char*)str, len);
 			stack_push(ip->stack, (funge_cell)len);
 			free_nogc(str);

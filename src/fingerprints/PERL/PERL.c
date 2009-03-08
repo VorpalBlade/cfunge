@@ -53,7 +53,7 @@ static void finger_PERL_shelled(instructionPointer * ip)
 
 // Yes... This is a mess...
 FUNGE_ATTR_FAST
-static char * run_perl(const char * restrict perlcode)
+static char * run_perl(const char * restrict perlcode, size_t * restrict retlength)
 {
 	pid_t pid;
 	int outfds[2]; // For pipe of stderr.
@@ -151,7 +151,7 @@ static char * run_perl(const char * restrict perlcode)
 							close(outfds[0]);
 							if (readErrno == EAGAIN) {
 								free_nogc(buf);
-								return stringbuffer_finish(sb);
+								return stringbuffer_finish(sb, retlength);
 							} else {
 								if (setting_enable_warnings)
 									perror("run_perl, read failed");
@@ -165,7 +165,7 @@ static char * run_perl(const char * restrict perlcode)
 							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
 								free_nogc(buf);
-								return stringbuffer_finish(sb);
+								return stringbuffer_finish(sb, retlength);
 							}
 						}
 					}
@@ -190,14 +190,15 @@ static char * run_perl(const char * restrict perlcode)
 /// E - Evaluate 0gnirts
 static void finger_PERL_eval(instructionPointer * ip)
 {
+	size_t length;
 	char * restrict result;
 	char * restrict perlcode = (char*)stack_pop_string(ip->stack, NULL);
-	result = run_perl(perlcode);
+	result = run_perl(perlcode, &length);
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {
 		stack_push(ip->stack, '\0');
-		stack_push_string(ip->stack, (unsigned char*)result, strlen(result));
+		stack_push_string(ip->stack, (unsigned char*)result, length);
 	}
 	stack_free_string(perlcode);
 	free_nogc(result);
@@ -208,7 +209,7 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 {
 	char * restrict result;
 	char * restrict perlcode = (char*)stack_pop_string(ip->stack, NULL);
-	result = run_perl(perlcode);
+	result = run_perl(perlcode, NULL);
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {

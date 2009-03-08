@@ -98,6 +98,7 @@ static void finger_STRN_get(instructionPointer * ip)
 {
 	fungeRect bounds;
 	StringBuffer *sb;
+	size_t len;
 	char *s;
 	funge_vector pos;
 
@@ -123,13 +124,13 @@ static void finger_STRN_get(instructionPointer * ip)
 		if (val == 0) break;
 		pos.x += 1;
 	}
-	s = stringbuffer_finish(sb);
+	s = stringbuffer_finish(sb, &len);
 	if (!s) {
 		stringbuffer_destroy(sb);
 		ip_reverse(ip);
 		return;
 	}
-	stack_push_string(ip->stack, (unsigned char*)s, strlen(s));
+	stack_push_string(ip->stack, (unsigned char*)s, len);
 	free_nogc(s);
 }
 
@@ -239,12 +240,13 @@ static void finger_STRN_right(instructionPointer * ip)
 static void finger_STRN_itoa(instructionPointer * ip)
 {
 	char *s;
+	size_t len;
 	funge_cell n = stack_pop(ip->stack);
 	StringBuffer *sb = stringbuffer_new();
 
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
-	s = stringbuffer_finish(sb);
-	stack_push_string(ip->stack, (unsigned char*)s, strlen(s));
+	s = stringbuffer_finish(sb, &len);
+	stack_push_string(ip->stack, (unsigned char*)s, len);
 	free_nogc(s);
 }
 

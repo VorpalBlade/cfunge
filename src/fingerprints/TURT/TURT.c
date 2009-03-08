@@ -116,7 +116,7 @@ typedef struct Drawing {
 	uint32_t     bgColour;
 	/**
 	 * When possible prefer transparency.
-	 * This can be done because specs doesn't say what default is.
+	 * This can be done because TURT specs doesn't say what default is.
 	 */
 	bool         bgSet;
 } Drawing;
@@ -427,6 +427,7 @@ static inline bool generate_paths(genxWriter gw)
 	Path *p, *prev = NULL;
 	StringBuffer * sb;
 	char * path_data;
+	size_t path_data_length;
 
 	p = pic.pathBeg;
 	if (!p)
@@ -458,7 +459,7 @@ static inline bool generate_paths(genxWriter gw)
 			print_point(sb, 'M', p->d.p.x, p->d.p.y);
 		}
 		if (p->next && (p->d.colour != p->next->d.colour)) {
-			path_data = stringbuffer_finish(sb);
+			path_data = stringbuffer_finish(sb, NULL);
 			sb = NULL;
 			generate_path(gw, p->d.colour, path_data, g_path, g_style, g_d);
 			// TODO: Should we free?
@@ -470,8 +471,8 @@ static inline bool generate_paths(genxWriter gw)
 		p = p->next;
 	}
 	// Final printout:
-	path_data = stringbuffer_finish(sb);
-	if (strlen(path_data) > 0) {
+	path_data = stringbuffer_finish(sb, &path_data_length);
+	if (path_data_length > 0) {
 		generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
 	}
 	if (path_data) free_nogc(path_data);

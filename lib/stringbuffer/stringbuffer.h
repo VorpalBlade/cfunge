@@ -69,7 +69,7 @@ typedef struct StringBuffer StringBuffer;
  *
  * @return The newly allocated string buffer.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 StringBuffer *stringbuffer_new(void);
 
 /**
@@ -82,7 +82,7 @@ StringBuffer *stringbuffer_new(void);
  * @return The result string; to free it, call <code>free()</code> on it.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-char *stringbuffer_finish(StringBuffer *sb);
+char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length);
 
 
 /**
@@ -103,7 +103,7 @@ void stringbuffer_destroy(StringBuffer *sb);
  *
  * @param c The char to append.
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stringbuffer_append_char(StringBuffer *sb, const char c);
 
 /**
@@ -113,7 +113,7 @@ void stringbuffer_append_char(StringBuffer *sb, const char c);
  *
  * @param str The string to append.
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stringbuffer_append_string(StringBuffer *sb, const char *str);
 
 /**
