@@ -308,26 +308,29 @@ static void finger_FILE_fread(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	} else {
+		size_t bytes_read;
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = calloc_nogc((size_t)n, sizeof(unsigned char));
+		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(unsigned char));
 		if (!buf) {
 			ip_reverse(ip);
 			return;
 		}
 
-		if (fread(buf, sizeof(unsigned char), (size_t)n, fp) != (size_t)n) {
+		if ((bytes_read = fread(buf, sizeof(unsigned char), (size_t)n, fp)) != (size_t)n) {
+			// Reverse on less bytes read, but if feof() also write out to funge space below.
+			ip_reverse(ip);
 			if (ferror(fp)) {
 				clearerr(fp);
-				ip_reverse(ip);
 				free_nogc(buf);
 				return;
-			} else {
-				assert(feof(fp));
 			}
 		}
-
-		for (funge_cell i = 0; i < n; i++) {
-			fungespace_set(buf[i], vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
+		{
+			funge_vector v = handles[h]->buffvect;
+			for (size_t i = 0; i < bytes_read; i++) {
+				fungespace_set(buf[i], &v);
+				v.x++;
+			}
 		}
 		free_nogc(buf);
 	}
@@ -389,10 +392,12 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 		return;
 	} else {
 		FILE * fp = handles[h]->file;
+		funge_vector v = handles[h]->buffvect;
 		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(char));
 
 		for (funge_cell i = 0; i < n; i++) {
-			buf[i] = (unsigned char)fungespace_get(vector_create_ref(handles[h]->buffvect.x + i, handles[h]->buffvect.y));
+			buf[i] = (unsigned char)fungespace_get(&v);
+			v.x++;
 		}
 		if (fwrite(buf, sizeof(unsigned char), (size_t)n, fp) != (size_t)n) {
 			if (ferror(fp)) {
