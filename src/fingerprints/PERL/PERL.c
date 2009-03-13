@@ -160,7 +160,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 								return NULL;
 							}
 						} else if (n > 0) {
-							buf[STRINGALLOCCHUNK] = '\0';
+							buf[n] = '\0';
 							stringbuffer_append_string(sb, buf);
 							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
