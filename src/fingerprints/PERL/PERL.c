@@ -137,7 +137,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 					sb = stringbuffer_new();
 					if (!sb)
 						return NULL;
-					buf = calloc_nogc(STRINGALLOCCHUNK + 1, sizeof(char));
+					buf = malloc_nogc((STRINGALLOCCHUNK + 1) * sizeof(char));
 					if (!buf) {
 						stringbuffer_destroy(sb);
 						return NULL;
