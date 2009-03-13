@@ -1,0 +1,13 @@
+ aa*aa* 0 0 #vi na".emanelif htgnel orez no tcelfer t'ndid i :DAB">:#,_@
+v            >na"emanelif htgnel orez no detcelfer i :DOOG">:#,_
+>aa*aa* aa*aa* 0 0 #vo na".emanelif htgnel orez no tcelfer t'ndid o :DAB">:#,_@
+v                   >na"emanelif htgnel orez no detcelfer o :DOOG">:#,_
+>aa*aa* aa*aa* 0 0"tset-egnufeb/cte/" #vo v
+v                                      <
+                           v              <
+                           >na"tset-egnufeb/cte/ no tcelfer t'ndid o :DAB">:#,_@
+>na"tset-egnufeb/cte/ ot etirw ot gniyrt no detcelfer o :DOOG">:#,_@
+
+This program tests:
+ * i and o with zero length filenames
+ * o to readonly files (assumes you can't write to /etc/befunge-test
