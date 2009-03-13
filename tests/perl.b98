@@ -9,9 +9,13 @@ v                         <
 
 v "$x=" "' "Hello world!\n" "' "; print $x"0<
    > a"detcelfeR" >:#,_@
-> #^ E >:#,_ a, @
+> #^ E >:#,_ a,      v
+v """'"x""'" x 5934"n<
+> #v E a2*3+y1-.a, @
+   > na".detcelfer E :DAB">:#,_@
 
 This program should print:
 hi6
 Hello world!
 1
+5934
