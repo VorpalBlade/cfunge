@@ -3,7 +3,13 @@
   > 0" :)0 eb dluohs( lavteR" >:#,_ $ . a,   v
 
 v ,a   = "echo 'Will run: exit 2'; exit 2" 0 <
-> 0" :)2 eb dluohs( lavteR" >:#,_ $ . a,@
+> 0" :)2 eb dluohs( lavteR" >:#,_ $ . a,v
+v                                       <
+>n #v=v
+    >  na".gnirts htgnel orez no detcelfer = :DAB">:#,_@
+          >v
+      >02-w na".gnirts htgnel orez no 2- dehsup = :DOOG">:#,_@
+          >> na"gnirts htgnel orez no 2- hsup t'ndid = :DAB">:#,_@
 
 This program should ouput (on a POSIX system):
 	Hi there (and now a ls):
@@ -13,6 +19,10 @@ This program should ouput (on a POSIX system):
 	Will run: exit 2
 
 	Retval (should be 2): 2
-There should be no indention in the output. (It was done here to it clear this
-line is not part of the output.)
+	GOOD: = pushed -2 on zero length string.
+There should be no indention in the output. (It was done here for clarity.)
 The blank lines should match.
+
+The last test (value on zero length string) is implementation defined, but
+cfunge is supposed to push -2. Other implementations may push other values
+(even 0).
