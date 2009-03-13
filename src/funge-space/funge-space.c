@@ -399,7 +399,7 @@ static inline void load_string(const unsigned char * restrict program,
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
-			// We ignore Form Feed here.
+			// Ignore form feed. Treat it as newline is treated in Unefunge.
 			case '\f':
 				break;
 			case '\r':
@@ -490,7 +490,9 @@ fungespace_load_at_offset(const char        * restrict filename,
 			x++;
 		} else {
 			switch (addr[i]) {
-				// We don't ignore Form Feed here...
+				// Ignore form feed. Treat it as newline is treated in Unefunge.
+				case '\f':
+					break;
 				case '\r':
 					lastwascr = true;
 					break;
