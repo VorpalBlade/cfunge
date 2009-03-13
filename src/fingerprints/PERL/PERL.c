@@ -197,7 +197,6 @@ static void finger_PERL_eval(instructionPointer * ip)
 	if (result == NULL) {
 		ip_reverse(ip);
 	} else {
-		stack_push(ip->stack, '\0');
 		stack_push_string(ip->stack, (unsigned char*)result, length);
 	}
 	stack_free_string(perlcode);
