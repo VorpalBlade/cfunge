@@ -65,7 +65,7 @@ funge_cell fungespace_get(const funge_vector * restrict position);
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 funge_cell fungespace_get_offset(const funge_vector * restrict position,
-                                const funge_vector * restrict offset);
+                                 const funge_vector * restrict offset);
 /**
  * Set a cell.
  * @param value The value to set.
@@ -141,9 +141,9 @@ bool fungespace_load_at_offset(const char * restrict filename,
  * @return True if successful, otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool fungespace_save_to_file(const char          * restrict filename,
+bool fungespace_save_to_file(const char         * restrict filename,
                              const funge_vector * restrict offset,
-                             const funge_vector   * restrict size,
+                             const funge_vector * restrict size,
                              bool textfile);
 
 /**

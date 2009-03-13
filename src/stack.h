@@ -43,10 +43,10 @@ struct s_instructionPointer;
 /// A Funge stack.
 /// @warning Don't access directly, use functions and macros below.
 typedef struct funge_stack {
-	size_t         size;  ///< This is current size of the array entries.
-	size_t         top;   /**< This is current top item in stack (may not be last item).
-	                           Note: One-indexed, as 0 = empty stack. */
-	funge_cell *entries;  ///< Pointer to entries.
+	size_t      size;    ///< This is current size of the array entries.
+	size_t      top;     /**< This is current top item in stack (may not be last item).
+	                          Note: One-indexed, as 0 = empty stack. */
+	funge_cell *entries; ///< Pointer to entries.
 } funge_stack;
 
 /// A Funge stack-stack.
@@ -112,7 +112,8 @@ size_t stack_strlen(const funge_stack * restrict stack);
  * Push a vector.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_push_vector(funge_stack * restrict stack, const funge_vector * restrict value);
+void stack_push_vector(funge_stack * restrict stack,
+                       const funge_vector * restrict value);
 /**
  * Pop a vector.
  */
@@ -122,7 +123,8 @@ funge_vector stack_pop_vector(funge_stack * restrict stack);
  * Push a null-terminated string to a 0"gnirts".
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stack_push_string(funge_stack * restrict stack, const unsigned char * restrict str, size_t len);
+void stack_push_string(funge_stack * restrict stack,
+                       const unsigned char * restrict str, size_t len);
 /**
  * Pop a 0"gnirts" and return a null-terminated string.
  * Use stack_free_string() to free the string. This is due to that a different
@@ -131,7 +133,8 @@ void stack_push_string(funge_stack * restrict stack, const unsigned char * restr
  * @param len If non-NULL, the string length is stored in this variable.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR((nonnull(1))) FUNGE_ATTR_FAST
-unsigned char * stack_pop_string(funge_stack * restrict stack, size_t * restrict len);
+unsigned char * stack_pop_string(funge_stack * restrict stack,
+                                 size_t * restrict len);
 
 /**
  * Free a 0"gnirts" that was popped with stack_pop_string().
@@ -146,7 +149,8 @@ unsigned char * stack_pop_string(funge_stack * restrict stack, size_t * restrict
  * @return Result returned as null-terminated string.
  */
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-unsigned char * stack_pop_sized_string(funge_stack * restrict stack, size_t len);
+unsigned char * stack_pop_sized_string(funge_stack * restrict stack,
+                                       size_t len);
 /// Clear all items from a stack.
 #define stack_clear(stack) { stack->top = 0; }
 /**
@@ -197,8 +201,8 @@ funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_begin(struct s_instructionPointer * restrict ip,
-                     funge_cell count,
-                     const funge_vector * restrict storageOffset);
+                      funge_cell count,
+                      const funge_vector * restrict storageOffset);
 /**
  * End a stack on the stack-stack.
  * @param ip Instruction pointer (will operate on it's stack stack).
@@ -206,7 +210,7 @@ bool stackstack_begin(struct s_instructionPointer * restrict ip,
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 bool stackstack_end(struct s_instructionPointer * restrict ip,
-                   funge_cell count);
+                    funge_cell count);
 /**
  * Transfer items from one stack to another (not in order).
  * Used for u instruction.
@@ -215,6 +219,8 @@ bool stackstack_end(struct s_instructionPointer * restrict ip,
  * @param SOSS Pointer to second stack on the stack-stack.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void stackstack_transfer(funge_cell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS);
+void stackstack_transfer(funge_cell count,
+                         funge_stack * restrict TOSS,
+                         funge_stack * restrict SOSS);
 
 #endif
