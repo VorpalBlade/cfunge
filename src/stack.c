@@ -37,10 +37,10 @@
 FUNGE_ATTR_FAST funge_stack * stack_create(void)
 {
 	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
-	if (FUNGE_EXPECT(tmp == NULL, false))
+	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
 	tmp->entries = (funge_cell*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(funge_cell));
-	if (FUNGE_EXPECT(tmp->entries == NULL, false)) {
+	if (FUNGE_UNLIKELY(!tmp->entries)) {
 		cf_free(tmp);
 		return NULL;
 	}
@@ -51,9 +51,9 @@ FUNGE_ATTR_FAST funge_stack * stack_create(void)
 
 FUNGE_ATTR_FAST void stack_free(funge_stack * stack)
 {
-	if (FUNGE_EXPECT(!stack, false))
+	if (FUNGE_UNLIKELY(!stack))
 		return;
-	if (FUNGE_EXPECT(stack->entries != NULL, true)) {
+	if (FUNGE_LIKELY(stack->entries != NULL)) {
 		cf_free(stack->entries);
 		stack->entries = NULL;
 	}
@@ -66,10 +66,10 @@ FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline funge_stack * stack_duplicate(const funge_stack * old)
 {
 	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
-	if (FUNGE_EXPECT(tmp == NULL, false))
+	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
 	tmp->entries = (funge_cell*)cf_malloc_noptr((old->top + 1) * sizeof(funge_cell));
-	if (FUNGE_EXPECT(tmp->entries == NULL, false)) {
+	if (FUNGE_UNLIKELY(!tmp->entries)) {
 		cf_free(tmp);
 		return NULL;
 	}
@@ -101,7 +101,7 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
 		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
 		stack->entries = (funge_cell*)cf_realloc(stack->entries, newsize * sizeof(funge_cell));
-		if (FUNGE_EXPECT(!stack->entries, false)) {
+		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
 		stack->size = newsize;
@@ -123,9 +123,9 @@ FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, funge_cell value)
 	assert(stack->top <= stack->size);
 
 	// Do we need to realloc?
-	if (FUNGE_EXPECT(stack->top == stack->size, false)) {
+	if (FUNGE_UNLIKELY(stack->top == stack->size)) {
 		stack->entries = (funge_cell*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(funge_cell));
-		if (FUNGE_EXPECT(!stack->entries, false)) {
+		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
 		stack->size += ALLOCCHUNKSIZE;
@@ -236,7 +236,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
 	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
-	if (FUNGE_EXPECT(!buf, false))
+	if (FUNGE_UNLIKELY(!buf))
 		return NULL;
 
 	while ((c = stack_pop(stack)) != '\0') {
@@ -251,7 +251,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict stack, size_t len)
 {
 	unsigned char * restrict x = (unsigned char*)cf_malloc_noptr((len + 1) * sizeof(char));
-	if (!x)
+	if (FUNGE_UNLIKELY(!x))
 		return NULL;
 
 	for (size_t i = 0; i < len; i++) {
