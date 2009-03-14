@@ -129,7 +129,7 @@ FUNGE_ATTR_FAST static inline CON_RETTYPE handle_string_mode(funge_cell opcode, 
 /// This function handles fingerprint instructions.
 FUNGE_ATTR_FAST static inline void handle_fprint(funge_cell opcode, instructionPointer * restrict ip)
 {
-	if (FUNGE_EXPECT(setting_disable_fingerprints, false)) {
+	if (FUNGE_UNLIKELY(setting_disable_fingerprints)) {
 		warn_unknown_instr(opcode, ip);
 		ip_reverse(ip);
 	} else {
@@ -377,13 +377,13 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			case ',': {
 				funge_cell a = stack_pop(ip->stack);
 				// Reverse on failed output/input
-				if (FUNGE_EXPECT(cf_putchar_maybe_locked((int)a) != (unsigned char)a, false))
+				if (FUNGE_UNLIKELY(cf_putchar_maybe_locked((int)a) != (unsigned char)a))
 					ip_reverse(ip);
 				break;
 			}
 			case '.':
 				// Reverse on failed output/input
-				if (FUNGE_EXPECT(printf("%" FUNGECELLPRI " ", stack_pop(ip->stack)) < 0, false))
+				if (FUNGE_UNLIKELY(printf("%" FUNGECELLPRI " ", stack_pop(ip->stack)) < 0))
 					ip_reverse(ip);
 				break;
 
@@ -465,12 +465,12 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				// outside such a range. This prevents long lockups here.
 				if (fpsize < 1) {
 					ip_reverse(ip);
-				} else if (FUNGE_EXPECT(setting_disable_fingerprints, false)) {
+				} else if (FUNGE_UNLIKELY(setting_disable_fingerprints)) {
 					stack_discard(ip->stack, (size_t)fpsize);
 					ip_reverse(ip);
 				} else {
 					funge_cell fprint = 0;
-					if (FUNGE_EXPECT(setting_enable_warnings && (fpsize > 8), false)) {
+					if (FUNGE_UNLIKELY(setting_enable_warnings && (fpsize > 8))) {
 						fprintf(stderr,
 						        "WARN: %c (x=%" FUNGECELLPRI " y=%" FUNGECELLPRI "): count is very large(%" FUNGECELLPRI "), probably a bug.\n",
 						        (char)opcode, ip->position.x, ip->position.y, fpsize);
@@ -558,16 +558,16 @@ static inline void interpreter_main_loop(void)
 
 			opcode = fungespace_get(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
-			if (FUNGE_EXPECT(setting_trace_level > 8, false)) {
+			if (FUNGE_UNLIKELY(setting_trace_level > 8)) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
 				        IPList->ips[i].position.y, (char)opcode, opcode);
 				stack_print_top(IPList->ips[i].stack);
-			} else if (FUNGE_EXPECT(setting_trace_level > 3, false)) {
+			} else if (FUNGE_UNLIKELY(setting_trace_level > 3)) {
 				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
 				        IPList->ips[i].position.y, (char)opcode, opcode);
-			} else if (FUNGE_EXPECT(setting_trace_level > 2, false))
+			} else if (FUNGE_UNLIKELY(setting_trace_level > 2))
 				fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 
@@ -583,14 +583,14 @@ static inline void interpreter_main_loop(void)
 
 		opcode = fungespace_get(&IP->position);
 #    ifndef DISABLE_TRACE
-		if (FUNGE_EXPECT(setting_trace_level > 8, false)) {
+		if (FUNGE_UNLIKELY(setting_trace_level > 8)) {
 			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
 			stack_print_top(IP->stack);
-		} else if (FUNGE_EXPECT(setting_trace_level > 3, false)) {
+		} else if (FUNGE_UNLIKELY(setting_trace_level > 3)) {
 			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 			        IP->position.x, IP->position.y, (char)opcode, opcode);
-		} else if (FUNGE_EXPECT(setting_trace_level > 2, false))
+		} else if (FUNGE_UNLIKELY(setting_trace_level > 2))
 			fprintf(stderr, "%c", (char)opcode);
 #    endif /* DISABLE_TRACE */
 
