@@ -163,7 +163,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 		switch (opcode) {
 			case ' ': {
 				do {
-					ip_forward(ip, 1);
+					ip_forward(ip);
 				} while (fungespace_get(&ip->position) == ' ');
 				ip->needMove = false;
 				ReturnFromexecute_instruction(true);
@@ -172,7 +172,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			case ';': {
 				do {
-					ip_forward(ip, 1);
+					ip_forward(ip);
 				} while (fungespace_get(&ip->position) != ';');
 				ReturnFromexecute_instruction(true);
 			}
@@ -198,7 +198,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					tmp.y = ip->delta.y;
 					ip->delta.y *= jumps;
 					ip->delta.x *= jumps;
-					ip_forward(ip, 1);
+					ip_forward(ip);
 					ip->delta.x = tmp.x;
 					ip->delta.y = tmp.y;
 				}
@@ -257,7 +257,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 
 			case '#':
-				ip_forward(ip, 1);
+				ip_forward(ip);
 				break;
 
 			case '_':
@@ -355,11 +355,11 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			}
 
 			case '\'':
-				ip_forward(ip, 1);
+				ip_forward(ip);
 				stack_push(ip->stack, fungespace_get(&ip->position));
 				break;
 			case 's':
-				ip_forward(ip, 1);
+				ip_forward(ip);
 				fungespace_set(stack_pop(ip->stack), &ip->position);
 				break;
 
@@ -416,10 +416,10 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				funge_cell count;
 				funge_vector pos;
 				count = stack_pop(ip->stack);
-				ip_forward(ip, 1);
+				ip_forward(ip);
 				pos.x = ip->position.x;
 				pos.y = ip->position.y;
-				ip_forward(ip, -1);
+				ip_backward(ip);
 				if (!stackstack_begin(ip, count, &pos))
 					ip_reverse(ip);
 				break;
@@ -538,7 +538,7 @@ static inline void thread_forward(instructionPointer * restrict ip)
 	assert(ip != NULL);
 
 	if (ip->needMove)
-		ip_forward(ip, 1);
+		ip_forward(ip);
 	else
 		ip->needMove = true;
 }
@@ -599,7 +599,7 @@ static inline void interpreter_main_loop(void)
 
 		execute_instruction(opcode, IP);
 		if (IP->needMove)
-			ip_forward(IP, 1);
+			ip_forward(IP);
 		else
 			IP->needMove = true;
 	}

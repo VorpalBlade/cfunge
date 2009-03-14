@@ -124,14 +124,6 @@ FUNGE_ATTR_FAST void ip_free(instructionPointer * restrict ip)
 }
 #endif
 
-FUNGE_ATTR_FAST inline void ip_forward(instructionPointer * restrict ip, funge_cell steps)
-{
-	assert(ip != NULL);
-	ip->position.x += ip->delta.x * steps;
-	ip->position.y += ip->delta.y * steps;
-	fungespace_wrap(&ip->position, &ip->delta);
-}
-
 FUNGE_ATTR_FAST inline void ip_set_delta(instructionPointer * restrict ip, const funge_vector * restrict delta)
 {
 	assert(ip != NULL);
@@ -230,7 +222,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	// Here we mirror new IP and do ID changes.
 	index++;
 	ip_reverse(&list->ips[index]);
-	ip_forward(&list->ips[index], 1);
+	ip_forward(&list->ips[index]);
 	list->ips[index].ID = ++list->highestID;
 	list->top++;
 	return index - 1;

@@ -52,7 +52,7 @@ static inline funge_cell find_next_instr(instructionPointer * restrict ip, funge
 	if (kInstr == ';')
 		injump = true;
 	while (true) {
-		ip_forward(ip, 1);
+		ip_forward(ip);
 		kInstr = fungespace_get(&ip->position);
 		if (kInstr == ';') {
 			injump = !injump;
@@ -79,7 +79,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 	if (iters == 0) {
 		funge_cell kInstr;
 		// Skip past next instruction.
-		ip_forward(ip, 1);
+		ip_forward(ip);
 		kInstr = fungespace_get(&ip->position);
 		if (kInstr == ' ' || kInstr == ';') {
 			kInstr = find_next_instr(ip, kInstr);
@@ -99,7 +99,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 		// And this is for knowing where to move past (in 109)
 		funge_vector posinstr;
 		// Fetch instruction
-		ip_forward(ip, 1);
+		ip_forward(ip);
 		kInstr = fungespace_get(&ip->position);
 
 		// We should reach past any spaces and ;; pairs and execute first

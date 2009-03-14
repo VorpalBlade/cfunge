@@ -108,7 +108,7 @@ static void finger_ORTH_change_y(instructionPointer * ip)
 static void finger_ORTH_ramp_if_zero(instructionPointer * ip)
 {
 	if (!stack_pop(ip->stack))
-		ip_forward(ip, 1);
+		ip_forward(ip);
 }
 
 bool finger_ORTH_load(instructionPointer * ip)

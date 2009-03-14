@@ -105,17 +105,27 @@ FUNGE_ATTR_FAST
 void ip_free(instructionPointer * restrict ip);
 #endif
 
+
 /**
- * Move the IP forward.
- * @param ip Instruction pointer to operate on.
- * @param steps Number of steps forward to take. You can also take negative
- * count of steps.
- * @note
- * steps let you take several steps at once. However if you will wrap, you
- * probably want to set a temp delta instead and take +/- one step for now.
+ * Move the IP forwards one step.
+ * @param m_ip Instruction pointer to operate on.
  */
-FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_forward(instructionPointer * restrict ip, funge_cell steps);
+#define ip_forward(m_ip) \
+	do { \
+		(m_ip)->position.x += (m_ip)->delta.x; \
+		(m_ip)->position.y += (m_ip)->delta.y; \
+		fungespace_wrap(&((m_ip)->position), &((m_ip)->delta)); \
+	} while(0)
+/**
+ * Move the IP backwards one step.
+ * @param m_ip Instruction pointer to operate on.
+ */
+#define ip_backward(m_ip) \
+	do { \
+		(m_ip)->position.x -= (m_ip)->delta.x; \
+		(m_ip)->position.y -= (m_ip)->delta.y; \
+		fungespace_wrap(&((m_ip)->position), &((m_ip)->delta)); \
+	} while(0)
 
 /**
  * Mirror IP direction.

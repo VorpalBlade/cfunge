@@ -202,9 +202,9 @@ static void finger_TOYS_scissors(instructionPointer * ip)
 static void finger_TOYS_corner(instructionPointer * ip)
 {
 	ip_turn_left(ip);
-	ip_forward(ip, 1);
+	ip_forward(ip);
 	stack_push(ip->stack, fungespace_get(&ip->position));
-	ip_forward(ip, -1);
+	ip_backward(ip);
 	ip_turn_right(ip);
 }
 
@@ -272,18 +272,18 @@ static void finger_TOYS_necklace(instructionPointer * ip)
 {
 	funge_cell v = stack_pop(ip->stack);
 
-	ip_forward(ip, -1);
+	ip_backward(ip);
 	fungespace_set(v, &ip->position);
-	ip_forward(ip, 1);
+	ip_forward(ip);
 }
 
 /// R - can opener (Like L but to the right)
 static void finger_TOYS_can_opener(instructionPointer * ip)
 {
 	ip_turn_right(ip);
-	ip_forward(ip, 1);
+	ip_forward(ip);
 	stack_push(ip->stack, fungespace_get(&ip->position));
-	ip_forward(ip, -1);
+	ip_backward(ip);
 	ip_turn_left(ip);
 }
 
@@ -368,7 +368,7 @@ static void finger_TOYS_television_antenna(instructionPointer * ip)
 	if (c < v) {
 		stack_push(ip->stack, v);
 		stack_push_vector(ip->stack, vector_create_ref(vect.x - ip->storageOffset.x, vect.y - ip->storageOffset.y));
-		ip_forward(ip, -1);
+		ip_backward(ip);
 	} else if (c > v)
 		ip_reverse(ip);
 }
