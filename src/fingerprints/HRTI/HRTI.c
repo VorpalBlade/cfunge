@@ -101,7 +101,7 @@ static inline bool check_ip_have_HRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {
 		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(timetype));
-		if (!ip->fingerHRTItimestamp)
+		if (FUNGE_UNLIKELY(!ip->fingerHRTItimestamp))
 			return false;
 		ZERO_TIMETYPE((timetype*)ip->fingerHRTItimestamp);
 	}
@@ -176,7 +176,7 @@ FUNGE_ATTR_FAST static inline bool setup_HRTI(instructionPointer * ip)
 
 bool finger_HRTI_load(instructionPointer * ip)
 {
-	if (!setup_HRTI(ip))
+	if (FUNGE_UNLIKELY(!setup_HRTI(ip)))
 		return false;
 	manager_add_opcode(HRTI, 'E', erase_mark)
 	manager_add_opcode(HRTI, 'G', granularity)
