@@ -226,9 +226,8 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				ip_turn_right(ip);
 				break;
 			case 'x': {
-				funge_vector pos;
-				pos = stack_pop_vector(ip->stack);
-				ip_set_delta(ip, & pos);
+				funge_vector pos = stack_pop_vector(ip->stack);
+				ip_set_delta(ip, &pos);
 				break;
 			}
 
