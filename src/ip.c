@@ -66,7 +66,7 @@ FUNGE_ATTR_FAST instructionPointer * ip_create(void)
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
-	if (!ip_create_in_place(tmp)) {
+	if (FUNGE_UNLIKELY(!ip_create_in_place(tmp))) {
 		cf_free(tmp);
 		return NULL;
 	}
@@ -222,7 +222,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	 * t0 | t1  | t2 |
 	 * t0 | t0a | t1 | t2
 	 */
-	if (!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1])) {
+	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1]))) {
 		// We are in trouble
 		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.\n", stderr);
 	}
