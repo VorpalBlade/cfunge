@@ -248,6 +248,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 	return buf;
 }
 
+#ifdef UNUSED
 FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict stack, size_t len)
 {
 	unsigned char * restrict x = (unsigned char*)cf_malloc_noptr((len + 1) * sizeof(char));
@@ -260,6 +261,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict sta
 	x[len + 1] = '\0';
 	return x;
 }
+#endif
 
 
 /***************
@@ -313,8 +315,7 @@ void stack_dump(const funge_stack * stack)
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stack_print_top(const funge_stack * stack)
 {
-	if (!stack)
-		return;
+	assert(stack != NULL);
 	if (stack->top == 0) {
 		fputs("\tStack is empty.\n", stderr);
 	} else {
@@ -336,11 +337,11 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_create(void)
 	funge_stack      * stack;
 
 	stackStack = (funge_stackstack*)cf_malloc(sizeof(funge_stackstack) + sizeof(funge_stack*));
-	if (!stackStack)
+	if (FUNGE_UNLIKELY(!stackStack))
 		return NULL;
 
 	stack = stack_create();
-	if (!stack) {
+	if (FUNGE_UNLIKELY(!stack)) {
 		cf_free(stackStack);
 		return NULL;
 	}
@@ -353,7 +354,7 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_create(void)
 
 FUNGE_ATTR_FAST void stackstack_free(funge_stackstack * me)
 {
-	if (!me)
+	if (FUNGE_UNLIKELY(!me))
 		return;
 
 	for (size_t i = 0; i < me->size; i++)
@@ -370,12 +371,12 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 	assert(old != NULL);
 
 	stackStack = (funge_stackstack*)cf_malloc(sizeof(funge_stackstack) + old->size * sizeof(funge_stack*));
-	if (!stackStack)
+	if (FUNGE_UNLIKELY(!stackStack))
 		return NULL;
 
 	for (size_t i = 0; i <= old->current; i++) {
 		stackStack->stacks[i] = stack_duplicate(old->stacks[i]);
-		if (!stackStack->stacks[i])
+		if (FUNGE_UNLIKELY(!stackStack->stacks[i]))
 			return NULL;
 	}
 
@@ -419,8 +420,8 @@ static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stac
 	if (count > src->top) {
 		// Push some initial zeros then.
 		size_t zero_count = count - src->top;
-		stack_zero_fill(dest, zero_count);
 		count -= zero_count;
+		stack_zero_fill(dest, zero_count);
 	}
 
 	// memcpy the rest.
@@ -441,16 +442,15 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 	stackStack = ip->stackstack;
 
 	TOSS = stack_create();
-	if (!TOSS) {
+	if (FUNGE_UNLIKELY(!TOSS)) {
 		oom_stackstack(ip);
 		return false;
 	}
 
 	// Extend by one
 	stackStack = cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
-	if (!stackStack) {
-		if (TOSS)
-			stack_free(TOSS);
+	if (FUNGE_UNLIKELY(!stackStack)) {
+		stack_free(TOSS);
 		oom_stackstack(ip);
 		return false;
 	}
@@ -502,9 +502,10 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 	ip->storageOffset.y = storageOffset.y;
 
 	ip->stack = SOSS;
+	// FIXME: Maybe we shouldn't realloc here to reduce overhead.
 	// Make it one smaller
 	stackStack = (funge_stackstack*)cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size - 1) * sizeof(funge_stack*));
-	if (!stackStack) {
+	if (FUNGE_UNLIKELY(!stackStack)) {
 		oom_stackstack(ip);
 		return false;
 	}

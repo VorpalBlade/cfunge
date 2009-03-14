@@ -142,6 +142,7 @@ unsigned char * stack_pop_string(funge_stack * restrict stack,
  */
 #define stack_free_string(string) cf_free(string)
 
+#ifdef UNUSED
 /**
  * Pop a fixed number of chars from a stack.
  * @param stack A pointer to the stack in question.
@@ -151,6 +152,8 @@ unsigned char * stack_pop_string(funge_stack * restrict stack,
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 unsigned char * stack_pop_sized_string(funge_stack * restrict stack,
                                        size_t len);
+#endif
+
 /// Clear all items from a stack.
 #define stack_clear(stack) { stack->top = 0; }
 /**
