@@ -264,7 +264,7 @@ fungespace_set_offset(funge_cell value,
 }
 
 
-/// Duplicated from vector.c for speed reasons. 
+/// Duplicated from vector.c for speed reasons.
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
 static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
 {
