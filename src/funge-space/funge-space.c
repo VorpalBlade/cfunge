@@ -104,7 +104,7 @@ fungespace_create(void)
 	for (size_t i = 0; i < sizeof(static_space) / sizeof(funge_cell); i++)
 		static_space[i] = ' ';
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
-	if (!fspace.entries)
+	if (FUNGE_UNLIKELY(!fspace.entries))
 		return false;
 	ght_set_rehash(fspace.entries, true);
 	// Set up mempool for hash library.
