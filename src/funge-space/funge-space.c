@@ -382,6 +382,10 @@ static inline void do_mmap_cleanup(int fd, unsigned char *addr, size_t length)
 	}
 }
 
+#define FUNGE_INITIAL_NEWLINE \
+	pos.x = 0; \
+	pos.y++;
+
 /**
  * Load a string into Funge-Space at 0,0. Used for initial loading.
  * Can handle null-bytes in the string without problems.
@@ -393,31 +397,36 @@ static inline void load_string(const unsigned char * restrict program,
                                size_t length)
 {
 	bool lastwascr = false;
-	// Row in fungespace
-	funge_cell y = 0;
-	funge_cell x = 0;
+	// Coord in Funge-Space.
+	funge_vector pos = {0, 0};
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
 			// Ignore form feed. Treat it as newline is treated in Unefunge.
 			case '\f':
+				if (lastwascr) {
+					FUNGE_INITIAL_NEWLINE
+					lastwascr = false;
+				}
 				break;
 			case '\r':
-				lastwascr = true;
+				if (lastwascr) {
+					FUNGE_INITIAL_NEWLINE
+				} else {
+					lastwascr = true;
+				}
 				break;
 			case '\n':
-				x = 0;
-				y++;
+				FUNGE_INITIAL_NEWLINE
 				lastwascr = false;
 				break;
 			default:
 				if (lastwascr) {
 					lastwascr = false;
-					x = 0;
-					y++;
+					FUNGE_INITIAL_NEWLINE
 				}
-				fungespace_set_initial((funge_cell)program[i], vector_create_ref(x, y));
-				x++;
+				fungespace_set_initial((funge_cell)program[i], &pos);
+				pos.x++;
 				break;
 		}
 	}
@@ -455,7 +464,7 @@ fungespace_load_string(const unsigned char * restrict program)
 }
 #endif
 
-#define FUNGE_NEWLINE \
+#define FUNGE_OFFSET_NEWLINE \
 	if (x > size->x) \
 		size->x = x; \
 	x = 0; \
@@ -501,26 +510,26 @@ fungespace_load_at_offset(const char        * restrict filename,
 				// Ignore form feed. Treat it as newline is treated in Unefunge.
 				case '\f':
 					if (lastwascr) {
-						FUNGE_NEWLINE
+						FUNGE_OFFSET_NEWLINE
 						lastwascr = false;
 					}
 					break;
 				case '\r':
 					if (lastwascr) {
 						// Blergh two \r after each other.
-						FUNGE_NEWLINE
+						FUNGE_OFFSET_NEWLINE
 					} else {
 						lastwascr = true;
 					}
 					break;
 				case '\n':
-					FUNGE_NEWLINE
+					FUNGE_OFFSET_NEWLINE
 					lastwascr = false;
 					break;
 				default:
 					if (lastwascr) {
 						lastwascr = false;
-						FUNGE_NEWLINE
+						FUNGE_OFFSET_NEWLINE
 					}
 					if (addr[i] != ' ')
 						fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
