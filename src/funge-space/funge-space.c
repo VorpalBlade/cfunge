@@ -455,6 +455,12 @@ fungespace_load_string(const unsigned char * restrict program)
 }
 #endif
 
+#define FUNGE_NEWLINE \
+	if (x > size->x) \
+		size->x = x; \
+	x = 0; \
+	y++;
+
 FUNGE_ATTR_FAST bool
 fungespace_load_at_offset(const char        * restrict filename,
                           const funge_vector * restrict offset,
@@ -483,31 +489,38 @@ fungespace_load_at_offset(const char        * restrict filename,
 	size->x = 0;
 	size->y = 0;
 
-	for (size_t i = 0; i < length; i++) {
-		if (binary) {
+	if (binary) {
+		for (size_t i = 0; i < length; i++) {
 			if (addr[i] != ' ')
 				fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
 			x++;
-		} else {
+		}
+	} else {
+		for (size_t i = 0; i < length; i++) {
 			switch (addr[i]) {
 				// Ignore form feed. Treat it as newline is treated in Unefunge.
 				case '\f':
+					if (lastwascr) {
+						FUNGE_NEWLINE
+						lastwascr = false;
+					}
 					break;
 				case '\r':
-					lastwascr = true;
+					if (lastwascr) {
+						// Blergh two \r after each other.
+						FUNGE_NEWLINE
+					} else {
+						lastwascr = true;
+					}
 					break;
 				case '\n':
-					if (x > size->x) size->x = x;
-					x = 0;
-					y++;
+					FUNGE_NEWLINE
 					lastwascr = false;
 					break;
 				default:
 					if (lastwascr) {
 						lastwascr = false;
-						if (x > size->x) size->x = x;
-						x = 0;
-						y++;
+						FUNGE_NEWLINE
 					}
 					if (addr[i] != ' ')
 						fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
@@ -515,8 +528,8 @@ fungespace_load_at_offset(const char        * restrict filename,
 					break;
 			}
 		}
+		if (lastwascr) y++;
 	}
-
 	if (x > size->x) size->x = x;
 	if (y > size->y) size->y = y;
 	do_mmap_cleanup(fd, addr, length);
