@@ -39,7 +39,7 @@ static void finger_STRN_append(instructionPointer * ip)
 	bottom = (char*)stack_pop_string(ip->stack, &bottom_len);
 
 	c = cf_realloc(top, top_len + strlen(bottom) + 1);
-	if (!c) {
+	if (FUNGE_UNLIKELY(!c)) {
 		ip_reverse(ip);
 		stack_free_string(top);
 		stack_free_string(bottom);
@@ -110,7 +110,12 @@ static void finger_STRN_get(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
+
 	sb = stringbuffer_new();
+	if (FUNGE_UNLIKELY(!sb)) {
+		ip_reverse(ip);
+		return;
+	}
 
 	while (true) {
 		funge_cell val;
@@ -125,7 +130,7 @@ static void finger_STRN_get(instructionPointer * ip)
 		pos.x += 1;
 	}
 	s = stringbuffer_finish(sb, &len);
-	if (!s) {
+	if (FUNGE_UNLIKELY(!s)) {
 		stringbuffer_destroy(sb);
 		ip_reverse(ip);
 		return;
@@ -243,7 +248,10 @@ static void finger_STRN_itoa(instructionPointer * ip)
 	size_t len;
 	funge_cell n = stack_pop(ip->stack);
 	StringBuffer *sb = stringbuffer_new();
-
+	if (FUNGE_UNLIKELY(!sb)) {
+		ip_reverse(ip);
+		return;
+	}
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb, &len);
 	stack_push_string(ip->stack, (unsigned char*)s, len);
