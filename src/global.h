@@ -49,6 +49,11 @@
 #  define FUNGE_EXPECT(expr, outcome) (expr)
 #endif /* __GNUC__ */
 
+/// Hints about likely outcome. Do not add unless you have profiled.
+#define FUNGE_LIKELY(expr)   FUNGE_EXPECT(!!(expr), 1)
+/// Hints about likely outcome. Do not add unless you have profiled.
+#define FUNGE_UNLIKELY(expr) FUNGE_EXPECT(!!(expr), 0)
+
 /*@}*/
 
 
