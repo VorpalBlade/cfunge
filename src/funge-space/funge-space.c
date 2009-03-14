@@ -232,7 +232,6 @@ FUNGE_ATTR_FAST static inline void
 fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 {
 	assert(position != NULL);
-	fungespace_set_no_bounds_update(value, position);
 	if (value != ' ') {
 		if (FUNGE_LIKELY(fspace.boundsvalid)) {
 			if (fspace.bottomRightCorner.y < position->y)
@@ -249,6 +248,7 @@ fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 			fspace.boundsvalid = true;
 		}
 	}
+	fungespace_set_no_bounds_update(value, position);
 }
 
 
@@ -352,10 +352,10 @@ static inline int do_mmap(const char * restrict filename,
 	size_t len;
 
 	fd = open(filename, O_RDONLY);
-	if (fd == -1)
+	if (FUNGE_UNLIKELY(fd == -1))
 		return -1;
 
-	if (fstat(fd, &sb) == -1) {
+	if (FUNGE_UNLIKELY(fstat(fd, &sb) == -1)) {
 		perror("fstat() on file failed");
 		goto error;
 	}
@@ -369,7 +369,7 @@ static inline int do_mmap(const char * restrict filename,
 	}
 	// mmap() it.
 	addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (addr == MAP_FAILED) {
+	if (FUNGE_UNLIKELY(addr == MAP_FAILED)) {
 		perror("mmap() on file failed");
 		goto error;
 	}
@@ -397,10 +397,10 @@ error:
 FUNGE_ATTR_FAST
 static inline void do_mmap_cleanup(int fd, unsigned char *addr, size_t length)
 {
-	if (addr != NULL) {
+	if (FUNGE_LIKELY(addr != NULL)) {
 		munmap((char*)addr, length);
 	}
-	if (fd != -1) {
+	if (FUNGE_LIKELY(fd != -1)) {
 		close(fd);
 	}
 }
