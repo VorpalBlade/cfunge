@@ -534,7 +534,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void thread_forward(instructionPointer * ip)
+static inline void thread_forward(instructionPointer * restrict ip)
 {
 	assert(ip != NULL);
 
@@ -558,17 +558,19 @@ static inline void interpreter_main_loop(void)
 
 			opcode = fungespace_get(&IPList->ips[i].position);
 #    ifndef DISABLE_TRACE
-			if (FUNGE_UNLIKELY(setting_trace_level > 8)) {
-				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
-				        IPList->ips[i].position.y, (char)opcode, opcode);
-				stack_print_top(IPList->ips[i].stack);
-			} else if (FUNGE_UNLIKELY(setting_trace_level > 3)) {
-				fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-				        i, IPList->ips[i].ID, IPList->ips[i].position.x,
-				        IPList->ips[i].position.y, (char)opcode, opcode);
-			} else if (FUNGE_UNLIKELY(setting_trace_level > 2))
-				fprintf(stderr, "%c", (char)opcode);
+			if (FUNGE_UNLIKELY(setting_trace_level != 0)) {
+				if (setting_trace_level > 8) {
+					fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+					        i, IPList->ips[i].ID, IPList->ips[i].position.x,
+					        IPList->ips[i].position.y, (char)opcode, opcode);
+					stack_print_top(IPList->ips[i].stack);
+				} else if (setting_trace_level > 3) {
+					fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+					        i, IPList->ips[i].ID, IPList->ips[i].position.x,
+					        IPList->ips[i].position.y, (char)opcode, opcode);
+				} else if (setting_trace_level > 2)
+					fprintf(stderr, "%c", (char)opcode);
+			}
 #    endif /* DISABLE_TRACE */
 
 			retval = execute_instruction(opcode, &IPList->ips[i], &i);
@@ -583,15 +585,17 @@ static inline void interpreter_main_loop(void)
 
 		opcode = fungespace_get(&IP->position);
 #    ifndef DISABLE_TRACE
-		if (FUNGE_UNLIKELY(setting_trace_level > 8)) {
-			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-			        IP->position.x, IP->position.y, (char)opcode, opcode);
-			stack_print_top(IP->stack);
-		} else if (FUNGE_UNLIKELY(setting_trace_level > 3)) {
-			fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-			        IP->position.x, IP->position.y, (char)opcode, opcode);
-		} else if (FUNGE_UNLIKELY(setting_trace_level > 2))
-			fprintf(stderr, "%c", (char)opcode);
+		if (FUNGE_UNLIKELY(setting_trace_level != 0)) {
+			if (setting_trace_level > 8) {
+				fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+				        IP->position.x, IP->position.y, (char)opcode, opcode);
+				stack_print_top(IP->stack);
+			} else if (setting_trace_level > 3) {
+				fprintf(stderr, "x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+				        IP->position.x, IP->position.y, (char)opcode, opcode);
+			} else if (setting_trace_level > 2)
+				fprintf(stderr, "%c", (char)opcode);
+		}
 #    endif /* DISABLE_TRACE */
 
 		execute_instruction(opcode, IP);
@@ -621,26 +625,26 @@ static void debug_free(void)
 
 FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 {
-	if (!fungespace_create()) {
+	if (FUNGE_UNLIKELY(!fungespace_create())) {
 		perror("Couldn't create funge space!?");
 		exit(EXIT_FAILURE);
 	}
 #ifndef NDEBUG
 	atexit(&debug_free);
 #endif
-	if (!fungespace_load(filename)) {
+	if (FUNGE_UNLIKELY(!fungespace_load(filename))) {
 		fprintf(stderr, "Failed to process file \"%s\": %s\n", filename, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 #ifdef CONCURRENT_FUNGE
 	IPList = iplist_create();
-	if (IPList == NULL) {
+	if (FUNGE_UNLIKELY(IPList == NULL)) {
 		perror("Couldn't create instruction pointer list!?");
 		exit(EXIT_FAILURE);
 	}
 #else
 	IP = ip_create();
-	if (IP == NULL) {
+	if (FUNGE_UNLIKELY(IP == NULL)) {
 		perror("Couldn't create instruction pointer!?");
 		exit(EXIT_FAILURE);
 	}
@@ -648,7 +652,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 	{
 #ifdef HAVE_clock_gettime
 		struct timespec tv;
-		if (clock_gettime(CLOCK_REALTIME, &tv)) {
+		if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
 			perror("Couldn't get time of day?!");
 			exit(EXIT_FAILURE);
 		}
@@ -656,7 +660,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 		srandom((unsigned int)tv.tv_nsec);
 #else
 		struct timeval tv;
-		if (gettimeofday(&tv, NULL)) {
+		if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
 			perror("Couldn't get time of day?!");
 			exit(EXIT_FAILURE);
 		}
