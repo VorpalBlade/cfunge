@@ -48,12 +48,12 @@ static inline bool ip_create_in_place(instructionPointer *me)
 	me->stringLastWasSpace   = false;
 	me->fingerSUBRisRelative = false;
 	me->stackstack           = stackstack_create();
-	if (!me->stackstack)
+	if (FUNGE_UNLIKELY(!me->stackstack))
 		return false;
 	me->stack                = me->stackstack->stacks[me->stackstack->current];
 	me->ID                   = 0;
-	if (!setting_disable_fingerprints) {
-		if (!manager_create(me))
+	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
+		if (FUNGE_UNLIKELY(!manager_create(me)))
 			return false;
 	}
 	me->fingerHRTItimestamp  = NULL;
@@ -64,7 +64,7 @@ static inline bool ip_create_in_place(instructionPointer *me)
 FUNGE_ATTR_FAST instructionPointer * ip_create(void)
 {
 	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
-	if (!tmp)
+	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
 	if (!ip_create_in_place(tmp)) {
 		cf_free(tmp);
@@ -83,12 +83,12 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 	memcpy(new, old, sizeof(instructionPointer));
 
 	new->stackstack           = stackstack_duplicate(old->stackstack);
-	if (!new->stackstack)
+	if (FUNGE_UNLIKELY(!new->stackstack))
 		return false;
 
 	new->stack                = new->stackstack->stacks[new->stackstack->current];
-	if (!setting_disable_fingerprints) {
-		if (!manager_duplicate(old, new))
+	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
+		if (FUNGE_UNLIKELY(!manager_duplicate(old, new)))
 			return false;
 	}
 	new->fingerHRTItimestamp  = NULL;
@@ -98,14 +98,14 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 
 FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 {
-	if (!ip)
+	if (FUNGE_UNLIKELY(!ip))
 		return;
-	if (ip->stackstack) {
+	if (FUNGE_LIKELY(ip->stackstack)) {
 		stackstack_free(ip->stackstack);
 		ip->stackstack = NULL;
 	}
 	ip->stack = NULL;
-	if (!setting_disable_fingerprints) {
+	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
 		manager_free(ip);
 	}
 	if (ip->fingerHRTItimestamp) {
@@ -158,9 +158,9 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
 FUNGE_ATTR_FAST ipList* iplist_create(void)
 {
 	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer[ALLOCCHUNKSIZE]));
-	if (!tmp)
+	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
-	if (!ip_create_in_place(&tmp->ips[0]))
+	if (FUNGE_UNLIKELY(!ip_create_in_place(&tmp->ips[0])))
 		return NULL;
 	tmp->size = ALLOCCHUNKSIZE;
 	tmp->top = 0;
@@ -171,7 +171,7 @@ FUNGE_ATTR_FAST ipList* iplist_create(void)
 #ifndef NDEBUG
 FUNGE_ATTR_FAST void iplist_free(ipList* me)
 {
-	if (!me)
+	if (FUNGE_UNLIKELY(!me))
 		return;
 	for (size_t i = 0; i <= me->top; i++) {
 		ip_free_resources(&me->ips[i]);
@@ -193,7 +193,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	// Grow if needed
 	if (list->size <= (list->top + 1)) {
 		list = (ipList*)cf_realloc(*me, sizeof(ipList) + sizeof(instructionPointer[(*me)->size + ALLOCCHUNKSIZE]));
-		if (!list)
+		if (FUNGE_UNLIKELY(!list))
 			return -1;
 		*me = list;
 		list->size += ALLOCCHUNKSIZE;
