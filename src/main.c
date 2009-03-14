@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 		}
 	}
-	if (optind >= argc) {
+	if (FUNGE_UNLIKELY(optind >= argc)) {
 		fputs("Error: No file provided.\n", stderr);
 		return EXIT_FAILURE;
 	} else {
