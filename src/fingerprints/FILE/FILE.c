@@ -120,7 +120,7 @@ static void finger_FILE_fclose(instructionPointer * ip)
 	free_handle(h);
 }
 
-/// C - Delete specified file
+/// D - Delete specified file
 static void finger_FILE_delete(instructionPointer * ip)
 {
 	char * restrict filename;
