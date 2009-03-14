@@ -211,10 +211,7 @@ static void finger_NCRS_put(instructionPointer * ip)
 /// R - Refresh window
 static void finger_NCRS_refresh(instructionPointer * ip)
 {
-	if (!ncrs_valid_state) {
-		ip_reverse(ip);
-		return;
-	}
+	NCRS_VALIDATE_STATE();
 	if (refresh() == ERR)
 		ip_reverse(ip);
 }
