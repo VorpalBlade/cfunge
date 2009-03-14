@@ -22,6 +22,8 @@
 #include "vector.h"
 #include <stdint.h>
 
+// NOTE: This has been duplicated in funge-space.c for speed reasons.
+
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
 inline bool vector_is_cardinal(const funge_vector * restrict v)
 {
