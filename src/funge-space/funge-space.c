@@ -85,9 +85,10 @@ static funge_cell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
 static inline bool fungespace_in_range(const funge_vector * restrict position)
 {
-	if ((position->x > fspace.bottomRightCorner.x) || (position->x < fspace.topLeftCorner.x))
-		return false;
-	if ((position->y > fspace.bottomRightCorner.y) || (position->y < fspace.topLeftCorner.y))
+	if ((position->x > fspace.bottomRightCorner.x)
+	    || (position->x < fspace.topLeftCorner.x)
+	    || (position->y > fspace.bottomRightCorner.y)
+	    || (position->y < fspace.topLeftCorner.y))
 		return false;
 	return true;
 }
@@ -213,17 +214,17 @@ FUNGE_ATTR_FAST void
 fungespace_set(funge_cell value, const funge_vector * restrict position)
 {
 	assert(position != NULL);
-	fungespace_set_no_bounds_update(value, position);
 	if (value != ' ') {
 		if (fspace.bottomRightCorner.y < position->y)
 			fspace.bottomRightCorner.y = position->y;
-		if (fspace.bottomRightCorner.x < position->x)
-			fspace.bottomRightCorner.x = position->x;
 		if (fspace.topLeftCorner.y > position->y)
 			fspace.topLeftCorner.y = position->y;
+		if (fspace.bottomRightCorner.x < position->x)
+			fspace.bottomRightCorner.x = position->x;
 		if (fspace.topLeftCorner.x > position->x)
 			fspace.topLeftCorner.x = position->x;
 	}
+	fungespace_set_no_bounds_update(value, position);
 }
 
 
@@ -233,21 +234,27 @@ fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 	assert(position != NULL);
 	fungespace_set_no_bounds_update(value, position);
 	if (value != ' ') {
-		if (!fspace.boundsvalid || fspace.bottomRightCorner.y < position->y)
-			fspace.bottomRightCorner.y = position->y;
-		if (!fspace.boundsvalid || fspace.bottomRightCorner.x < position->x)
-			fspace.bottomRightCorner.x = position->x;
-		if (!fspace.boundsvalid || fspace.topLeftCorner.y > position->y)
-			fspace.topLeftCorner.y = position->y;
-		if (!fspace.boundsvalid || fspace.topLeftCorner.x > position->x)
-			fspace.topLeftCorner.x = position->x;
-		fspace.boundsvalid = true;
+		if (FUNGE_LIKELY(fspace.boundsvalid)) {
+			if (fspace.bottomRightCorner.y < position->y)
+				fspace.bottomRightCorner.y = position->y;
+			if (fspace.topLeftCorner.y > position->y)
+				fspace.topLeftCorner.y = position->y;
+			if (fspace.bottomRightCorner.x < position->x)
+				fspace.bottomRightCorner.x = position->x;
+			if (fspace.topLeftCorner.x > position->x)
+				fspace.topLeftCorner.x = position->x;
+		} else {
+			fspace.topLeftCorner.y = fspace.bottomRightCorner.y = position->y;
+			fspace.topLeftCorner.x = fspace.bottomRightCorner.x = position->x;
+			fspace.boundsvalid = true;
+		}
 	}
 }
 
 
 FUNGE_ATTR_FAST void
-fungespace_set_offset(funge_cell value, const funge_vector * restrict position,
+fungespace_set_offset(funge_cell value,
+                      const funge_vector * restrict position,
                       const funge_vector * restrict offset)
 {
 	assert(position != NULL);
@@ -257,13 +264,28 @@ fungespace_set_offset(funge_cell value, const funge_vector * restrict position,
 }
 
 
+/// Duplicated from vector.c for speed reasons. 
+FUNGE_ATTR_PURE FUNGE_ATTR_FAST
+static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
+{
+	// Due to unsigned this can't overflow in the addition below.
+	funge_unsigned_cell x = (funge_unsigned_cell)ABS(v->x);
+	funge_unsigned_cell y = (funge_unsigned_cell)ABS(v->y);
+	if ((x + y) != 1)
+		return false;
+	if (x && y)
+		return false;
+	return true;
+}
+
+
 FUNGE_ATTR_FAST void
 fungespace_wrap(funge_vector * restrict position,
                 const funge_vector * restrict delta)
 {
 	if (!fungespace_in_range(position)) {
 		// Quick and dirty if cardinal.
-		if (vector_is_cardinal(delta)) {
+		if (FUNGE_LIKELY(fspace_vector_is_cardinal(delta))) {
 			// FIXME, HACK: Why are the +1/-1 needed?
 			if (position->x < fspace.topLeftCorner.x)
 				position->x = fspace.bottomRightCorner.x + 1;
@@ -320,7 +342,8 @@ void fungespace_dump(void)
 r -2 in case of empty file.
  */
 FUNGE_ATTR_FAST
-static inline int do_mmap(const char * restrict filename, unsigned char **maddr,
+static inline int do_mmap(const char * restrict filename,
+                          unsigned char **maddr,
                           size_t * restrict length)
 {
 	char *addr = NULL;
@@ -404,21 +427,16 @@ static inline void load_string(const unsigned char * restrict program,
 		switch (program[i]) {
 			// Ignore form feed. Treat it as newline is treated in Unefunge.
 			case '\f':
-				if (lastwascr) {
-					FUNGE_INITIAL_NEWLINE
-					lastwascr = false;
-				}
 				break;
 			case '\r':
 				if (lastwascr) {
 					FUNGE_INITIAL_NEWLINE
-				} else {
-					lastwascr = true;
 				}
+				lastwascr = true;
 				break;
 			case '\n':
-				FUNGE_INITIAL_NEWLINE
 				lastwascr = false;
+				FUNGE_INITIAL_NEWLINE
 				break;
 			default:
 				if (lastwascr) {
@@ -465,13 +483,13 @@ fungespace_load_string(const unsigned char * restrict program)
 #endif
 
 #define FUNGE_OFFSET_NEWLINE \
-	if (x > size->x) \
-		size->x = x; \
-	x = 0; \
-	y++;
+	if (pos.x > size->x) \
+		size->x = pos.x; \
+	pos.x = 0; \
+	pos.y++;
 
 FUNGE_ATTR_FAST bool
-fungespace_load_at_offset(const char        * restrict filename,
+fungespace_load_at_offset(const char         * restrict filename,
                           const funge_vector * restrict offset,
                           funge_vector       * restrict size,
                           bool binary)
@@ -479,11 +497,8 @@ fungespace_load_at_offset(const char        * restrict filename,
 	unsigned char *addr;
 	int fd;
 	size_t length;
+	funge_vector pos = {0, 0};
 
-	bool lastwascr = false;
-
-	funge_cell y = 0;
-	funge_cell x = 0;
 	assert(filename != NULL);
 	assert(offset != NULL);
 	assert(size != NULL);
@@ -499,28 +514,26 @@ fungespace_load_at_offset(const char        * restrict filename,
 	size->y = 0;
 
 	if (binary) {
+		pos.x = offset->x;
+		pos.y = offset->y;
 		for (size_t i = 0; i < length; i++) {
 			if (addr[i] != ' ')
-				fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
-			x++;
+				fungespace_set((funge_cell)addr[i], &pos);
+			pos.x++;
 		}
 	} else {
+		bool lastwascr = false;
 		for (size_t i = 0; i < length; i++) {
 			switch (addr[i]) {
 				// Ignore form feed. Treat it as newline is treated in Unefunge.
 				case '\f':
-					if (lastwascr) {
-						FUNGE_OFFSET_NEWLINE
-						lastwascr = false;
-					}
 					break;
 				case '\r':
 					if (lastwascr) {
 						// Blergh two \r after each other.
 						FUNGE_OFFSET_NEWLINE
-					} else {
-						lastwascr = true;
 					}
+					lastwascr = true;
 					break;
 				case '\n':
 					FUNGE_OFFSET_NEWLINE
@@ -532,21 +545,21 @@ fungespace_load_at_offset(const char        * restrict filename,
 						FUNGE_OFFSET_NEWLINE
 					}
 					if (addr[i] != ' ')
-						fungespace_set_offset((funge_cell)addr[i], vector_create_ref(x, y), offset);
-					x++;
+						fungespace_set_offset((funge_cell)addr[i], &pos, offset);
+					pos.x++;
 					break;
 			}
 		}
-		if (lastwascr) y++;
+		if (lastwascr) pos.y++;
 	}
-	if (x > size->x) size->x = x;
-	if (y > size->y) size->y = y;
+	if (pos.x > size->x) size->x = pos.x;
+	if (pos.y > size->y) size->y = pos.y;
 	do_mmap_cleanup(fd, addr, length);
 	return true;
 }
 
 FUNGE_ATTR_FAST bool
-fungespace_save_to_file(const char        * restrict filename,
+fungespace_save_to_file(const char         * restrict filename,
                         const funge_vector * restrict offset,
                         const funge_vector * restrict size,
                         bool textfile)
@@ -569,8 +582,7 @@ fungespace_save_to_file(const char        * restrict filename,
 		// However it also makes it possible to error out early.
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
 		if (posix_fallocate(fileno(file), 0, (off_t)(size->y * size->x)) != 0) {
-			fclose(file);
-			return false;
+			goto error;
 		}
 #endif
 		cf_flockfile(file);
@@ -586,18 +598,17 @@ fungespace_save_to_file(const char        * restrict filename,
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		funge_cell * restrict towrite = cf_malloc((size_t)(size->x * size->y + size->y) * sizeof(funge_cell));
+		unsigned char * restrict towrite = cf_malloc_noptr((size_t)(size->x * size->y + size->y) * sizeof(unsigned char));
 		if (!towrite) {
-			fclose(file);
-			return false;
+			goto error;
 		}
 		// Construct each line.
 		for (funge_cell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = (ssize_t)size->x;
-			funge_cell * restrict string = cf_malloc((size_t)size->x * sizeof(funge_cell));
+			funge_cell * restrict string = cf_malloc_noptr((size_t)size->x * sizeof(funge_cell));
 			if (!string) {
-				fclose(file);
-				return false;
+				cf_free(towrite);
+				goto error;
 			}
 			for (funge_cell x = offset->x; x < maxx; x++) {
 				string[x-offset->x] = fungespace_get(vector_create_ref(x, y));
@@ -624,18 +635,20 @@ fungespace_save_to_file(const char        * restrict filename,
 				lastnewline--;
 			} while ((lastnewline >= 0) && (towrite[lastnewline] == '\n'));
 
-			cf_flockfile(file);
 			if (lastnewline > 0) {
-				// Why the cast? To allow GCC to optimise better, by being able to
-				// check if the loop is infinite or not.
-				for (size_t i = 0; i <= (size_t)lastnewline; i++) {
-					cf_putc_unlocked((int)towrite[i], file);
+				size_t retval = fwrite(towrite, sizeof(unsigned char), lastnewline+1, file);
+				if (retval != (size_t)lastnewline+1) {
+					cf_free(towrite);
+					goto error;
 				}
 			}
-			cf_funlockfile(file);
 		}
 		cf_free(towrite);
 	}
 	fclose(file);
 	return true;
+error:
+	if (file)
+		fclose(file);
+	return false;
 }
