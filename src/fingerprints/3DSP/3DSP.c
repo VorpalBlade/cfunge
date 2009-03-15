@@ -115,8 +115,8 @@ FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
                               const funge_vector * restrict fV, double m[restrict 16])
 {
-	for (funge_cell x = 0; x < 4; ++x) {
-		for (funge_cell y = 0; y < 4; ++y) {
+	for (funge_cell y = 0; y < 4; ++y) {
+		for (funge_cell x = 0; x < 4; ++x) {
 			floatint u;
 			u.i = (int32_t)fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
 			m[y*4 + x] = u.f;
@@ -258,8 +258,8 @@ static void finger_3DSP_matrix_copy(instructionPointer * ip)
 	ft.y += ip->storageOffset.y;
 
 
-	for (funge_cell x = 0; x < 4; ++x)
-		for (funge_cell y = 0; y < 4; ++y) {
+	for (funge_cell y = 0; y < 4; ++y)
+		for (funge_cell x = 0; x < 4; ++x) {
 			fungespace_set(fungespace_get(vector_create_ref(fs.x + x, fs.y + y)),
 			               vector_create_ref(ft.x + x, ft.y + y));
 		}
