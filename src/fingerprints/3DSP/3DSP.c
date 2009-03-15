@@ -61,7 +61,7 @@ static inline void push_float(instructionPointer * restrict ip, float f)
 
 
 FUNGE_ATTR_FAST
-static inline void pop_vec_float(instructionPointer * restrict ip, float vec[3])
+static inline void pop_vec_float(instructionPointer * restrict ip, float vec[restrict 3])
 {
 	vec[2] = pop_float(ip);
 	vec[1] = pop_float(ip);
@@ -69,7 +69,7 @@ static inline void pop_vec_float(instructionPointer * restrict ip, float vec[3])
 }
 
 FUNGE_ATTR_FAST
-static inline void push_vec_float(instructionPointer * restrict ip, const float vec[3])
+static inline void push_vec_float(instructionPointer * restrict ip, const float vec[restrict 3])
 {
 	push_float(ip, vec[0]);
 	push_float(ip, vec[1]);
@@ -77,7 +77,7 @@ static inline void push_vec_float(instructionPointer * restrict ip, const float 
 }
 
 FUNGE_ATTR_FAST
-static inline void pop_vec(instructionPointer * restrict ip, double vec[3])
+static inline void pop_vec(instructionPointer * restrict ip, double vec[restrict 3])
 {
 	vec[2] = pop_float(ip);
 	vec[1] = pop_float(ip);
@@ -85,7 +85,7 @@ static inline void pop_vec(instructionPointer * restrict ip, double vec[3])
 }
 
 FUNGE_ATTR_FAST
-static inline void push_vec(instructionPointer * restrict ip, const double vec[3])
+static inline void push_vec(instructionPointer * restrict ip, const double vec[restrict 3])
 {
 	push_float(ip, (float)vec[0]);
 	push_float(ip, (float)vec[1]);
@@ -93,14 +93,14 @@ static inline void push_vec(instructionPointer * restrict ip, const double vec[3
 }
 
 FUNGE_ATTR_FAST
-static inline double vector_length(const double vec[3])
+static inline double vector_length(const double vec[restrict 3])
 {
 	return sqrt(vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]);
 }
 
 FUNGE_ATTR_FAST
 static inline void writeMatrix(const instructionPointer * restrict ip,
-                               const funge_vector * restrict fV, const double m[16])
+                               const funge_vector * restrict fV, const double m[restrict 16])
 {
 	for (funge_cell i = 0; i < 4; ++i) {
 		for (funge_cell j = 0; j < 4; ++j) {
@@ -113,7 +113,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 
 FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
-                              const funge_vector * restrict fV, double m[16])
+                              const funge_vector * restrict fV, double m[restrict 16])
 {
 	for (funge_cell x = 0; x < 4; ++x) {
 		for (funge_cell y = 0; y < 4; ++y) {
@@ -125,7 +125,7 @@ static inline void readMatrix(const instructionPointer * restrict ip,
 }
 
 FUNGE_ATTR_FAST
-static inline void mulMatrixVector(const double m[16], const double v[4], double r[4])
+static inline void mulMatrixVector(const double m[restrict 16], const double v[restrict 4], double r[restrict 4])
 {
 	for (size_t i = 0; i < 4; ++i) {
 		double n = 0;
@@ -136,7 +136,7 @@ static inline void mulMatrixVector(const double m[16], const double v[4], double
 }
 
 FUNGE_ATTR_FAST
-static inline void mulMatrices(const double a[16], const double b[16], double r[16])
+static inline void mulMatrices(const double a[restrict 16], const double b[restrict 16], double r[restrict 16])
 {
 	for (size_t i = 0; i < 4; ++i) {
 		for (size_t j = 0; j < 4; ++j) {
