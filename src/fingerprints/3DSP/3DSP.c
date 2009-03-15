@@ -102,11 +102,13 @@ FUNGE_ATTR_FAST
 static inline void writeMatrix(const instructionPointer * restrict ip,
                                const funge_vector * restrict fV, const double m[restrict 16])
 {
-	for (funge_cell i = 0; i < 4; ++i) {
-		for (funge_cell j = 0; j < 4; ++j) {
+	const funge_cell basex = fV->x + ip->storageOffset.x;
+	const funge_cell basey = fV->y + ip->storageOffset.y;
+	for (funge_cell j = 0; j < 4; ++j) {
+		for (funge_cell i = 0; i < 4; ++i) {
 			floatint u;
 			u.f = (float)m[4*j + i];
-			fungespace_set_offset(u.i, vector_create_ref(fV->x + i, fV->y + j), &ip->storageOffset);
+			fungespace_set(u.i, vector_create_ref(basex + i, basey + j));
 		}
 	}
 }
@@ -115,10 +117,12 @@ FUNGE_ATTR_FAST
 static inline void readMatrix(const instructionPointer * restrict ip,
                               const funge_vector * restrict fV, double m[restrict 16])
 {
+	const funge_cell basex = fV->x + ip->storageOffset.x;
+	const funge_cell basey = fV->y + ip->storageOffset.y;
 	for (funge_cell y = 0; y < 4; ++y) {
 		for (funge_cell x = 0; x < 4; ++x) {
 			floatint u;
-			u.i = (int32_t)fungespace_get_offset(vector_create_ref(fV->x + x, fV->y + y), &ip->storageOffset);
+			u.i = (int32_t)fungespace_get(vector_create_ref(basex + x, basey + y));
 			m[y*4 + x] = u.f;
 		}
 	}
