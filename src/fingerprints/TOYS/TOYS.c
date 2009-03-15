@@ -80,8 +80,8 @@ static void finger_TOYS_bracelet(instructionPointer * ip)
 		return;
 	}
 
-	for (funge_cell x = 0; x < d.x; ++x)
-		for (funge_cell y = 0; y < d.y; ++y)
+	for (funge_cell y = 0; y < d.y; ++y)
+		for (funge_cell x = 0; x < d.x; ++x)
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
 			                      vector_create_ref(x, y), &t);
 }
@@ -192,8 +192,8 @@ static void finger_TOYS_scissors(instructionPointer * ip)
 		return;
 	}
 
-	for (funge_cell x = d.x; x-- > 0;)
-		for (funge_cell y = d.y; y-- > 0;)
+	for (funge_cell y = d.y; y-- > 0;)
+		for (funge_cell x = d.x; x-- > 0;)
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
 			                      vector_create_ref(x, y), &t);
 }
@@ -224,8 +224,8 @@ static void finger_TOYS_kittycat(instructionPointer * ip)
 		return;
 	}
 
-	for (funge_cell x = 0; x < d.x; ++x)
-		for (funge_cell y = 0; y < d.y; ++y) {
+	for (funge_cell y = 0; y < d.y; ++y)
+		for (funge_cell x = 0; x < d.x; ++x) {
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
 			                      vector_create_ref(x, y), &t);
 			fungespace_set_offset(' ', vector_create_ref(x, y), &o);
@@ -304,8 +304,8 @@ static void finger_TOYS_chicane(instructionPointer * ip)
 		return;
 	}
 
-	for (funge_cell x = o.x; x < o.x + d.x; ++x)
-		for (funge_cell y = o.y; y < o.y + d.y; ++y)
+	for (funge_cell y = o.y; y < o.y + d.y; ++y)
+		for (funge_cell x = o.x; x < o.x + d.x; ++x)
 			fungespace_set(c, vector_create_ref(x, y));
 }
 
@@ -348,8 +348,8 @@ static void finger_TOYS_dixiecup(instructionPointer * ip)
 		return;
 	}
 
-	for (funge_cell x = d.x; x-- > 0;)
-		for (funge_cell y = d.y; y-- > 0;) {
+	for (funge_cell y = d.y; y-- > 0;)
+		for (funge_cell x = d.x; x-- > 0;) {
 			fungespace_set_offset(fungespace_get_offset(vector_create_ref(x, y), &o),
 			                      vector_create_ref(x, y), &t);
 			fungespace_set_offset(' ', vector_create_ref(x, y), &o);
