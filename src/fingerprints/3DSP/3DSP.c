@@ -413,12 +413,7 @@ static void finger_3DSP_matrix_mul(instructionPointer * ip)
 
 	mulMatrices(b, a, r);
 
-	for (funge_cell x = 0; x < 4; ++x)
-		for (funge_cell y = 0; y < 4; ++y) {
-			floatint u;
-			u.f = (float)r[y*4 + x];
-			fungespace_set_offset(u.i, vector_create_ref(ft.x + x, ft.y + y), &ip->storageOffset);
-		}
+	writeMatrix(ip, &ft, r);
 }
 
 /// Z - Scale a vector
