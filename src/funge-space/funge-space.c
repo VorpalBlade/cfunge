@@ -93,6 +93,29 @@ static inline bool fungespace_in_range(const funge_vector * restrict position)
 	return true;
 }
 
+#undef FSPACE_CREATE_SSE
+#undef FSPACE_SSE_ASM
+#if (defined(__i386__) || defined(__x86_64__)) && defined(__GNUC__) && defined(__SSE__) && !defined(__INTEL_COMPILER)
+#  define FSPACE_CREATE_SSE 1
+#endif
+#if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) && defined(__x86_64__)
+#  define FSPACE_SSE_ASM 1
+#endif
+#if defined(FSPACE_CREATE_SSE)
+typedef int32_t v4si __attribute__((vector_size(16)));
+#  ifndef FSPACE_SSE_ASM
+typedef float v4sf __attribute__((vector_size(16)));
+#  endif
+#  if defined(USE32)
+#    define FUNGESPACE_DATASIZE_STR "4"
+static const v4si fspace_vector_init = {0x20, 0x20, 0x20, 0x20};
+#  elif defined(USE64)
+#    define FUNGESPACE_DATASIZE_STR "8"
+static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
+#  else
+#    error "Unknown funge space data type size."
+#  endif
+#endif
 
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
@@ -101,8 +124,67 @@ fungespace_create(void)
 	cf_mark_static_noptr(&static_space,
 	                     &static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
+	// When possible use movntps, which reduces cache pollution (because it acts
+	// as if the memory was write combining).
+	//
+	// GCC's __builtin_ia32_movntps refuses to load thing in the fastest way, so
+	// provide an inline asm version too. Also __builtin_ia32_movntps generates
+	// terrible code for -O0. Worse than plain C variant with no vectorisation
+	// at all.
+	//
+	// Further using %[space] in the movntps resulted in the invalid asm:
+	// static_space(%rip)(%rax)
+	// I still had to list it as output though.
+	//
+	// For the pure-ISO C variant, something like -ftree-vectorize (GCC) or
+	// -xP (icc, generate for SSE/SSE2/SSE3) can be used to at least speed up
+	// the execution a bit. Though you will still get cache pollution.
+	//
+	// For the PIC variant GCC's i constraint generate a $ in front of the number
+	// which doesn't work here. So we do it manually with macros that expand to
+	// the correct sizes.
+#if defined(FSPACE_CREATE_SSE) && defined(FSPACE_SSE_ASM)
+#  if defined(__pic__) || defined(__PIC__)
+	// I hate the C preprocessor...
+#    define CPP_STRINGIFY_INNER(x) # x
+#    define CPP_STRINGIFY(x) CPP_STRINGIFY_INNER(x)
+	__asm__ volatile ("\
+	leaq    %[space],%%rax\n\
+	leaq    "FUNGESPACE_DATASIZE_STR
+		"*"CPP_STRINGIFY(FUNGESPACE_STATIC_X)
+		"*"CPP_STRINGIFY(FUNGESPACE_STATIC_Y)"+%[space],%%rdx\n\
+	movdqa  %[mask],%%xmm0\n\
+	.p2align 4,,7\n\
+loop:\n\
+	movntps %%xmm0,(%%rax)\n\
+	addq    $16,%%rax\n\
+	cmpq    %%rdx,%%rax\n\
+	jne     loop"
+: [space] "=o"(static_space)
+: [mask]  "m"(fspace_vector_init)
+: "rax", "rdx", "xmm0");
+#  else
+	__asm__ volatile ("\
+	xor     %%eax,%%eax\n\
+	movdqa  %[mask],%%xmm0\n\
+	.p2align 4,,7\n\
+loop:\n\
+	movntps %%xmm0,static_space(%%rax)\n\
+	add     $16,%%rax\n\
+	cmp     %[size],%%rax\n\
+	jne     loop"
+	: [space] "=m"(static_space)
+	: [mask]  "m"(fspace_vector_init)
+	, [size]  "i"(sizeof(static_space))
+	: "rax", "xmm0");
+#  endif
+#elif defined(FSPACE_CREATE_SSE)
+	for (size_t i = 0; i < (sizeof(static_space) / 16); i++)
+		__builtin_ia32_movntps(((float*)&static_space) + i*4, *((const v4sf*)&fspace_vector_init));
+#else
 	for (size_t i = 0; i < sizeof(static_space) / sizeof(funge_cell); i++)
 		static_space[i] = ' ';
+#endif
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (FUNGE_UNLIKELY(!fspace.entries))
 		return false;
@@ -228,25 +310,27 @@ fungespace_set(funge_cell value, const funge_vector * restrict position)
 }
 
 
+/**
+ * Special variant of fungespace_set() to deal with initial load.
+ * Needed to handle the initial bounding box properly.
+ * Must NOT be called with a space for value.
+ */
 FUNGE_ATTR_FAST static inline void
 fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 {
-	assert(position != NULL);
-	if (value != ' ') {
-		if (FUNGE_LIKELY(fspace.boundsvalid)) {
-			if (fspace.bottomRightCorner.y < position->y)
-				fspace.bottomRightCorner.y = position->y;
-			if (fspace.topLeftCorner.y > position->y)
-				fspace.topLeftCorner.y = position->y;
-			if (fspace.bottomRightCorner.x < position->x)
-				fspace.bottomRightCorner.x = position->x;
-			if (fspace.topLeftCorner.x > position->x)
-				fspace.topLeftCorner.x = position->x;
-		} else {
-			fspace.topLeftCorner.y = fspace.bottomRightCorner.y = position->y;
-			fspace.topLeftCorner.x = fspace.bottomRightCorner.x = position->x;
-			fspace.boundsvalid = true;
-		}
+	if (FUNGE_LIKELY(fspace.boundsvalid)) {
+		if (fspace.bottomRightCorner.y < position->y)
+			fspace.bottomRightCorner.y = position->y;
+		if (fspace.topLeftCorner.y > position->y)
+			fspace.topLeftCorner.y = position->y;
+		if (fspace.bottomRightCorner.x < position->x)
+			fspace.bottomRightCorner.x = position->x;
+		if (fspace.topLeftCorner.x > position->x)
+			fspace.topLeftCorner.x = position->x;
+	} else {
+		fspace.topLeftCorner.y = fspace.bottomRightCorner.y = position->y;
+		fspace.topLeftCorner.x = fspace.bottomRightCorner.x = position->x;
+		fspace.boundsvalid = true;
 	}
 	fungespace_set_no_bounds_update(value, position);
 }
@@ -425,8 +509,8 @@ static inline void load_string(const unsigned char * restrict program,
 
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
-			// Ignore form feed. Treat it as newline is treated in Unefunge.
-			case '\f':
+			case ' ':
+				pos.x++;
 				break;
 			case '\r':
 				if (lastwascr) {
@@ -437,6 +521,9 @@ static inline void load_string(const unsigned char * restrict program,
 			case '\n':
 				lastwascr = false;
 				FUNGE_INITIAL_NEWLINE
+				break;
+			// Ignore form feed. Treat it as newline is treated in Unefunge.
+			case '\f':
 				break;
 			default:
 				if (lastwascr) {
