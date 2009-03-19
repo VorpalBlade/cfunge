@@ -151,9 +151,10 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 {
 	switch (request) {
 		case si_flags: { // Flags
+#ifndef CONCURRENT_FUNGE
 			funge_cell tmp = 0x0;
-#ifdef CONCURRENT_FUNGE
-			tmp |= FUNGE_FLAGS_CONCURRENT;
+#else
+			funge_cell tmp = FUNGE_FLAGS_CONCURRENT;
 #endif
 			if (!setting_enable_sandbox) {
 				// i, o and =
@@ -256,11 +257,9 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 			// Check if result is cached.
 			if (environ_count == 0) {
 				size_t i = 0;
-				while (true) {
-					if (!environ[i] || *environ[i] == (funge_cell)'\0')
-						break;
-					if (setting_enable_sandbox) {
-						if (!check_env_is_safe(environ[i])) {
+				while (environ[i]) {
+					if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
+						if (FUNGE_UNLIKELY(!check_env_is_safe(environ[i]))) {
 							i++;
 							continue;
 						}
@@ -275,11 +274,9 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 			size_t i = 0;
 			stack_push(pushStack, (funge_cell)'\0');
 
-			while (true) {
-				if (!environ[i] || *environ[i] == (funge_cell)'\0')
-					break;
-				if (setting_enable_sandbox) {
-					if (!check_env_is_safe(environ[i])) {
+			while (environ[i]) {
+				if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
+					if (FUNGE_LIKELY(!check_env_is_safe(environ[i]))) {
 						i++;
 						continue;
 					}
@@ -312,11 +309,10 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 {
 	funge_cell request = stack_pop(ip->stack);
-	assert(ip != NULL);
 	TOSSSize = ip->stack->top;
 	// Negative or 0: push all
 	if (request <= 0) {
-		if (setting_current_standard == stdver109) {
+		if (FUNGE_UNLIKELY(setting_current_standard == stdver109)) {
 			for (int i = sizeof(Funge109Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge109Requests[i], ip, ip->stack);
 		} else {
@@ -326,9 +322,16 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 	// Simple to get single cell in this range
 	} else if (request < 10) {
 		push_request(request, ip, ip->stack);
+	// Some common ones in mycology:
+	} else if (request == 10) {
+		// y component of current position
+		stack_push(ip->stack, ip->position.y);
+	} else if (request == 15) {
+		// y component of storage offset.
+		stack_push(ip->stack, ip->storageOffset.y);
 	} else {
 		funge_stack * restrict tmp = stack_create();
-		if (setting_current_standard == stdver109) {
+		if (FUNGE_UNLIKELY(setting_current_standard == stdver109)) {
 			for (int i = sizeof(Funge109Requests) / sizeof(si_flags) - 1; i >= 0; i--)
 				push_request(Funge109Requests[i], ip, tmp);
 		} else {
