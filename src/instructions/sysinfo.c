@@ -306,6 +306,9 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 	}
 }
 
+/// Temp stack for pushing on when needed. Faster.
+static funge_stack* restrict sysinfo_tmp_stack = NULL;
+
 FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 {
 	funge_cell request = stack_pop(ip->stack);
@@ -330,21 +333,30 @@ FUNGE_ATTR_FAST void run_sys_info(instructionPointer *ip)
 		// y component of storage offset.
 		stack_push(ip->stack, ip->storageOffset.y);
 	} else {
-		funge_stack * restrict tmp = stack_create();
+		if (FUNGE_UNLIKELY(!sysinfo_tmp_stack))
+			sysinfo_tmp_stack = stack_create();
 		if (FUNGE_UNLIKELY(setting_current_standard == stdver109)) {
 			for (int i = sizeof(Funge109Requests) / sizeof(si_flags) - 1; i >= 0; i--)
-				push_request(Funge109Requests[i], ip, tmp);
+				push_request(Funge109Requests[i], ip, sysinfo_tmp_stack);
 		} else {
 			for (int i = sizeof(Funge98Requests) / sizeof(si_flags) - 1; i >= 0; i--)
-				push_request(Funge98Requests[i], ip, tmp);
+				push_request(Funge98Requests[i], ip, sysinfo_tmp_stack);
 		}
 		// Find out if we should act as pick or not...
-		if (tmp->top > (size_t)request) {
-			stack_push(ip->stack, tmp->entries[tmp->top - (size_t)request]);
+		if (sysinfo_tmp_stack->top > (size_t)request) {
+			stack_push(ip->stack, sysinfo_tmp_stack->entries[sysinfo_tmp_stack->top - (size_t)request]);
 		} else {
 			// Act as pick
-			stack_push(ip->stack, stack_get_index(ip->stack, request - tmp->top));
+			stack_push(ip->stack, stack_get_index(ip->stack, request - sysinfo_tmp_stack->top));
 		}
-		stack_free(tmp);
+		stack_clear(sysinfo_tmp_stack);
 	}
 }
+
+#ifndef NDEBUG
+/// Free some memory if debug build.
+void sysinfo_cleanup(void) {
+	if (sysinfo_tmp_stack)
+		stack_free(sysinfo_tmp_stack);
+}
+#endif

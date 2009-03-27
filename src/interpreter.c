@@ -507,13 +507,11 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					IPList->ips[*threadindex].needMove = false;
 				}
 #else
-				fflush(stdout);
 				exit(0);
 #endif /* CONCURRENT_FUNGE */
 				break;
 
 			case 'q':
-				fflush(stdout);
 // We do the wrong thing here when fuzz testing to reduce false positives.
 #ifdef FUZZ_TESTING
 				exit(0);
@@ -618,6 +616,7 @@ static void debug_free(void)
 # else
 	ip_free(IP);
 # endif
+	sysinfo_cleanup();
 	fungespace_free();
 }
 #endif
