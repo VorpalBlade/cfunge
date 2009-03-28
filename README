@@ -13,6 +13,16 @@ don't. For example:
    funge-space at compile time.
 
 
+Important notice
+----------------
+The last version of the Mycology test suite for Befunge-98 interpreters as of
+writing (version 2008–11–15) has a bug in how it expects R in the FILE
+fingerprint to act on EOF. The author of Mycology has agreed that Mycology is
+buggy when it comes to this but has not yet fixed the bug. Thus the message
+"BAD: 1R reflected" is to be expected from that Mycology version when running it
+under this cfunge release. This is not a cfunge bug but a mycology bug.
+
+
 Dependencies
 ------------
 REQUIRED:

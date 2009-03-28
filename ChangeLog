@@ -10,40 +10,90 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (r556)
----------------------------------
+Changes since last release (as of r628)
+---------------------------------------
 These are important changes since last release:
  * cfunge now depend on cmake 2.6 (or later).
+ * cfunge is now quite a bit faster thanks to many parts rewritten in a faster
+   way. This includes:
+     * Stack-stack begin/end are faster.
+     * Pushing strings on stack have been optimised a lot (important for y and
+       various fingerprints).
+     * Popping strings from stack pass string length info back to caller to
+       avoid an extra strlen() call.
+     * System information (y) faster by avoiding to allocate as much and as
+       often.
+     * Optimised N in STRN to avoid popping and pushing the string at all. It
+       now operates on the stack directly.
+     * Added a flag (-b) for fully buffered output, this halves the sys time for
+       mycology and removes about 20% of the wall clock time.
+     * Some code has been rewritten to allow GCC and ICC (and potentially other
+       compilers) to auto-vectorise it.
+     * Avoid reallocing the IP list in concurrent Funge as often.
+     * Avoid ip_set_delta() in some often used macros for working on IPs.
+     * Avoid strdup() of argv. We can point to them in the stack instead.
+     * Avoid building vectors in many places, instead modify existing ones.
+     * stringbuffer_finish() now returns string length, avoiding unneeded calls
+       to strlen().
+     * Annotate some branches as "probably not taken", this includes error paths
+       for failed malloc() and such.
+     * When looping over a block of the Funge-Space like:
+         for (x=0; x<maxx; x++)
+           for (y=0; y<maxy; y++)
+       make sure the x-loop is the outermost loop in order to increase locality
+       of reference in the static Funge-Space area (doesn't matter for the hash
+       area outside that).
+     * Optimise Funge-Space loading in various ways.
+ * Various bug fixes in many places.
+   * FILE: Fixed bug with how R works on EOF.
+           The current Mycology version (2008–11–15) has a bug and will report
+           the new behaviour as BAD. Next Mycology version will fix it.
+   * FRTH: Fixed a crash bug when calling L or P with negative arguments.
+   * PERL: Fixed a rare memory corruption bug.
+   * PERL: Fix bug that caused data corruption on long resulting strings.
+   * PERL: Remove a spurious stack_push() call.
+   * Correctly handle form feed in i.
+   * Handle CR line endings correctly (both initial file load and i).
+   * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
+     found thanks to this.
+ * Fingerprint format have been updated to 1.4 (1.2 still supported since the
+   new features are a superset of the old ones). 1.3 added support for
+   conditional compilation (enabling a fingerprint based on #if).
+ * NCRS and TERM now use of the conditional compilation of fingerprints to make
+   the dependency on ncurses optional.
+ * Funge-108 renamed Funge-109 due to time constraints. Update all mentions of
+   this in cfunge.
+ * There has been some changes to make cfunge more portable:
+   * Added some workarounds for OpenBSD (missing AI_ADDRCONFIG, ncurses
+     redefining bool).
+   * Made the fuzz testing script more portable.
+   * If the XSI functions random and srandom aren't available, fall back on
+     rand and srand.
+   * For POSIX.1-2008 compatibility use clock_gettime() when available. Fall
+     back on gettimeofday().
+   * Added various checks at configuration time to check that needed functions
+     exist.
+ * Add the #define CFUNGE_VERSION to allow external fingerprints to easily find
+   which cfunge version is used. Useful since the cfunge API isn't very stable.
+ * Important API changes:
+   * Renamed:
+     * fungeCell to funge_cell
+     * fungeUnsignedCell to funge_unsigned_cell
+     * fungeVector to funge_vector
+   * Removed:
+     * ipDelta: Use funge_vector instead.
+   * Changed:
+     * stack_pop_string(): Additional out parameter, returns string length if
+       non-NULL.
+     * ip_forward(): Steps parameter removed. Will now only take one step
+       forwards.
+   * Added:
+     * ip_backward(): Same as ip_forward() but takes one step backwards.
+ * Build system cleanup:
+   * Macros split into separate files in a subdirectory.
+   * Check if some linker flags are supported.
  * Man page have been extended.
  * List of fingerprints in man page is now auto generated.
- * Some code has been rewritten to allow GCC and ICC to auto-vectorise it.
- * Stack-stack begin/end is now a lot faster, it now uses memcpy().
- * Fixed a rare memory corruption bug in PERL.
- * Added various checks at configuration time to check that needed functions
-   exist.
- * Pushing a string on the stack is now a lot faster.
- * For POSIX.1-2008 compatibility use clock_gettime() when available. Fall back
-   on gettimeofday().
- * Avoid reallocing the IP list in concurrent Funge all the time.
- * Updated fingerprint spec format (now 1.3), allow fingerprints to be disabled
-   at compile time based on defines.
- * If the XSI functions random and srandom aren't available, fall back on
-   rand and srand.
- * Fixed a crash bug in FRTH when calling L or P with negative arguments.
- * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
-   found thanks to this.
- * Ncurses is now an optional dependency, detected at compile time.
- * It is now Funge-109 (since Funge-108 wasn't finished in time).
- * Fingerprint spec updated to 1.4.
- * Optimised N in STRN.
- * Made stack_pop_string() optionally return string length, avoiding some
-   pointless strlen() calls (since stack_pop_string() already has to know the
-   length).
- * Added a flag (-b) for fully buffered output, this halves the sys time for
-   mycology and removes about 20% of the wall clock time.
- * Added some workarounds for OpenBSD (missing AI_ADDRCONFIG, ncurses redefining
-   bool).
- * Made the fuzz testing script more portable.
 
 Added fingerprints:
  * DATE Date Functions
