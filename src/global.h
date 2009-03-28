@@ -192,6 +192,9 @@ typedef uint32_t funge_unsigned_cell;
  */
 #define CFUNGE_VERSION 0x00030301
 
+/// Since there may be no API changes between versions we also define this.
+#define CFUNGE_API_VERSION 1
+
 // Define if you use fuzz testing script.
 //#define FUZZ_TESTING
 
