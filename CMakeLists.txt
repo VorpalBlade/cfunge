@@ -85,7 +85,7 @@ endif(USE_GC)
 
 ################################################################################
 # Other options
-option(USE_64BIT "Should 64-bit funge space cells be used (otherwise 32-bit)." OFF)
+option(USE_64BIT "Should 64-bit funge space cells be used (otherwise 32-bit)." ON)
 if(USE_64BIT)
 	add_definitions(-DUSE64)
 else(USE_64BIT)

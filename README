@@ -35,6 +35,8 @@ REQUIRED:
      may not work.
    + ICC 10.1 is known to work too.
    + Open64 4.1 should work, but isn't recommended.
+   + Very recent SVN versions of clang works (as of 2009-03-28), but can
+     currently not be recommended since it is very much work in progress.
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 
@@ -68,13 +70,17 @@ OPTIONAL:
 
 Configuring
 -----------
+Warning: Out of tree builds are highly recommended. Building in the source tree
+may work but is _completely_ untested.
+
 To build using cmake, you can run these commands in the top source directory:
   mkdir build && cd build
   cmake ..
 
 If you are on a 32-bit system you may want to use 32-bit integers (instead of
-64-bit integers) for speed. To do that you could use this command instead of
-the above ones:
+64-bit integers) for speed. It is also slightly faster on some 64-bit systems
+to use 32-bit integers. This may vary between architectures. To use 32-bit
+integers you could use these commands instead of the above ones:
   mkdir build && cd build
   cmake -DUSE_64BIT=OFF ..
 
