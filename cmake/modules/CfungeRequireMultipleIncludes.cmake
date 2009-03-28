@@ -1,11 +1,12 @@
 # - Check if a given include file exists and error out if not.
-# CFUNGE_REQUIRE_INCLUDE(_name)
+# CFUNGE_REQUIRE_INCLUDE(_files _name)
 #
-#  _name - Include file to check for.
+#  _files - List of includes file to check for.
+#  _name  - Used for cache variable name.
 #
 # The same variables as for CheckIncludeFile affect this macro.
 #
-# Will set CFUNGE_CHECKINCLUDE_<name> (as CheckIncludeFile out variable).
+# Will set CFUNGE_CHECKMULTIINCLUDES_<name> (as CheckIncludeFiles out variable).
 #
 
 # cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
@@ -26,12 +27,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-include(CheckIncludeFile)
+include(CheckIncludeFiles)
 
-macro(CFUNGE_REQUIRE_INCLUDE _name)
-	CHECK_INCLUDE_FILE(${_name} "CFUNGE_CHECKINCLUDE_${_name}")
-	if (NOT "CFUNGE_CHECKINCLUDE_${_name}")
+macro(CFUNGE_REQUIRE_MULTIPLE_INCLUDES _files _name)
+	CHECK_INCLUDE_FILES("${_files}" "CFUNGE_CHECKMULTIINCLUDES_${_name}")
+	if (NOT "CFUNGE_CHECKMULTIINCLUDES_${_name}")
 		message(FATAL_ERROR
-		        "Your system seems to be missing the header \"${_name}\" which is required by cfunge.")
-	endif (NOT "CFUNGE_CHECKINCLUDE_${_name}")
-endmacro(CFUNGE_REQUIRE_INCLUDE)
+		        "Your system seems to be missing one or several of the headers \"${_files}\" which are required by cfunge.")
+	endif (NOT "CFUNGE_CHECKMULTIINCLUDES_${_name}")
+endmacro(CFUNGE_REQUIRE_MULTIPLE_INCLUDES)
