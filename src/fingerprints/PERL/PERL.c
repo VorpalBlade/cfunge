@@ -90,7 +90,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 			// Build argument list.
 			// Strdup to avoid the read only string warning.
 			// No need to free in child.
-			char * arguments[] = {
+			char * const arguments[] = {
 				strdup_nogc("perl"),
 				strdup_nogc("-e"),
 				strdup_nogc("open(CFUNGE_REALERR, \">&STDERR\"); open(STDERR, \">&STDOUT\"); print CFUNGE_REALERR eval($ARGV[0])"),
