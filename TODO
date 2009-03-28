@@ -1,4 +1,4 @@
-This file details current status of the Befunge93/98/108 interpreter cfunge.
+This file details current status of the Befunge93/98/109 interpreter cfunge.
 
 Before next release
 -------------------
@@ -12,7 +12,7 @@ Future
  * Several more fingerprints
  * Better hash library.
  * Rewrite TURT to use events, to handle lines on top of dots.
- * Handle Funge-108 fingerprint URIs.
+ * Handle Funge-109 fingerprint URIs.
 
 Ideas for future
 ----------------
