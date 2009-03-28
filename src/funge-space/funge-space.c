@@ -120,6 +120,7 @@ static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
 {
+	// Mark the static space area as pointer-free when using Boehm-GC.
 	// FIXME: Not sure the arguments are correct..
 	cf_mark_static_noptr(&static_space,
 	                     &static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
@@ -297,6 +298,8 @@ fungespace_set(funge_cell value, const funge_vector * restrict position)
 {
 	assert(position != NULL);
 	if (value != ' ') {
+		// It is faster to not use else if here, because this way the code
+		// translates into conditional moves (on x86 at least).
 		if (fspace.bottomRightCorner.y < position->y)
 			fspace.bottomRightCorner.y = position->y;
 		if (fspace.topLeftCorner.y > position->y)
@@ -319,6 +322,8 @@ FUNGE_ATTR_FAST static inline void
 fungespace_set_initial(funge_cell value, const funge_vector * restrict position)
 {
 	if (FUNGE_LIKELY(fspace.boundsvalid)) {
+		// It is faster to not use else if here, because this way the code
+		// translates into conditional moves (on x86 at least).
 		if (fspace.bottomRightCorner.y < position->y)
 			fspace.bottomRightCorner.y = position->y;
 		if (fspace.topLeftCorner.y > position->y)
@@ -348,7 +353,7 @@ fungespace_set_offset(funge_cell value,
 }
 
 
-/// Duplicated from vector.c for speed reasons.
+/// Duplicated from vector.c for speed reasons (inlining).
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
 static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
 {
@@ -422,8 +427,8 @@ void fungespace_dump(void)
  * @param maddr Pointer to a char* where the mapping's address will be placed.
  * @param length Pointer to a size_t where the size of the mapping will be placed.
  * @return
- * Returns the file descriptor, or -1 in case of error, o
-r -2 in case of empty file.
+ * Returns the file descriptor, or -1 in case of error, or -2 in case of
+ * empty file.
  */
 FUNGE_ATTR_FAST
 static inline int do_mmap(const char * restrict filename,
@@ -489,6 +494,7 @@ static inline void do_mmap_cleanup(int fd, unsigned char *addr, size_t length)
 	}
 }
 
+/// Macro for handling newlines.
 #define FUNGE_INITIAL_NEWLINE \
 	pos.x = 0; \
 	pos.y++;
@@ -569,6 +575,7 @@ fungespace_load_string(const unsigned char * restrict program)
 }
 #endif
 
+/// Macro for handling newlines.
 #define FUNGE_OFFSET_NEWLINE \
 	if (pos.x > size->x) \
 		size->x = pos.x; \
