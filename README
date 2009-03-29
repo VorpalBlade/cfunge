@@ -13,25 +13,14 @@ don't. For example:
    funge-space at compile time.
 
 
-Important notice
-----------------
-The last version of the Mycology test suite for Befunge-98 interpreters as of
-writing (version 2008–11–15) has a bug in how it expects R in the FILE
-fingerprint to act on EOF. The author of Mycology has agreed that Mycology is
-buggy when it comes to this but has not yet fixed the bug. Thus the message
-"BAD: 1R reflected" is to be expected from that Mycology version when running it
-under this cfunge release. This is not a cfunge bug but a mycology bug.
-
-
 Dependencies
 ------------
 REQUIRED:
  * cmake (http://www.cmake.org/) to generate Makefile for cfunge. At least
-   version 2.6 is recommended, older versions may work, but that haven't been
-   tested.
+   version 2.6 is required.
 
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
-   + GCC 3.4.6, 4.1.2, 4.2.1 and 4.3.2 are known to work, other versions may or
+   + GCC 3.4.6, 4.1.2, 4.2.1 and 4.3.3 are known to work, other versions may or
      may not work.
    + ICC 10.1 is known to work too.
    + Open64 4.1 should work, but isn't recommended.
@@ -47,9 +36,9 @@ REQUIRED:
    function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
    strdup() and memory mapped files are mandatory and part of the base.)
    Operating systems known to work:
-   + Linux 2.6.25 (with glibc 2.6.1) and later (earlier versions unknown but
-     will probably work unless very old).
-   + FreeBSD 6.3 or later (earlier versions unknown).
+   + Linux 2.6.27 (with glibc 2.8) and later (earlier versions unknown but will
+     probably work unless very old).
+   + FreeBSD 6.4 or later (earlier versions unknown).
    + Mac OS X (unknown version) has been reported to work but I don't have it
      myself and thus can't test it.
    + OpenBSD 4.4 (sparc64): I have not managed to get cmake 2.6 to compile on
