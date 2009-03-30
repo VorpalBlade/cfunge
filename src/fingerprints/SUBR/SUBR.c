@@ -56,6 +56,7 @@ static void finger_SUBR_call(instructionPointer * ip)
 		pos.y += ip->storageOffset.y;
 	}
 
+	// FIXME: Use a faster bulk copy for stack below.
 	tmpstack = stack_create();
 
 	for (funge_cell i = 0; i < n; ++i)
@@ -108,6 +109,7 @@ static void finger_SUBR_return(instructionPointer * ip)
 		return;
 	}
 
+	// FIXME: Use a faster bulk copy for stack below.
 	tmpstack = stack_create();
 
 	for (funge_cell i = 0; i < n; ++i)
