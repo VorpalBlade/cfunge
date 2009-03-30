@@ -204,7 +204,9 @@ cf_fungespace_create_init_loop:\n\
 #  endif
 #elif defined(FSPACE_CREATE_SSE)
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
-		__builtin_ia32_movntps(((float*)&cfun_static_space) + i*4, *((const v4sf*)&fspace_vector_init));
+		// Cast to void to shut up warning about strict-aliasing rules.
+		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i*4,
+		                       *((const v4sf*)(const void*)&fspace_vector_init));
 	__builtin_ia32_sfence();
 #else
 	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
