@@ -144,6 +144,10 @@ fungespace_create(void)
 	// For the PIC variant GCC's i constraint generate a $ in front of the number
 	// which doesn't work here. So we do it manually with macros that expand to
 	// the correct sizes.
+	//
+	// I'm not sure if the sfence is needed. The AMD and Intel docs are a bit
+	// unclear about this. And it doesn't seem to be needed in practise. However
+	// I'd rather go for the safe alternative.
 #if defined(FSPACE_CREATE_SSE) && defined(FSPACE_SSE_ASM)
 #  if defined(__pic__) || defined(__PIC__)
 	// I hate the C preprocessor...
@@ -160,7 +164,8 @@ loop:\n\
 	movntps %%xmm0,(%%rax)\n\
 	addq    $16,%%rax\n\
 	cmpq    %%rdx,%%rax\n\
-	jne     loop"
+	jne     loop\n\
+	sfence"
 : [space] "=o"(static_space)
 : [mask]  "m"(fspace_vector_init)
 : "rax", "rdx", "xmm0");
@@ -171,9 +176,17 @@ loop:\n\
 	.p2align 4,,7\n\
 loop:\n\
 	movntps %%xmm0,static_space(%%rax)\n\
-	add     $16,%%rax\n\
+	movntps %%xmm0,0x10+static_space(%%rax)\n\
+	movntps %%xmm0,0x20+static_space(%%rax)\n\
+	movntps %%xmm0,0x30+static_space(%%rax)\n\
+	movntps %%xmm0,0x40+static_space(%%rax)\n\
+	movntps %%xmm0,0x50+static_space(%%rax)\n\
+	movntps %%xmm0,0x60+static_space(%%rax)\n\
+	movntps %%xmm0,0x70+static_space(%%rax)\n\
+	add     $128,%%rax\n\
 	cmp     %[size],%%rax\n\
-	jne     loop"
+	jne     loop\n\
+	sfence"
 	: [space] "=m"(static_space)
 	: [mask]  "m"(fspace_vector_init)
 	, [size]  "i"(sizeof(static_space))
@@ -182,6 +195,7 @@ loop:\n\
 #elif defined(FSPACE_CREATE_SSE)
 	for (size_t i = 0; i < (sizeof(static_space) / 16); i++)
 		__builtin_ia32_movntps(((float*)&static_space) + i*4, *((const v4sf*)&fspace_vector_init));
+	__builtin_ia32_sfence();
 #else
 	for (size_t i = 0; i < sizeof(static_space) / sizeof(funge_cell); i++)
 		static_space[i] = ' ';
