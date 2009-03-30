@@ -75,7 +75,7 @@
 #  define FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER)
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__)
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
