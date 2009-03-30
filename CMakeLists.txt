@@ -55,6 +55,7 @@ include(CfungeRequireInclude)
 include(CfungeRequireMultipleIncludes)
 include(CfungeCheckLibraryFunction)
 include(CfungeCheckLinkerFlag)
+include(MacroAddLinkFlags)
 
 set(MAN_INSTALL_PREFIX
 	"${CMAKE_INSTALL_PREFIX}/share/man"
@@ -214,7 +215,7 @@ if (NOT CFUNGE_HAVE_clock_gettime)
 endif (NOT CFUNGE_HAVE_clock_gettime)
 
 # Optional: C99 requires these but we fall back on double versions since many
-# sysems still lack the long double versions.
+# systems still lack the long double versions.
 set(CMAKE_REQUIRED_LIBRARIES "-lm")
 CFUNGE_CHECK_FUNCTION(acosl)
 CFUNGE_CHECK_FUNCTION(asinl)
@@ -355,7 +356,7 @@ if(USE_GC)
 endif(USE_GC)
 
 if(USE_MUDFLAP)
-	set_target_properties(cfunge PROPERTIES LINK_FLAGS "-fmudflap")
+	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")
 	target_link_libraries(cfunge mudflap)
 endif(USE_MUDFLAP)
 
