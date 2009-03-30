@@ -81,7 +81,7 @@ static fungeSpace fspace = {
 #define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
 
 // We need to give it an asm name here, or the non-PIC inline asm below won't
-// work properly.
+// work properly in some cases.
 static funge_cell cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]
 #ifdef __GNUC__
 __asm__("cfun_static_space")
