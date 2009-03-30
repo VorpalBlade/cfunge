@@ -130,6 +130,8 @@ static void finalise(void)
 	if (!cur_term)
 		if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
 			return;
+	// Make some static analysers less confused.
+	assert(cur_term != NULL);
 	putp(exit_ca_mode);
 	del_curterm(cur_term);
 }
