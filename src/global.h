@@ -62,7 +62,7 @@
  * Contains attribute specifications.
  */
 /*@{*/
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER)
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__)
 #  ifdef __i386__
 /// Used to select fast calling convention on platforms that need it.
 #    define FUNGE_ATTR_FAST FUNGE_ATTR((regparm(3)))
