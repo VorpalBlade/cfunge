@@ -82,7 +82,7 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 		ip_forward(ip);
 		kInstr = fungespace_get(&ip->position);
 		if (kInstr == ' ' || kInstr == ';') {
-			kInstr = find_next_instr(ip, kInstr);
+			find_next_instr(ip, kInstr);
 		}
 	} else if (iters < 0) {
 		ip_reverse(ip);
