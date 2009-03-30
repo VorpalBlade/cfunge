@@ -37,13 +37,13 @@ static void finger_STRN_append(instructionPointer * ip)
 
 	top = (char*)stack_pop_string(ip->stack, &top_len);
 	bottom = (char*)stack_pop_string(ip->stack, &bottom_len);
+	if (FUNGE_UNLIKELY(!top || !bottom)) {
+		goto error;
+	}
 
 	c = cf_realloc(top, top_len + strlen(bottom) + 1);
 	if (FUNGE_UNLIKELY(!c)) {
-		ip_reverse(ip);
-		stack_free_string(top);
-		stack_free_string(bottom);
-		return;
+		goto error;
 	}
 	memcpy(c + top_len, bottom, bottom_len);
 	c[top_len + bottom_len] = '\0';
@@ -52,6 +52,14 @@ static void finger_STRN_append(instructionPointer * ip)
 
 	stack_free_string(bottom);
 	cf_free(c);
+	return;
+error:
+	ip_reverse(ip);
+	if (top)
+		stack_free_string(top);
+	if (bottom)
+		stack_free_string(bottom);
+	return;
 }
 
 /// C - Compare strings
