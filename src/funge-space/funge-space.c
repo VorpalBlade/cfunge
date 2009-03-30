@@ -70,6 +70,9 @@ static fungeSpace fspace = {
 
 #define FUNGESPACE_STATIC_OFFSET_X 64
 #define FUNGESPACE_STATIC_OFFSET_Y 64
+// Note that this must be true to not break code below:
+//  (FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y * sizeof(funge_cell)) % 128 == 0
+// Further cfun_static_space must be aligned on 16 byte boundary.
 #define FUNGESPACE_STATIC_X 512
 #define FUNGESPACE_STATIC_Y 1024
 
@@ -77,7 +80,14 @@ static fungeSpace fspace = {
 	(((rx) < FUNGESPACE_STATIC_X) && ((ry) < FUNGESPACE_STATIC_Y))
 #define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
 
-static funge_cell static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y];
+// We need to give it an asm name here, or the non-PIC inline asm below won't
+// work properly.
+static funge_cell cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]
+#ifdef __GNUC__
+__asm__("cfun_static_space")
+#endif
+FUNGE_ATTR((aligned(16)))
+;
 
 /**
  * Check if position is in range.
@@ -122,8 +132,8 @@ fungespace_create(void)
 {
 	// Mark the static space area as pointer-free when using Boehm-GC.
 	// FIXME: Not sure the arguments are correct..
-	cf_mark_static_noptr(&static_space,
-	                     &static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
+	cf_mark_static_noptr(&cfun_static_space,
+	                     &cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
 	// When possible use movntps, which reduces cache pollution (because it acts
 	// as if the memory was write combining).
@@ -134,7 +144,7 @@ fungespace_create(void)
 	// at all.
 	//
 	// Further using %[space] in the movntps resulted in the invalid asm:
-	// static_space(%rip)(%rax)
+	// cfun_static_space(%rip)(%rax)
 	// I still had to list it as output though.
 	//
 	// For the pure-ISO C variant, something like -ftree-vectorize (GCC) or
@@ -160,13 +170,13 @@ fungespace_create(void)
 		"*"CPP_STRINGIFY(FUNGESPACE_STATIC_Y)"+%[space],%%rdx\n\
 	movdqa  %[mask],%%xmm0\n\
 	.p2align 4,,7\n\
-loop:\n\
+cf_fungespace_create_init_loop:\n\
 	movntps %%xmm0,(%%rax)\n\
 	addq    $16,%%rax\n\
 	cmpq    %%rdx,%%rax\n\
-	jne     loop\n\
+	jne     cf_fungespace_create_init_loop\n\
 	sfence"
-: [space] "=o"(static_space)
+: [space] "=o"(cfun_static_space)
 : [mask]  "m"(fspace_vector_init)
 : "rax", "rdx", "xmm0");
 #  else
@@ -174,31 +184,31 @@ loop:\n\
 	xor     %%eax,%%eax\n\
 	movdqa  %[mask],%%xmm0\n\
 	.p2align 4,,7\n\
-loop:\n\
-	movntps %%xmm0,static_space(%%rax)\n\
-	movntps %%xmm0,0x10+static_space(%%rax)\n\
-	movntps %%xmm0,0x20+static_space(%%rax)\n\
-	movntps %%xmm0,0x30+static_space(%%rax)\n\
-	movntps %%xmm0,0x40+static_space(%%rax)\n\
-	movntps %%xmm0,0x50+static_space(%%rax)\n\
-	movntps %%xmm0,0x60+static_space(%%rax)\n\
-	movntps %%xmm0,0x70+static_space(%%rax)\n\
+cf_fungespace_create_init_loop:\n\
+	movntps %%xmm0,cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x10+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x20+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x30+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x40+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x50+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x60+cfun_static_space(%%rax)\n\
+	movntps %%xmm0,0x70+cfun_static_space(%%rax)\n\
 	add     $128,%%rax\n\
 	cmp     %[size],%%rax\n\
-	jne     loop\n\
+	jne     cf_fungespace_create_init_loop\n\
 	sfence"
-	: [space] "=m"(static_space)
+	: [space] "=o"(cfun_static_space)
 	: [mask]  "m"(fspace_vector_init)
-	, [size]  "i"(sizeof(static_space))
+	, [size]  "i"(sizeof(cfun_static_space))
 	: "rax", "xmm0");
 #  endif
 #elif defined(FSPACE_CREATE_SSE)
-	for (size_t i = 0; i < (sizeof(static_space) / 16); i++)
-		__builtin_ia32_movntps(((float*)&static_space) + i*4, *((const v4sf*)&fspace_vector_init));
+	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
+		__builtin_ia32_movntps(((float*)&cfun_static_space) + i*4, *((const v4sf*)&fspace_vector_init));
 	__builtin_ia32_sfence();
 #else
-	for (size_t i = 0; i < sizeof(static_space) / sizeof(funge_cell); i++)
-		static_space[i] = ' ';
+	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
+		cfun_static_space[i] = ' ';
 #endif
 	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
 	if (FUNGE_UNLIKELY(!fspace.entries))
@@ -238,7 +248,7 @@ fungespace_get(const funge_vector * restrict position)
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
-		return static_space[STATIC_COORD(x,y)];
+		return cfun_static_space[STATIC_COORD(x,y)];
 	} else {
 		tmp = (funge_cell*)ght_get(fspace.entries, position);
 		if (!tmp)
@@ -268,7 +278,7 @@ fungespace_get_offset(const funge_vector * restrict position,
 	y = (funge_unsigned_cell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
-		return static_space[STATIC_COORD(x,y)];
+		return cfun_static_space[STATIC_COORD(x,y)];
 	} else {
 		result = (funge_cell*)ght_get(fspace.entries, &tmp);
 		if (!result)
@@ -288,7 +298,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
-		static_space[STATIC_COORD(x,y)] = value;
+		cfun_static_space[STATIC_COORD(x,y)] = value;
 	} else {
 		if (value == ' ') {
 			ght_remove(fspace.entries, position);
