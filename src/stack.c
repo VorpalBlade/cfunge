@@ -236,8 +236,10 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
 	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
-	if (FUNGE_UNLIKELY(!buf))
+	if (FUNGE_UNLIKELY(!buf)) {
+		*len = 0;
 		return NULL;
+	}
 
 	while ((c = stack_pop(stack)) != '\0') {
 		buf[index++] = (unsigned char)c;
