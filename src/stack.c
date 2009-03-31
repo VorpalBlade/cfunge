@@ -82,7 +82,7 @@ static inline funge_stack * stack_duplicate(const funge_stack * old)
 }
 #endif
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void stack_oom(void)
 {
 	perror("Emergency! Failed to allocate enough memory for new stack items");
@@ -299,7 +299,7 @@ FUNGE_ATTR_FAST void stack_swap_top(funge_stack * restrict stack)
 
 
 // For use with call in gdb
-void stack_dump(const funge_stack * stack) FUNGE_ATTR_UNUSED;
+void stack_dump(const funge_stack * stack) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
 void stack_dump(const funge_stack * stack)
 {
