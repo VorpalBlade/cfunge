@@ -64,7 +64,7 @@ static instructionPointer *IP = NULL;
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void warn_unknown_instr(funge_cell opcode, instructionPointer * restrict ip)
 {
-	if (setting_enable_warnings)
+	if (FUNGE_UNLIKELY(setting_enable_warnings))
 		fprintf(stderr,
 		        "WARN: Unknown instruction at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
 		        ip->position.x, ip->position.y, (char)opcode, opcode);
@@ -107,7 +107,8 @@ FUNGE_ATTR_FAST inline void if_north_south(instructionPointer * restrict ip)
 		break;
 
 /// This function handles string mode.
-FUNGE_ATTR_FAST static inline CON_RETTYPE handle_string_mode(funge_cell opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline CON_RETTYPE handle_string_mode(funge_cell opcode, instructionPointer * restrict ip)
 {
 	if (opcode == '"') {
 		ip->mode = ipmCODE;
@@ -127,7 +128,8 @@ FUNGE_ATTR_FAST static inline CON_RETTYPE handle_string_mode(funge_cell opcode, 
 }
 
 /// This function handles fingerprint instructions.
-FUNGE_ATTR_FAST static inline void handle_fprint(funge_cell opcode, instructionPointer * restrict ip)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void handle_fprint(funge_cell opcode, instructionPointer * restrict ip)
 {
 	if (FUNGE_UNLIKELY(setting_disable_fingerprints)) {
 		warn_unknown_instr(opcode, ip);
