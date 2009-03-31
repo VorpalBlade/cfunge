@@ -10,9 +10,13 @@ For more info:
 and
   bzr help revisionspec
 
-Changes since last release (as of r631)
----------------------------------------
-These are important changes since last release:
+
+0.4.0
+-----
+This release add support for some more fingerprints, speed up execution quite
+a bit, and fixes several bugs. See details below.
+
+Important changes in this release:
  * cfunge now depend on cmake 2.6 (or later).
  * cfunge is now quite a bit faster thanks to many parts rewritten in a faster
    way. This includes:
@@ -55,6 +59,7 @@ These are important changes since last release:
    * PERL: Fixed a rare memory corruption bug.
    * PERL: Fix bug that caused data corruption on long resulting strings.
    * PERL: Remove a spurious stack_push() call.
+   * STRN: Proper error checks for A (append) added.
    * Correctly handle form feed in i.
    * Handle CR line endings correctly (both initial file load and i).
    * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
@@ -76,8 +81,9 @@ These are important changes since last release:
      back on gettimeofday().
    * Added various checks at configuration time to check that needed functions
      exist.
- * Add the #define CFUNGE_VERSION to allow external fingerprints to easily find
-   which cfunge version is used. Useful since the cfunge API isn't very stable.
+ * Add the defines CFUNGE_VERSION and CFUNGE_API_VERSION to allow external
+   fingerprints to easily find which cfunge version is used. Useful since the
+   cfunge API isn't very stable.
  * Important API changes:
    * Renamed:
      * fungeCell to funge_cell

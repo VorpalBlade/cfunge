@@ -218,9 +218,9 @@ typedef uint32_t funge_unsigned_cell;
 #  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"
 #endif
 /// Version, for -V.
-#define CFUNGE_APPVERSION  "0.3.3"
+#define CFUNGE_APPVERSION  "0.4.0"
 /// For y instruction.
-#define CFUNGE_VERSION_Y 33
+#define CFUNGE_VERSION_Y 40
 
 /**
  * For third party code.
@@ -233,7 +233,7 @@ typedef uint32_t funge_unsigned_cell;
  *    major API breakage happened.
  *  This define was introduced between 0.3.3 and 0.3.4.
  */
-#define CFUNGE_VERSION 0x00030301
+#define CFUNGE_VERSION 0x00040000
 
 /// Since there may be no API changes between versions we also define this.
 #define CFUNGE_API_VERSION 1
