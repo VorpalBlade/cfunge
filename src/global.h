@@ -28,18 +28,53 @@
 #define FUNGE_HAD_SRC_GLOBAL_H
 
 /**
+ * @defgroup compiler Compiler identification.
+ * Defines identifying the compiler.
+ *
+ * CFUNGE_COMP_GCC_COMPAT    - GCC or claims to be GCC
+ * CFUNGE_COMP_ICC           - Actually ICC
+ * CFUNGE_COMP_CLANG         - Really clang.
+ * CFUNGE_COMP_GCC           - In fact this is GCC. Or is someone pretending that
+ *                             we don't know how to identify correctly.
+ * CFUNGE_COMP_GCC3_COMPAT   - Claims to be GCC 3.x or later.
+ * CFUNGE_COMP_GCC4_COMPAT   - Claims to be GCC 4 or later.
+ * CFUNGE_COMP_GCC4_3_COMPAT - Claims to be GCC 4.3 or later.
+ */
+/*@{*/
+#ifdef __GNUC__
+#  define CFUNGE_COMP_GCC_COMPAT
+#  if defined(__INTEL_COMPILER)
+#    define CFUNGE_COMP_ICC
+#  elif defined(__clang__)
+#    define CFUNGE_COMP_CLANG
+#  else
+#    define CFUNGE_COMP_GCC
+#  endif
+#  if (__GNUC__ >= 3)
+#    define CFUNGE_COMP_GCC3_COMPAT
+#  endif
+#  if (__GNUC__ >= 4)
+#    define CFUNGE_COMP_GCC4_COMPAT
+#  endif
+#  if (defined(CFUNGE_COMP_GCC4_COMPAT) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ >= 5)
+#    define CFUNGE_COMP_GCC4_3_COMPAT
+#  endif
+#endif
+/*@}*/
+
+/**
  * @defgroup compat Compiler/system compatibility defines.
  * Compatibility stuff to support systems lacking some functions of features.
  */
 /*@{*/
-#ifdef __GNUC__
+#ifdef CFUNGE_COMP_GCC_COMPAT
 #  define FUNGE_ATTR(x) __attribute__(x)
 #else
 /// Make non-GCC compilers happy.
 #  define FUNGE_ATTR(x)  /* NO-OP */
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ >= 3) && !defined(__INTEL_COMPILER)
+#if defined(CFUNGE_COMP_GCC3_COMPAT) && !defined(CFUNGE_COMP_ICC)
 /// Give GCC a hint about the most common outcome.
 /// Please do not add this unless you have profiled.
 #  define FUNGE_EXPECT(expr, outcome) __builtin_expect((expr),(outcome))
@@ -62,7 +97,7 @@
  * Contains attribute specifications.
  */
 /*@{*/
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__)
+#ifdef CFUNGE_COMP_GCC
 #  ifdef __i386__
 /// Used to select fast calling convention on platforms that need it.
 #    define FUNGE_ATTR_FAST FUNGE_ATTR((regparm(3)))
@@ -75,7 +110,7 @@
 #  define FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__)
+#ifdef CFUNGE_COMP_GCC
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
@@ -95,6 +130,14 @@
 #  define FUNGE_ATTR_PURE          /* NO-OP */
 #  define FUNGE_ATTR_UNUSED        /* NO-OP */
 #  define FUNGE_ATTR_WARN_UNUSED   /* NO-OP */
+#endif
+
+#if defined(CFUNGE_COMP_GCC) && defined(CFUNGE_COMP_GCC4_3_COMPAT)
+#  define FUNGE_ATTR_COLD FUNGE_ATTR((cold))
+#  define FUNGE_ATTR_HOT  FUNGE_ATTR((hot))
+#else
+#  define FUNGE_ATTR_COLD /* NO-OP */
+#  define FUNGE_ATTR_HOT  /* NO-OP */
 #endif
 
 /*@}*/
