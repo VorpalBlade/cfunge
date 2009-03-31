@@ -250,7 +250,8 @@ FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, funge_cell
 #  error "CHAR_BIT != 8, please make sure the function below the location of this error works on your system."
 #endif
 
-FUNGE_ATTR_FAST void manager_list(void)
+FUNGE_ATTR_FAST FUNGE_ATTR_COLD
+void manager_list(void)
 {
 	puts("Supported fingerprints in this binary:");
 	for (size_t i = 0; i < FPRINT_ARRAY_SIZE; i++) {

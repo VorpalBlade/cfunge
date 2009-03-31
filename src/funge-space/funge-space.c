@@ -429,7 +429,7 @@ fungespace_wrap(funge_vector * restrict position,
 
 
 // For use with call in gdb
-void fungespace_dump(void) FUNGE_ATTR_UNUSED;
+void fungespace_dump(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
 void fungespace_dump(void)
 {
