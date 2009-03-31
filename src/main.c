@@ -41,7 +41,7 @@ int fungeargc = 0;
 static char cfun_iobuf[BUFSIZ*4];
 
 // These are NOT worth inlineing, even though only called once.
-FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_features(void)
 {
 	puts("Features compiled into this binary:");
@@ -94,7 +94,7 @@ static void print_features(void)
 	manager_list();
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_help(void)
 {
 	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]");
@@ -115,7 +115,7 @@ static void print_help(void)
 	exit(EXIT_SUCCESS);
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_version(void)
 {
 	puts("cfunge " CFUNGE_APPVERSION);
