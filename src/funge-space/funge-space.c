@@ -30,8 +30,8 @@
 
 #include "../global.h"
 #include "funge-space.h"
-#include "../../lib/libghthash/ght_hash_table.h"
-#include "../../lib/libghthash/cfunge_mempool.h"
+#include "../../lib/libghthash_fspace/ght_hash_table.h"
+#include "../../lib/libghthash_fspace/cfunge_mempool.h"
 
 #include <unistd.h>
 

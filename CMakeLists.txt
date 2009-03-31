@@ -305,7 +305,7 @@ include_directories(${CFUNGE_SOURCE_DIR}/src/)
 ################################################################################
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
-	lib/libghthash/*.c
+	lib/libghthash_fspace/*.c
 	lib/genx/*.c
 	lib/stringbuffer/*.c
 	src/*.c
