@@ -267,19 +267,6 @@ fungespace_free(void)
 	cf_mempool_fspace_teardown();
 }
 
-#ifdef CFUN_EXACT_BOUNDS
-FUNGE_ATTR_FAST
-static void fungespace_minimize_bounds(void)
-{
-// 	if ((position->x != fspace.bottomRightCorner.x)
-// 	    && (position->x != fspace.topLeftCorner.x)
-// 	    && (position->y != fspace.bottomRightCorner.y)
-// 	    && (position->y != fspace.topLeftCorner.y))
-// 		return;
-	// TODO.
-}
-#endif
-
 FUNGE_ATTR_FAST void
 fungespace_get_bounds_rect(fungeRect * restrict rect)
 {
@@ -292,21 +279,51 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 
 #ifdef CFUN_EXACT_BOUNDS
 FUNGE_ATTR_FAST
+static void fungespace_minimize_bounds(void)
+{
+// 	if ((position->x != fspace.bottomRightCorner.x)
+// 	    && (position->x != fspace.topLeftCorner.x)
+// 	    && (position->y != fspace.bottomRightCorner.y)
+// 	    && (position->y != fspace.topLeftCorner.y))
+// 		return;
+	// TODO.
+}
+
+#define FSPACE_COUNT_OP_OR_NEW(m_var, m_op, m_a, m_key, m_val) \
+	do { \
+		if (m_var) \
+			(*(m_var)) m_op; \
+		else if (ght_fspacecount_insert((m_a), m_val, &m_key) == -1) { \
+			ght_fspacecount_replace((m_a), m_val, &m_key); \
+		} \
+	} while(0)
+
+FUNGE_ATTR_FAST
 static inline void fungespace_count(bool isset, const funge_vector * restrict position)
 {
 	{
-		funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
-		funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
-		if (FUNGESPACE_RANGE_CHECK(x, y)) {
+		funge_cell x = position->x;
+		funge_cell y = position->y;
+		funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
+		funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
+		if (FUNGESPACE_RANGE_CHECK(sx, sy)) {
 			if (isset) {
-				cfun_static_use_count_row[y]++;
-				cfun_static_use_count_col[x]++;
+				cfun_static_use_count_row[sy]++;
+				cfun_static_use_count_col[sx]++;
 			} else {
-				cfun_static_use_count_row[y]--;
-				cfun_static_use_count_col[x]--;
+				cfun_static_use_count_row[sy]--;
+				cfun_static_use_count_col[sx]--;
 			}
 		} else {
-			// TODO
+			funge_unsigned_cell *prevcol = ght_fspacecount_get(fspace.col_count, &x);
+			funge_unsigned_cell *prevrow = ght_fspacecount_get(fspace.row_count, &y);
+			if (isset) {
+				FSPACE_COUNT_OP_OR_NEW(prevcol, ++, fspace.col_count, x, 1);
+				FSPACE_COUNT_OP_OR_NEW(prevrow, ++, fspace.row_count, y, 1);
+			} else {
+				FSPACE_COUNT_OP_OR_NEW(prevcol, --, fspace.col_count, x, 0);
+				FSPACE_COUNT_OP_OR_NEW(prevrow, --, fspace.row_count, y, 0);
+			}
 		}
 	}
 }
