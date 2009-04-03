@@ -55,7 +55,7 @@ typedef struct fungeSpace {
 	funge_vector      topLeftCorner;
 	funge_vector      bottomRightCorner;
 	/// And this is the hash table.
-	ght_hash_table_t *entries;
+	ght_fspace_hash_table_t *entries;
 	/// Used during loading to handle 0,0 not being least point.
 	bool              boundsvalid;
 } fungeSpace;
@@ -212,12 +212,12 @@ cf_fungespace_create_init_loop:\n\
 	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
 		cfun_static_space[i] = ' ';
 #endif
-	fspace.entries = ght_create(FUNGESPACEINITIALSIZE);
+	fspace.entries = ght_fspace_create(FUNGESPACEINITIALSIZE);
 	if (FUNGE_UNLIKELY(!fspace.entries))
 		return false;
-	ght_set_rehash(fspace.entries, true);
+	ght_fspace_set_rehash(fspace.entries, true);
 	// Set up mempool for hash library.
-	return mempool_setup();
+	return cf_mempool_fspace_setup();
 }
 
 
@@ -225,8 +225,8 @@ FUNGE_ATTR_FAST void
 fungespace_free(void)
 {
 	if (fspace.entries)
-		ght_finalize(fspace.entries);
-	mempool_teardown();
+		ght_fspace_finalize(fspace.entries);
+	cf_mempool_fspace_teardown();
 }
 
 
@@ -252,7 +252,7 @@ fungespace_get(const funge_vector * restrict position)
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		return cfun_static_space[STATIC_COORD(x,y)];
 	} else {
-		tmp = (funge_cell*)ght_get(fspace.entries, position);
+		tmp = (funge_cell*)ght_fspace_get(fspace.entries, position);
 		if (!tmp)
 			return (funge_cell)' ';
 		else
@@ -282,7 +282,7 @@ fungespace_get_offset(const funge_vector * restrict position,
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		return cfun_static_space[STATIC_COORD(x,y)];
 	} else {
-		result = (funge_cell*)ght_get(fspace.entries, &tmp);
+		result = (funge_cell*)ght_fspace_get(fspace.entries, &tmp);
 		if (!result)
 			return (funge_cell)' ';
 		else
@@ -303,15 +303,15 @@ fungespace_set_no_bounds_update(funge_cell value,
 		cfun_static_space[STATIC_COORD(x,y)] = value;
 	} else {
 		if (value == ' ') {
-			ght_remove(fspace.entries, position);
+			ght_fspace_remove(fspace.entries, position);
 		} else {
 			// Reuse cell if it exists
 			funge_cell *tmp;
-			if ((tmp = (funge_cell*)ght_get(fspace.entries, position)) != NULL) {
+			if ((tmp = (funge_cell*)ght_fspace_get(fspace.entries, position)) != NULL) {
 				*tmp = value;
 			} else {
-				if (ght_insert(fspace.entries, value, position) == -1) {
-					ght_replace(fspace.entries, value, position);
+				if (ght_fspace_insert(fspace.entries, value, position) == -1) {
+					ght_fspace_replace(fspace.entries, value, position);
 				}
 			}
 		}

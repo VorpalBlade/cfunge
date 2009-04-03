@@ -60,177 +60,36 @@ Notes:
 #  define VALGRIND_MOVE_MEMPOOL(x, y)      /* NO-OP */
 #endif
 
-// This is either a memory block, or a pointer in the free list.
-typedef union memory_block {
-	// This should be first... Or mempool_free() won't work
-	memorypool_data     data;
-	// If NULL: end of list. If not in free list the value is undefined.
-	union memory_block *next_free;
-} memory_block;
 
+// I hate the preprocessor
+#define CF_MEMPOOL_FUNC_INTERN(m_funcname, m_variant) \
+  cf_mempool_ ## m_variant ## _ ## m_funcname
 
-typedef struct pool_header {
-	memory_block  *base;
-	// Pointer to first free block for mallocing.
-	memory_block  *first_free;
-} pool_header;
+#define CF_MEMPOOL_FUNC(m_funcname, m_variant) \
+  CF_MEMPOOL_FUNC_INTERN(m_funcname, m_variant)
 
-// This points to an array of pools.
-static pool_header *pools = NULL;
-// Size of pools array
-static size_t       pools_size = 0;
-// The free list
-static memory_block *free_list = NULL;
+#define CF_MEMPOOL_VARIANT  fspace
+#define CF_MEMPOOL_DATATYPE struct s_fspace_hash_entry
+#define memory_block        memory_block_fspace
+#define pool_header         pool_fspace_header
+#define pools               fspace_pools
+#define pools_size          fspace_pools_size
+#define free_list           fspace_free_list
+#include "cfunge_mempool_priv.h"
 
-// Forward decls:
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool initialise_mempool(pool_header *pool);
+#undef CF_MEMPOOL_VARIANT
+#undef CF_MEMPOOL_DATATYPE
+#undef memory_block
+#undef pool_header
+#undef pools
+#undef pools_size
+#undef free_list
 
-FUNGE_ATTR_FAST
-static inline void clear_mempool(pool_header *pool);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool add_mempool(void);
-
-FUNGE_ATTR_FAST
-static inline void freelist_add(memory_block *memblock);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
-static inline memory_block *freelist_get(void);
-
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
-static inline memory_block *mempool_get_next_free(void);
-
-
-FUNGE_ATTR_FAST
-bool mempool_setup(void)
-{
-	assert(pools == NULL);
-	pools = calloc_nogc(1, sizeof(pool_header));
-	if (!pools)
-		return false;
-	// No it isn't really initialised.
-	// However valgrind will give false errors for freelist otherwise.
-	VALGRIND_CREATE_MEMPOOL(pools, 0, true);
-	pools_size = 1;
-	return initialise_mempool(pools);
-}
-
-
-FUNGE_ATTR_FAST
-void mempool_teardown(void)
-{
-	if (!pools)
-		return;
-	for (size_t i = 0; i < pools_size; i++) {
-		clear_mempool(&pools[i]);
-	}
-	VALGRIND_DESTROY_MEMPOOL(pools);
-	free_nogc(pools);
-}
-
-
-FUNGE_ATTR_FAST
-memorypool_data *mempool_alloc(void)
-{
-	memory_block *block = freelist_get();
-	if (!block)
-		block = mempool_get_next_free();
-	if (block)
-		return &block->data;
-	return NULL;
-}
-
-
-FUNGE_ATTR_FAST
-void mempool_free(memorypool_data *ptr)
-{
-	freelist_add((memory_block*)ptr);
-}
-
-
-// Private functions
-
-/// Setup a mempool, allocating it's block.
-FUNGE_ATTR_FAST
-static inline bool initialise_mempool(pool_header *pool)
-{
-	pool->base = malloc_nogc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
-	if (!pool->base)
-		return false;
-	pool->first_free = pool->base;
-	VALGRIND_MAKE_MEM_NOACCESS(pool->base, sizeof(memory_block) * POOL_ARRAY_COUNT);
-	return true;
-}
-
-/// Tear down a mempool, freeing it's block.
-FUNGE_ATTR_FAST
-static inline void clear_mempool(pool_header *pool)
-{
-	if (!pool)
-		return;
-	if (pool->base)
-		free_nogc(pool->base);
-	pool->first_free = NULL;
-}
-
-/// Adds a new memory pool at the end of the array.
-FUNGE_ATTR_FAST
-static inline bool add_mempool(void)
-{
-	pool_header *pools_new = realloc_nogc(pools, sizeof(pool_header) * (pools_size + 1));
-	if (!pools_new)
-		return false;
-	VALGRIND_MOVE_MEMPOOL(pools, pools_new);
-	pools = pools_new;
-
-	if (!initialise_mempool(&pools[pools_size])) {
-		// Blergh...
-		return false;
-	}
-	pools_size++;
-	return true;
-}
-
-/// Add a block to the list of free blocks.
-FUNGE_ATTR_FAST
-static inline void freelist_add(memory_block *memblock)
-{
-	memblock->next_free = free_list;
-	free_list = memblock;
-	VALGRIND_MEMPOOL_FREE(pools, memblock);
-}
-
-/// Try to get a block from the free block list.
-FUNGE_ATTR_FAST
-static inline memory_block *freelist_get(void)
-{
-	if (!free_list) {
-		return NULL;
-	} else {
-		memory_block *block = free_list;
-		VALGRIND_MEMPOOL_ALLOC(pools, block, sizeof(memory_block));
-		free_list = free_list->next_free;
-		return block;
-	}
-}
-
-/// Get memory from the first mempool with blocks free at the end.
-/// Will call add_mempool() if no blocks are free in the last mempool.
-FUNGE_ATTR_FAST
-static inline memory_block *mempool_get_next_free(void)
-{
-	pool_header* pool = &pools[pools_size-1];
-
-	if ((pool->first_free - pool->base) >= (intptr_t)(POOL_ARRAY_COUNT - 1)) {
-		if (!add_mempool())
-			return NULL;
-		pool = &pools[pools_size-1];
-	}
-	{
-		memory_block* block = pool->first_free;
-		pool->first_free++;
-		VALGRIND_MEMPOOL_ALLOC(pools, block, sizeof(memory_block));
-		return block;
-	}
-}
+#define CF_MEMPOOL_VARIANT  fspacecount
+#define CF_MEMPOOL_DATATYPE struct s_fspacecount_hash_entry
+#define memory_block        memory_block_fspacecount
+#define pool_header         pool_fspacecount_header
+#define pools               fspacecount_pools
+#define pools_size          fspacecount_pools_size
+#define free_list           fspacecount_free_list
+#include "cfunge_mempool_priv.h"

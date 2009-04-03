@@ -23,39 +23,13 @@
  * $Id: hash_functions.c 2174 2005-03-18 07:00:30Z ska $
  *
  ********************************************************************/
-#include <assert.h>
 
+#define CF_GHT_INTERNAL
+
+#include <assert.h>
 #include "ght_hash_table.h"
 
-#if 0
-/* One-at-a-time hash (found in a web article from ddj), this is the
- * standard hash function.
- *
- * See http://burtleburtle.net/bob/hash/doobs.html
- * for the hash functions used here.
- */
-FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
-{
-	ght_uint32_t i_hash = 0;
-	size_t i;
-
-	assert(p_key != NULL);
-
-	for (i = 0; i < sizeof(fungeSpaceHashKey); ++i) {
-		i_hash += ((const unsigned char*)&(p_key->p_key))[i];
-		i_hash += (i_hash << 10);
-		i_hash ^= (i_hash >> 6);
-	}
-	i_hash += (i_hash << 3);
-	i_hash ^= (i_hash >> 11);
-	i_hash += (i_hash << 15);
-
-	return i_hash;
-}
-#endif
-
 #if 1
-
 static const ght_uint32_t crc32_table[256] = {
 	0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
 	0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61, 0x350c9b64, 0x31cd86d3, 0x3c8ea00a, 0x384fbdbd,
@@ -90,104 +64,20 @@ static const ght_uint32_t crc32_table[256] = {
 	0x89b8fd09, 0x8d79e0be, 0x803ac667, 0x84fbdbd0, 0x9abc8bd5, 0x9e7d9662, 0x933eb0bb, 0x97ffad0c,
 	0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
-
-/* CRC32 hash based on code from comp.compression FAQ.
- * Added by Dru Lemley <spambait@lemley.net>
- */
-FUNGE_ATTR_FAST ght_uint32_t ght_crc_hash(const ght_hash_key_t *p_key)
-{
-	const unsigned char *p;
-	ght_uint32_t  crc;
-
-	assert(p_key != NULL);
-
-	crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
-	p = (const unsigned char *)&(p_key->p_key);
-
-	for (size_t i = 0; i < sizeof(fungeSpaceHashKey); i++)
-		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ (p[i])];
-
-	return ~crc;            /* transmit complement, per CRC-32 spec */
-}
 #endif
 
-#if 0
-#ifdef USE64
-FUNGE_ATTR_FAST
-static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
-{
-	// 'm' and 'r' are mixing constants generated offline.
-	// They're not really 'magic', they just happen to work well.
+#define CF_GHT_VAR fspace
+#define CF_GHT_KEY fungeSpaceHashKey
+#define CF_GHT_DATA funge_cell
 
-	const ght_uint32_t m = 0x5bd1e995;
-	const int32_t r = 24;
+#include "hash_functions_priv.h"
 
-	// Initialise the hash to a 'random' value
-	size_t len = sizeof(fungeSpaceHashKey);
-	ght_uint32_t h = 0x7fd652ad ^ len;
+#undef CF_GHT_VAR
+#undef CF_GHT_KEY
+#undef CF_GHT_DATA
 
-	// Mix 4 bytes at a time into the hash
+#define CF_GHT_VAR fspacecount
+#define CF_GHT_KEY funge_cell
+#define CF_GHT_DATA funge_unsigned_cell
 
-	const unsigned char * data = (const unsigned char *)key;
-
-	while(len >= 4)
-	{
-		ght_uint32_t k = *(const ght_uint32_t *)data;
-
-		k *= m;
-		k ^= k >> r;
-		k *= m;
-
-		h *= m;
-		h ^= k;
-
-		data += 4;
-		len -= 4;
-	}
-
-	// Not needed the way we use it.
-#if 0
-	// Handle the last few bytes of the input array
-
-	switch(len)
-	{
-	case 3: h ^= data[2] << 16;
-	case 2: h ^= data[1] << 8;
-	case 1: h ^= data[0];
-	        h *= m;
-	};
-#endif
-
-	// Do a few final mixes of the hash to ensure the last few
-	// bytes are well-incorporated.
-
-	h ^= h >> 13;
-	h *= m;
-	h ^= h >> 15;
-
-	return h;
-}
-#endif
-
-/* CRC32 hash based on code from comp.compression FAQ.
- * Added by Dru Lemley <spambait@lemley.net>
- */
-FUNGE_ATTR_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
-{
-#ifdef USE32
-	const ght_uint32_t m = 0xc6a4a793;
-
-	ght_uint32_t h = 0x7fd652ad ^ (8 * m), k;
-
-	k = p_key->p_key.x; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;
-	k = p_key->p_key.y; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;
-
-	h *= m; h ^= h >> 10;
-	h *= m; h ^= h >> 17;
-
-	return h;
-#else
-	return MurmurHash2(&p_key->p_key);
-#endif
-}
-#endif
+#include "hash_functions_priv.h"
