@@ -76,8 +76,10 @@ static const ght_uint32_t crc32_table[256] = {
 #undef CF_GHT_KEY
 #undef CF_GHT_DATA
 
-#define CF_GHT_VAR fspacecount
-#define CF_GHT_KEY funge_cell
-#define CF_GHT_DATA funge_unsigned_cell
+#ifdef CFUN_EXACT_BOUNDS
+# define CF_GHT_VAR fspacecount
+# define CF_GHT_KEY funge_cell
+# define CF_GHT_DATA funge_unsigned_cell
 
-#include "hash_functions_priv.h"
+# include "hash_functions_priv.h"
+#endif

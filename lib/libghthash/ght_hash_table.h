@@ -124,16 +124,18 @@ typedef uint32_t ght_uint32_t;
 #undef CF_GHT_KEY
 #undef CF_GHT_DATA
 
-// Create column count variant.
-#define CF_GHT_VAR fspacecount
-#define CF_GHT_KEY funge_cell
-#define CF_GHT_DATA funge_unsigned_cell
+// Create column/row count variant.
+#ifdef CFUN_EXACT_BOUNDS
+#  define CF_GHT_VAR fspacecount
+#  define CF_GHT_KEY funge_cell
+#  define CF_GHT_DATA funge_unsigned_cell
 
-#include "ght_hash_table_priv.h"
+#  include "ght_hash_table_priv.h"
 
-#undef CF_GHT_VAR
-#undef CF_GHT_KEY
-#undef CF_GHT_DATA
+#  undef CF_GHT_VAR
+#  undef CF_GHT_KEY
+#  undef CF_GHT_DATA
+#endif
 
 #ifndef CF_GHT_INTERNAL
 #  undef CF_GHT_NAME_INTERN

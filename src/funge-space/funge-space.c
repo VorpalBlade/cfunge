@@ -30,8 +30,8 @@
 
 #include "../global.h"
 #include "funge-space.h"
-#include "../../lib/libghthash_fspace/ght_hash_table.h"
-#include "../../lib/libghthash_fspace/cfunge_mempool.h"
+#include "../../lib/libghthash/ght_hash_table.h"
+#include "../../lib/libghthash/cfunge_mempool.h"
 
 #include <unistd.h>
 
@@ -48,24 +48,39 @@
 #include <assert.h>
 #include <fcntl.h>
 
-#define FUNGESPACEINITIALSIZE 0x40000
+// Initial size for hash table (main)
+#define FUNGESPACE_INITIAL_SIZE 0x40000
+// Initial size for hash table (column count)
+#define FUNGECOUNT_COL_INITIAL_SIZE 0x20000
+// Initial size for hash table (row count)
+#define FUNGECOUNT_ROW_INITIAL_SIZE 0x20000
 
 typedef struct fungeSpace {
 	/// These two form a rectangle for the program size
-	funge_vector      topLeftCorner;
-	funge_vector      bottomRightCorner;
-	/// And this is the hash table.
-	ght_fspace_hash_table_t *entries;
+	funge_vector                  topLeftCorner;
+	funge_vector                  bottomRightCorner;
+	/// And this is the main hash table.
+	ght_fspace_hash_table_t      *entries;
+#ifdef CFUN_EXACT_BOUNDS
+	/// Hash tables for cell count in columns.
+	ght_fspacecount_hash_table_t *col_count;
+	/// Hash tables for cell count in rows.
+	ght_fspacecount_hash_table_t *row_count;
+#endif
 	/// Used during loading to handle 0,0 not being least point.
-	bool              boundsvalid;
+	bool                          boundsvalid;
 } fungeSpace;
 
 /// Funge-space storage.
 static fungeSpace fspace = {
-	.topLeftCorner = {0, 0},
+	.topLeftCorner     = {0, 0},
 	.bottomRightCorner = {0, 0},
-	.entries = NULL,
-	.boundsvalid = false
+	.entries           = NULL,
+#ifdef CFUN_EXACT_BOUNDS
+	.col_count         = NULL,
+	.row_count         = NULL,
+#endif
+	.boundsvalid       = false
 };
 
 #define FUNGESPACE_STATIC_OFFSET_X 64
@@ -88,6 +103,12 @@ __asm__("cfun_static_space")
 #endif
 FUNGE_ATTR((aligned(16)))
 ;
+
+#ifdef CFUN_EXACT_BOUNDS
+// Non-Space counts for each column and row.
+static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
+static funge_unsigned_cell cfun_static_use_count_col[FUNGESPACE_STATIC_X];
+#endif
 
 /**
  * Check if position is in range.
@@ -212,11 +233,21 @@ cf_fungespace_create_init_loop:\n\
 	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
 		cfun_static_space[i] = ' ';
 #endif
-	fspace.entries = ght_fspace_create(FUNGESPACEINITIALSIZE);
+	fspace.entries = ght_fspace_create(FUNGESPACE_INITIAL_SIZE);
 	if (FUNGE_UNLIKELY(!fspace.entries))
 		return false;
 	ght_fspace_set_rehash(fspace.entries, true);
+#ifdef CFUN_EXACT_BOUNDS
+	fspace.col_count = ght_fspacecount_create(FUNGECOUNT_COL_INITIAL_SIZE);
+	fspace.row_count = ght_fspacecount_create(FUNGECOUNT_ROW_INITIAL_SIZE);
+	if (FUNGE_UNLIKELY(!fspace.col_count || !fspace.row_count))
+		return false;
+	ght_fspacecount_set_rehash(fspace.col_count, true);
+	ght_fspacecount_set_rehash(fspace.row_count, true);
 	// Set up mempool for hash library.
+	if (FUNGE_UNLIKELY(!cf_mempool_fspacecount_setup()))
+		return false;
+#endif
 	return cf_mempool_fspace_setup();
 }
 
@@ -226,9 +257,28 @@ fungespace_free(void)
 {
 	if (fspace.entries)
 		ght_fspace_finalize(fspace.entries);
+#ifdef CFUN_EXACT_BOUNDS
+	if (fspace.col_count)
+		ght_fspacecount_finalize(fspace.col_count);
+	if (fspace.row_count)
+		ght_fspacecount_finalize(fspace.row_count);
+	cf_mempool_fspacecount_teardown();
+#endif
 	cf_mempool_fspace_teardown();
 }
 
+#ifdef CFUN_EXACT_BOUNDS
+FUNGE_ATTR_FAST
+static void fungespace_minimize_bounds(void)
+{
+// 	if ((position->x != fspace.bottomRightCorner.x)
+// 	    && (position->x != fspace.topLeftCorner.x)
+// 	    && (position->y != fspace.bottomRightCorner.y)
+// 	    && (position->y != fspace.topLeftCorner.y))
+// 		return;
+	// TODO.
+}
+#endif
 
 FUNGE_ATTR_FAST void
 fungespace_get_bounds_rect(fungeRect * restrict rect)
@@ -240,6 +290,27 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
 }
 
+#ifdef CFUN_EXACT_BOUNDS
+FUNGE_ATTR_FAST
+static inline void fungespace_count(bool isset, const funge_vector * restrict position)
+{
+	{
+		funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
+		funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
+		if (FUNGESPACE_RANGE_CHECK(x, y)) {
+			if (isset) {
+				cfun_static_use_count_row[y]++;
+				cfun_static_use_count_col[x]++;
+			} else {
+				cfun_static_use_count_row[y]--;
+				cfun_static_use_count_col[x]--;
+			}
+		} else {
+			// TODO
+		}
+	}
+}
+#endif
 
 FUNGE_ATTR_FAST funge_cell
 fungespace_get(const funge_vector * restrict position)
@@ -300,7 +371,15 @@ fungespace_set_no_bounds_update(funge_cell value,
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
+#ifdef CFUN_EXACT_BOUNDS
+		funge_cell prev = cfun_static_space[STATIC_COORD(x,y)];
+#endif
 		cfun_static_space[STATIC_COORD(x,y)] = value;
+#ifdef CFUN_EXACT_BOUNDS
+		if ((value != prev) && ((prev == ' ') || (value == ' '))) {
+			fungespace_count((value != 32), position);
+		}
+#endif
 	} else {
 		if (value == ' ') {
 			ght_fspace_remove(fspace.entries, position);

@@ -85,11 +85,13 @@ Notes:
 #undef pools_size
 #undef free_list
 
-#define CF_MEMPOOL_VARIANT  fspacecount
-#define CF_MEMPOOL_DATATYPE struct s_fspacecount_hash_entry
-#define memory_block        memory_block_fspacecount
-#define pool_header         pool_fspacecount_header
-#define pools               fspacecount_pools
-#define pools_size          fspacecount_pools_size
-#define free_list           fspacecount_free_list
-#include "cfunge_mempool_priv.h"
+#ifdef CFUN_EXACT_BOUNDS
+#  define CF_MEMPOOL_VARIANT  fspacecount
+#  define CF_MEMPOOL_DATATYPE struct s_fspacecount_hash_entry
+#  define memory_block        memory_block_fspacecount
+#  define pool_header         pool_fspacecount_header
+#  define pools               fspacecount_pools
+#  define pools_size          fspacecount_pools_size
+#  define free_list           fspacecount_free_list
+#  include "cfunge_mempool_priv.h"
+#endif

@@ -61,11 +61,13 @@
 #undef CF_GHT_COMPAREKEYS
 #undef CF_GHT_COPYKEY
 
-#define CF_GHT_VAR fspacecount
-#define CF_GHT_KEY funge_cell
-#define CF_GHT_DATA funge_unsigned_cell
-#define CF_GHT_COMPAREKEYS(m_a, m_b) ((m_a)->p_key == (m_b)->p_key)
-#define CF_GHT_COPYKEY(m_target, m_source) \
+#ifdef CFUN_EXACT_BOUNDS
+#  define CF_GHT_VAR fspacecount
+#  define CF_GHT_KEY funge_cell
+#  define CF_GHT_DATA funge_unsigned_cell
+#  define CF_GHT_COMPAREKEYS(m_a, m_b) ((m_a)->p_key == (m_b)->p_key)
+#  define CF_GHT_COPYKEY(m_target, m_source) \
     do { (m_target) = *(m_source); } while (0)
 
-#include "hash_table_priv.h"
+#  include "hash_table_priv.h"
+#endif

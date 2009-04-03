@@ -83,7 +83,9 @@ void mempool_free(memorypool_data *ptr);
 #endif
 
 CF_MEMPOOL_DECLARE_FUNCS(fspace, struct s_fspace_hash_entry)
+#ifdef CFUN_EXACT_BOUNDS
 CF_MEMPOOL_DECLARE_FUNCS(fspacecount, struct s_fspacecount_hash_entry)
+#endif
 
 #undef CF_MEMPOOL_FUNCPROT
 #undef CF_MEMPOOL_DECLARE_FUNCS

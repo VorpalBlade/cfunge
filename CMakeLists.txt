@@ -87,6 +87,12 @@ endif(USE_GC)
 
 ################################################################################
 # Other options
+
+option(EXACT_BOUNDS "Handle shrinking bounds (slower and most programs don't need it, but follows the standard more closely)." ON)
+if(EXACT_BOUNDS)
+	add_definitions(-DCFUN_EXACT_BOUNDS)
+endif(EXACT_BOUNDS)
+
 option(USE_64BIT "Should 64-bit funge space cells be used (otherwise 32-bit)." ON)
 if(USE_64BIT)
 	add_definitions(-DUSE64)
@@ -305,7 +311,7 @@ include_directories(${CFUNGE_SOURCE_DIR}/src/)
 ################################################################################
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
-	lib/libghthash_fspace/*.c
+	lib/libghthash/*.c
 	lib/genx/*.c
 	lib/stringbuffer/*.c
 	src/*.c
