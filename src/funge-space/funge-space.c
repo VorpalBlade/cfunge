@@ -66,6 +66,8 @@ typedef struct fungeSpace {
 	ght_fspacecount_hash_table_t *col_count;
 	/// Hash tables for cell count in rows.
 	ght_fspacecount_hash_table_t *row_count;
+	/// Are the bounds stored currently exact already?
+	bool                          boundsexact;
 #endif
 	/// Used during loading to handle 0,0 not being least point.
 	bool                          boundsvalid;
@@ -79,6 +81,7 @@ static fungeSpace fspace = {
 #ifdef CFUN_EXACT_BOUNDS
 	.col_count         = NULL,
 	.row_count         = NULL,
+	.boundsexact       = true,
 #endif
 	.boundsvalid       = false
 };
@@ -110,20 +113,6 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 static funge_unsigned_cell cfun_static_use_count_col[FUNGESPACE_STATIC_X];
 #endif
 
-/**
- * Check if position is in range.
- */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
-static inline bool fungespace_in_range(const funge_vector * restrict position)
-{
-	if ((position->x > fspace.bottomRightCorner.x)
-	    || (position->x < fspace.topLeftCorner.x)
-	    || (position->y > fspace.bottomRightCorner.y)
-	    || (position->y < fspace.topLeftCorner.y))
-		return false;
-	return true;
-}
-
 #undef FSPACE_CREATE_SSE
 #undef FSPACE_SSE_ASM
 #if (defined(__i386__) || defined(__x86_64__)) && defined(__GNUC__) && defined(__SSE__) && !defined(__INTEL_COMPILER)
@@ -147,6 +136,10 @@ static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
 #    error "Unknown funge space data type size."
 #  endif
 #endif
+
+/*********************************
+ * Setup and teardown code here. *
+ *********************************/
 
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
@@ -267,27 +260,88 @@ fungespace_free(void)
 	cf_mempool_fspace_teardown();
 }
 
-FUNGE_ATTR_FAST void
-fungespace_get_bounds_rect(fungeRect * restrict rect)
-{
-	rect->x = fspace.topLeftCorner.x;
-	rect->y = fspace.topLeftCorner.y;
-	// +1 because it is inclusive.
-	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x + 1;
-	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
-}
+/*****************************************************************
+ * This section of the code handles tracking exact bounds for y. *
+ *****************************************************************/
 
 #ifdef CFUN_EXACT_BOUNDS
-FUNGE_ATTR_FAST
-static void fungespace_minimize_bounds(void)
-{
-// 	if ((position->x != fspace.bottomRightCorner.x)
-// 	    && (position->x != fspace.topLeftCorner.x)
-// 	    && (position->y != fspace.bottomRightCorner.y)
-// 	    && (position->y != fspace.topLeftCorner.y))
-// 		return;
-	// TODO.
+static inline funge_unsigned_cell get_count_col(funge_cell x) {
+	funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
+	if (sx < FUNGESPACE_STATIC_X) {
+		return cfun_static_use_count_col[sx];
+	} else {
+		funge_unsigned_cell *tmp = ght_fspacecount_get(fspace.col_count, &x);
+		if (!tmp)
+			return 0;
+		return *tmp;
+	}
 }
+
+static inline funge_unsigned_cell get_count_row(funge_cell y) {
+	funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
+	if (sy < FUNGESPACE_STATIC_Y) {
+		return cfun_static_use_count_row[sy];
+	} else {
+		funge_unsigned_cell *tmp = ght_fspacecount_get(fspace.row_count, &y);
+		if (!tmp)
+			return 0;
+		return *tmp;
+	}
+}
+
+FUNGE_ATTR_FAST
+static inline void fungespace_minimize_bounds(void)
+{
+	funge_cell minx = fspace.topLeftCorner.x;
+	funge_cell miny = fspace.topLeftCorner.y;
+	funge_cell maxx = fspace.bottomRightCorner.x;
+	funge_cell maxy = fspace.bottomRightCorner.y;
+	if (fspace.boundsexact)
+		return;
+	/* Time for scanning.
+	 * * Scan inwards from each edge until we a non-zero count in a column.
+	 * * If we hit the other bound we stop, lets lock up in an infinite loop
+	 *   somewhere else instead of this routine.
+	 */
+	for (; minx < maxx; minx++) {
+		if (get_count_col(minx) != 0)
+			break;
+	}
+	for (; maxx > minx; maxx--) {
+		if (get_count_col(maxx) != 0)
+			break;
+	}
+	for (; miny < maxy; miny++) {
+		if (get_count_row(miny) != 0)
+			break;
+	}
+	for (; maxy > miny; maxy--) {
+		if (get_count_row(maxy) != 0)
+			break;
+	}
+	fspace.topLeftCorner.x = minx;
+	fspace.topLeftCorner.y = miny;
+	fspace.bottomRightCorner.x = maxx;
+	fspace.bottomRightCorner.y = maxy;
+	fspace.boundsexact = true;
+}
+
+/**
+ * Clear the boundsexact flag if needed.
+ */
+FUNGE_ATTR_FAST
+static inline void fungespace_check_pos(const funge_cell x, const funge_cell y)
+{
+	if (x == fspace.bottomRightCorner.x)
+		fspace.boundsexact = false;
+	else if (y == fspace.bottomRightCorner.y)
+		fspace.boundsexact = false;
+	else if (x == fspace.topLeftCorner.x)
+		fspace.boundsexact = false;
+	else if (y == fspace.topLeftCorner.y)
+		fspace.boundsexact = false;
+}
+
 
 #define FSPACE_COUNT_OP_OR_NEW(m_var, m_op, m_a, m_key, m_val) \
 	do { \
@@ -298,41 +352,79 @@ static void fungespace_minimize_bounds(void)
 		} \
 	} while(0)
 
+/**
+ * Update column/row counts.
+ */
 FUNGE_ATTR_FAST
 static inline void fungespace_count(bool isset, const funge_vector * restrict position)
 {
-	{
-		funge_cell x = position->x;
-		funge_cell y = position->y;
-		funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
-		funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
-		if (FUNGESPACE_RANGE_CHECK(sx, sy)) {
-			if (isset) {
-				cfun_static_use_count_row[sy]++;
-				cfun_static_use_count_col[sx]++;
-			} else {
-				cfun_static_use_count_row[sy]--;
-				cfun_static_use_count_col[sx]--;
-			}
+	funge_cell x = position->x;
+	funge_cell y = position->y;
+	funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
+	funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
+	if (FUNGESPACE_RANGE_CHECK(sx, sy)) {
+		if (isset) {
+			cfun_static_use_count_row[sy]++;
+			cfun_static_use_count_col[sx]++;
 		} else {
-			funge_unsigned_cell *prevcol = ght_fspacecount_get(fspace.col_count, &x);
-			funge_unsigned_cell *prevrow = ght_fspacecount_get(fspace.row_count, &y);
-			if (isset) {
-				FSPACE_COUNT_OP_OR_NEW(prevcol, ++, fspace.col_count, x, 1);
-				FSPACE_COUNT_OP_OR_NEW(prevrow, ++, fspace.row_count, y, 1);
-			} else {
-				FSPACE_COUNT_OP_OR_NEW(prevcol, --, fspace.col_count, x, 0);
-				FSPACE_COUNT_OP_OR_NEW(prevrow, --, fspace.row_count, y, 0);
-			}
+			cfun_static_use_count_row[sy]--;
+			cfun_static_use_count_col[sx]--;
+		}
+	} else {
+		funge_unsigned_cell *prevcol = ght_fspacecount_get(fspace.col_count, &x);
+		funge_unsigned_cell *prevrow = ght_fspacecount_get(fspace.row_count, &y);
+		if (isset) {
+			FSPACE_COUNT_OP_OR_NEW(prevcol, ++, fspace.col_count, x, 1);
+			FSPACE_COUNT_OP_OR_NEW(prevrow, ++, fspace.row_count, y, 1);
+		} else {
+			FSPACE_COUNT_OP_OR_NEW(prevcol, --, fspace.col_count, x, 0);
+			FSPACE_COUNT_OP_OR_NEW(prevrow, --, fspace.row_count, y, 0);
 		}
 	}
+	if (!isset)
+		fungespace_check_pos(x, y);
 }
 #endif
+
+/********************************************************
+ * Code for checking Funge Space bounds in various ways *
+ ********************************************************/
+
+FUNGE_ATTR_FAST void
+fungespace_get_bounds_rect(fungeRect * restrict rect)
+{
+#ifdef CFUN_EXACT_BOUNDS
+	fungespace_minimize_bounds();
+#endif
+	rect->x = fspace.topLeftCorner.x;
+	rect->y = fspace.topLeftCorner.y;
+	// +1 because it is inclusive.
+	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x + 1;
+	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
+}
+
+/**
+ * Check if position is in range.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE FUNGE_ATTR_WARN_UNUSED
+static inline bool fungespace_in_range(const funge_vector * restrict position)
+{
+	if ((position->x > fspace.bottomRightCorner.x)
+	    || (position->x < fspace.topLeftCorner.x)
+	    || (position->y > fspace.bottomRightCorner.y)
+	    || (position->y < fspace.topLeftCorner.y))
+		return false;
+	return true;
+}
+
+
+/************************
+ * Funge space get code *
+ ************************/
 
 FUNGE_ATTR_FAST funge_cell
 fungespace_get(const funge_vector * restrict position)
 {
-	funge_cell *tmp;
 	// Offsets for static.
 	funge_unsigned_cell x = (funge_unsigned_cell)position->x + FUNGESPACE_STATIC_OFFSET_X;
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
@@ -340,14 +432,13 @@ fungespace_get(const funge_vector * restrict position)
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 		return cfun_static_space[STATIC_COORD(x,y)];
 	} else {
-		tmp = (funge_cell*)ght_fspace_get(fspace.entries, position);
+		funge_cell *tmp = (funge_cell*)ght_fspace_get(fspace.entries, position);
 		if (!tmp)
 			return (funge_cell)' ';
 		else
 			return *tmp;
 	}
 }
-
 
 FUNGE_ATTR_FAST funge_cell
 fungespace_get_offset(const funge_vector * restrict position,
@@ -379,6 +470,10 @@ fungespace_get_offset(const funge_vector * restrict position,
 }
 
 
+/************************
+ * Funge space set code *
+ ************************/
+
 FUNGE_ATTR_FAST static inline void
 fungespace_set_no_bounds_update(funge_cell value,
                                 const funge_vector * restrict position)
@@ -393,11 +488,31 @@ fungespace_set_no_bounds_update(funge_cell value,
 #endif
 		cfun_static_space[STATIC_COORD(x,y)] = value;
 #ifdef CFUN_EXACT_BOUNDS
-		if ((value != prev) && ((prev == ' ') || (value == ' '))) {
-			fungespace_count((value != 32), position);
+		if (value != prev) {
+			if ((prev == ' ') || (value == ' '))
+				fungespace_count((value != ' '), position);
 		}
 #endif
 	} else {
+#ifdef CFUN_EXACT_BOUNDS
+		funge_cell* prev = ght_fspace_get(fspace.entries, position);
+		if (!prev) {
+			if (value == ' ')
+				return;
+			if (ght_fspace_insert(fspace.entries, value, position) == -1) {
+				fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
+				abort();
+			}
+			fungespace_count(true, position);
+		} else {
+			if (value == ' ') {
+				ght_fspace_remove(fspace.entries, position);
+				fungespace_count(false, position);
+			} else {
+				*prev = value;
+			}
+		}
+#else
 		if (value == ' ') {
 			ght_fspace_remove(fspace.entries, position);
 		} else {
@@ -407,10 +522,12 @@ fungespace_set_no_bounds_update(funge_cell value,
 				*tmp = value;
 			} else {
 				if (ght_fspace_insert(fspace.entries, value, position) == -1) {
-					ght_fspace_replace(fspace.entries, value, position);
+					fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
+					abort();
 				}
 			}
 		}
+#endif
 	}
 }
 
@@ -475,6 +592,10 @@ fungespace_set_offset(funge_cell value,
 }
 
 
+/*****************
+ * Wrapping code *
+ *****************/
+
 /// Duplicated from vector.c for speed reasons (inlining).
 FUNGE_ATTR_PURE FUNGE_ATTR_FAST
 static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
@@ -489,11 +610,11 @@ static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
 	return true;
 }
 
-
 FUNGE_ATTR_FAST void
 fungespace_wrap(funge_vector * restrict position,
                 const funge_vector * restrict delta)
 {
+	fungespace_minimize_bounds();
 	if (!fungespace_in_range(position)) {
 		// Quick and dirty if cardinal.
 		if (FUNGE_LIKELY(fspace_vector_is_cardinal(delta))) {
@@ -518,12 +639,11 @@ fungespace_wrap(funge_vector * restrict position,
 	}
 }
 
-#ifndef NDEBUG
 /*************
  * Debugging *
  *************/
 
-
+#ifndef NDEBUG
 // For use with call in gdb
 void fungespace_dump(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
@@ -539,8 +659,11 @@ void fungespace_dump(void)
 	}
 	fputs("\n", stderr);
 }
-
 #endif
+
+/******************
+ * Load/save code *
+ ******************/
 
 // Returns fd, addr and length.
 /**
