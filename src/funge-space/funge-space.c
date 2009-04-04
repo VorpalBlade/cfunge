@@ -86,6 +86,7 @@ static fungeSpace fspace = {
 	.boundsvalid       = false
 };
 
+
 #define FUNGESPACE_STATIC_OFFSET_X 64
 #define FUNGESPACE_STATIC_OFFSET_Y 64
 // Note that this must be true to not break code below:
@@ -98,8 +99,12 @@ static fungeSpace fspace = {
 	(((rx) < FUNGESPACE_STATIC_X) && ((ry) < FUNGESPACE_STATIC_Y))
 #define STATIC_COORD(rx, ry) ((rx)+(ry)*FUNGESPACE_STATIC_X)
 
-// We need to give it an asm name here, or the non-PIC inline asm below won't
-// work properly in some cases.
+/**
+ * Static array for core Funge Space.
+ *
+ * We need to give it an asm name here, or the non-PIC inline asm below won't
+ * work properly in some cases.
+ */
 static funge_cell cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]
 #ifdef __GNUC__
 __asm__("cfun_static_space")
@@ -108,9 +113,21 @@ FUNGE_ATTR((aligned(16)))
 ;
 
 #ifdef CFUN_EXACT_BOUNDS
-// Non-Space counts for each column and row.
-static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
+/// Non-Space counts for each column.
 static funge_unsigned_cell cfun_static_use_count_col[FUNGESPACE_STATIC_X];
+/// Non-Space counts for each row.
+static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
+/** If difference is larger than this we switch to a different bounds minimising
+ * algorithm
+ */
+#  define SIMPLEBOUNDS_MAX 0x10000
+/**
+ * Decide if difference is too large or not, m_dim is either x or y.
+ * Used in wrapping code to decide if we should minimise the bounds.
+ * Check fspace.boundsexact first!
+ */
+#  define BOUNDS_TOO_LARGE(m_dim) \
+     ((fspace.bottomRightCorner.m_dim - fspace.topLeftCorner.m_dim) > SIMPLEBOUNDS_MAX)
 #endif
 
 #undef FSPACE_CREATE_SSE
@@ -265,7 +282,9 @@ fungespace_free(void)
  *****************************************************************/
 
 #ifdef CFUN_EXACT_BOUNDS
-static inline funge_unsigned_cell get_count_col(funge_cell x) {
+FUNGE_ATTR_FAST
+static inline funge_unsigned_cell get_count_col(funge_cell x)
+{
 	funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
 	if (sx < FUNGESPACE_STATIC_X) {
 		return cfun_static_use_count_col[sx];
@@ -277,7 +296,9 @@ static inline funge_unsigned_cell get_count_col(funge_cell x) {
 	}
 }
 
-static inline funge_unsigned_cell get_count_row(funge_cell y) {
+FUNGE_ATTR_FAST
+static inline funge_unsigned_cell get_count_row(funge_cell y)
+{
 	funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
 	if (sy < FUNGESPACE_STATIC_Y) {
 		return cfun_static_use_count_row[sy];
@@ -287,6 +308,42 @@ static inline funge_unsigned_cell get_count_row(funge_cell y) {
 			return 0;
 		return *tmp;
 	}
+}
+
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL static inline void
+largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
+                    ght_fspacecount_hash_table_t* restrict hashtable,
+                    const funge_unsigned_cell* restrict sarray,
+                    const size_t sarray_len, const size_t sarray_off)
+{
+	// Sparse scan over hash array.
+	funge_cell min_h = 0;
+	funge_cell max_h = 0;
+	bool isfirst = true;
+	ght_fspacecount_iterator_t iterator;
+	const funge_cell *p_key;
+	funge_unsigned_cell *p;
+	for (p = ght_fspacecount_first(hashtable, &iterator, &p_key);
+	     p; p = ght_fspacecount_next(&iterator, &p_key)) {
+		funge_cell value = *p_key;
+		if (FUNGE_UNLIKELY(isfirst)) {
+			max_h = min_h = value;
+			isfirst = false;
+		} else {
+			if (max_h < value) max_h = value;
+			if (min_h > value) min_h = value;
+		}
+	}
+	// Now scan static array.
+	for (size_t i=0; i<sarray_len;i++)
+		if (sarray[i] > 0) {
+			funge_cell value = i+sarray_off;
+			if (max_h < value) max_h = value;
+			if (min_h > value) min_h = value;
+		}
+	*min = min_h;
+	*max = max_h;
 }
 
 FUNGE_ATTR_FAST
@@ -299,25 +356,41 @@ static inline void fungespace_minimize_bounds(void)
 	if (fspace.boundsexact)
 		return;
 	/* Time for scanning.
-	 * * Scan inwards from each edge until we a non-zero count in a column.
-	 * * If we hit the other bound we stop, lets lock up in an infinite loop
-	 *   somewhere else instead of this routine.
+	 * * If difference is huge, (over 2^16 atm, see the define SIMPLEBOUNDS_MAX):
+	 *   * First try to do a sparse scan by iterating over all entries in the hash array.
+	 *   * Then scan static space and grow the previously calculated bounds if needed.
+	 * * If the difference is smaller:
+	 *   * Scan inwards from each edge until we a non-zero count in a column.
+	 *   * If we hit the other bound we stop, lets lock up in an infinite loop
+	 *     in the wrapping code instead of here!
 	 */
-	for (; minx < maxx; minx++) {
-		if (get_count_col(minx) != 0)
-			break;
+	if ((maxx-minx) > SIMPLEBOUNDS_MAX) {
+		largemodel_minimise(&maxx, &minx, fspace.col_count,
+		                    cfun_static_use_count_col,
+		                    FUNGESPACE_STATIC_X, FUNGESPACE_STATIC_OFFSET_X);
+	} else {
+		for (; minx < maxx; minx++) {
+			if (get_count_col(minx) != 0)
+				break;
+		}
+		for (; maxx > minx; maxx--) {
+			if (get_count_col(maxx) != 0)
+				break;
+		}
 	}
-	for (; maxx > minx; maxx--) {
-		if (get_count_col(maxx) != 0)
-			break;
-	}
-	for (; miny < maxy; miny++) {
-		if (get_count_row(miny) != 0)
-			break;
-	}
-	for (; maxy > miny; maxy--) {
-		if (get_count_row(maxy) != 0)
-			break;
+	if ((maxy-miny) > SIMPLEBOUNDS_MAX) {
+		largemodel_minimise(&maxy, &miny, fspace.row_count,
+		                    cfun_static_use_count_row,
+		                    FUNGESPACE_STATIC_Y, FUNGESPACE_STATIC_OFFSET_Y);
+	} else {
+		for (; miny < maxy; miny++) {
+			if (get_count_row(miny) != 0)
+				break;
+		}
+		for (; maxy > miny; maxy--) {
+			if (get_count_row(maxy) != 0)
+				break;
+		}
 	}
 	fspace.topLeftCorner.x = minx;
 	fspace.topLeftCorner.y = miny;
@@ -619,7 +692,10 @@ FUNGE_ATTR_FAST void
 fungespace_wrap(funge_vector * restrict position,
                 const funge_vector * restrict delta)
 {
-	fungespace_minimize_bounds();
+#ifdef CFUN_EXACT_BOUNDS
+	if (!fspace.boundsexact && (BOUNDS_TOO_LARGE(x) || BOUNDS_TOO_LARGE(y)))
+		fungespace_minimize_bounds();
+#endif
 	if (!fungespace_in_range(position)) {
 		// Quick and dirty if cardinal.
 		if (FUNGE_LIKELY(fspace_vector_is_cardinal(delta))) {
