@@ -731,19 +731,51 @@ fungespace_wrap(funge_vector * restrict position,
 #ifndef NDEBUG
 // For use with call in gdb
 void fungespace_dump(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
+void fungespace_dump_sparse(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 void fungespace_clearstatic(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
 void fungespace_dump(void)
 {
 	if (!fspace.entries)
 		return;
-	fprintf(stderr, "Fungespace follows:\n");
+	fputs("Fungespace follows:\n", stderr);
 	for (funge_cell y = 0; y <= fspace.bottomRightCorner.y; y++) {
 		for (funge_cell x = 0; x <= fspace.bottomRightCorner.x; x++)
 			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
 		fprintf(stderr, "\n");
 	}
 	fputs("\n", stderr);
+}
+
+void fungespace_dump_sparse(void)
+{
+	if (!fspace.entries)
+		return;
+	fputs("Sparse Fungespace follows:\n", stderr);
+	fputs("(static\n", stderr);
+	for (funge_cell x = -FUNGESPACE_STATIC_OFFSET_X;
+	     x < FUNGESPACE_STATIC_X - FUNGESPACE_STATIC_OFFSET_X;
+	     x++)
+		for (funge_cell y = -FUNGESPACE_STATIC_OFFSET_Y;
+		     y < FUNGESPACE_STATIC_Y - FUNGESPACE_STATIC_OFFSET_Y;
+		     y++) {
+			funge_cell value = fungespace_get(vector_create_ref(x, y));
+			if (value != ' ')
+				fprintf(stderr, "  ((%"FUNGECELLPRI" %"FUNGECELLPRI") %"FUNGECELLPRI" \"%c\")\n", x, y, value, (char)value);
+		}
+	fputs(")\n", stderr);
+	fputs("(hash\n", stderr);
+	// Sparse scan over hash array.
+	{
+		ght_fspace_iterator_t iterator;
+		const funge_vector *p_key;
+		funge_cell *p;
+		for (p = ght_fspace_first(fspace.entries, &iterator, &p_key);
+		     p; p = ght_fspace_next(&iterator, &p_key)) {
+			fprintf(stderr, "  ((%"FUNGECELLPRI" %"FUNGECELLPRI") %"FUNGECELLPRI" \"%c\")\n", p_key->x, p_key->y, *p, (char)*p);
+		}
+	}
+	fputs(")\n", stderr);
 }
 
 void fungespace_clearstatic(void)
