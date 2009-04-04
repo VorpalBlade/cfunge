@@ -362,24 +362,29 @@ static inline void fungespace_count(bool isset, const funge_vector * restrict po
 	funge_cell y = position->y;
 	funge_unsigned_cell sx = (funge_unsigned_cell)x + FUNGESPACE_STATIC_OFFSET_X;
 	funge_unsigned_cell sy = (funge_unsigned_cell)y + FUNGESPACE_STATIC_OFFSET_Y;
-	if (FUNGESPACE_RANGE_CHECK(sx, sy)) {
-		if (isset) {
-			cfun_static_use_count_row[sy]++;
+	if (sx < FUNGESPACE_STATIC_X) {
+		if (isset)
 			cfun_static_use_count_col[sx]++;
-		} else {
-			cfun_static_use_count_row[sy]--;
+		else
 			cfun_static_use_count_col[sx]--;
-		}
 	} else {
 		funge_unsigned_cell *prevcol = ght_fspacecount_get(fspace.col_count, &x);
-		funge_unsigned_cell *prevrow = ght_fspacecount_get(fspace.row_count, &y);
-		if (isset) {
+		if (isset)
 			FSPACE_COUNT_OP_OR_NEW(prevcol, ++, fspace.col_count, x, 1);
-			FSPACE_COUNT_OP_OR_NEW(prevrow, ++, fspace.row_count, y, 1);
-		} else {
+		else
 			FSPACE_COUNT_OP_OR_NEW(prevcol, --, fspace.col_count, x, 0);
+	}
+	if (sy < FUNGESPACE_STATIC_Y) {
+		if (isset)
+			cfun_static_use_count_row[sy]++;
+		else
+			cfun_static_use_count_row[sy]--;
+	} else {
+		funge_unsigned_cell *prevrow = ght_fspacecount_get(fspace.row_count, &y);
+		if (isset)
+			FSPACE_COUNT_OP_OR_NEW(prevrow, ++, fspace.row_count, y, 1);
+		else
 			FSPACE_COUNT_OP_OR_NEW(prevrow, --, fspace.row_count, y, 0);
-		}
 	}
 	if (!isset)
 		fungespace_check_pos(x, y);
