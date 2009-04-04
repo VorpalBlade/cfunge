@@ -63,10 +63,10 @@ Notes:
 
 // I hate the preprocessor
 #define CF_MEMPOOL_FUNC_INTERN(m_funcname, m_variant) \
-  cf_mempool_ ## m_variant ## _ ## m_funcname
+	cf_mempool_ ## m_variant ## _ ## m_funcname
 
 #define CF_MEMPOOL_FUNC(m_funcname, m_variant) \
-  CF_MEMPOOL_FUNC_INTERN(m_funcname, m_variant)
+	CF_MEMPOOL_FUNC_INTERN(m_funcname, m_variant)
 
 #define CF_MEMPOOL_VARIANT  fspace
 #define CF_MEMPOOL_DATATYPE struct s_fspace_hash_entry

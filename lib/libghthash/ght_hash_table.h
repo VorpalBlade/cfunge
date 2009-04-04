@@ -99,13 +99,13 @@ typedef uint32_t ght_uint32_t;
 
 // I hate the preprocessor
 #define CF_GHT_NAME_INTERN(m_prefix, m_variant, m_name) \
-  m_prefix ## m_variant ## _ ## m_name
+	m_prefix ## m_variant ## _ ## m_name
 
 #define CF_GHT_NAME(m_variant, m_name) \
-  CF_GHT_NAME_INTERN(ght_, m_variant, m_name)
+	CF_GHT_NAME_INTERN(ght_, m_variant, m_name)
 
 #define CF_GHT_STRUCT(m_variant, m_name) \
-  CF_GHT_NAME_INTERN(s_, m_variant, m_name)
+	CF_GHT_NAME_INTERN(s_, m_variant, m_name)
 
 /*
  * CF_GHT_VAR - Variant name

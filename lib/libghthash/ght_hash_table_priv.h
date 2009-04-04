@@ -107,7 +107,8 @@ typedef struct CF_GHT_STRUCT(CF_GHT_VAR, hash_table) {
  *
  * @return a pointer to the hash table or NULL upon error.
  */
-CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, create) (size_t i_size) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, create)(size_t i_size);
 
 /**
  * Enable or disable automatic rehashing.
@@ -123,7 +124,9 @@ CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, create) (size_t i
  * @param b_rehash TRUE if rehashing should be used or FALSE if it
  *        should not be used.
  */
-void CF_GHT_NAME(CF_GHT_VAR, set_rehash) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht, bool b_rehash) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+void CF_GHT_NAME(CF_GHT_VAR, set_rehash)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+                                         bool b_rehash);
 
 #ifndef GHT_USE_MACROS
 /**
@@ -133,7 +136,7 @@ void CF_GHT_NAME(CF_GHT_VAR, set_rehash) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) 
  *
  * @return the number of items in the hash table.
  */
-size_t CF_GHT_NAME(CF_GHT_VAR, size) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht);
+size_t CF_GHT_NAME(CF_GHT_VAR, size)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht);
 
 /**
  * Get the table size (the number of buckets) of the hash table.
@@ -142,7 +145,7 @@ size_t CF_GHT_NAME(CF_GHT_VAR, size) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_h
  *
  * @return the number of buckets in the hash table.
  */
-size_t CF_GHT_NAME(CF_GHT_VAR, table_size) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht);
+size_t CF_GHT_NAME(CF_GHT_VAR, table_size)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht);
 #endif
 
 /**
@@ -179,9 +182,11 @@ size_t CF_GHT_NAME(CF_GHT_VAR, table_size) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t
  *
  * @return 0 if the element could be inserted, -1 otherwise.
  */
-int CF_GHT_NAME(CF_GHT_VAR, insert) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-                                     CF_GHT_DATA p_entry_data,
-                                     const CF_GHT_KEY * restrict p_key_data) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+int CF_GHT_NAME(CF_GHT_VAR, insert)(
+        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+        CF_GHT_DATA p_entry_data,
+        const CF_GHT_KEY * restrict p_key_data);
 
 /**
  * Replace an entry in the hash table. This function will return an
@@ -196,9 +201,11 @@ int CF_GHT_NAME(CF_GHT_VAR, insert) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * res
  *
  * @return a pointer to the <I>old</I> value or NULL if the operation failed.
  */
-CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-                                              CF_GHT_DATA p_entry_data,
-                                              const CF_GHT_KEY * restrict p_key_data) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace)(
+        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+        CF_GHT_DATA p_entry_data,
+        const CF_GHT_KEY * restrict p_key_data);
 
 
 /**
@@ -211,8 +218,9 @@ CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace) (CF_GHT_NAME(CF_GHT_VAR, hash_table
  *
  * @return a pointer to the found entry or NULL if no entry could be found.
  */
-CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-                                           const CF_GHT_KEY * restrict p_key_data) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+        const CF_GHT_KEY * restrict p_key_data);
 
 /**
  * Remove an entry from the hash table. The entry is removed from the
@@ -224,8 +232,10 @@ CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get) (CF_GHT_NAME(CF_GHT_VAR, hash_table_t)
  *
  * @return a pointer to the removed entry or NULL if the entry could be found.
  */
-CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-                                            const CF_GHT_KEY * restrict p_key_data) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(
+        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+        const CF_GHT_KEY * restrict p_key_data);
 
 /**
  * Return the first entry in the hash table. This function should be
@@ -268,8 +278,10 @@ CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t
  *
  * @see ght_next()
  */
-void *CF_GHT_NAME(CF_GHT_VAR, first)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht, CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
-                                     const CF_GHT_KEY **pp_key) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+void *CF_GHT_NAME(CF_GHT_VAR, first)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+                                     CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+                                     const CF_GHT_KEY **pp_key);
 
 /**
  * Return the next entry in the hash table. This function should be
@@ -288,7 +300,10 @@ void *CF_GHT_NAME(CF_GHT_VAR, first)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht
  *
  * @see ght_first()
  */
-void *CF_GHT_NAME(CF_GHT_VAR, next)(CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator, const CF_GHT_KEY **pp_key) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+void *CF_GHT_NAME(CF_GHT_VAR, next)(
+        CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+        const CF_GHT_KEY **pp_key);
 
 /**
  * Rehash the hash table.
@@ -306,7 +321,9 @@ void *CF_GHT_NAME(CF_GHT_VAR, next)(CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_itera
  *
  * @see ght_create()
  */
-void CF_GHT_NAME(CF_GHT_VAR, rehash)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht, size_t i_size) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+void CF_GHT_NAME(CF_GHT_VAR, rehash)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+                                     size_t i_size);
 
 /**
  * Free the hash table. ght_finalize() should typically be called
@@ -330,7 +347,8 @@ void CF_GHT_NAME(CF_GHT_VAR, rehash)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht
  *
  * @param p_ht the table to remove.
  */
-void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht);
 
 /* exported hash functions */
 
@@ -346,7 +364,8 @@ void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_
  * @see ght_fn_hash_t
  * @see ght_rotating_hash(), ght_crc_hash()
  */
-ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, one_at_a_time_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, one_at_a_time_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key);
 
 /**
  * CRC32 hash. CRC32 hash is a good hash function. This came from Dru
@@ -358,10 +377,12 @@ ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, one_at_a_time_hash)(const CF_GHT_NAME(CF_GH
  * @see ght_fn_hash_t
  * @see ght_one_at_a_time_hash(), ght_rotating_hash()
  */
-ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, crc_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, crc_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key);
 
 // Fast hash, sometimes better than CRC, sometimes worse.
-ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, murmur_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key) FUNGE_ATTR_FAST;
+FUNGE_ATTR_FAST
+ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, murmur_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key);
 
 #ifdef USE_PROFILING
 /**

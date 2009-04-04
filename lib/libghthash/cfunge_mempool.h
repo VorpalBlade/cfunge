@@ -40,13 +40,13 @@
 #include "ght_hash_table.h"
 
 #define CF_MEMPOOL_FUNCPROT(m_variant, m_rettype, m_funcname, m_args, m_attrs) \
-  m_rettype cf_mempool_ ## m_variant ## _ ## m_funcname m_args
+	m_rettype cf_mempool_ ## m_variant ## _ ## m_funcname m_args
 
 #define CF_MEMPOOL_DECLARE_FUNCS(m_variant, m_datatype) \
-  CF_MEMPOOL_FUNCPROT(m_variant, bool,         setup,    (void), FUNGE_ATTR_FAST); \
-  CF_MEMPOOL_FUNCPROT(m_variant, void,         teardown, (void), FUNGE_ATTR_FAST); \
-  CF_MEMPOOL_FUNCPROT(m_variant, m_datatype *, alloc,    (void), FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC); \
-  CF_MEMPOOL_FUNCPROT(m_variant, void,         free,     (m_datatype *ptr), FUNGE_ATTR_FAST);
+	CF_MEMPOOL_FUNCPROT(m_variant, bool,         setup,    (void), FUNGE_ATTR_FAST); \
+	CF_MEMPOOL_FUNCPROT(m_variant, void,         teardown, (void), FUNGE_ATTR_FAST); \
+	CF_MEMPOOL_FUNCPROT(m_variant, m_datatype *, alloc,    (void), FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC); \
+	CF_MEMPOOL_FUNCPROT(m_variant, void,         free,     (m_datatype *ptr), FUNGE_ATTR_FAST);
 
 
 #include <stdbool.h>
@@ -92,9 +92,9 @@ CF_MEMPOOL_DECLARE_FUNCS(fspacecount, struct s_fspacecount_hash_entry)
 
 #ifdef CF_GHT_INTERNAL
 #  define CF_MEMPOOL_FUNC_INTERN(m_variant, m_funcname) \
-     cf_mempool_ ## m_variant ## _ ## m_funcname
+	cf_mempool_ ## m_variant ## _ ## m_funcname
 #  define CF_MEMPOOL_FUNC(m_variant, m_funcname) \
-     CF_MEMPOOL_FUNC_INTERN(m_variant, m_funcname)
+	CF_MEMPOOL_FUNC_INTERN(m_variant, m_funcname)
 #endif
 
 #endif

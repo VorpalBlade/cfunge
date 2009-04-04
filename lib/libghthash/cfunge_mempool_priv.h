@@ -68,26 +68,26 @@ static memory_block *free_list = NULL;
 
 // Forward decls:
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT) (pool_header *pool);
+static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT)(pool_header *pool);
 
 FUNGE_ATTR_FAST
-static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT) (pool_header *pool);
+static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(pool_header *pool);
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline bool CF_MEMPOOL_FUNC(add_mempool, CF_MEMPOOL_VARIANT) (void);
+static inline bool CF_MEMPOOL_FUNC(add_mempool, CF_MEMPOOL_VARIANT)(void);
 
 FUNGE_ATTR_FAST
-static inline void CF_MEMPOOL_FUNC(freelist_add, CF_MEMPOOL_VARIANT) (memory_block *memblock);
+static inline void CF_MEMPOOL_FUNC(freelist_add, CF_MEMPOOL_VARIANT)(memory_block *memblock);
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
-static inline memory_block *CF_MEMPOOL_FUNC(freelist_get, CF_MEMPOOL_VARIANT) (void);
+static inline memory_block *CF_MEMPOOL_FUNC(freelist_get, CF_MEMPOOL_VARIANT)(void);
 
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_MALLOC
-static inline memory_block *CF_MEMPOOL_FUNC(get_next_free, CF_MEMPOOL_VARIANT) (void);
+static inline memory_block *CF_MEMPOOL_FUNC(get_next_free, CF_MEMPOOL_VARIANT)(void);
 
 
 FUNGE_ATTR_FAST
-bool CF_MEMPOOL_FUNC(setup, CF_MEMPOOL_VARIANT) (void)
+bool CF_MEMPOOL_FUNC(setup, CF_MEMPOOL_VARIANT)(void)
 {
 	assert(pools == NULL);
 	pools = calloc_nogc(1, sizeof(pool_header));
@@ -97,17 +97,17 @@ bool CF_MEMPOOL_FUNC(setup, CF_MEMPOOL_VARIANT) (void)
 	// However valgrind will give false errors for freelist otherwise.
 	VALGRIND_CREATE_MEMPOOL(pools, 0, true);
 	pools_size = 1;
-	return CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT) (pools);
+	return CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT)(pools);
 }
 
 
 FUNGE_ATTR_FAST
-void CF_MEMPOOL_FUNC(teardown, CF_MEMPOOL_VARIANT) (void)
+void CF_MEMPOOL_FUNC(teardown, CF_MEMPOOL_VARIANT)(void)
 {
 	if (!pools)
 		return;
 	for (size_t i = 0; i < pools_size; i++) {
-		CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT) (&pools[i]);
+		CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(&pools[i]);
 	}
 	VALGRIND_DESTROY_MEMPOOL(pools);
 	free_nogc(pools);
@@ -115,7 +115,7 @@ void CF_MEMPOOL_FUNC(teardown, CF_MEMPOOL_VARIANT) (void)
 
 
 FUNGE_ATTR_FAST
-CF_MEMPOOL_DATATYPE * CF_MEMPOOL_FUNC(alloc, CF_MEMPOOL_VARIANT) (void)
+CF_MEMPOOL_DATATYPE * CF_MEMPOOL_FUNC(alloc, CF_MEMPOOL_VARIANT)(void)
 {
 	memory_block *block = CF_MEMPOOL_FUNC(freelist_get, CF_MEMPOOL_VARIANT)();
 	if (!block)
@@ -127,7 +127,7 @@ CF_MEMPOOL_DATATYPE * CF_MEMPOOL_FUNC(alloc, CF_MEMPOOL_VARIANT) (void)
 
 
 FUNGE_ATTR_FAST
-void CF_MEMPOOL_FUNC(free, CF_MEMPOOL_VARIANT) (CF_MEMPOOL_DATATYPE *ptr)
+void CF_MEMPOOL_FUNC(free, CF_MEMPOOL_VARIANT)(CF_MEMPOOL_DATATYPE *ptr)
 {
 	CF_MEMPOOL_FUNC(freelist_add, CF_MEMPOOL_VARIANT)((memory_block*)ptr);
 }
@@ -137,7 +137,7 @@ void CF_MEMPOOL_FUNC(free, CF_MEMPOOL_VARIANT) (CF_MEMPOOL_DATATYPE *ptr)
 
 /// Setup a mempool, allocating it's block.
 FUNGE_ATTR_FAST
-static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT) (pool_header *pool)
+static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT)(pool_header *pool)
 {
 	pool->base = malloc_nogc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
 	if (!pool->base)
@@ -149,7 +149,7 @@ static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT) (pool
 
 /// Tear down a mempool, freeing it's block.
 FUNGE_ATTR_FAST
-static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT) (pool_header *pool)
+static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(pool_header *pool)
 {
 	if (!pool)
 		return;
@@ -178,7 +178,7 @@ static inline bool CF_MEMPOOL_FUNC(add_mempool, CF_MEMPOOL_VARIANT)(void)
 
 /// add_mempool a block to the list of free blocks.
 FUNGE_ATTR_FAST
-static inline void CF_MEMPOOL_FUNC(freelist_add, CF_MEMPOOL_VARIANT) (memory_block *memblock)
+static inline void CF_MEMPOOL_FUNC(freelist_add, CF_MEMPOOL_VARIANT)(memory_block *memblock)
 {
 	memblock->next_free = free_list;
 	free_list = memblock;

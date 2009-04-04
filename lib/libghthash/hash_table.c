@@ -48,10 +48,10 @@
 #define CF_GHT_DATA funge_cell
 #define CF_GHT_COMPAREKEYS(m_a, m_b) (((m_a)->p_key.x == (m_b)->p_key.x) && ((m_a)->p_key.y == (m_b)->p_key.y))
 #define CF_GHT_COPYKEY(m_target, m_source) \
-  do { \
-    (m_target).x = (m_source)->x; \
-    (m_target).y = (m_source)->y; \
-  } while (0)
+	do { \
+		(m_target).x = (m_source)->x; \
+		(m_target).y = (m_source)->y; \
+	} while (0)
 
 #include "hash_table_priv.h"
 
@@ -67,7 +67,7 @@
 #  define CF_GHT_DATA funge_unsigned_cell
 #  define CF_GHT_COMPAREKEYS(m_a, m_b) ((m_a)->p_key == (m_b)->p_key)
 #  define CF_GHT_COPYKEY(m_target, m_source) \
-    do { (m_target) = *(m_source); } while (0)
+	do { (m_target) = *(m_source); } while (0)
 
 #  include "hash_table_priv.h"
 #endif
