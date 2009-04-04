@@ -236,15 +236,15 @@ CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t
  * an iteration is only safe for the <I>current</I> entry or an entry
  * which has <I>already been iterated over</I>.
  *
- * The use of the CF_GHT_NAME(CF_GHT_VAR, iterator_t) allows for several concurrent
- * iterations, where you would use one CF_GHT_NAME(CF_GHT_VAR, iterator_t) for each
+ * The use of the ght_foo_iterator_t allows for several concurrent
+ * iterations, where you would use one ght_foo_iterator_t for each
  * iteration. In threaded environments, you should still lock access
  * to the hash table for insertion and removal.
  *
  * A typical example might look as follows:
  * <PRE>
- * CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_table;
- * CF_GHT_NAME(CF_GHT_VAR, iterator_t) iterator;
+ * ght_foo_hash_table_t *p_table;
+ * ght_foo_iterator_t iterator;
  * void *p_key;
  * void *p_e;
  *
