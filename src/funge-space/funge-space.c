@@ -727,6 +727,7 @@ fungespace_wrap(funge_vector * restrict position,
 #ifndef NDEBUG
 // For use with call in gdb
 void fungespace_dump(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
+void fungespace_clearstatic(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
 void fungespace_dump(void)
 {
@@ -740,6 +741,18 @@ void fungespace_dump(void)
 	}
 	fputs("\n", stderr);
 }
+
+void fungespace_clearstatic(void)
+{
+	for (funge_cell x = -FUNGESPACE_STATIC_OFFSET_X;
+	     x < FUNGESPACE_STATIC_X-FUNGESPACE_STATIC_OFFSET_X;
+	     x++)
+		for (funge_cell y = -FUNGESPACE_STATIC_OFFSET_Y;
+		     y < FUNGESPACE_STATIC_Y-FUNGESPACE_STATIC_OFFSET_Y;
+		     y++)
+		fungespace_set(' ', vector_create_ref(x,y));
+}
+
 #endif
 
 /******************
