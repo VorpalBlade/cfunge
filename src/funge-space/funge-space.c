@@ -60,12 +60,12 @@ typedef struct fungeSpace {
 	funge_vector                  topLeftCorner;
 	funge_vector                  bottomRightCorner;
 	/// And this is the main hash table.
-	ght_fspace_hash_table_t      *entries;
+	ght_fspace_hash_table_t      * restrict entries;
 #ifdef CFUN_EXACT_BOUNDS
 	/// Hash tables for cell count in columns.
-	ght_fspacecount_hash_table_t *col_count;
+	ght_fspacecount_hash_table_t * restrict col_count;
 	/// Hash tables for cell count in rows.
-	ght_fspacecount_hash_table_t *row_count;
+	ght_fspacecount_hash_table_t * restrict row_count;
 	/// Are the bounds stored currently exact already?
 	bool                          boundsexact;
 #endif
@@ -349,12 +349,15 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 FUNGE_ATTR_FAST
 static inline void fungespace_minimize_bounds(void)
 {
-	funge_cell minx = fspace.topLeftCorner.x;
-	funge_cell miny = fspace.topLeftCorner.y;
-	funge_cell maxx = fspace.bottomRightCorner.x;
-	funge_cell maxy = fspace.bottomRightCorner.y;
+	funge_cell minx, miny, maxx, maxy;
 	if (fspace.boundsexact)
 		return;
+
+	minx = fspace.topLeftCorner.x;
+	miny = fspace.topLeftCorner.y;
+	maxx = fspace.bottomRightCorner.x;
+	maxy = fspace.bottomRightCorner.y;
+
 	/* Time for scanning.
 	 * * If difference is huge, (over 2^16 atm, see the define SIMPLEBOUNDS_MAX):
 	 *   * First try to do a sparse scan by iterating over all entries in the hash array.
@@ -364,7 +367,7 @@ static inline void fungespace_minimize_bounds(void)
 	 *   * If we hit the other bound we stop, lets lock up in an infinite loop
 	 *     in the wrapping code instead of here!
 	 */
-	if ((maxx -minx) > SIMPLEBOUNDS_MAX) {
+	if (FUNGE_UNLIKELY((maxx - minx) > SIMPLEBOUNDS_MAX)) {
 		largemodel_minimise(&maxx, &minx, fspace.col_count,
 		                    cfun_static_use_count_col,
 		                    FUNGESPACE_STATIC_X, FUNGESPACE_STATIC_OFFSET_X);
@@ -378,7 +381,7 @@ static inline void fungespace_minimize_bounds(void)
 				break;
 		}
 	}
-	if ((maxy - miny) > SIMPLEBOUNDS_MAX) {
+	if (FUNGE_UNLIKELY((maxy - miny) > SIMPLEBOUNDS_MAX)) {
 		largemodel_minimise(&maxy, &miny, fspace.row_count,
 		                    cfun_static_use_count_row,
 		                    FUNGESPACE_STATIC_Y, FUNGESPACE_STATIC_OFFSET_Y);
@@ -577,7 +580,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 		if (!prev) {
 			if (value == ' ')
 				return;
-			if (ght_fspace_insert(fspace.entries, value, position) == -1) {
+			if (FUNGE_UNLIKELY(ght_fspace_insert(fspace.entries, value, position) == -1)) {
 				fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
 				abort();
 			}
@@ -599,7 +602,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 			if ((tmp = (funge_cell*)ght_fspace_get(fspace.entries, position)) != NULL) {
 				*tmp = value;
 			} else {
-				if (ght_fspace_insert(fspace.entries, value, position) == -1) {
+				if (FUNGE_UNLIKELY(ght_fspace_insert(fspace.entries, value, position) == -1)) {
 					fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
 					abort();
 				}
@@ -693,7 +696,8 @@ fungespace_wrap(funge_vector * restrict position,
                 const funge_vector * restrict delta)
 {
 #ifdef CFUN_EXACT_BOUNDS
-	if (!fspace.boundsexact && (BOUNDS_TOO_LARGE(x) || BOUNDS_TOO_LARGE(y)))
+	if (FUNGE_UNLIKELY(!fspace.boundsexact
+	                   && (BOUNDS_TOO_LARGE(x) || BOUNDS_TOO_LARGE(y))))
 		fungespace_minimize_bounds();
 #endif
 	if (!fungespace_in_range(position)) {
@@ -744,6 +748,8 @@ void fungespace_dump(void)
 
 void fungespace_clearstatic(void)
 {
+	if (!fspace.entries)
+		return;
 	for (funge_cell x = -FUNGESPACE_STATIC_OFFSET_X;
 	     x < FUNGESPACE_STATIC_X - FUNGESPACE_STATIC_OFFSET_X;
 	     x++)
