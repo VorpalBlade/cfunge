@@ -127,7 +127,7 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
  * Check fspace.boundsexact first!
  */
 #  define BOUNDS_TOO_LARGE(m_dim) \
-     ((fspace.bottomRightCorner.m_dim - fspace.topLeftCorner.m_dim) > SIMPLEBOUNDS_MAX)
+	((fspace.bottomRightCorner.m_dim - fspace.topLeftCorner.m_dim) > SIMPLEBOUNDS_MAX)
 #endif
 
 #undef FSPACE_CREATE_SSE
@@ -207,9 +207,9 @@ cf_fungespace_create_init_loop:\n\
 	cmpq    %%rdx,%%rax\n\
 	jne     cf_fungespace_create_init_loop\n\
 	sfence"
-: [space] "=o"(cfun_static_space)
-: [mask]  "m"(fspace_vector_init)
-: "rax", "rdx", "xmm0");
+	: [space] "=o"(cfun_static_space)
+	: [mask]  "m"(fspace_vector_init)
+	: "rax", "rdx", "xmm0");
 #  else
 	__asm__ volatile ("\
 	xor     %%eax,%%eax\n\
@@ -336,9 +336,9 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 		}
 	}
 	// Now scan static array.
-	for (size_t i=0; i<sarray_len;i++)
+	for (size_t i = 0; i < sarray_len;i++)
 		if (sarray[i] > 0) {
-			funge_cell value = i+sarray_off;
+			funge_cell value = i + sarray_off;
 			if (max_h < value) max_h = value;
 			if (min_h > value) min_h = value;
 		}
@@ -364,7 +364,7 @@ static inline void fungespace_minimize_bounds(void)
 	 *   * If we hit the other bound we stop, lets lock up in an infinite loop
 	 *     in the wrapping code instead of here!
 	 */
-	if ((maxx-minx) > SIMPLEBOUNDS_MAX) {
+	if ((maxx -minx) > SIMPLEBOUNDS_MAX) {
 		largemodel_minimise(&maxx, &minx, fspace.col_count,
 		                    cfun_static_use_count_col,
 		                    FUNGESPACE_STATIC_X, FUNGESPACE_STATIC_OFFSET_X);
@@ -378,7 +378,7 @@ static inline void fungespace_minimize_bounds(void)
 				break;
 		}
 	}
-	if ((maxy-miny) > SIMPLEBOUNDS_MAX) {
+	if ((maxy - miny) > SIMPLEBOUNDS_MAX) {
 		largemodel_minimise(&maxy, &miny, fspace.row_count,
 		                    cfun_static_use_count_row,
 		                    FUNGESPACE_STATIC_Y, FUNGESPACE_STATIC_OFFSET_Y);
@@ -745,12 +745,12 @@ void fungespace_dump(void)
 void fungespace_clearstatic(void)
 {
 	for (funge_cell x = -FUNGESPACE_STATIC_OFFSET_X;
-	     x < FUNGESPACE_STATIC_X-FUNGESPACE_STATIC_OFFSET_X;
+	     x < FUNGESPACE_STATIC_X - FUNGESPACE_STATIC_OFFSET_X;
 	     x++)
 		for (funge_cell y = -FUNGESPACE_STATIC_OFFSET_Y;
-		     y < FUNGESPACE_STATIC_Y-FUNGESPACE_STATIC_OFFSET_Y;
+		     y < FUNGESPACE_STATIC_Y - FUNGESPACE_STATIC_OFFSET_Y;
 		     y++)
-		fungespace_set(' ', vector_create_ref(x,y));
+			fungespace_set(' ', vector_create_ref(x, y));
 }
 
 #endif
@@ -1069,8 +1069,8 @@ fungespace_save_to_file(const char         * restrict filename,
 			} while ((lastnewline >= 0) && (towrite[lastnewline] == '\n'));
 
 			if (lastnewline > 0) {
-				size_t retval = fwrite(towrite, sizeof(unsigned char), lastnewline+1, file);
-				if (retval != (size_t)lastnewline+1) {
+				size_t retval = fwrite(towrite, sizeof(unsigned char), lastnewline + 1, file);
+				if (retval != (size_t)lastnewline + 1) {
 					cf_free(towrite);
 					goto error;
 				}
