@@ -38,6 +38,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void run_sys_info(instructionPointer * ip);
 
 #ifndef NDEBUG
+FUNGE_ATTR_FAST
 void sysinfo_cleanup(void);
 #endif
 
