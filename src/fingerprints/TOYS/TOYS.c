@@ -169,7 +169,6 @@ static void finger_TOYS_fishhook(instructionPointer * ip)
 	else if (n < 0) {
 		for (funge_cell y = bounds.y; y <= (bounds.y + bounds.h); ++y)
 			fungespace_set(fungespace_get(vector_create_ref(ip->position.x, y)), vector_create_ref(ip->position.x, y + n));
-
 	} else if (n > 0) {
 		for (funge_cell y = (bounds.y + bounds.h); y >= bounds.y; --y)
 			fungespace_set(fungespace_get(vector_create_ref(ip->position.x, y)), vector_create_ref(ip->position.x, y + n));
