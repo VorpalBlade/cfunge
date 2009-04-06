@@ -338,7 +338,7 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 	// Now scan static array.
 	for (size_t i = 0; i < sarray_len;i++)
 		if (sarray[i] > 0) {
-			funge_cell value = i + sarray_off;
+			funge_cell value = i - sarray_off;
 			if (max_h < value) max_h = value;
 			if (min_h > value) min_h = value;
 		}
@@ -730,7 +730,10 @@ fungespace_wrap(funge_vector * restrict position,
 
 #ifndef NDEBUG
 // For use with call in gdb
-void fungespace_dump(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
+void fungespace_dump(void)        FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
+void fungespace_dumparea(funge_cell minx, funge_cell miny,
+                         funge_cell maxx, funge_cell maxy)
+                                  FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 void fungespace_dump_sparse(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 void fungespace_clearstatic(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
@@ -741,6 +744,20 @@ void fungespace_dump(void)
 	fputs("Fungespace follows:\n", stderr);
 	for (funge_cell y = 0; y <= fspace.bottomRightCorner.y; y++) {
 		for (funge_cell x = 0; x <= fspace.bottomRightCorner.x; x++)
+			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
+		fprintf(stderr, "\n");
+	}
+	fputs("\n", stderr);
+}
+
+void fungespace_dumparea(funge_cell minx, funge_cell miny,
+                         funge_cell maxx, funge_cell maxy)
+{
+	if (!fspace.entries)
+		return;
+	fputs("Fungespace follows:\n", stderr);
+	for (funge_cell y = miny; y <= maxy; y++) {
+		for (funge_cell x = minx; x <= maxx; x++)
 			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
 		fprintf(stderr, "\n");
 	}
