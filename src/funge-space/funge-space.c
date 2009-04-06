@@ -109,7 +109,7 @@ static funge_cell cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]
 #ifdef __GNUC__
 __asm__("cfun_static_space")
 #endif
-FUNGE_ATTR((aligned(16)))
+FUNGE_ATTR_ALIGNED(16)
 ;
 
 #ifdef CFUN_EXACT_BOUNDS
