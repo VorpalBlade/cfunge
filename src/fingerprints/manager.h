@@ -52,6 +52,7 @@ typedef struct s_fungeOpcodeStack {
 	/// Pointer to entries of the stack.
 	fingerprintOpcode *entries;
 } fungeOpcodeStack;
+/// @internal For internal use in core headers.
 #define fungeOpcodeStackDefined
 
 /**

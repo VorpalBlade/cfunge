@@ -73,6 +73,7 @@ typedef struct s_instructionPointer {
 	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
 	                                                    ///  We don't know what type here.
 } instructionPointer;
+/// @internal For internal use in core headers.
 #define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
