@@ -79,6 +79,8 @@ StringBuffer *stringbuffer_new(void);
  *
  * @param sb The string buffer to deallocate.
  *
+ * @param length The length of the string returned.
+ *
  * @return The result string; to free it, call <code>free()</code> on it.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
