@@ -238,11 +238,13 @@ FUNGE_ATTR_FAST static void push_request(funge_cell request, instructionPointer 
 		case si_stack_count: // Number of stacks on stack stack
 			stack_push(pushStack, (funge_cell)ip->stackstack->size);
 			break;
-		case si_stack_sizes: // Number of elements on all stacks
-			for (size_t i = 0; i < ip->stackstack->current; i++)
+		case si_stack_sizes: { // Number of elements on all stacks
+			const size_t stack_stack_count = ip->stackstack->current;
+			for (size_t i = 0; i < stack_stack_count; i++)
 				stack_push(pushStack, (funge_cell)ip->stackstack->stacks[i]->top);
 			stack_push(pushStack, (funge_cell)TOSSSize);
 			break;
+		}
 		case si_argc: // Command line arguments (count) (109 specific)
 			stack_push(pushStack, fungeargc);
 			break;
