@@ -251,7 +251,7 @@ static Boolean checkExpand(plist * restrict pl)
 		return True;
 
 	pl->space *= 2;
-	newlist = (void **) allocate(pl->space * sizeof(void *));
+	newlist = (void ** restrict) allocate(pl->space * sizeof(void *));
 	if (newlist == NULL)
 		return False;
 	// This is to allow vectorising.
