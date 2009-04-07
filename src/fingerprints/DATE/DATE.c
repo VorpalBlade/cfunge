@@ -34,15 +34,19 @@
 #  define roundl round
 #endif
 
+typedef int_least64_t fprint_DATE_int;
+
 typedef struct ymd {
-	funge_cell year;
-	funge_cell month;
-	funge_cell day;
+	fprint_DATE_int year;
+	fprint_DATE_int month;
+	fprint_DATE_int day;
 } ymd;
 
+FUNGE_ATTR_FAST
 static int month_length(const ymd * restrict date);
 
 /// Pop a struct ymd.
+FUNGE_ATTR_FAST
 static bool pop_ymd(instructionPointer * restrict ip, ymd * restrict result)
 {
 	result->day = stack_pop(ip->stack);
@@ -62,16 +66,18 @@ static bool pop_ymd(instructionPointer * restrict ip, ymd * restrict result)
 }
 
 /// Push a struct ymd.
+FUNGE_ATTR_FAST
 static void push_ymd(instructionPointer * restrict ip, const ymd * restrict result)
 {
-	stack_push(ip->stack, result->year);
-	stack_push(ip->stack, result->month);
-	stack_push(ip->stack, result->day);
+	stack_push(ip->stack, (funge_cell)result->year);
+	stack_push(ip->stack, (funge_cell)result->month);
+	stack_push(ip->stack, (funge_cell)result->day);
 
 }
 
 /// Check if year is a leap year.
-static bool is_leap_year(funge_cell y)
+FUNGE_ATTR_FAST
+static bool is_leap_year(fprint_DATE_int y)
 {
 	// Handle year 0
 	if (y < 0) y++;
@@ -87,6 +93,7 @@ static bool is_leap_year(funge_cell y)
 
 /// Compute Length of the month for the given year.
 /// @note This funtion ignores day
+FUNGE_ATTR_FAST
 static int month_length(const ymd * restrict date)
 {
 	switch (date->month) {
@@ -107,37 +114,39 @@ static int month_length(const ymd * restrict date)
 	}
 }
 
-static funge_cell ymd_to_julian(const ymd * restrict date)
+FUNGE_ATTR_FAST
+static fprint_DATE_int ymd_to_julian(const ymd * restrict date)
 {
 	// Based on: http://en.wikipedia.org/wiki/Julian_day#Calculation
-	funge_cell Y = date->year;
+	fprint_DATE_int Y = date->year;
 	// Handle year 0
 	if (Y < 0)
 		Y++;
 	{
-		long double a = floorl((14 - date->month) / 12.0);
-		long double y = Y + 4800 - a;
-		long double m = date->month + 12 * a - 3;
-		long double jdn = date->day + floorl((153 * m + 2)/5.0) + 365 * y
-		                + floorl(y/4.0) - floorl(y/100.0) + floorl(y/400) - 32045;
+		fprint_DATE_int a = floorl((14 - date->month) / 12.0L);
+		fprint_DATE_int y = Y + 4800 - a;
+		fprint_DATE_int m = date->month + 12 * a - 3;
+		long double jdn = date->day + floorl((153 * m + 2)/5.0L) + 365 * y
+		                + floorl(y/4.0L) - floorl(y/100.0L) + floorl(y/400.0L) - 32045;
 		return roundl(jdn);
 	}
 }
 
-static void julian_to_ymd(ymd * restrict result, funge_cell date)
+FUNGE_ATTR_FAST
+static void julian_to_ymd(ymd * restrict result, fprint_DATE_int date)
 {
 	// Based on: http://www.hermetic.ch/cal_stud/jdn.htm#comp
 	// We need floorl() here, not integer rounding, since we want to round
 	// downwards all the time, not towards 0.
-	int64_t l, n, i, j;
+	fprint_DATE_int l, n, i, j;
 	l = date + 68569;
-	n = floorl((4*l)/146097.0);
-	l -= floorl((146097*n+3)/4.0);
-	i = floorl((4000*(l+1))/1461001.0);
-	l = (int64_t)(l - floorl((1461*i)/4.0)+31);
-	j = floorl((80*l)/2447.0);
-	result->day = (funge_cell)(l - floorl((2447*j)/80.0));
-	l = floorl(j/11.0);
+	n = floorl((4*l)/146097.0L);
+	l -= floorl((146097*n+3)/4.0L);
+	i = floorl((4000*(l+1))/1461001.0L);
+	l = (int64_t)(l - floorl((1461*i)/4.0L)+31);
+	j = floorl((80*l)/2447.0L);
+	result->day = (fprint_DATE_int)(l - floorl((2447*j)/80.0L));
+	l = floorl(j/11.0L);
 	result->month = j + 2 - 12 * l;
 	result->year = 100 * (n - 49) + i + l;
 	// Handle year 0
@@ -147,12 +156,12 @@ static void julian_to_ymd(ymd * restrict result, funge_cell date)
 /// A - Add days to date
 static void finger_DATE_add_days(instructionPointer * ip)
 {
-	funge_cell days = stack_pop(ip->stack);
+	fprint_DATE_int days = stack_pop(ip->stack);
 	ymd date;
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		funge_cell jdn = ymd_to_julian(&date);
+		fprint_DATE_int jdn = ymd_to_julian(&date);
 		jdn += days;
 		julian_to_ymd(&date, jdn);
 		push_ymd(ip, &date);
@@ -162,7 +171,7 @@ static void finger_DATE_add_days(instructionPointer * ip)
 /// C - Convert Julian day to calendar date
 static void finger_DATE_jdn_to_ymd(instructionPointer * ip)
 {
-	funge_cell date = stack_pop(ip->stack);
+	fprint_DATE_int date = stack_pop(ip->stack);
 	ymd result;
 	julian_to_ymd(&result, date);
 	push_ymd(ip, &result);
@@ -177,9 +186,9 @@ static void finger_DATE_day_diff(instructionPointer * ip)
 	if (!pop_ymd(ip, &b))
 		return;
 	{
-		funge_cell a_days = ymd_to_julian(&a);
-		funge_cell b_days = ymd_to_julian(&b);
-		stack_push(ip->stack, b_days - a_days);
+		fprint_DATE_int a_days = ymd_to_julian(&a);
+		fprint_DATE_int b_days = ymd_to_julian(&b);
+		stack_push(ip->stack, (funge_cell)(b_days - a_days));
 	}
 }
 
@@ -189,7 +198,7 @@ static void finger_DATE_ymd_to_jdn(instructionPointer * ip)
 	ymd date;
 	if (!pop_ymd(ip, &date))
 		return;
-	stack_push(ip->stack, ymd_to_julian(&date));
+	stack_push(ip->stack, (funge_cell)ymd_to_julian(&date));
 }
 
 /// T - Year/day-of-year to full date
@@ -227,8 +236,8 @@ static void finger_DATE_week_day(instructionPointer * ip)
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		funge_cell jdn = ymd_to_julian(&date);
-		stack_push(ip->stack, jdn % 7);
+		fprint_DATE_int jdn = ymd_to_julian(&date);
+		stack_push(ip->stack, (funge_cell)(jdn % 7));
 	}
 }
 
@@ -239,9 +248,9 @@ static void finger_DATE_year_day(instructionPointer * ip)
 	if (!pop_ymd(ip, &date))
 		return;
 	{
-		funge_cell jdn = ymd_to_julian(&date);
-		funge_cell jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1 });
-		stack_push(ip->stack, jdn - jdn_start);
+		fprint_DATE_int jdn = ymd_to_julian(&date);
+		fprint_DATE_int jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1 });
+		stack_push(ip->stack, (funge_cell)(jdn - jdn_start));
 	}
 }
 
