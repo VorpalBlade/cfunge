@@ -1,4 +1,4 @@
-v > "CFER oN" >:#,_@             ; This program tests invalid D in REFC ;
+v >0a"CFER oN" >:#,_@            ; This program tests invalid D in REFC ;
 >#^"CFER"4(nv
 v           <
 >1. #v 0D  "DAB" >:#,_  @        ; Derefence 0 ;
