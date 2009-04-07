@@ -243,44 +243,58 @@ if (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(Wall                         -Wall)
 	CFUNGE_CHECK_CFLAG(Wextra                       -Wextra)
 	CFUNGE_CHECK_CFLAG(pedantic                     -pedantic)
-	CFUNGE_CHECK_CFLAG(Wpointer-arith               -Wpointer-arith)
-	CFUNGE_CHECK_CFLAG(Wimplicit                    -Wimplicit)
-	CFUNGE_CHECK_CFLAG(Wnested-externs              -Wnested-externs)
+
+	CFUNGE_CHECK_CFLAG(Wwrite-strings               -Wwrite-strings)
+
 	CFUNGE_CHECK_CFLAG(Wcast-align                  -Wcast-align)
 	CFUNGE_CHECK_CFLAG(Wcast-qual                   -Wcast-qual)
 	CFUNGE_CHECK_CFLAG(Wbad-function-cast           -Wbad-function-cast)
+
 	CFUNGE_CHECK_CFLAG(Wstrict-prototypes           -Wstrict-prototypes)
 	CFUNGE_CHECK_CFLAG(Wmissing-prototypes          -Wmissing-prototypes)
 	CFUNGE_CHECK_CFLAG(Wmissing-declarations        -Wmissing-declarations)
-	CFUNGE_CHECK_CFLAG(Wparentheses                 -Wparentheses)
+	CFUNGE_CHECK_CFLAG(Wold-style-definition        -Wold-style-definition)
+
+	CFUNGE_CHECK_CFLAG(Wredundant-decls             -Wredundant-decls)
+	CFUNGE_CHECK_CFLAG(Wnested-externs              -Wnested-externs)
+	CFUNGE_CHECK_CFLAG(Wdeclaration-after-statement -Wdeclaration-after-statement)
+
 	CFUNGE_CHECK_CFLAG(Wshadow                      -Wshadow)
 	CFUNGE_CHECK_CFLAG(Wundef                       -Wundef)
 	CFUNGE_CHECK_CFLAG(Wpacked                      -Wpacked)
-	CFUNGE_CHECK_CFLAG(Wredundant-decls             -Wredundant-decls)
 	CFUNGE_CHECK_CFLAG(Wfloat-equal                 -Wfloat-equal)
-	# =2 is best on 4.1.2, but not on 4.3... Figure out a fix for this.
+
 	CFUNGE_CHECK_CFLAG(Wstrict-aliasing_2           -Wstrict-aliasing=2)
+	#CFUNGE_CHECK_CFLAG(Wstrict-overflow_5          -Wstrict-overflow=5)
 	CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
-	CFUNGE_CHECK_CFLAG(Wdisabled-optimization       -Wdisabled-optimization)
-	# This is not very useful really.
-	#CFUNGE_CHECK_CFLAG(Winline                      -Winline)
+
 	CFUNGE_CHECK_CFLAG(Wmissing-noreturn            -Wmissing-noreturn)
 	CFUNGE_CHECK_CFLAG(Wmissing-format-attribute    -Wmissing-format-attribute)
-	CFUNGE_CHECK_CFLAG(Wdeclaration-after-statement -Wdeclaration-after-statement)
-	CFUNGE_CHECK_CFLAG(Wunused-function             -Wunused-function)
-	CFUNGE_CHECK_CFLAG(Wunused-label                -Wunused-label)
-	CFUNGE_CHECK_CFLAG(Wunused-value                -Wunused-value)
-	CFUNGE_CHECK_CFLAG(Wunused-variable             -Wunused-variable)
-	CFUNGE_CHECK_CFLAG(Wwrite-strings               -Wwrite-strings)
+
 	CFUNGE_CHECK_CFLAG(Winit-self                   -Winit-self)
 	# GCC 4.1(?) or later
 	CFUNGE_CHECK_CFLAG(Wunsafe-loop-optimizations   -Wunsafe-loop-optimizations)
 	CFUNGE_CHECK_CFLAG(Wmissing-include-dirs        -Wmissing-include-dirs)
 
+	CFUNGE_CHECK_CFLAG(Wunused-parameter            -Wunused-parameter)
+	# These are part of -Wall in GCC 4.3, but not in some older versions.
+	CFUNGE_CHECK_CFLAG(Wunused-function             -Wunused-function)
+	CFUNGE_CHECK_CFLAG(Wunused-label                -Wunused-label)
+	CFUNGE_CHECK_CFLAG(Wunused-value                -Wunused-value)
+	CFUNGE_CHECK_CFLAG(Wunused-variable             -Wunused-variable)
+	CFUNGE_CHECK_CFLAG(Wimplicit                    -Wimplicit)
+	CFUNGE_CHECK_CFLAG(Wparentheses                 -Wparentheses)
+	# Part of -pedantic in 4.3
+	CFUNGE_CHECK_CFLAG(Wpointer-arith               -Wpointer-arith)
+
 	# Maintainer flags. Gives lots of false positives.
-	#add_definitions(-Wunreachable-code -fno-inline -fno-inline-functions-called-once -fno-inline-functions -fkeep-inline-functions -Wno-inline)
+	# add_definitions(-Wunreachable-code -fno-inline
+	#                 -fno-inline-functions-called-once -fno-inline-functions
+	#                 -fkeep-inline-functions -Wno-inline)
 	# Even more false positives
 	#add_definitions(-Wunreachable-code)
+	# Only with this meaning in GCC 4.3 (and false positives):
+	# -Wconversion
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 
