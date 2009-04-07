@@ -348,7 +348,7 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 			PUSH_REQ_17(pushStack, ip);
 			break;
 		case 23: // Size of TOSS
-			stack_push(pushStack, TOSSSize);
+			stack_push(pushStack, (funge_cell)TOSSSize);
 			break;
 	}
 }

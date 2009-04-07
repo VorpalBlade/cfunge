@@ -1108,7 +1108,7 @@ fungespace_save_to_file(const char         * restrict filename,
 
 			if (lastspace > 0) {
 				for (ssize_t i = 0; i <= lastspace; i++) {
-					towrite[index+i] = string[i];
+					towrite[index+i] = (unsigned char)string[i];
 				}
 				index += lastspace + 1;
 			}
@@ -1118,13 +1118,13 @@ fungespace_save_to_file(const char         * restrict filename,
 		}
 		// Remove trailing newlines.
 		{
-			ssize_t lastnewline = index;
+			ssize_t lastnewline = (ssize_t)index;
 			do {
 				lastnewline--;
 			} while ((lastnewline >= 0) && (towrite[lastnewline] == '\n'));
 
 			if (lastnewline > 0) {
-				size_t retval = fwrite(towrite, sizeof(unsigned char), lastnewline + 1, file);
+				size_t retval = fwrite(towrite, sizeof(unsigned char), (size_t)(lastnewline + 1), file);
 				if (retval != (size_t)lastnewline + 1) {
 					cf_free(towrite);
 					goto error;

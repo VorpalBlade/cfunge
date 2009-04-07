@@ -224,7 +224,7 @@ FUNGE_ATTR_FAST void stack_push_string(funge_stack * restrict stack, const unsig
 	stack_prealloc_space(stack, len + 1);
 	{
 		const size_t top = stack->top + len;
-		for (ssize_t i = len; i >= 0; i--)
+		for (ssize_t i = (ssize_t)len; i >= 0; i--)
 			stack->entries[top - (size_t)i] = str[i];
 		stack->top += len + 1;
 	}
@@ -322,7 +322,7 @@ void stack_print_top(const funge_stack * stack)
 		fputs("\tStack is empty.\n", stderr);
 	} else {
 		fprintf(stderr, "\tStack has %zu elements, top 5 (or less) elements:\n\t\t", stack->top);
-		for (ssize_t i = stack->top; (i > 0) && (i > ((ssize_t)stack->top - 5)); i--)
+		for (ssize_t i = (ssize_t)stack->top; (i > 0) && (i > ((ssize_t)stack->top - 5)); i--)
 			fprintf(stderr, "%" FUNGECELLPRI " ", stack->entries[i-1]);
 		fputs("\n", stderr);
 	}
