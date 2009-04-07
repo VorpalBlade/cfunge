@@ -251,7 +251,7 @@ static Boolean checkExpand(plist * restrict pl)
 		return True;
 
 	pl->space *= 2;
-	newlist = (void ** restrict) allocate(pl->space * sizeof(void *));
+	newlist = (void **) allocate(pl->space * sizeof(void *));
 	if (newlist == NULL)
 		return False;
 	// This is to allow vectorising.
@@ -1075,7 +1075,7 @@ static genxStatus sendxBounded(genxWriter w, constUtf8 start, constUtf8 end)
 	if (w->sender)
 		return (*w->sender->sendBounded)(w->userData, start, end);
 	else
-		if (fwrite(start, 1, end - start, w->file) != (unsigned)(end - start))
+		if (fwrite(start, 1, end - start, w->file) != (size_t)(end - start))
 			return GENX_IO_ERROR;
 		else
 			return GENX_SUCCESS;
