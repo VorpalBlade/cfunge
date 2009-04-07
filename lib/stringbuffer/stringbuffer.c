@@ -72,7 +72,8 @@ FUNGE_ATTR_FAST
 static bool stringbuffer_ensure(StringBuffer *sb, size_t len);
 
 FUNGE_ATTR_FAST
-StringBuffer *stringbuffer_new(void) {
+StringBuffer *stringbuffer_new(void)
+{
     StringBuffer *sb;
 
     sb = malloc(sizeof(*sb));
@@ -87,13 +88,15 @@ StringBuffer *stringbuffer_new(void) {
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_destroy(StringBuffer *sb) {
+void stringbuffer_destroy(StringBuffer *sb)
+{
     free(sb->buf);
     free(sb);
 }
 
 FUNGE_ATTR_FAST
-char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length) {
+char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length)
+{
     char *result;
 
     sb->buf[sb->pos] = '\0';
@@ -105,14 +108,16 @@ char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length) 
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_char(StringBuffer *sb, const char c) {
+void stringbuffer_append_char(StringBuffer *sb, const char c)
+{
     stringbuffer_ensure(sb, 2);
     sb->buf[sb->pos] = c;
     sb->pos += 1;
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_string(StringBuffer *sb, const char *str) {
+void stringbuffer_append_string(StringBuffer *sb, const char *str)
+{
     size_t len;
 
     len = strlen(str);
@@ -122,7 +127,8 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str) {
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
+void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...)
+{
     size_t size;
 
     size = 100;                 /* arbitrary guess */
@@ -150,14 +156,17 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2) {
+void stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
+                                      const StringBuffer * restrict sb2)
+{
     stringbuffer_ensure(sb, sb2->pos+1);
     memcpy(sb->buf+sb->pos, sb2->buf, sb2->pos);
     sb->pos += sb2->pos;
 }
 
 FUNGE_ATTR_FAST
-static bool stringbuffer_ensure(StringBuffer *sb, size_t len) {
+static bool stringbuffer_ensure(StringBuffer *sb, size_t len)
+{
     char *tmp;
     size_t new_size;
 

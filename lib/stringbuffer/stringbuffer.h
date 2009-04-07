@@ -51,13 +51,6 @@
 
 #include "../../src/global.h"
 
-/// __attribute__, this one isn't generic so we need it for just this one.
-#ifdef __GNUC__
-#  define FUNGE_SB_PRINTF __attribute__((format(printf, 2, 3)))
-#else
-#  define FUNGE_SB_PRINTF /* NO-OP */
-#endif
-
 /**
  * The string buffer state.
  */
@@ -125,7 +118,7 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str);
  *
  * @param format The format string to append.
  */
-FUNGE_ATTR_FAST FUNGE_SB_PRINTF
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,2,3)
 void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 
 /**
@@ -136,8 +129,9 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
  *
  * @param sb2 The string buffer to append; it must be different from sb.
  */
-FUNGE_ATTR_FAST
-void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
+                                      const StringBuffer * restrict sb2);
 
 /*@}*/
 

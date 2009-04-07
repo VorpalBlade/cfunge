@@ -121,6 +121,8 @@
 #  define FUNGE_ATTR_UNUSED        FUNGE_ATTR((unused))
 #  define FUNGE_ATTR_WARN_UNUSED   FUNGE_ATTR((warn_unused_result))
 #  define FUNGE_ATTR_ALIGNED(m_n)  FUNGE_ATTR((aligned(m_n)))
+#  define FUNGE_ATTR_FORMAT(m_type, m_fmtidx, m_chkid) \
+	FUNGE_ATTR((format(m_type, m_fmtidx, m_chkid)))
 #else
 #  define FUNGE_ATTR_CONST         /* NO-OP */
 #  define FUNGE_ATTR_ALWAYS_INLINE /* NO-OP */
@@ -132,6 +134,7 @@
 #  define FUNGE_ATTR_UNUSED        /* NO-OP */
 #  define FUNGE_ATTR_WARN_UNUSED   /* NO-OP */
 #  define FUNGE_ATTR_ALIGNED(m_n)  /* NO-OP */
+#  define FUNGE_ATTR_FORMAT(m_type, m_fmtidx, m_chkid)  /* NO-OP */
 #endif
 
 #if defined(CFUNGE_COMP_GCC) && defined(CFUNGE_COMP_GCC4_3_COMPAT)
