@@ -337,7 +337,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 
 	got = recv(sockets[s]->fd, buffer, (size_t)len, 0);
 
-	stack_push(ip->stack, got);
+	stack_push(ip->stack, (funge_cell)got);
 
 	if (got == -1)
 		goto error;
@@ -419,7 +419,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 
 	sent = send(sockets[s]->fd, buffer, (size_t)len, 0);
 
-	stack_push(ip->stack, sent);
+	stack_push(ip->stack, (funge_cell)sent);
 
 	if (sent == -1)
 		goto error;

@@ -97,7 +97,7 @@ static void finger_FIXP_rand(instructionPointer * ip)
 	if (n == 0)
 		stack_push(ip->stack, 0);
 	else
-		stack_push(ip->stack, random() % n);
+		stack_push(ip->stack, (funge_cell)(random() % n));
 }
 
 /// I - sin
