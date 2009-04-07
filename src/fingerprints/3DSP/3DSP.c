@@ -104,11 +104,11 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 {
 	const funge_cell basex = fV->x + ip->storageOffset.x;
 	const funge_cell basey = fV->y + ip->storageOffset.y;
-	for (funge_cell j = 0; j < 4; ++j) {
-		for (funge_cell i = 0; i < 4; ++i) {
+	for (funge_cell y = 0; y < 4; ++y) {
+		for (funge_cell x = 0; x < 4; ++x) {
 			floatint u;
-			u.f = (float)m[4*j + i];
-			fungespace_set(u.i, vector_create_ref(basex + i, basey + j));
+			u.f = (float)m[4*y + x];
+			fungespace_set(u.i, vector_create_ref(basex + x, basey + y));
 		}
 	}
 }
@@ -142,12 +142,12 @@ static inline void mulMatrixVector(const double m[restrict 16], const double v[r
 FUNGE_ATTR_FAST
 static inline void mulMatrices(const double a[restrict 16], const double b[restrict 16], double r[restrict 16])
 {
-	for (size_t i = 0; i < 4; ++i) {
-		for (size_t j = 0; j < 4; ++j) {
+	for (size_t y = 0; y < 4; ++y) {
+		for (size_t x = 0; x < 4; ++x) {
 			double n = 0;
 			for (size_t k = 0; k < 4; ++k)
-				n += a[i*4 + k] * b[k*4 + j];
-			r[i*4 + j] = n;
+				n += a[y*4 + k] * b[k*4 + x];
+			r[y*4 + x] = n;
 		}
 	}
 }
