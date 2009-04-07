@@ -40,7 +40,7 @@
 #include "ght_hash_table.h"
 
 #define CF_MEMPOOL_FUNCPROT(m_variant, m_rettype, m_funcname, m_args, m_attrs) \
-	m_rettype cf_mempool_ ## m_variant ## _ ## m_funcname m_args
+	m_attrs m_rettype cf_mempool_ ## m_variant ## _ ## m_funcname m_args
 
 #define CF_MEMPOOL_DECLARE_FUNCS(m_variant, m_datatype) \
 	CF_MEMPOOL_FUNCPROT(m_variant, bool,         setup,    (void), FUNGE_ATTR_FAST); \
