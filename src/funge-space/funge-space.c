@@ -951,11 +951,13 @@ fungespace_load(const char * restrict filename)
 	assert(filename != NULL);
 
 	fd = do_mmap(filename, &addr, &length);
-	if (fd == -1)
+	if (FUNGE_UNLIKELY(fd == -1))
 		return false;
 	// Empty file?
-	if (fd == -2)
+	else if (FUNGE_UNLIKELY(fd == -2)) {
+		diag_warn("File is empty, program will be infinite loop.");
 		return true;
+	}
 
 	load_string(addr, length);
 
@@ -996,14 +998,17 @@ fungespace_load_at_offset(const char         * restrict filename,
 	assert(size != NULL);
 
 	fd = do_mmap(filename, &addr, &length);
-	if (fd == -1)
+	if (FUNGE_UNLIKELY(fd == -1))
 		return false;
-	// Empty file?
-	if (fd == -2)
-		return true;
 
+	// Set size here, we have to initialise it for both empty-file and normal
+	// load.
 	size->x = 0;
 	size->y = 0;
+
+	// Empty file?
+	if (FUNGE_UNLIKELY(fd == -2))
+		return true;
 
 	if (binary) {
 		pos.x = offset->x;
