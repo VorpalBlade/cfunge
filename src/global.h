@@ -63,6 +63,25 @@
 /*@}*/
 
 /**
+ * @defgroup architecture Architecture identification.
+ * Defines identifying the compiler.
+ *
+ * CFUNGE_ARCH_X86    - 32-bit or 64-bit x86
+ * CFUNGE_ARCH_X86_32 - 32-bit x86
+ * CFUNGE_ARCH_X86_64 - 64-bit x86
+ */
+/*@{*/
+#ifdef __i386__
+#  define CFUNGE_ARCH_X86
+#  define CFUNGE_ARCH_X86_32
+#endif
+#ifdef __x86_64__
+#  define CFUNGE_ARCH_X86
+#  define CFUNGE_ARCH_X86_64
+#endif
+/*@}*/
+
+/**
  * @defgroup compat Compiler/system compatibility defines.
  * Compatibility stuff to support systems lacking some functions of features.
  */
@@ -146,6 +165,13 @@
 #endif
 
 /*@}*/
+
+// I so hate the C preprocessor...
+#define FUNGE_CPP_STRINGIFY_INNER(m_arg) # m_arg
+/**
+ * Stringifies argument, needed because the C preprocessor is so stupid.
+ */
+#define FUNGE_CPP_STRINGIFY(m_arg) FUNGE_CPP_STRINGIFY_INNER(m_arg)
 
 #include <stdlib.h>
 #include "support.h"
@@ -238,7 +264,7 @@ typedef uint32_t funge_unsigned_cell;
  *    major API breakage happened.
  *  This define was introduced between 0.3.3 and 0.3.4.
  */
-#define CFUNGE_VERSION 0x00040000
+#define CFUNGE_VERSION 0x00040001
 
 /// Since there may be no API changes between versions we also define this.
 #define CFUNGE_API_VERSION 1
