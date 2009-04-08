@@ -743,7 +743,7 @@ void fungespace_dump(void)
 {
 	if (!fspace.entries)
 		return;
-	fputs("Fungespace follows:\n", stderr);
+	fputs("Positive fungespace follows:\n", stderr);
 	for (funge_cell y = 0; y <= fspace.bottomRightCorner.y; y++) {
 		for (funge_cell x = 0; x <= fspace.bottomRightCorner.x; x++)
 			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
@@ -757,7 +757,9 @@ void fungespace_dumparea(funge_cell minx, funge_cell miny,
 {
 	if (!fspace.entries)
 		return;
-	fputs("Fungespace follows:\n", stderr);
+	fprintf(stderr, "Fungespace (%"FUNGECELLPRI",%"FUNGECELLPRI
+	        ") to (%"FUNGECELLPRI",%"FUNGECELLPRI") follows:\n",
+	        minx, miny, maxx, maxy);
 	for (funge_cell y = miny; y <= maxy; y++) {
 		for (funge_cell x = minx; x <= maxx; x++)
 			fprintf(stderr, "%c", (char)fungespace_get(vector_create_ref(x, y)));
