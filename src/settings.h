@@ -46,6 +46,9 @@ extern standardVersion setting_current_standard;
 extern uint_fast16_t setting_trace_level;
 /// Should we enable warnings
 extern bool setting_enable_warnings;
+/// Should we enable certain error messages.
+/// Fatal errors are always shown.
+extern bool setting_enable_errors;
 
 /// Should fingerprints be enabled
 extern bool setting_disable_fingerprints;

@@ -31,6 +31,7 @@
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
+
 #include "interpreter.h"
 #include "settings.h"
 #include "fingerprints/manager.h"
@@ -100,6 +101,7 @@ static void print_help(void)
 	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]");
 	puts("A fast Befunge interpreter in C\n");
 	puts(" -b           Use fully buffered output (default is system default for stdout).");
+	puts(" -E           Show non-fatal error messages, fatal ones are always shown.");
 	puts(" -F           Disable all fingerprints.");
 	puts(" -f           Show list of features and fingerprints supported in this binary.");
 	puts(" -h           Show this help and exit.");
@@ -142,13 +144,17 @@ int main(int argc, char *argv[])
 #ifdef FUZZ_TESTING
 	alarm(3);
 #endif
+
 	// We detect socket issues in other ways.
 	signal(SIGPIPE, SIG_IGN);
 
-	while ((opt = getopt(argc, argv, "+bFfhSs:t:VW")) != -1) {
+	while ((opt = getopt(argc, argv, "+bEFfhSs:t:VW")) != -1) {
 		switch (opt) {
 			case 'b':
 				setvbuf(stdout, cfun_iobuf, _IOFBF, sizeof(cfun_iobuf));
+				break;
+			case 'E':
+				setting_enable_errors = true;
 				break;
 			case 'F':
 				setting_disable_fingerprints = true;

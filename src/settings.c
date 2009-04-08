@@ -29,5 +29,6 @@ standardVersion setting_current_standard = stdver98;
 
 uint_fast16_t setting_trace_level = 0;
 bool setting_enable_warnings = false;
+bool setting_enable_errors = false;
 bool setting_disable_fingerprints = false;
 bool setting_enable_sandbox = false;
