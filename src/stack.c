@@ -24,6 +24,7 @@
 #include "vector.h"
 #include "ip.h"
 #include "settings.h"
+#include "diagnostic.h"
 #include <assert.h>
 #include <string.h>
 
@@ -85,8 +86,7 @@ static inline funge_stack * stack_duplicate(const funge_stack * old)
 FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void stack_oom(void)
 {
-	perror("Emergency! Failed to allocate enough memory for new stack items");
-	abort();
+	DIAG_OOM("Failed to allocate enough memory for new stack items");
 }
 
 /*************************************
@@ -390,11 +390,9 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 
 FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict ip)
 {
-	if (setting_enable_warnings) {
-		fprintf(stderr,
-		        "WARN: Out of memory in stack-stack routine at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ". Reflecting.\n",
-		        ip->position.x, ip->position.y);
-	}
+	diag_warn_format("Out of memory in stack-stack routine at x=%"
+	                 FUNGECELLPRI " y=%" FUNGECELLPRI ". Reflecting.",
+	                 ip->position.x, ip->position.y);
 	// Lets hope.
 #ifdef CFUN_USE_GC
 	gc_collect_full();
