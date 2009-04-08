@@ -96,6 +96,7 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 }
 #endif
 
+#if defined(CONCURRENT_FUNGE) || !defined(NDEBUG)
 FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 {
 	if (FUNGE_UNLIKELY(!ip))
@@ -113,6 +114,7 @@ FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 		ip->fingerHRTItimestamp = NULL;
 	}
 }
+#endif
 
 #if !defined(CONCURRENT_FUNGE) && !defined(NDEBUG)
 FUNGE_ATTR_FAST void ip_free(instructionPointer * restrict ip)
