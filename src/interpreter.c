@@ -650,14 +650,14 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 #ifdef HAVE_clock_gettime
 		struct timespec tv;
 		if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
-			diag_fatal_format("Couldn't get time of day: %s", strerror(errno));
+			diag_fatal_format("clock_gettime() failed (needed for random seed): %s", strerror(errno));
 		}
 		// Set up randomness
 		srandom((unsigned int)tv.tv_nsec);
 #else
 		struct timeval tv;
 		if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
-			diag_fatal_format("Couldn't get time of day: %s", strerror(errno));
+			diag_fatal_format("gettimeofday() failed (needed for random seed): %s", strerror(errno));
 		}
 		// Set up randomness
 		srandom((unsigned int)tv.tv_usec);
