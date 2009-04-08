@@ -244,7 +244,8 @@ static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, he_
 	 * some fragmentation. Thanks to Dru Lemley for this idea.
 	 */
 	if (!(p_he = CF_MEMPOOL_FUNC(CF_GHT_VAR, alloc)())) {
-		fprintf(stderr, "cf_malloc failed in mempool_alloc!\n");
+		DIAG_OOM("cf_malloc failed in mempool_alloc!");
+		// Not reached.
 		return NULL;
 	}
 
@@ -672,8 +673,8 @@ FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, rehash)(
 		if (CF_GHT_NAME(CF_GHT_VAR, insert)(p_tmp,
 		                                    iterator.p_entry->p_data,
 		                                    &iterator.p_entry->key.p_key) < 0) {
-			fprintf(stderr, "hash_table.c ERROR: Out of memory error or entry already in hash table\n"
-			        "when rehashing (internal error)\n");
+			DIAG_CRIT_LOC("Out of memory error or entry already in hash table\n"
+			              "when rehashing (internal error)");
 		}
 	}
 

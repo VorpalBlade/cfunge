@@ -21,6 +21,7 @@
 
 #include "global.h"
 #include "ip.h"
+#include "diagnostic.h"
 #include "vector.h"
 #include "interpreter.h"
 #include "settings.h"
@@ -218,7 +219,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	 */
 	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1]))) {
 		// We are in trouble
-		fputs("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.\n", stderr);
+		DIAG_ERROR_LOC("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.");
 	}
 
 	// Here we mirror new IP and do ID changes.

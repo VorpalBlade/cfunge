@@ -35,6 +35,7 @@
 #include "ght_hash_table.h"
 
 #include "../../src/global.h"
+#include "../../src/diagnostic.h"
 
 #include "cfunge_mempool.h"
 

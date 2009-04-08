@@ -39,12 +39,23 @@
 /// For internal use in this header only.
 #define DIAG_SOURCELOC "[" __FILE__ ":" FUNGE_CPP_STRINGIFY(__LINE__) "]"
 
-/// Print out of memory message and abort().
+/// Print location in code, out of memory, message and abort().
 #define DIAG_OOM(m_reason) \
 	do { \
 		fputs("FATAL: Out of memory at " DIAG_SOURCELOC ":\n " m_reason "\n", stderr); \
 		abort(); \
 	} while(0)
+
+/**
+ * Like DIAG_FATAL_LOC() but abort()s instead, thus hopefully producing core
+ * dump. Meant for internal errors that should never happen.
+ */
+#define DIAG_CRIT_LOC(m_message) \
+	do { \
+		fputs("CRITICAL ERROR " DIAG_SOURCELOC ": " m_message "\n", stderr); \
+		abort(); \
+	} while(0)
+
 
 /**
  * Like diag_fatal() but includes file and line number, meant for errors that
