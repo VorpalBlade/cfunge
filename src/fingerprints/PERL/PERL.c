@@ -24,6 +24,7 @@
 
 #include "PERL.h"
 #include "../../stack.h"
+#include "../../diagnostic.h"
 #include "../../settings.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
@@ -66,8 +67,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 
 	// Non-blocking to prevent locking up in read() in parent
 	if (fcntl(outfds[0], F_SETFL, O_NONBLOCK) == -1) {
-		if (setting_enable_warnings)
-			perror("run_perl, fcntl on outfds failed");
+		DIAG_ERROR_FORMAT_LOC("fcntl() on outfds failed in run_perl: %s", strerror(errno));
 		close(outfds[0]);
 		close(outfds[1]);
 		return NULL;
@@ -76,8 +76,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 	pid = fork();
 	switch (pid) {
 		case -1: // Parent, error
-			if (setting_enable_warnings)
-				perror("run_perl, could not fork");
+			DIAG_ERROR_FORMAT_LOC("Could not fork in run_perl: %s", strerror(errno));
 			// Clean up
 			close(outfds[0]);
 			close(outfds[1]);
@@ -114,7 +113,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 			if (execvp("perl", arguments) == -1) {
 				// If we got here...
 				// Message is followed by ": error"
-				perror("Failed to run perl");
+				DIAG_ERROR_FORMAT_LOC("Failed to run perl: %s", strerror(errno));
 			}
 			_Exit(2);
 			break;
@@ -153,8 +152,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 								free_nogc(buf);
 								return stringbuffer_finish(sb, retlength);
 							} else {
-								if (setting_enable_warnings)
-									perror("run_perl, read failed");
+								DIAG_ERROR_FORMAT_LOC("Read failed in run_perl: %s", strerror(readErrno));
 								free_nogc(buf);
 								stringbuffer_destroy(sb);
 								return NULL;
