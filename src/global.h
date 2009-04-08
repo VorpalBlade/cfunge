@@ -264,10 +264,10 @@ typedef uint32_t funge_unsigned_cell;
  *    major API breakage happened.
  *  This define was introduced between 0.3.3 and 0.3.4.
  */
-#define CFUNGE_VERSION 0x00040001
+#define CFUNGE_VERSION 0x00040002
 
 /// Since there may be no API changes between versions we also define this.
-#define CFUNGE_API_VERSION 1
+#define CFUNGE_API_VERSION 2
 
 // Define if you use fuzz testing script.
 //#define FUZZ_TESTING
