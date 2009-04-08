@@ -28,6 +28,7 @@
 #define FUNGE_HAD_SRC_DIAGNOSTIC_H
 
 #include "global.h"
+#include "settings.h"
 #include <stdarg.h>
 
 /**
@@ -60,15 +61,20 @@
  * should never happen (not for user typoing something).
  */
 #define DIAG_ERROR_LOC(m_message) \
-	fputs("ERROR " DIAG_SOURCELOC ": " m_message "\n", stderr); \
+	do { \
+		if (FUNGE_UNLIKELY(setting_enable_errors)) \
+			fputs("ERROR " DIAG_SOURCELOC ": " m_message "\n", stderr); \
+	} while(0)
 
 /**
  * Like diag_warn() but includes file and line number, meant for errors that
  * should never happen (not for user typoing something).
  */
 #define DIAG_WARN_LOC(m_fmt) \
-	fputs("WARN " DIAG_SOURCELOC ": " m_message "\n", stderr); \
-
+	do { \
+		if (FUNGE_UNLIKELY(setting_enable_warnings)) \
+			fputs("WARN " DIAG_SOURCELOC ": " m_message "\n", stderr); \
+	} while(0)
 
 /**
  * Like diag_fatal_format() but includes file and line number, meant for errors
@@ -85,14 +91,20 @@
  * that should never happen (not for user typoing something).
  */
 #define DIAG_ERROR_FORMAT_LOC(m_fmt, ...) \
-	fprintf(stderr, "ERROR " DIAG_SOURCELOC ": " m_fmt "\n", __VA_ARGS__); \
+	do { \
+		if (FUNGE_UNLIKELY(setting_enable_errors)) \
+			fprintf(stderr, "ERROR " DIAG_SOURCELOC ": " m_fmt "\n", __VA_ARGS__); \
+	} while(0)
 
 /**
  * Like diag_warn_format() but includes file and line number, meant for errors
  * that should never happen (not for user typoing something).
  */
 #define DIAG_WARN_FORMAT_LOC(m_fmt, ...) \
-	fprintf(stderr, "WARN " DIAG_SOURCELOC ": " m_fmt "\n", __VA_ARGS__); \
+	do { \
+		if (FUNGE_UNLIKELY(setting_enable_warnings)) \
+			fprintf(stderr, "WARN " DIAG_SOURCELOC ": " m_fmt "\n", __VA_ARGS__); \
+	} while(0)
 
 
 
@@ -107,14 +119,14 @@ void diag_fatal(const char* message);
  * Prints "ERROR: message" and returns.
  * @param message Message to print
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void diag_error(const char* message);
 
 /**
  * Prints "WARN: message" and returns.
  * @param message Message to print
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void diag_warn(const char* message);
 
 /**
@@ -129,16 +141,14 @@ void diag_fatal_format(const char* format, ...);
  * Prints "ERROR: formatted message" and returns.
  * @param format Format string to use.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL
-FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,1,2)
 void diag_error_format(const char* format, ...);
 
 /**
  * Prints "WARN: formatted message" and returns.
  * @param format Format string to use.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL
-FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,1,2)
 void diag_warn_format(const char* format, ...);
 
 /*@}*/

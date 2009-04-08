@@ -32,13 +32,15 @@ void diag_fatal(const char* message)
 FUNGE_ATTR_FAST
 void diag_error(const char* message)
 {
-	fprintf(stderr, "ERROR: %s\n", message);
+	if (FUNGE_UNLIKELY(setting_enable_errors))
+		fprintf(stderr, "ERROR: %s\n", message);
 }
 
 FUNGE_ATTR_FAST
 void diag_warn(const char* message)
 {
-	fprintf(stderr, "WARN: %s\n", message);
+	if (FUNGE_UNLIKELY(setting_enable_warnings))
+		fprintf(stderr, "WARN: %s\n", message);
 }
 
 
@@ -57,21 +59,25 @@ void diag_fatal_format(const char* format, ...)
 FUNGE_ATTR_FAST
 void diag_error_format(const char* format, ...)
 {
-	va_list ap;
-	fputs("ERROR: ", stderr);
-	va_start(ap, format);
-	vfprintf(stderr, format, ap);
-	va_end(ap);
-	fputc('\n', stderr);
+	if (FUNGE_UNLIKELY(setting_enable_errors)) {
+		va_list ap;
+		fputs("ERROR: ", stderr);
+		va_start(ap, format);
+		vfprintf(stderr, format, ap);
+		va_end(ap);
+		fputc('\n', stderr);
+	}
 }
 
 FUNGE_ATTR_FAST
 void diag_warn_format(const char* format, ...)
 {
-	va_list ap;
-	fputs("WARN: ", stderr);
-	va_start(ap, format);
-	vfprintf(stderr, format, ap);
-	va_end(ap);
-	fputc('\n', stderr);
+	if (FUNGE_UNLIKELY(setting_enable_warnings)) {
+		va_list ap;
+		fputs("WARN: ", stderr);
+		va_start(ap, format);
+		vfprintf(stderr, format, ap);
+		va_end(ap);
+		fputc('\n', stderr);
+	}
 }
