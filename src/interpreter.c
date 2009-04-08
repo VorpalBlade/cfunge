@@ -21,6 +21,7 @@
 
 #include "global.h"
 #include "interpreter.h"
+#include "diagnostic.h"
 #include "funge-space/funge-space.h"
 #include "vector.h"
 #include "stack.h"
@@ -65,9 +66,8 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void warn_unknown_instr(funge_cell opcode, instructionPointer * restrict ip)
 {
 	if (FUNGE_UNLIKELY(setting_enable_warnings))
-		fprintf(stderr,
-		        "WARN: Unknown instruction at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
-		        ip->position.x, ip->position.y, (char)opcode, opcode);
+		diag_warn_format("Unknown instruction at x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")",
+		                 ip->position.x, ip->position.y, (char)opcode, opcode);
 }
 
 // These two are called from elsewhere. Avoid code duplication.
@@ -472,9 +472,10 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				} else {
 					funge_cell fprint = 0;
 					if (FUNGE_UNLIKELY(setting_enable_warnings && (fpsize > 8))) {
-						fprintf(stderr,
-						        "WARN: %c (x=%" FUNGECELLPRI " y=%" FUNGECELLPRI "): count is very large(%" FUNGECELLPRI "), probably a bug.\n",
-						        (char)opcode, ip->position.x, ip->position.y, fpsize);
+						diag_warn_format("WARN: %c (x=%" FUNGECELLPRI " y=%"
+							FUNGECELLPRI "): count is very large(%" FUNGECELLPRI
+							"), probably a bug.\n", (char)opcode,
+							ip->position.x, ip->position.y, fpsize);
 					}
 					while (fpsize--) {
 						fprint <<= 8;
@@ -626,43 +627,37 @@ static void debug_free(void)
 FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 {
 	if (FUNGE_UNLIKELY(!fungespace_create())) {
-		perror("Couldn't create funge space!?");
-		exit(EXIT_FAILURE);
+		DIAG_FATAL_FORMAT_LOC("Couldn't create funge space: %s", strerror(errno));
 	}
 #ifndef NDEBUG
 	atexit(&debug_free);
 #endif
 	if (FUNGE_UNLIKELY(!fungespace_load(filename))) {
-		fprintf(stderr, "Failed to process file \"%s\": %s\n", filename, strerror(errno));
-		exit(EXIT_FAILURE);
+		diag_fatal_format("Failed to process file \"%s\": %s", filename, strerror(errno));
 	}
 #ifdef CONCURRENT_FUNGE
 	IPList = iplist_create();
 	if (FUNGE_UNLIKELY(IPList == NULL)) {
-		perror("Couldn't create instruction pointer list!?");
-		exit(EXIT_FAILURE);
+		DIAG_FATAL_LOC("Couldn't create instruction pointer list!?");
 	}
 #else
 	IP = ip_create();
 	if (FUNGE_UNLIKELY(IP == NULL)) {
-		perror("Couldn't create instruction pointer!?");
-		exit(EXIT_FAILURE);
+		DIAG_FATAL_LOC("Couldn't create instruction pointer!?");
 	}
 #endif
 	{
 #ifdef HAVE_clock_gettime
 		struct timespec tv;
 		if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
-			perror("Couldn't get time of day?!");
-			exit(EXIT_FAILURE);
+			diag_fatal_format("Couldn't get time of day: %s", strerror(errno));
 		}
 		// Set up randomness
 		srandom((unsigned int)tv.tv_nsec);
 #else
 		struct timeval tv;
 		if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
-			perror("Couldn't get time of day?!");
-			exit(EXIT_FAILURE);
+			diag_fatal_format("Couldn't get time of day: %s", strerror(errno));
 		}
 		// Set up randomness
 		srandom((unsigned int)tv.tv_usec);

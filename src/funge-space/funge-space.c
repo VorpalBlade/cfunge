@@ -30,6 +30,7 @@
 
 #include "../global.h"
 #include "funge-space.h"
+#include "diagnostic.h"
 #include "../../lib/libghthash/ght_hash_table.h"
 #include "../../lib/libghthash/cfunge_mempool.h"
 
@@ -39,6 +40,7 @@
 #  error "cfunge needs a working mmap(), which this system claims it lacks."
 #endif
 
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -583,8 +585,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 			if (value == ' ')
 				return;
 			if (FUNGE_UNLIKELY(ght_fspace_insert(fspace.entries, value, position) == -1)) {
-				fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
-				abort();
+				DIAG_FATAL_LOC("Internal error: insert in hash table failed when value known not to exist.");
 			}
 			fungespace_count(true, position);
 		} else {
@@ -605,8 +606,7 @@ fungespace_set_no_bounds_update(funge_cell value,
 				*tmp = value;
 			} else {
 				if (FUNGE_UNLIKELY(ght_fspace_insert(fspace.entries, value, position) == -1)) {
-					fputs("Internal error: fungespace set: insert in hash table failed when value known not to exist.", stderr);
-					abort();
+					DIAG_FATAL_LOC("Internal error: insert in hash table failed when value known not to exist.");
 				}
 			}
 		}
@@ -841,7 +841,7 @@ static inline int do_mmap(const char * restrict filename,
 		return -1;
 
 	if (FUNGE_UNLIKELY(fstat(fd, &sb) == -1)) {
-		perror("fstat() on file failed");
+		diag_error_format("fstat() on file \"%s\" failed: %s", filename, strerror(errno));
 		goto error;
 	}
 
@@ -855,7 +855,7 @@ static inline int do_mmap(const char * restrict filename,
 	// mmap() it.
 	addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (FUNGE_UNLIKELY(addr == MAP_FAILED)) {
-		perror("mmap() on file failed");
+		diag_error_format("mmap() on file \"%s\" failed: %s", filename, strerror(errno));
 		goto error;
 	}
 #if defined(_POSIX_ADVISORY_INFO) && (_POSIX_ADVISORY_INFO > 0)
