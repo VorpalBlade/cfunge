@@ -39,7 +39,7 @@
 #ifndef DISABLE_TRACE
 static inline void print_trace(funge_cell iters, funge_cell kInstr)
 {
-	if (setting_trace_level > 5)
+	if (FUNGE_UNLIKELY(setting_trace_level > 5))
 		fprintf(stderr, "  * In k: iteration: %" FUNGECELLPRI " instruction: %c (%" FUNGECELLPRI ")\n",
 		        iters, (char)kInstr, kInstr);
 }
