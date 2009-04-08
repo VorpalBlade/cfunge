@@ -34,6 +34,7 @@
 
 #include "interpreter.h"
 #include "settings.h"
+#include "diagnostic.h"
 #include "fingerprints/manager.h"
 
 const char **fungeargv = NULL;
@@ -176,8 +177,7 @@ int main(int argc, char *argv[])
 				else if (strncmp(optarg, "109", 3) == 0)
 					setting_current_standard = stdver109;
 				else {
-					fprintf(stderr, "%s is not valid for -s.\n", optarg);
-					return EXIT_FAILURE;
+					diag_fatal_format("%s is not valid for -s.\n", optarg);
 				}
 				break;
 			case 't':
@@ -195,8 +195,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (FUNGE_UNLIKELY(optind >= argc)) {
-		fputs("Error: No file provided.\n", stderr);
-		return EXIT_FAILURE;
+		diag_fatal("No file provided.");
 	} else {
 		// Copy a argument count and a pointer to argv[optind] for later reuse
 		// by the y instruction.
