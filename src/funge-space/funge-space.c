@@ -106,7 +106,7 @@ static fungeSpace fspace = {
  * work properly in some cases.
  */
 static funge_cell cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]
-#ifdef __GNUC__
+#ifdef CFUNGE_COMP_GCC_COMPAT
 __asm__("cfun_static_space")
 #endif
 FUNGE_ATTR_ALIGNED(16)
@@ -132,10 +132,10 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 
 #undef FSPACE_CREATE_SSE
 #undef FSPACE_SSE_ASM
-#if (defined(__i386__) || defined(__x86_64__)) && defined(__GNUC__) && defined(__SSE__) && !defined(__INTEL_COMPILER)
+#if defined(CFUNGE_COMP_GCC_COMPAT) && defined(CFUNGE_ARCH_X86) && defined(__SSE__)
 #  define FSPACE_CREATE_SSE 1
 #endif
-#if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) && defined(__x86_64__)
+#if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) && defined(CFUNGE_ARCH_X86_64)
 #  define FSPACE_SSE_ASM 1
 #endif
 #if defined(FSPACE_CREATE_SSE)
@@ -165,6 +165,10 @@ fungespace_create(void)
 	// FIXME: Not sure the arguments are correct..
 	cf_mark_static_noptr(&cfun_static_space,
 	                     &cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
+	cf_mark_static_noptr(&cfun_static_use_count_col,
+	                     &cfun_static_use_count_col[FUNGESPACE_STATIC_X]);
+	cf_mark_static_noptr(&cfun_static_use_count_row,
+	                     &cfun_static_use_count_row[FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
 	// When possible use movntps, which reduces cache pollution (because it acts
 	// as if the memory was write combining).
@@ -190,22 +194,20 @@ fungespace_create(void)
 	// unclear about this. And it doesn't seem to be needed in practise. However
 	// I'd rather go for the safe alternative.
 #if defined(FSPACE_CREATE_SSE) && defined(FSPACE_SSE_ASM)
-#  if defined(__pic__) || defined(__PIC__)
-	// I hate the C preprocessor...
-#    define CPP_STRINGIFY_INNER(x) # x
-#    define CPP_STRINGIFY(x) CPP_STRINGIFY_INNER(x)
+	// ICC can't deal with embedded "cfun_static_space".
+#  if defined(__pic__) || defined(__PIC__) || defined(CFUNGE_COMP_ICC)
 	__asm__ volatile ("\
 	leaq    %[space],%%rax\n\
 	leaq    "FUNGESPACE_DATASIZE_STR
-		"*"CPP_STRINGIFY(FUNGESPACE_STATIC_X)
-		"*"CPP_STRINGIFY(FUNGESPACE_STATIC_Y)"+%[space],%%rdx\n\
+		"*"FUNGE_CPP_STRINGIFY(FUNGESPACE_STATIC_X)
+		"*"FUNGE_CPP_STRINGIFY(FUNGESPACE_STATIC_Y)"+%[space],%%rdx\n\
 	movdqa  %[mask],%%xmm0\n\
 	.p2align 4,,7\n\
-cf_fungespace_create_init_loop:\n\
+.Lcf_fungespace_create_init_loop:\n\
 	movntps %%xmm0,(%%rax)\n\
 	addq    $16,%%rax\n\
 	cmpq    %%rdx,%%rax\n\
-	jne     cf_fungespace_create_init_loop\n\
+	jne     .Lcf_fungespace_create_init_loop\n\
 	sfence"
 	: [space] "=o"(cfun_static_space)
 	: [mask]  "m"(fspace_vector_init)
@@ -215,7 +217,7 @@ cf_fungespace_create_init_loop:\n\
 	xor     %%eax,%%eax\n\
 	movdqa  %[mask],%%xmm0\n\
 	.p2align 4,,7\n\
-cf_fungespace_create_init_loop:\n\
+.Lcf_fungespace_create_init_loop:\n\
 	movntps %%xmm0,cfun_static_space(%%rax)\n\
 	movntps %%xmm0,0x10+cfun_static_space(%%rax)\n\
 	movntps %%xmm0,0x20+cfun_static_space(%%rax)\n\
@@ -226,7 +228,7 @@ cf_fungespace_create_init_loop:\n\
 	movntps %%xmm0,0x70+cfun_static_space(%%rax)\n\
 	add     $128,%%rax\n\
 	cmp     %[size],%%rax\n\
-	jne     cf_fungespace_create_init_loop\n\
+	jne     .Lcf_fungespace_create_init_loop\n\
 	sfence"
 	: [space] "=o"(cfun_static_space)
 	: [mask]  "m"(fspace_vector_init)
