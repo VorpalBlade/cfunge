@@ -185,7 +185,6 @@ FUNGE_ATTR_FAST inline funge_cell stack_get_index(const funge_stack * restrict s
 
 FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)
 {
-	assert(stack != NULL);
 	// TODO: Maybe scan two cells at once if we are using 32-bit cells on a
 	// 64-bit system?
 	for (size_t i = stack->top; i > 0; i--) {

@@ -103,7 +103,7 @@ funge_cell stack_get_index(const funge_stack * restrict stack, size_t index);
  * length excluding the 0.
  * @param stack Pointer to stack to operate on.
  */
-FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST FUNGE_ATTR_PURE
 size_t stack_strlen(const funge_stack * restrict stack);
 
 
