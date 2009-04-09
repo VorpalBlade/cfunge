@@ -25,7 +25,7 @@
 #include "../../interpreter.h"
 #include "../../funge-space/funge-space.h"
 
-#include <stdio.h>
+#include <stdio.h> /* fputs */
 
 
 static void finger_ORTH_bit_and(instructionPointer * ip)

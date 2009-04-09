@@ -22,7 +22,7 @@
 #include "FRTH.h"
 #include "../../stack.h"
 
-#include <string.h>
+#include <string.h> /* memcpy */
 
 // This was partly based on how CCBI does it.
 

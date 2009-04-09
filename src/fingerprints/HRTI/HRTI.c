@@ -23,7 +23,6 @@
 #include "../../stack.h"
 
 #include <stdint.h>
-#include <assert.h>
 
 // This code tries to select the best timer:
 //  1. clock_gettime() with CLOCK_MONOTONIC
@@ -31,7 +30,7 @@
 //  3. gettimeofday()
 
 #ifdef HAVE_clock_gettime
-#  include <unistd.h>
+#  include <unistd.h> /* _POSIX_MONOTONIC_CLOCK */
 #  include <time.h>
 typedef struct timespec timetype;
 typedef long res_type;
