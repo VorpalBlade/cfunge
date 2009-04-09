@@ -24,17 +24,16 @@
 #include "../../../lib/genx/genx.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
-#include <stdint.h>
+#include <math.h>    /* cosl, roundl, sinl */
 #include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>   /* fputs, snprintf */
+#include <stdlib.h>  /* abs */
 
-// Yeah, some systems are *really* crap.
-// This includes Mingw on windows when I tried.
-#ifndef M_PI
-#  define M_PI 3.14159265358979323846
+// M_PIl is a GNU extension. This value should be enough
+// for 128-bit long double.
+#ifndef M_PIl
+#  define M_PIl 3.1415926535897932384626433832795029L
 #endif
 
 #ifndef HAVE_cosl
@@ -153,10 +152,10 @@ static inline void addPath(Point pt, bool penDown, uint32_t colour)
 FUNGE_ATTR_FAST
 static inline void normalise(void)
 {
-	while (turt.heading > 2*M_PI)
-		turt.heading -= 2 * M_PI;
+	while (turt.heading > 2*M_PIl)
+		turt.heading -= 2 * M_PIl;
 	while (turt.heading < 0)
-		turt.heading += 2 * M_PI;
+		turt.heading += 2 * M_PIl;
 	turt.sin = sinl(turt.heading);
 	turt.cos = cosl(turt.heading);
 }
