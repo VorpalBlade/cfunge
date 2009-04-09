@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <stdio.h>     /* fclose, fileno, fopen, fputs, fwrite, ... */
 #include <stdlib.h>
-#include <string.h>    /* strerror, strlen */
+#include <string.h>    /* strerror */
 
 #include <unistd.h>    /* _POSIX_MAPPED_FILES, close, fstat */
 
