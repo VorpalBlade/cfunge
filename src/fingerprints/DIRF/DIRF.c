@@ -22,10 +22,9 @@
 #include "DIRF.h"
 #include "../../stack.h"
 
-#include <unistd.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <unistd.h> /* chdir, rmdir */
+#include <sys/stat.h> /* mkdir */
+#include <sys/types.h> /* mkdir (not required by POSIX?) */
 
 static void finger_DIRF_chdir(instructionPointer * ip)
 {
