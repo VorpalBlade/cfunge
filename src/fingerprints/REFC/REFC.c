@@ -23,7 +23,6 @@
 #include "../../stack.h"
 #include "../../vector.h"
 
-#include <stdio.h>
 #include <assert.h>
 
 #define ALLOCCHUNK 5

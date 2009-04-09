@@ -22,9 +22,9 @@
 #include "REXP.h"
 #include "../../stack.h"
 
-#include <sys/types.h>
+#include <sys/types.h> /* Regular expressions */
+#include <regex.h> /* Regular expressions */
 #include <unistd.h>
-#include <regex.h>
 #include <string.h>
 
 #if !defined(_POSIX_REGEXP) || (_POSIX_REGEXP < 1)
