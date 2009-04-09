@@ -21,19 +21,19 @@
 
 #include "../global.h"
 #include "sysinfo.h"
-#include "../main.h"
-#include "../funge-space/funge-space.h"
-#include "../vector.h"
-#include "../rect.h"
-#include "../stack.h"
-#include "../ip.h"
-#include "../settings.h"
 #include "safe_env.h"
 
-#include <unistd.h>
-#include <assert.h>
-#include <time.h>
-#include <string.h>
+#include "../funge-space/funge-space.h" /* fungespace_get_bounds_rect */
+#include "../ip.h"
+#include "../main.h"                    /* fungeargc, fungeargv */
+#include "../rect.h"
+#include "../settings.h"
+#include "../stack.h"
+#include "../vector.h"
+
+#include <unistd.h> /* environ (partly) */
+#include <time.h>   /* gmtime, time, time_t */
+#include <string.h> /* strlen */
 #include <stdlib.h>
 #include <limits.h>
 

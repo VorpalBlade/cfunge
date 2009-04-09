@@ -26,16 +26,15 @@
 #include "global.h"
 #include "main.h"
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#include <stdio.h>  /* fprintf, puts */
+#include <stdlib.h> /* exit */
+#include <signal.h> /* signal */
+#include <string.h> /* strncmp */
+#include <unistd.h> /* getopt */
 
+#include "diagnostic.h"
 #include "interpreter.h"
 #include "settings.h"
-#include "diagnostic.h"
 #include "fingerprints/manager.h"
 
 const char **fungeargv = NULL;
