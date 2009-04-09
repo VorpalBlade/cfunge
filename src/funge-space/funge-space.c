@@ -34,27 +34,29 @@
 #include "../../lib/libghthash/ght_hash_table.h"
 #include "../../lib/libghthash/cfunge_mempool.h"
 
-#include <unistd.h>
+#include <assert.h>
+#include <errno.h>
+#include <stdio.h>     /* fclose, fileno, fopen, fputs, fwrite, ... */
+#include <stdlib.h>
+#include <string.h>    /* strerror, strlen */
+
+#include <unistd.h>    /* _POSIX_MAPPED_FILES, close, fstat */
+
+#include <sys/types.h> /* fstat, open */
+#include <sys/stat.h>  /* fstat, open */
+#include <fcntl.h>     /* open, posix_fallocate */
 
 #if !defined(_POSIX_MAPPED_FILES) || (_POSIX_MAPPED_FILES < 1)
 #  error "cfunge needs a working mmap(), which this system claims it lacks."
 #endif
 
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <fcntl.h>
+#include <sys/mman.h>  /* mmap, munmap, posix_madvise */
 
-// Initial size for hash table (main)
+/// Initial size for hash table (main)
 #define FUNGESPACE_INITIAL_SIZE 0x40000
-// Initial size for hash table (column count)
+/// Initial size for hash table (column count)
 #define FUNGECOUNT_COL_INITIAL_SIZE 0x20000
-// Initial size for hash table (row count)
+/// Initial size for hash table (row count)
 #define FUNGECOUNT_ROW_INITIAL_SIZE 0x20000
 
 typedef struct fungeSpace {
@@ -737,7 +739,6 @@ void fungespace_dumparea(funge_cell minx, funge_cell miny,
                          funge_cell maxx, funge_cell maxy)
                                   FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 void fungespace_dump_sparse(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
-void fungespace_clearstatic(void) FUNGE_ATTR_UNUSED FUNGE_ATTR_COLD;
 
 void fungespace_dump(void)
 {
@@ -798,20 +799,6 @@ void fungespace_dump_sparse(void)
 	}
 	fputs(")\n", stderr);
 }
-
-void fungespace_clearstatic(void)
-{
-	if (!fspace.entries)
-		return;
-	for (funge_cell x = -FUNGESPACE_STATIC_OFFSET_X;
-	     x < FUNGESPACE_STATIC_X - FUNGESPACE_STATIC_OFFSET_X;
-	     x++)
-		for (funge_cell y = -FUNGESPACE_STATIC_OFFSET_Y;
-		     y < FUNGESPACE_STATIC_Y - FUNGESPACE_STATIC_OFFSET_Y;
-		     y++)
-			fungespace_set(' ', vector_create_ref(x, y));
-}
-
 #endif
 
 /******************
