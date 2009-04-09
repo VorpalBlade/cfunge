@@ -26,6 +26,8 @@
 #if defined(HAVE_NCURSES)
 
 #include "../../stack.h"
+
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>

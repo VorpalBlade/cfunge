@@ -25,6 +25,7 @@
 #define FUNGE_EXTENDS_SOCK
 #include "../SOCK/SOCK.h"
 
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

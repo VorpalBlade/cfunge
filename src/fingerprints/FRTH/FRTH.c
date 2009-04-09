@@ -22,6 +22,8 @@
 #include "FRTH.h"
 #include "../../stack.h"
 
+#include <string.h>
+
 // This was partly based on how CCBI does it.
 
 /// D - Push depth of stack to tos
