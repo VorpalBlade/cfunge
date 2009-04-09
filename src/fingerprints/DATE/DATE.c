@@ -22,9 +22,6 @@
 #include "DATE.h"
 #include "../../stack.h"
 
-#include <time.h>
-#include <string.h>
-#include <assert.h>
 #include <math.h>
 
 #ifndef HAVE_floorl
