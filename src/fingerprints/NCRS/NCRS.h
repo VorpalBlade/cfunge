@@ -31,6 +31,7 @@ bool finger_NCRS_load(instructionPointer * ip);
 
 // Used by TERM to be specific to check coordinate ncurses state changes
 #ifdef FUNGE_EXTENDS_NCRS
+FUNGE_ATTR_FAST
 bool finger_NCRS_need_setupterm(void);
 #endif
 

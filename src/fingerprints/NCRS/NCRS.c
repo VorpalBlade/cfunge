@@ -49,6 +49,7 @@ static SCREEN* ncrs_screen = NULL;
 static WINDOW* ncrs_window = NULL;
 
 /// For use from TERM
+FUNGE_ATTR_FAST
 bool finger_NCRS_need_setupterm(void)
 {
 	return !ncrs_valid_state;
@@ -125,10 +126,12 @@ static void finger_NCRS_init(instructionPointer * ip)
 			// leak:
 			finger_TERM_fix_before_NCRS_init();
 			ncrs_screen = newterm(NULL, stdout, stdin);
-			if (!ncrs_screen) goto error;
+			if (!ncrs_screen)
+				goto error;
 			set_term(ncrs_screen);
 			ncrs_window = newwin(0, 0, 0, 0);
-			if (!ncrs_window) goto error;
+			if (!ncrs_window)
+				goto error;
 			stdscr = ncrs_window;
 			ncrs_initialised = true;
 			ncrs_valid_state = true;
@@ -136,9 +139,12 @@ static void finger_NCRS_init(instructionPointer * ip)
 			goto error;
 		}
 	} else {
-		if (!ncrs_initialised)          goto error;
-		if (endwin() == ERR)            goto error;
-		if (delwin(ncrs_window) == ERR) goto error;
+		if (!ncrs_initialised)
+			goto error;
+		if (endwin() == ERR)
+			goto error;
+		if (delwin(ncrs_window) == ERR)
+			goto error;
 		delscreen(ncrs_screen);
 		ncrs_screen = NULL;
 		ncrs_window = NULL;
