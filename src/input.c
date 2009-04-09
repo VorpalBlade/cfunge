@@ -22,11 +22,11 @@
 #include "global.h"
 #include "input.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <assert.h>
+#include <ctype.h>  /* isdigit, isxdigit */
+#include <stdbool.h>
+#include <stddef.h> /* ptrdiff_t */
+#include <stdlib.h>
 
 // We use static buffer for input to save input
 // from one read to the next if there was any
