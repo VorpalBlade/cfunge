@@ -23,7 +23,9 @@
 #include "../../stack.h"
 #include "../../input.h"
 
+#include <stdlib.h> /* atoi */
 #include <string.h>
+
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
 /// A - Append bottom string to upper string
