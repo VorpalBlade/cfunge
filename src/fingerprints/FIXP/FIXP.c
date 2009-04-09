@@ -22,13 +22,13 @@
 #include "FIXP.h"
 #include "../../stack.h"
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h> /* random */
 
-// Yeah, some systems are *really* crap.
-// This includes Mingw on windows when I tried.
-#ifndef M_PI
-#  define M_PI 3.14159265358979323846
+// M_PIl is a GNU extension. This value should be enough
+// for 128-bit long double.
+#ifndef M_PIl
+#  define M_PIl 3.1415926535897932384626433832795029L
 #endif
 
 #ifndef HAVE_acosl
@@ -60,8 +60,8 @@
 #endif
 
 // For converting between degrees and radians.
-#define FUNGE_PI_180 (M_PI / 180.0)
-#define FUNGE_180_PI (180.0 / M_PI)
+#define FUNGE_PI_180 (M_PIl / 180.0)
+#define FUNGE_180_PI (180.0 / M_PIl)
 
 /// A - and
 static void finger_FIXP_and(instructionPointer * ip)
@@ -74,7 +74,7 @@ static void finger_FIXP_acos(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * acosl((long double)n / 10000) * FUNGE_180_PI);
+	d = roundl(10000 * acosl((long double)n / 10000.0L) * FUNGE_180_PI);
 	stack_push(ip->stack, (funge_cell)d);
 }
 
@@ -83,7 +83,7 @@ static void finger_FIXP_cos(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * cosl(((long double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * cosl(((long double)n / 10000.0L) * FUNGE_PI_180));
 	stack_push(ip->stack, (funge_cell)d);
 
 }
@@ -105,7 +105,7 @@ static void finger_FIXP_sin(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * sinl(((long double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * sinl(((long double)n / 10000.0L) * FUNGE_PI_180));
 	stack_push(ip->stack, (funge_cell)d);
 }
 
@@ -114,7 +114,7 @@ static void finger_FIXP_asin(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * asinl((long double)n / 10000) * FUNGE_180_PI);
+	d = roundl(10000 * asinl((long double)n / 10000.0L) * FUNGE_180_PI);
 	stack_push(ip->stack, (funge_cell)d);
 }
 
@@ -133,7 +133,7 @@ static void finger_FIXP_or(instructionPointer * ip)
 /// P - mulpi
 static void finger_FIXP_mulpi(instructionPointer * ip)
 {
-	stack_push(ip->stack, (funge_cell)(M_PI * stack_pop(ip->stack)));
+	stack_push(ip->stack, (funge_cell)(M_PIl * stack_pop(ip->stack)));
 }
 
 /// Q - sqrt
@@ -168,7 +168,7 @@ static void finger_FIXP_tan(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * tanl(((long double)n / 10000) * FUNGE_PI_180));
+	d = roundl(10000 * tanl(((long double)n / 10000.0L) * FUNGE_PI_180));
 	stack_push(ip->stack, (funge_cell)d);
 }
 
@@ -177,7 +177,7 @@ static void finger_FIXP_atan(instructionPointer * ip)
 {
 	long double d;
 	funge_cell n = stack_pop(ip->stack);
-	d = roundl(10000 * atanl((long double)n / 10000)  * FUNGE_180_PI);
+	d = roundl(10000 * atanl((long double)n / 10000.0L)  * FUNGE_180_PI);
 	stack_push(ip->stack, (funge_cell)d);
 }
 
