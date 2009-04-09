@@ -24,11 +24,13 @@
 #include "../ip.h"
 #include "../settings.h"
 
-#include <string.h>
+#include <assert.h>
+#include <limits.h> /* CHAR_BIT */
 #include <stdbool.h>
 #include <stdio.h>
-#include <limits.h>
-#include <assert.h>
+#include <stdlib.h> /* exit */
+#include <string.h> /* memcpy, strlen */
+
 
 #define ALLOCCHUNKSIZE 2
 

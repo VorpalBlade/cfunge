@@ -21,16 +21,18 @@
 
 #include "global.h"
 #include "ip.h"
+
 #include "diagnostic.h"
-#include "vector.h"
 #include "interpreter.h"
 #include "settings.h"
-#include "fingerprints/manager.h"
 #include "stack.h"
+#include "vector.h"
+
+#include "fingerprints/manager.h"
 #include "funge-space/funge-space.h"
 
-#include <string.h>
 #include <assert.h>
+#include <string.h>
 
 /// For concurrent funge: how many new IPs to allocate in one go?
 #define ALLOCCHUNKSIZE 1

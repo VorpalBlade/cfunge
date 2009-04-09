@@ -33,12 +33,9 @@
 #include <stdint.h>
 
 #include "vector.h"
-#include "funge-space/funge-space.h"
 
-
-#ifndef ipDEFINED
+/// Forward decl, see ip.h
 struct s_instructionPointer;
-#endif
 
 /// A Funge stack.
 /// @warning Don't access directly, use functions and macros below.

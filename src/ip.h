@@ -33,8 +33,8 @@
 #include <sys/types.h>
 #include <stdint.h>
 
-#include "vector.h"
 #include "stack.h"
+#include "vector.h"
 #include "funge-space/funge-space.h"
 
 /// IP mode: code.
@@ -44,10 +44,8 @@
 /// Type of the ipMode entry.
 typedef uint_fast8_t ipMode;
 
-
-#ifndef fungeOpcodeStackDefined
+/// Forward decl, see fingerprints/manager.h
 struct s_fungeOpcodeStack;
-#endif
 
 /// This is for size of opcode array.
 #define FINGEROPCODECOUNT 26
@@ -73,8 +71,6 @@ typedef struct s_instructionPointer {
 	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
 	                                                    ///  We don't know what type here.
 } instructionPointer;
-/// @internal For internal use in core headers.
-#define ipDEFINED 1
 
 #ifdef CONCURRENT_FUNGE
 /// Instruction pointer list. For concurrent Funge.
