@@ -30,7 +30,7 @@
 
 #include "../global.h"
 #include "funge-space.h"
-#include "diagnostic.h"
+#include "../diagnostic.h"
 #include "../../lib/libghthash/ght_hash_table.h"
 #include "../../lib/libghthash/cfunge_mempool.h"
 
@@ -890,9 +890,11 @@ static inline void do_mmap_cleanup(int fd, unsigned char *addr, size_t length)
  * @param program is the string to load.
  * @param length is the length of the string.
  */
-FUNGE_ATTR_FAST
-static inline void load_string(const unsigned char * restrict program,
-                               size_t length)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+#ifndef FUNGE_EXTERNAL_LIBRARY
+static inline
+#endif
+void fungespace_load_string(const unsigned char * restrict program, size_t length)
 {
 	bool lastwascr = false;
 	// Coord in Funge-Space.
@@ -946,21 +948,13 @@ fungespace_load(const char * restrict filename)
 		return true;
 	}
 
-	load_string(addr, length);
+	fungespace_load_string(addr, length);
 
 	// Cleanup
 	do_mmap_cleanup(fd, addr, length);
 	return true;
 }
 
-
-#ifdef FUNGE_EXTERNAL_LIBRARY
-FUNGE_ATTR_FAST void
-fungespace_load_string(const unsigned char * restrict program)
-{
-	load_string(program, strlen((const char*)program));
-}
-#endif
 
 /// Macro for handling newlines.
 #define FUNGE_OFFSET_NEWLINE \

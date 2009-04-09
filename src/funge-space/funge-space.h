@@ -106,13 +106,16 @@ bool fungespace_load(const char * restrict filename);
 
 #ifdef FUNGE_EXTERNAL_LIBRARY
 /**
- * Load a string into Funge-Space at 0,0. Optimised.
- * cfunge itself doesn't use this. However cfunge have been/will be integrated
- * as a library in C-INTERCAL, which use it.
+ * Load a string into Funge-Space at 0,0. Optimised. This code is used
+ * internally by cfunge itself but is not usually exposed. It is however needed
+ * for IFFI (using cfunge as a library in C-INTERCAL).
  * @param program Program to load.
+ * @param length  Length of string, needed since code need to be embedded
+ * null bytes, thus strlen() won't work.
  */
-FUNGE_ATTR_FAST
-void fungespace_load_string(const unsigned char * restrict program);
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void fungespace_load_string(const unsigned char * restrict program,
+                            size_t length);
 #endif
 
 /**
