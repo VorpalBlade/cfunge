@@ -25,14 +25,14 @@
 #include "SOCK.h"
 #include "../../stack.h"
 
-#include <unistd.h>
-#include <fcntl.h>
+#include <unistd.h> /* close, fcntl */
+#include <fcntl.h>  /* fcntl */
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <sys/types.h>  /* accept, connect, socket, ... */
+#include <sys/socket.h> /* accept, connect, socket, ... */
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <arpa/inet.h>
+#include <arpa/inet.h>  /* htons */
 #include <netdb.h>
 
 // Based on how CCBI does it.
@@ -85,7 +85,7 @@ static inline funge_cell allocate_handle(void)
 	return h;
 }
 
-/// Free a handle. fclose() the file before calling this.
+/// Free a handle. close() the file before calling this.
 FUNGE_ATTR_FAST
 static inline void free_handle(funge_cell h)
 {
@@ -447,15 +447,15 @@ bool finger_SOCK_load(instructionPointer * ip)
 		if (!init_handle_list())
 			return false;
 
-	manager_add_opcode(SOCK,  'A', accept)
-	manager_add_opcode(SOCK,  'B', bind)
-	manager_add_opcode(SOCK,  'C', open)
-	manager_add_opcode(SOCK,  'I', fromascii)
-	manager_add_opcode(SOCK,  'K', kill)
-	manager_add_opcode(SOCK,  'L', listen)
-	manager_add_opcode(SOCK,  'O', setopt)
-	manager_add_opcode(SOCK,  'R', receive)
-	manager_add_opcode(SOCK,  'S', create)
-	manager_add_opcode(SOCK,  'W', write)
+	manager_add_opcode(SOCK, 'A', accept)
+	manager_add_opcode(SOCK, 'B', bind)
+	manager_add_opcode(SOCK, 'C', open)
+	manager_add_opcode(SOCK, 'I', fromascii)
+	manager_add_opcode(SOCK, 'K', kill)
+	manager_add_opcode(SOCK, 'L', listen)
+	manager_add_opcode(SOCK, 'O', setopt)
+	manager_add_opcode(SOCK, 'R', receive)
+	manager_add_opcode(SOCK, 'S', create)
+	manager_add_opcode(SOCK, 'W', write)
 	return true;
 }

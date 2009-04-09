@@ -25,12 +25,13 @@
 #define FUNGE_EXTENDS_SOCK
 #include "../SOCK/SOCK.h"
 
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <string.h> /* memset */
+
+#include <sys/types.h>   /* getaddrinfo */
+#include <sys/socket.h>  /* getaddrinfo */
 #include <netinet/in.h>
-#include <netdb.h>
-#include <poll.h>
+#include <netdb.h>       /* getaddrinfo */
+#include <poll.h>        /* poll */
 
 /* Handle systems missing this. */
 #ifndef AI_ADDRCONFIG
@@ -109,7 +110,7 @@ error:
 
 bool finger_SCKE_load(instructionPointer * ip)
 {
-	manager_add_opcode(SCKE,  'H', gethostbyname)
-	manager_add_opcode(SCKE,  'P', peek)
+	manager_add_opcode(SCKE, 'H', gethostbyname)
+	manager_add_opcode(SCKE, 'P', peek)
 	return true;
 }
