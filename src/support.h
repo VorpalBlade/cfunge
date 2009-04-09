@@ -32,7 +32,7 @@
 #ifndef FUNGE_HAD_SRC_SUPPORT_H
 #define FUNGE_HAD_SRC_SUPPORT_H
 
-#include <sys/types.h>
+#include <sys/types.h> /* ssize_t */
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

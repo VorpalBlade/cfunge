@@ -483,7 +483,7 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 {
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;
-	funge_vector       storageOffset;
+	funge_vector      storageOffset;
 
 	assert(ip != NULL);
 
