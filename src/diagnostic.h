@@ -29,7 +29,9 @@
 
 #include "global.h"
 #include "settings.h"
+
 #include <stdarg.h>
+#include <stdlib.h> /* abort, exit */
 
 /**
  * @defgroup diagnostics Diagnostics

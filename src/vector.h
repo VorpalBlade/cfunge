@@ -26,6 +26,7 @@
 #define FUNGE_HAD_SRC_VECTOR_H
 
 #include "global.h"
+
 #include <stdbool.h>
 
 /// A vector in Funge-Space

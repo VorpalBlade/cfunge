@@ -20,6 +20,8 @@
  */
 #include "global.h"
 #include "diagnostic.h"
+
+#include <stdlib.h> /* abort, exit */
 #include <stdio.h>
 
 FUNGE_ATTR_FAST
