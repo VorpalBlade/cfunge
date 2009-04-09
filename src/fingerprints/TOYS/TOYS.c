@@ -26,7 +26,7 @@
 #include "../../interpreter.h"
 #include "../../funge-space/funge-space.h"
 
-#include <assert.h>
+#include <stdlib.h> /* random */
 
 // Note: Function names are related to intercal names, see
 // http://catseye.tc/projects/funge98/library/TOYS.html
@@ -322,7 +322,6 @@ static void finger_TOYS_barstool(instructionPointer * ip)
 static void finger_TOYS_tumbler(instructionPointer * ip)
 {
 	long int rnd = random() % 4;
-	assert((rnd >= 0) && (rnd <= 3));
 	switch (rnd) {
 		case 0: fungespace_set('^', &ip->position); ip_go_north(ip); break;
 		case 1: fungespace_set('>', &ip->position); ip_go_east(ip); break;
