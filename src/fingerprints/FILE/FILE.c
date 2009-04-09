@@ -22,11 +22,11 @@
 #include "FILE.h"
 #include "../../stack.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
-#include <stdio.h>
-#include <assert.h>
 
-#include <unistd.h>
-#include <fcntl.h>
+#include <assert.h>
+#include <stdio.h> /* fclose, fopen, fread, fwrite ... */
+#include <unistd.h> /* fcntl, unlink */
+#include <fcntl.h> /* fcntl */
 
 // Based on how CCBI does it.
 
