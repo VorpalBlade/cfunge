@@ -1,0 +1,18 @@
+In this file is a list of API changes that caused API to increment:
+
+Version 1
+---------
+  Initial version, external API was not versioned before this.
+
+
+Version 2
+---------
+Main breaking change was changing prototype of fungespace_load_string from
+  void fungespace_load_string(const unsigned char * restrict program);
+to
+  void fungespace_load_string(const unsigned char * restrict program,
+                              size_t length);
+
+The parameter "length" should be like taking a strlen() on the program parameter
+(if program contains no embedded null-bytes). However as long as length is
+correct the code can handle embedded null bytes.
