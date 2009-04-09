@@ -158,6 +158,7 @@ static inline bool initialise(void)
 	return true;
 }
 
+FUNGE_ATTR_FAST
 void finger_TERM_fix_before_NCRS_init(void)
 {
 	if (!term_initialised)
@@ -167,6 +168,7 @@ void finger_TERM_fix_before_NCRS_init(void)
 	cur_term = NULL;
 }
 
+FUNGE_ATTR_FAST
 void finger_TERM_fix_after_NCRS_teardown(void)
 {
 	int errret;
