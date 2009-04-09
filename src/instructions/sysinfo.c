@@ -21,7 +21,7 @@
 
 #include "../global.h"
 #include "sysinfo.h"
-#include "../interpreter.h"
+#include "../main.h"
 #include "../funge-space/funge-space.h"
 #include "../vector.h"
 #include "../rect.h"

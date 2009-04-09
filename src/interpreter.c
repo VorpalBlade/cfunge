@@ -21,26 +21,28 @@
 
 #include "global.h"
 #include "interpreter.h"
+
 #include "diagnostic.h"
 #include "funge-space/funge-space.h"
-#include "vector.h"
-#include "stack.h"
-#include "ip.h"
 #include "input.h"
+#include "ip.h"
 #include "settings.h"
-
-#include "instructions/iterate.h"
-#include "instructions/sysinfo.h"
-#include "instructions/io.h"
-#include "instructions/execute.h"
+#include "stack.h"
+#include "vector.h"
 
 #include "fingerprints/manager.h"
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+#include "instructions/execute.h"
+#include "instructions/io.h"
+#include "instructions/iterate.h"
+#include "instructions/sysinfo.h"
+
 #include <errno.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> /* strerror */
+
 #ifdef HAVE_clock_gettime
 #  include <time.h>
 #else

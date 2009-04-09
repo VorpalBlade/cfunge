@@ -32,30 +32,7 @@
 #include <sys/types.h>
 #include <stdint.h>
 
-#include "vector.h"
-#include "stack.h"
 #include "ip.h"
-#include "funge-space/funge-space.h"
-
-/**
- * @defgroup fungearg Interpreter command line arguments
- *
- * Contains information about command line parameters
- * @note
- * DO NOT MODIFY these two!
- * (They are declared in main.c by the way.)
- */
-/*@{*/
-/// Points to program name argument of argv, don't modify.
-///
-/// Currently this points into the real argv of main(). Though that may change
-/// without prior notice.
-extern const char **fungeargv;
-/// Copy of argc, don't modify.
-extern int fungeargc;
-/*@}*/
-
-// Functions
 
 // Certain instructions that are also used elsewhere.
 /**
