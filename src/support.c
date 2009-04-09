@@ -22,36 +22,10 @@
 #include "global.h"
 #include "support.h"
 
-#include <string.h>
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <errno.h>
-
-// This function is from Gnulib, with some changes
-FUNGE_ATTR_FAST size_t cf_strnlen(const char *string, size_t maxlen)
-{
-	const char *end = (const char*)memchr(string, '\0', maxlen);
-	return end ? (size_t)(end - string) : maxlen;
-}
-
-// This function is from Gnulib, with some changes
-FUNGE_ATTR_FAST char * cf_strndup(const char *string, size_t n)
-{
-	if (!string || !*string)
-		return NULL;
-	// Keep gcc happy with variable decls
-	{
-		size_t len = cf_strnlen(string, n);
-		char *newstr = (char*)cf_malloc_noptr(len + 1);
-
-		if (newstr == NULL)
-			return NULL;
-
-		newstr[len] = '\0';
-		return (char*)memcpy(newstr, string, len);
-	}
-}
 
 #ifndef SIZE_MAX
 # define SIZE_MAX ((size_t) -1)
