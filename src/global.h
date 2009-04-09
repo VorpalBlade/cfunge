@@ -173,7 +173,7 @@
  */
 #define FUNGE_CPP_STRINGIFY(m_arg) FUNGE_CPP_STRINGIFY_INNER(m_arg)
 
-/* stdlib.h: For ABS below, as well as malloc/calloc in support.h */
+/* stdlib.h: For ABS() below, as well as malloc/calloc/free in support.h */
 #include <stdlib.h>
 #include "support.h"
 /* stdint.h: For int32_t/int64_t needed for funge_cell below. */

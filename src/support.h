@@ -33,9 +33,9 @@
 #define FUNGE_HAD_SRC_SUPPORT_H
 
 #include <sys/types.h> /* ssize_t */
-#include <stdio.h>
+#include <stdio.h>     /* FILE* (in cf_getline) */
 #include <string.h>
-#include <unistd.h>
+#include <unistd.h>    /* _POSIX_THREAD_SAFE_FUNCTIONS */
 
 // GC may cause threading to happen...
 // ...but without threading we can avoid locking for some stuff.
