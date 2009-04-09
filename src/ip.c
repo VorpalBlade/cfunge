@@ -32,7 +32,7 @@
 #include "funge-space/funge-space.h"
 
 #include <assert.h>
-#include <string.h>
+#include <string.h> /* memcpy */
 
 /// For concurrent funge: how many new IPs to allocate in one go?
 #define ALLOCCHUNKSIZE 1

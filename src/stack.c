@@ -27,7 +27,7 @@
 #include "diagnostic.h"
 
 #include <assert.h>
-#include <string.h>
+#include <string.h> /* memcpy, memset */
 
 /// How many new items to allocate in one go?
 #define ALLOCCHUNKSIZE 4096
