@@ -21,8 +21,9 @@
 
 #include "FPDP.h"
 #include "../../stack.h"
-#include <stdlib.h>
+
 #include <math.h>
+#include <stdlib.h> /* strtod */
 
 // Based on how CCBI does it.
 

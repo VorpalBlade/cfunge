@@ -22,11 +22,10 @@
 #include "FPSP.h"
 #include "../../stack.h"
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h> /* strtof */
 
 // Based on how CCBI does it.
-
 
 /// An union for float and 32-bit int.
 typedef union u_floatint {
