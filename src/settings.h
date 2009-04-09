@@ -28,6 +28,8 @@
 #ifndef FUNGE_HAD_SRC_SETTINGS_H
 #define FUNGE_HAD_SRC_SETTINGS_H
 
+#include "global.h"
+
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdbool.h>
