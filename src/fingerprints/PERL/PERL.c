@@ -28,20 +28,17 @@
 #include "../../settings.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
-#include <unistd.h>
-#include <fcntl.h>
+#include <unistd.h> /* close, dup2, execvp, fcntl, fork, pipe, read */
+#include <fcntl.h> /* fcntl */
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#include <sys/types.h> /* waitpid */
+#include <sys/wait.h> /* waitpid */
 
-#include <stdio.h>
-
-#include <errno.h>
-
-#include <string.h>
 #include <limits.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h> /* _Exit, strtol */
+#include <string.h> /* strerror */
 
 // Used when reading back the result
 #define STRINGALLOCCHUNK 1024
