@@ -29,6 +29,7 @@
 #include "stack.h"
 #include "funge-space/funge-space.h"
 
+#include <string.h>
 #include <assert.h>
 
 /// For concurrent funge: how many new IPs to allocate in one go?
