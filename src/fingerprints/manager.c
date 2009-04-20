@@ -105,7 +105,7 @@ static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * 
 }
 #endif
 
-/// Add an entry to an OP code stack.
+/// Add an entry to an opcode stack.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func)
 {

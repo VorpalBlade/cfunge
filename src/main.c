@@ -201,7 +201,8 @@ int main(int argc, char *argv[])
 		// by the y instruction.
 		fungeargc = argc - optind;
 		fungeargv = (const char**)&argv[optind];
-		// Run the actual interpreter.
+		// Run the actual interpreter (never returns).
 		interpreter_run(argv[optind]);
 	}
+	// NEVER REACHED.
 }

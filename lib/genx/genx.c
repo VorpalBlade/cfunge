@@ -348,11 +348,11 @@ static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 {
 	ssize_t high, low;
 	utf8 * pp = (utf8 *) w->prefixes.pointers;
-	unsigned char buf[1024];
 
 	if (prefix[0] == 0)
 		prefix = (constUtf8) "xmlns";
 	else {
+		unsigned char buf[1024];
 		snprintf((char *) buf, sizeof(buf), "xmlns:%s", (const char*)prefix);
 		prefix = buf;
 	}
