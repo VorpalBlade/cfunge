@@ -867,7 +867,7 @@ static inline int do_mmap(const char * restrict filename,
 {
 	char *addr = NULL;
 	struct stat sb;
-	int fd = -1;
+	int fd;
 	size_t len;
 
 	fd = open(filename, O_RDONLY);
