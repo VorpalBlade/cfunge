@@ -112,9 +112,10 @@ bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, f
 	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
 	// Check if we need to realloc.
 	if (stack->top == stack->size) {
-		stack->entries = (fingerprintOpcode*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
-		if (FUNGE_UNLIKELY(!stack->entries))
+		fingerprintOpcode* newstack = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
+		if (FUNGE_UNLIKELY(!newstack))
 			return false;
+		stack->entries = newstack;
 		stack->entries[stack->top] = func;
 		stack->top++;
 		stack->size += ALLOCCHUNKSIZE;
