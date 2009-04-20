@@ -134,20 +134,52 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 	((fspace.bottomRightCorner.m_dim - fspace.topLeftCorner.m_dim) > SIMPLEBOUNDS_MAX)
 #endif
 
+/*
+ * Logic to select SSE asm, intrinsics or pure C versions.
+ *
+ * FSPACE_CREATE_SSE      - SSE code.
+ * FSPACE_CREATE_SSE_ASM  - Inline SSE asm for x86_64.
+ * FSPACE_CREATE_SSE_INT  - SSE intrinsics.
+ * FSPACE_ICC_INTRINSICS  - ICC SSE intrinsics.
+ * FSPACE_GCC_INTRINSICS  - GCC SSE intrinsics.
+
+ */
+
 #undef FSPACE_CREATE_SSE
-#undef FSPACE_SSE_ASM
+#undef FSPACE_CREATE_SSE_ASM
+#undef FSPACE_CREATE_SSE_INT
+#undef FSPACE_ICC_INTRINSICS
+#undef FSPACE_GCC_INTRINSICS
+
+
 #if defined(CFUNGE_COMP_GCC_COMPAT) && defined(CFUNGE_ARCH_X86) && defined(__SSE__)
 #  define FSPACE_CREATE_SSE 1
 #endif
+
 #if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) && defined(CFUNGE_ARCH_X86_64)
-#  define FSPACE_SSE_ASM 1
+#  define FSPACE_CREATE_SSE_ASM 1
 #endif
-#if defined(FSPACE_CREATE_SSE)
+
+#if defined(FSPACE_CREATE_SSE) && !defined(FSPACE_CREATE_SSE_ASM)
+#  define FSPACE_CREATE_SSE_INT
+#  ifdef CFUNGE_COMP_ICC
+#    define FSPACE_ICC_INTRINSICS
+#  else
+#    define FSPACE_GCC_INTRINSICS
+#  endif
+#endif
+
+// Handle ICC/GCC differences.
+#ifdef FSPACE_ICC_INTRINSICS
+#  include <xmmintrin.h>
+#endif
+
+#ifdef FSPACE_CREATE_SSE
 typedef int32_t v4si __attribute__((vector_size(16)));
-#  ifndef FSPACE_SSE_ASM
+#  ifdef FSPACE_GCC_INTRINSICS
 typedef float v4sf __attribute__((vector_size(16)));
 #  endif
-#  if defined(USE32)
+#  ifdef USE32
 #    define FUNGESPACE_DATASIZE_STR "4"
 static const v4si fspace_vector_init = {0x20, 0x20, 0x20, 0x20};
 #  elif defined(USE64)
@@ -157,6 +189,7 @@ static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
 #    error "Unknown funge space data type size."
 #  endif
 #endif
+
 
 /*********************************
  * Setup and teardown code here. *
@@ -197,7 +230,7 @@ fungespace_create(void)
 	// I'm not sure if the sfence is needed. The AMD and Intel docs are a bit
 	// unclear about this. And it doesn't seem to be needed in practise. However
 	// I'd rather go for the safe alternative.
-#if defined(FSPACE_CREATE_SSE) && defined(FSPACE_SSE_ASM)
+#ifdef FSPACE_CREATE_SSE_ASM
 	// ICC can't deal with embedded "cfun_static_space".
 #  if defined(__pic__) || defined(__PIC__) || defined(CFUNGE_COMP_ICC)
 	__asm__ volatile ("\
@@ -239,12 +272,24 @@ fungespace_create(void)
 	, [size]  "i"(sizeof(cfun_static_space))
 	: "rax", "xmm0");
 #  endif
-#elif defined(FSPACE_CREATE_SSE)
+#elif defined(FSPACE_CREATE_SSE_INT)
+	// Handle ICC
+#  ifdef FSPACE_ICC_INTRINSICS
+	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
+		// Cast to void to shut up warning about strict-aliasing rules.
+		_mm_stream_ps(((float*)(void*)&cfun_static_space) + i*4,
+		              *((const __m128*)(const void*)&fspace_vector_init));
+	_mm_sfence();
+	// Handle other GCC compatible compilers.
+#  elif defined(FSPACE_GCC_INTRINSICS)
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
 		// Cast to void to shut up warning about strict-aliasing rules.
 		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i*4,
 		                       *((const v4sf*)(const void*)&fspace_vector_init));
 	__builtin_ia32_sfence();
+#  else
+#    error "Unknown intrinsics selected. Should not happen."
+#  endif
 #else
 	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
 		cfun_static_space[i] = ' ';
