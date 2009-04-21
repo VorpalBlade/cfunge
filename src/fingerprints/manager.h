@@ -33,10 +33,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../ip.h"
+/// Forward decl, see ../ip.h
+struct s_instructionPointer;
 
 /// Function prototype for a fingerprint instruction.
-typedef void (*fingerprintOpcode)(instructionPointer * ip);
+typedef void (*fingerprintOpcode)(struct s_instructionPointer * ip);
 
 /**
  * An opcode stack.
@@ -49,7 +50,9 @@ typedef struct s_fungeOpcodeStack {
 	/// This is current top item in stack (may not be last item)
 	/// Note: One-indexed, as 0 = empty stack.
 	size_t             top;
-	/// Pointer to entries of the stack.
+	/// Pointer to entries of the stack. Is initialised on demand and may thus
+	/// be NULL before any fingerprint has been loaded that uses this opcode.
+	/// In that case, both size and top are 0.
 	fingerprintOpcode *entries;
 } fungeOpcodeStack;
 
@@ -61,7 +64,8 @@ typedef struct s_fungeOpcodeStack {
  * @return Returns true if successful, otherwise false.
  * @note Opcodes can be removed by manager at any point without prior warning.
  */
-typedef bool (*fingerprintLoader)(instructionPointer * ip);
+typedef bool (*fingerprintLoader)(struct s_instructionPointer * ip);
+
 /**
  * Add func to the correct opcode (instruction) in ip.
  * If possible use manager_add_opcode() macro instead!
@@ -70,7 +74,7 @@ typedef bool (*fingerprintLoader)(instructionPointer * ip);
  * @param func Function pointer to routine implementing the instruction.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func);
+bool opcode_stack_push(struct s_instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func);
 /**
  * Pop an opcode from an stack returning it.
  * @param ip IP to pop opcode for.
@@ -78,16 +82,7 @@ bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, f
  * @return A function pointer.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned char opcode);
-
-/**
- * Initialise opcode stacks for IP
- * @warning Don't call this directly from fingerprints.
- * @param ip IP to operate on.
- * @return True if successful otherwise false.
- */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool manager_create(instructionPointer * restrict ip);
+fingerprintOpcode opcode_stack_pop(struct s_instructionPointer * restrict ip, unsigned char opcode);
 
 /**
  * Free opcode stacks for IP
@@ -96,7 +91,7 @@ bool manager_create(instructionPointer * restrict ip);
  * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void manager_free(instructionPointer * restrict ip);
+void manager_free(struct s_instructionPointer * restrict ip);
 
 #ifdef CONCURRENT_FUNGE
 /**
@@ -104,10 +99,11 @@ void manager_free(instructionPointer * restrict ip);
  * @warning Don't call this directly from fingerprints.
  * @param oldip Old IP to copy loaded fingerprints from.
  * @param newip Target to copy to.
- * @return True if successful otherwise false.
+ * @note If allocation fails it will call DIAG_OOM(). It will not return.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool manager_duplicate(const instructionPointer * restrict oldip, instructionPointer * restrict newip);
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void manager_duplicate(const struct s_instructionPointer * restrict oldip,
+                       struct s_instructionPointer * restrict newip);
 #endif
 
 /**
@@ -118,7 +114,7 @@ bool manager_duplicate(const instructionPointer * restrict oldip, instructionPoi
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-bool manager_load(instructionPointer * restrict ip, funge_cell fingerprint);
+bool manager_load(struct s_instructionPointer * restrict ip, funge_cell fingerprint);
 
 /**
  * Try to unload a fingerprint.
@@ -128,7 +124,7 @@ bool manager_load(instructionPointer * restrict ip, funge_cell fingerprint);
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_COLD FUNGE_ATTR_WARN_UNUSED
-bool manager_unload(instructionPointer * restrict ip, funge_cell fingerprint);
+bool manager_unload(struct s_instructionPointer * restrict ip, funge_cell fingerprint);
 
 /**
  * Print out list of supported fingerprints
@@ -148,5 +144,8 @@ void manager_list(void);
 #define manager_add_opcode(fprint, opcode, name) \
 	if (FUNGE_UNLIKELY(!opcode_stack_push(ip, (opcode), &finger_ ## fprint ## _ ## name))) \
 		return false;
+
+// Now include ip.h, we couldn't before.
+#include "../ip.h"
 
 #endif

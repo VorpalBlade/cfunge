@@ -36,6 +36,7 @@
 #include "stack.h"
 #include "vector.h"
 #include "funge-space/funge-space.h"
+#include "fingerprints/manager.h"
 
 /// IP mode: code.
 #define ipmCODE 0x0
@@ -43,9 +44,6 @@
 #define ipmSTRING 0x1
 /// Type of the ipMode entry.
 typedef uint_fast8_t ipMode;
-
-/// Forward decl, see fingerprints/manager.h
-struct s_fungeOpcodeStack;
 
 /// This is for size of opcode array.
 #define FINGEROPCODECOUNT 26
@@ -55,22 +53,24 @@ struct s_fungeOpcodeStack;
 /// Fields of the style fingerXXXX* are for fingerprint per-IP data.
 /// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
-	funge_stack               * stack;         ///< Pointer to top stack.
-	funge_vector                position;      ///< Current position.
-	funge_vector                delta;         ///< Current delta.
-	funge_vector                storageOffset; ///< The storage offset for current IP.
-	ipMode                      mode;          ///< String or code mode.
+	funge_stack      * stack;            ///< Pointer to top stack.
+	funge_vector       position;         ///< Current position.
+	funge_vector       delta;            ///< Current delta.
+	funge_vector       storageOffset;    ///< The storage offset for current IP.
+	ipMode             mode;             ///< String or code mode.
 	// "Full" bool for very often checked flags.
-	bool                        needMove;      ///< Should ip_forward be called at end of main loop. Is reset to true each time.
-	bool                        stringLastWasSpace;     ///< Used in string mode for SGML style spaces.
-	// Bitfield for uncommon flags
-	bool                        fingerSUBRisRelative:1; ///< Data for fingerprint SUBR.
-	funge_cell                  ID;                     ///< The ID of this IP.
-	funge_stackstack          * stackstack;             ///< The stack stack.
-	struct s_fungeOpcodeStack * fingerOpcodes[FINGEROPCODECOUNT];  ///< Array of fingerprint opcodes.
-	void                      * fingerHRTItimestamp;    ///< Data for fingerprint HRTI.
-	                                                    ///  We don't know what type here.
+	bool               needMove;         ///< Should ip_forward be called at end of main loop. Is reset to true each time.
+	bool               stringLastWasSpace; ///< Used in string mode for SGML style spaces.
+	// These are more uncommon flags, and will be turned into bitfields
+	// should that save space at some point (doesn't currently).
+	bool               fingerSUBRisRelative; ///< Data for fingerprint SUBR.
+	funge_cell         ID;                   ///< The ID of this IP.
+	funge_stackstack * stackstack;           ///< The stack stack.
+	fungeOpcodeStack   fingerOpcodes[FINGEROPCODECOUNT]; ///< Array of fingerprint opcodes.
+	void             * fingerHRTItimestamp;  ///< Data for fingerprint HRTI.
+	                                         ///  We don't know what type here.
 } instructionPointer;
+#define CF_INSTRUCTIONPOINTER_DEFINED
 
 #ifdef CONCURRENT_FUNGE
 /// Instruction pointer list. For concurrent Funge.
@@ -187,6 +187,8 @@ void iplist_free(ipList* me);
  * @param index What entry in the list to duplicate.
  * @return Returns the index of next to execute as that may have changed after
  * this call. A value of -1 = failed to create IP.
+ * @note This function calls functions which may exit with an OOM error on out
+ * of memory. As well as functions returning error value.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 ssize_t iplist_duplicate_ip(ipList** me, size_t index);

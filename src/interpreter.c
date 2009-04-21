@@ -138,10 +138,10 @@ static inline void handle_fprint(funge_cell opcode, instructionPointer * restric
 		ip_reverse(ip);
 	} else {
 		int_fast8_t entry = (int_fast8_t)(opcode - 'A');
-		if ((ip->fingerOpcodes[entry]->top > 0)
-		    && ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1]) {
+		if ((ip->fingerOpcodes[entry].top > 0)
+		    && ip->fingerOpcodes[entry].entries[ip->fingerOpcodes[entry].top - 1]) {
 			// Call the fingerprint.
-			ip->fingerOpcodes[entry]->entries[ip->fingerOpcodes[entry]->top - 1](ip);
+			ip->fingerOpcodes[entry].entries[ip->fingerOpcodes[entry].top - 1](ip);
 		} else {
 			warn_unknown_instr(opcode, ip);
 			ip_reverse(ip);

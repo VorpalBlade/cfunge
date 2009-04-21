@@ -23,6 +23,7 @@
 #include "manager.h"
 #include "../ip.h"
 #include "../settings.h"
+#include "../diagnostic.h"
 
 #include <assert.h>
 #include <limits.h> /* CHAR_BIT */
@@ -44,64 +45,28 @@
  * Opcode Stack functions *
  **************************/
 
-/**
- * Create an opcode stack.
- */
-FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
-static inline fungeOpcodeStack* opcode_stack_create(void)
-{
-	fungeOpcodeStack * tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
-	if (FUNGE_UNLIKELY(!tmp))
-		return NULL;
-	tmp->entries = (fingerprintOpcode*)cf_malloc(ALLOCCHUNKSIZE * sizeof(fingerprintOpcode));
-	if (FUNGE_UNLIKELY(!tmp->entries)) {
-		cf_free(tmp);
-		return NULL;
-	}
-	tmp->size = ALLOCCHUNKSIZE;
-	tmp->top = 0;
-	tmp->entries[0] = NULL;
-	return tmp;
-}
-
-/**
- * Free an opcode stack.
- */
-FUNGE_ATTR_FAST
-static inline void opcode_stack_free(fungeOpcodeStack * restrict me)
-{
-	if (FUNGE_UNLIKELY(!me))
-		return;
-	if (FUNGE_LIKELY(me->entries))
-		cf_free(me->entries);
-	cf_free(me);
-}
-
 #ifdef CONCURRENT_FUNGE
 /**
  * Duplicate an opcode stack, used for split (t).
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
-static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * restrict old)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline void opcode_stack_duplicate(const fungeOpcodeStack * restrict old,
+                                          fungeOpcodeStack * restrict new)
 {
-	fungeOpcodeStack * restrict tmp;
-
-	if (FUNGE_UNLIKELY(!old))
-		return NULL;
-
-	tmp = (fungeOpcodeStack*)cf_malloc(sizeof(fungeOpcodeStack));
-	if (FUNGE_UNLIKELY(!tmp))
-		return NULL;
-	tmp->entries = (fingerprintOpcode*)cf_malloc((old->top + 1) * sizeof(fingerprintOpcode));
-	if (FUNGE_UNLIKELY(!tmp->entries)) {
-		cf_free(tmp);
-		return NULL;
+	if (old->top) {
+		new->entries = (fingerprintOpcode*)cf_malloc((old->top + 1) * sizeof(fingerprintOpcode));
+		if (FUNGE_UNLIKELY(!new->entries)) {
+			DIAG_OOM("Couldn't allocate for fingerprint stack");
+		}
+		new->size = old->top + 1;
+		new->top = old->top;
+		// Copy the pointers.
+		memcpy(new->entries, old->entries, new->top * sizeof(fingerprintOpcode));
+	} else {
+		new->entries = NULL;
+		new->top = 0;
+		new->size = 0;
 	}
-	tmp->size = old->top + 1;
-	tmp->top = old->top;
-	// Copy the pointers.
-	memcpy(tmp->entries, old->entries, tmp->top * sizeof(fingerprintOpcode));
-	return tmp;
 }
 #endif
 
@@ -109,8 +74,9 @@ static inline fungeOpcodeStack* opcode_stack_duplicate(const fungeOpcodeStack * 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func)
 {
-	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
-	// Check if we need to realloc.
+	fungeOpcodeStack * stack = &ip->fingerOpcodes[opcode - 'A'];
+	// Check if we need to realloc. It may also be that stack->entries is NULL
+	// (both stack->top and stack->size are 0 then.
 	if (stack->top == stack->size) {
 		fingerprintOpcode* newstack = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
 		if (FUNGE_UNLIKELY(!newstack))
@@ -129,7 +95,7 @@ bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, f
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned char opcode)
 {
-	fungeOpcodeStack * stack = ip->fingerOpcodes[opcode - 'A'];
+	fungeOpcodeStack * stack = &ip->fingerOpcodes[opcode - 'A'];
 	if (stack->top == 0) {
 		return NULL;
 	} else {
@@ -145,8 +111,6 @@ fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned ch
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void opcode_stack_drop(fungeOpcodeStack * restrict stack)
 {
-	assert(stack != NULL);
-
 	if (stack->top == 0) {
 		return;
 	} else {
@@ -158,42 +122,24 @@ static inline void opcode_stack_drop(fungeOpcodeStack * restrict stack)
  * Opcode Manager functions *
  ****************************/
 
-/// Set up the fingerprint stacks for an IP.
-FUNGE_ATTR_FAST bool manager_create(instructionPointer * restrict ip)
-{
-	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		ip->fingerOpcodes[i] = opcode_stack_create();
-		if (FUNGE_UNLIKELY(!ip->fingerOpcodes[i]))
-			return false;
-	}
-	return true;
-}
-
 /// Clean up the fingerprint stacks for an IP.
 FUNGE_ATTR_FAST void manager_free(instructionPointer * restrict ip)
 {
 	if (FUNGE_UNLIKELY(!ip))
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		opcode_stack_free(ip->fingerOpcodes[i]);
+		cf_free(ip->fingerOpcodes[i].entries);
 	}
 }
 
 #ifdef CONCURRENT_FUNGE
 /// Duplicate the opcode stacks from one ip to another, for concurrent Funge.
-FUNGE_ATTR_FAST bool manager_duplicate(const instructionPointer * restrict oldip,
+FUNGE_ATTR_FAST void manager_duplicate(const instructionPointer * restrict oldip,
                                        instructionPointer * restrict newip)
 {
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		newip->fingerOpcodes[i] = opcode_stack_duplicate(oldip->fingerOpcodes[i]);
-		if (FUNGE_UNLIKELY(!newip->fingerOpcodes[i])) {
-			// Try to create a new one instead then...
-			newip->fingerOpcodes[i] = opcode_stack_create();
-			if (FUNGE_UNLIKELY(!newip->fingerOpcodes[i]))
-				return false;
-		}
+		opcode_stack_duplicate(&oldip->fingerOpcodes[i], &newip->fingerOpcodes[i]);
 	}
-	return true;
 }
 #endif
 
@@ -245,7 +191,7 @@ FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, funge_cell
 	if (index == FPRINT_NOTFOUND)
 		return false;
 	for (size_t i = 0; i < strlen(ImplementedFingerprints[index].opcodes); i++)
-		opcode_stack_drop(ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
+		opcode_stack_drop(&ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
 }
 

@@ -56,9 +56,9 @@ static inline bool ip_create_in_place(instructionPointer *me)
 		return false;
 	me->stack                = me->stackstack->stacks[me->stackstack->current];
 	me->ID                   = 0;
+	// Zero the opcode stacks if needed.
 	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
-		if (FUNGE_UNLIKELY(!manager_create(me)))
-			return false;
+		memset(me->fingerOpcodes, 0, sizeof(fungeOpcodeStack) * FINGEROPCODECOUNT);
 	}
 	me->fingerHRTItimestamp  = NULL;
 	return true;
@@ -92,8 +92,7 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 
 	new->stack                = new->stackstack->stacks[new->stackstack->current];
 	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
-		if (FUNGE_UNLIKELY(!manager_duplicate(old, new)))
-			return false;
+		manager_duplicate(old, new);
 	}
 	new->fingerHRTItimestamp  = NULL;
 	return true;
