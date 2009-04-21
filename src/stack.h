@@ -164,11 +164,13 @@ void stack_dup_top(funge_stack * restrict stack);
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void stack_swap_top(funge_stack * restrict stack);
 
+#ifndef DISABLE_TRACE
 /**
  * Print some tracing info.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stack_print_top(const funge_stack * stack);
+#endif
 
 //
 // Stack-stack functions

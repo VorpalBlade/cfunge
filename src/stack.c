@@ -313,6 +313,7 @@ void stack_dump(const funge_stack * stack)
 
 #endif
 
+#ifndef DISABLE_TRACE
 // This is for tracing
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stack_print_top(const funge_stack * stack)
@@ -327,7 +328,7 @@ void stack_print_top(const funge_stack * stack)
 		fputs("\n", stderr);
 	}
 }
-
+#endif
 
 /****************
  * Stack-stacks *
