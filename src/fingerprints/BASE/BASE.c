@@ -83,13 +83,13 @@ static void finger_BASE_output_base(instructionPointer * ip)
 	} else {
 		// We need at most this size of the string.
 		size_t i = ceil(anyLog((double)base, (double)val) + 1);
-		char * restrict result = (char*)cf_malloc_noptr(i * sizeof(char));
+		// WARNING: VLA here. Should be safe though, since maximum size is small.
+		char result[i];
 		for (i = 0; val > 0; val /= base)
 			result[i++] = digits[val % base];
 		for (; i-- > 0;)
 			cf_putchar_unlocked(result[i]);
 		cf_putchar_unlocked(' ');
-		cf_free(result);
 	}
 	cf_funlockfile(stdout);
 }
