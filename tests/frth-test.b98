@@ -1,0 +1,30 @@
+"HTRF"4#v(v
+        >n a".detroppus ton HTRF">:#,_@
+  v       >na".tnemugra evitagen egral htiw L tset lliW">:#,_
+v >1 0aaaaa****- #v L 0{0a".tcelfer ton diD">:#,_
+v                 >0{0a".detcelfeR">:#,_
+>   0" :kcats no smeti owt poT">:#,_0}..a,@
+
+This program pushes a 1 before. The program may print several things. Known
+examples are included below (indentation added for clarity). The behaviour is
+undefined.
+
+cfunge:
+  Will test L with large negative argument.
+  Reflected.
+  Top two items on stack: 1 0
+CCBI:
+  Will test L with large negative argument.
+  Did not reflect.
+  Top two items on stack: 0 1
+RC/Funge 1:
+  Will test L with large negative argument.
+  Segmentation fault
+RC/Funge 2:
+  Will test L with large negative argument.
+  Did not reflect.
+  Top two items on stack: 0 0
+PyFunge:
+  Will test L with large negative argument.
+  Did not reflect.
+  Top two items on stack: 0 0
