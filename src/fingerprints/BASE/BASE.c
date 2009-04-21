@@ -121,10 +121,10 @@ static void finger_BASE_input_base(instructionPointer * ip)
 
 bool finger_BASE_load(instructionPointer * ip)
 {
-	manager_add_opcode(BASE,  'B', output_binary)
-	manager_add_opcode(BASE,  'H', output_hex)
-	manager_add_opcode(BASE,  'I', input_base)
-	manager_add_opcode(BASE,  'N', output_base)
-	manager_add_opcode(BASE,  'O', output_octal)
+	manager_add_opcode(BASE, 'B', output_binary)
+	manager_add_opcode(BASE, 'H', output_hex)
+	manager_add_opcode(BASE, 'I', input_base)
+	manager_add_opcode(BASE, 'N', output_base)
+	manager_add_opcode(BASE, 'O', output_octal)
 	return true;
 }

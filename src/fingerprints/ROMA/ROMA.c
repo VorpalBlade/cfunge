@@ -41,12 +41,12 @@ ROMAPUSH(M, 1000)
 
 bool finger_ROMA_load(instructionPointer * ip)
 {
-	manager_add_opcode(ROMA,  'C', pushC)
-	manager_add_opcode(ROMA,  'D', pushD)
-	manager_add_opcode(ROMA,  'I', pushI)
-	manager_add_opcode(ROMA,  'L', pushL)
-	manager_add_opcode(ROMA,  'M', pushM)
-	manager_add_opcode(ROMA,  'V', pushV)
-	manager_add_opcode(ROMA,  'X', pushX)
+	manager_add_opcode(ROMA, 'C', pushC)
+	manager_add_opcode(ROMA, 'D', pushD)
+	manager_add_opcode(ROMA, 'I', pushI)
+	manager_add_opcode(ROMA, 'L', pushL)
+	manager_add_opcode(ROMA, 'M', pushM)
+	manager_add_opcode(ROMA, 'V', pushV)
+	manager_add_opcode(ROMA, 'X', pushX)
 	return true;
 }

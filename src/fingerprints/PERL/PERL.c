@@ -221,8 +221,8 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 
 bool finger_PERL_load(instructionPointer * ip)
 {
-	manager_add_opcode(PERL,  'E', eval)
-	manager_add_opcode(PERL,  'I', int_eval)
-	manager_add_opcode(PERL,  'S', shelled)
+	manager_add_opcode(PERL, 'E', eval)
+	manager_add_opcode(PERL, 'I', int_eval)
+	manager_add_opcode(PERL, 'S', shelled)
 	return true;
 }

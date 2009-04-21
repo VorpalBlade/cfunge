@@ -78,9 +78,9 @@ static void finger_INDV_put_vec(instructionPointer * ip)
 
 bool finger_INDV_load(instructionPointer * ip)
 {
-	manager_add_opcode(INDV,  'G', get_num)
-	manager_add_opcode(INDV,  'P', put_num)
-	manager_add_opcode(INDV,  'V', get_vec)
-	manager_add_opcode(INDV,  'W', put_vec)
+	manager_add_opcode(INDV, 'G', get_num)
+	manager_add_opcode(INDV, 'P', put_num)
+	manager_add_opcode(INDV, 'V', get_vec)
+	manager_add_opcode(INDV, 'W', put_vec)
 	return true;
 }

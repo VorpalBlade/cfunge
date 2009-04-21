@@ -96,8 +96,8 @@ static void finger_FING_push(instructionPointer * ip)
 
 bool finger_FING_load(instructionPointer * ip)
 {
-	manager_add_opcode(FING,  'X', swap)
-	manager_add_opcode(FING,  'Y', drop)
-	manager_add_opcode(FING,  'Z', push)
+	manager_add_opcode(FING, 'X', swap)
+	manager_add_opcode(FING, 'Y', drop)
+	manager_add_opcode(FING, 'Z', push)
 	return true;
 }

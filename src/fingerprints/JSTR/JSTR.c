@@ -74,7 +74,7 @@ static void finger_JSTR_pop_n(instructionPointer * ip)
 
 bool finger_JSTR_load(instructionPointer * ip)
 {
-	manager_add_opcode(JSTR,  'G', push_n)
-	manager_add_opcode(JSTR,  'P', pop_n)
+	manager_add_opcode(JSTR, 'G', push_n)
+	manager_add_opcode(JSTR, 'P', pop_n)
 	return true;
 }

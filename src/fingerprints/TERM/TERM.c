@@ -185,13 +185,13 @@ bool finger_TERM_load(instructionPointer * ip)
 {
 	if (!initialise())
 		return false;
-	manager_add_opcode(TERM,  'C', clear_screen)
-	manager_add_opcode(TERM,  'D', go_down)
-	manager_add_opcode(TERM,  'G', goto_xy)
-	manager_add_opcode(TERM,  'H', go_home)
-	manager_add_opcode(TERM,  'L', clear_to_eol)
-	manager_add_opcode(TERM,  'S', clear_to_eos)
-	manager_add_opcode(TERM,  'U', go_up)
+	manager_add_opcode(TERM, 'C', clear_screen)
+	manager_add_opcode(TERM, 'D', go_down)
+	manager_add_opcode(TERM, 'G', goto_xy)
+	manager_add_opcode(TERM, 'H', go_home)
+	manager_add_opcode(TERM, 'L', clear_to_eol)
+	manager_add_opcode(TERM, 'S', clear_to_eos)
+	manager_add_opcode(TERM, 'U', go_up)
 	return true;
 }
 
