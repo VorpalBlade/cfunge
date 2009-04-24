@@ -1,0 +1,16 @@
+"PXIF"4#v(v
+        > na".detroppus ton PXIF">:#,_@
+ v        >aaaaa****
+v>#vB0{" :dehsup dna tcelfer t'ndid tnemugra egnar fo tuo htiw B">:#,_n}.a,
+v  >na".detcelfer tnemugra egnar fo tuo htiw B">:#,_
+>n1-#vQ0{" :dehsup dna tcelfer t'ndid tnemugra evitagen htiw Q">:#,_n}.a,nv
+     >na".detcelfer tnemugra evitagen htiw Q">:#,_                        @
+
+What correct behaviour is here I don't know. The fingerprint is underspecified.
+Common behaviours (in all cases same for both of the tests) include:
+ cfunge (32 bit cells) and RC/Funge-98 pushes -2147483648.
+ cfunge (64 bit cells) pushes -9223372036854775808.
+ efunge and CCBI pushes 0.
+ PyFunge reflects.
+By the way: -2147483648 seems to be NaN (as represented in "long double" on
+x86/x86_64) cast to 32-bit signed integer.
