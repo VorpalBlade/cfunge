@@ -468,8 +468,9 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 		oom_stackstack(ip);
 		return false;
 	}
-	// Allocate enough space on the TOSS.
-	if (FUNGE_UNLIKELY(!stack_prealloc_space_non_fatal(TOSS, ABS(count)))) {
+	// Allocate enough space on the TOSS and reflect if not.
+	// This is count + 2 (storage offset)
+	if (FUNGE_UNLIKELY(!stack_prealloc_space_non_fatal(TOSS, ABS(count) + 2))) {
 		stack_free(TOSS);
 		oom_stackstack(ip);
 		return false;

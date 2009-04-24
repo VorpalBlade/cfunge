@@ -24,8 +24,8 @@ REQUIRED:
      may or may not work.
    + ICC 10.1 is known to work too.
    + Open64 4.1 should work, but isn't recommended.
-   + Very recent SVN versions of clang works (as of 2009-03-28), but can
-     currently not be recommended since it is very much work in progress.
+   + Very recent SVN versions of clang works on 32-bit x86 (as of 2009-03-28),
+     but can currently not be recommended since clang is not very stable yet.
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 

@@ -99,9 +99,7 @@ fingerprintOpcode opcode_stack_pop(instructionPointer * restrict ip, unsigned ch
 	if (stack->top == 0) {
 		return NULL;
 	} else {
-		fingerprintOpcode tmp = stack->entries[stack->top - 1];
-		stack->top--;
-		return tmp;
+		return stack->entries[--stack->top];
 	}
 }
 
