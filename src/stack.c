@@ -402,6 +402,27 @@ FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict i
 }
 
 
+/**
+ * Like stack_prealloc_space() above, except it returns false instead of exiting
+ * on OOM. Needed for stack stack begin/end.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, size_t minfree)
+{
+	if ((stack->top + minfree) >= stack->size) {
+		size_t newsize = stack->size + minfree;
+		funge_cell* newentries;
+		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
+		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
+		newentries = (funge_cell*)cf_realloc(stack->entries, newsize * sizeof(funge_cell));
+		if (FUNGE_UNLIKELY(!newentries)) {
+			return false;
+		}
+		stack->entries = newentries;
+		stack->size = newsize;
+	}
+	return true;
+}
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
@@ -444,6 +465,12 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 
 	TOSS = stack_create();
 	if (FUNGE_UNLIKELY(!TOSS)) {
+		oom_stackstack(ip);
+		return false;
+	}
+	// Allocate enough space on the TOSS.
+	if (FUNGE_UNLIKELY(!stack_prealloc_space_non_fatal(TOSS, ABS(count)))) {
+		stack_free(TOSS);
 		oom_stackstack(ip);
 		return false;
 	}
