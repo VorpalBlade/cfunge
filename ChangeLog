@@ -11,6 +11,40 @@ and
   bzr help revisionspec
 
 
+Changes since last release (as of r751)
+---------------------------------------
+Major highlights:
+ * cfunge can now track exact bounds for Funge Space (option at compile time)
+Other important changes since last release:
+ * For exact bounds: Implement sparse bounds minimising when difference is huge.
+ * Reworked sysinfo code, now less overhead and more reused results (from time()
+   and fungespace_get_bounds_rect()).
+ * DATE: Make sure constants are long double ones (L suffix). Do more of the
+         conversion as integer math to reduce rounding errors. Make sure to
+         always use int_least64_t internally for greatest precision. Add some
+         missing function attributes.
+ * Cleaned up warning flags in CMakeLists.txt.
+ * Add system for diagnostics output, collected in one place. This should make
+   the error messages more uniform.
+ * Add new command line option to show non-fatal errors.
+ * Reorder some code in file loading to make sure we don't push uninitialised
+   size in i when trying to load an empty file.
+ * Removed unused functions (cf_strndup() and cf_strnlen()).
+ * Cleaned up includes (removing unused includes in header and source files).
+ * Use more exact value of pi than M_PI for long double calculations (affects
+   TURT and FIXP).
+ * Avoid malloc() calls in BASE. The max needed size is small and thus we can
+   safely use a VLA.
+ * Avoid some malloc() calls for fingerprint opcode stacks when they are empty.
+   Now the actual stacks are not allocated until they are needed. Also "inline"
+   the opcode stack metadata into the ip structs to reduce memory overhead.
+ * Fix OOM behaviour in cfunge on huge count for stack-stack begin.
+ * Added the file doc/API_CHANGES documenting API changes. Please see that file
+   for changes in the API.
+ * Fix build issue with IFFI.
+ * Fix handling of SSE intrinsics and inline asm for ICC in funge-space.c.
+
+
 0.4.0
 -----
 This release add support for some more fingerprints, speed up execution quite
@@ -64,7 +98,7 @@ Important changes in this release:
    * Handle CR line endings correctly (both initial file load and i).
    * Added casts to make the -Wconversion warning in GCC 4.3 useful. Fixed bugs
      found thanks to this.
- * Fingerprint format have been updated to 1.4 (1.2 still supported since the
+ * Fingerprint format has been updated to 1.4 (1.2 still supported since the
    new features are a superset of the old ones). 1.3 added support for
    conditional compilation (enabling a fingerprint based on #if).
  * NCRS and TERM now use of the conditional compilation of fingerprints to make
