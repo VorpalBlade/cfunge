@@ -59,6 +59,12 @@ static void print_features(void)
 	puts(" - Tracing using -t <level> option is disabled.");
 #endif
 
+#ifdef CFUN_EXACT_BOUNDS
+	puts(" + This binary uses exact bounds in y.");
+#else
+	puts(" - This binary does not use exact bounds in y.");
+#endif
+
 #ifdef CFUN_USE_GC
 	puts(" * This binary uses Boehm GC.");
 #else
