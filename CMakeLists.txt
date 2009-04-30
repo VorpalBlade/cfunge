@@ -232,19 +232,21 @@ CFUNGE_REQUIRE_FUNCTION(strdup)
 CFUNGE_CHECK_FUNCTION(random)
 CFUNGE_CHECK_FUNCTION(srandom)
 
-# Optional: C99 requires these but we fall back on double versions since many
-# systems still lack the long double versions.
-set(CMAKE_REQUIRED_LIBRARIES "-lm")
-CFUNGE_CHECK_FUNCTION(acosl)
-CFUNGE_CHECK_FUNCTION(asinl)
-CFUNGE_CHECK_FUNCTION(atanl)
-CFUNGE_CHECK_FUNCTION(cosl)
-CFUNGE_CHECK_FUNCTION(floorl)
-CFUNGE_CHECK_FUNCTION(powl)
-CFUNGE_CHECK_FUNCTION(roundl)
-CFUNGE_CHECK_FUNCTION(sinl)
-CFUNGE_CHECK_FUNCTION(sqrtl)
-CFUNGE_CHECK_FUNCTION(tanl)
+if (ENABLE_FLOATS)
+	# Optional: C99 requires these but we fall back on double versions since many
+	# systems still lack the long double versions.
+	set(CMAKE_REQUIRED_LIBRARIES "-lm")
+	CFUNGE_CHECK_FUNCTION(acosl)
+	CFUNGE_CHECK_FUNCTION(asinl)
+	CFUNGE_CHECK_FUNCTION(atanl)
+	CFUNGE_CHECK_FUNCTION(cosl)
+	CFUNGE_CHECK_FUNCTION(floorl)
+	CFUNGE_CHECK_FUNCTION(powl)
+	CFUNGE_CHECK_FUNCTION(roundl)
+	CFUNGE_CHECK_FUNCTION(sinl)
+	CFUNGE_CHECK_FUNCTION(sqrtl)
+	CFUNGE_CHECK_FUNCTION(tanl)
+endif (ENABLE_FLOATS)
 
 
 
