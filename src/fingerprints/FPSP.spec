@@ -1,7 +1,8 @@
-%fingerprint-spec 1.2
+%fingerprint-spec 1.4
 %fprint:FPSP
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://www.rcfunge98.com/rcsfingers.html#FPSP
 %desc:Single precision floating point
+%condition:!defined(CFUN_NO_FLOATS)
 %safe:true
 %begin-instrs
 #I	name	desc

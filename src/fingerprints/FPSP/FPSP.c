@@ -20,6 +20,8 @@
  */
 
 #include "FPSP.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 
 #include <math.h>
@@ -247,3 +249,4 @@ bool finger_FPSP_load(instructionPointer * ip)
 	manager_add_opcode(FPSP, 'Y', pow)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */

@@ -20,6 +20,8 @@
  */
 
 #include "3DSP.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 
 #include <math.h>
@@ -452,3 +454,4 @@ bool finger_3DSP_load(instructionPointer * ip)
 	manager_add_opcode(3DSP, 'Z', scale)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */

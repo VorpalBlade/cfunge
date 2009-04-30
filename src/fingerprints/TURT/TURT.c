@@ -20,6 +20,8 @@
  */
 
 #include "TURT.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 #include "../../../lib/genx/genx.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
@@ -662,3 +664,4 @@ bool finger_TURT_load(instructionPointer * ip)
 	manager_add_opcode(TURT, 'U', query_bounds)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */

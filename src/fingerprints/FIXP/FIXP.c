@@ -20,6 +20,8 @@
  */
 
 #include "FIXP.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 
 #include <math.h>
@@ -213,3 +215,4 @@ bool finger_FIXP_load(instructionPointer * ip)
 	manager_add_opcode(FIXP, 'X', xor)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */

@@ -1,7 +1,8 @@
-%fingerprint-spec 1.2
+%fingerprint-spec 1.4
 %fprint:TURT
 %url:http://catseye.tc/projects/funge98/library/TURT.html
 %desc:Simple Turtle Graphics Library
+%condition:!defined(CFUN_NO_FLOATS)
 %safe:true
 %begin-instrs
 #I	name	desc

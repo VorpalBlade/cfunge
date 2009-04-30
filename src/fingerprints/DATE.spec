@@ -1,7 +1,8 @@
-%fingerprint-spec 1.3
+%fingerprint-spec 1.4
 %fprint:DATE
 %url:http://rcfunge98.com/rcsfingers.html#DATE
 %desc:Date Functions
+%condition:!defined(CFUN_NO_FLOATS)
 %safe:true
 %begin-instrs
 #I Name              Desc

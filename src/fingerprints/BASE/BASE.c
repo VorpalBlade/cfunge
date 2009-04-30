@@ -20,6 +20,8 @@
  */
 
 #include "BASE.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 #include "../../input.h"
 
@@ -128,3 +130,4 @@ bool finger_BASE_load(instructionPointer * ip)
 	manager_add_opcode(BASE, 'O', output_octal)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */

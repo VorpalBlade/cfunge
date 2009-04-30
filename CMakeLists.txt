@@ -31,6 +31,7 @@ mark_as_advanced(
 	CURSES_FORM_LIBRARY
 	CURSES_HAVE_CURSES_H
 	USE_CLOCK_GETTIME
+	ENABLE_FLOATS
 	USE_MUDFLAP
 	USE_WERROR
 	USE_VALGRIND
@@ -92,6 +93,10 @@ option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON
 
 option(USE_CLOCK_GETTIME "Should we (try to) use clock_gettime() instead of gettimeofday()?"  ON)
 
+option(ENABLE_FLOATS "Dsiable all fingerprints using floating point. Not recommended for general use."  ON)
+if (NOT ENABLE_FLOATS)
+	add_definitions(-DCFUN_NO_FLOATS)
+endif (NOT ENABLE_FLOATS)
 
 
 ################################################################################
@@ -340,7 +345,9 @@ endif (USE_CLOCK_GETTIME)
 # Linking libraries
 
 # Need -lm for some fingerprints.
-target_link_libraries(cfunge m)
+if (ENABLE_FLOATS)
+	target_link_libraries(cfunge m)
+endif (ENABLE_FLOATS)
 
 if(USE_GC)
 	target_link_libraries(cfunge ${BOEHM_LIBRARY_GC})

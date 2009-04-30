@@ -1,7 +1,8 @@
-%fingerprint-spec 1.2
+%fingerprint-spec 1.4
 %fprint:FIXP
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://www.rcfunge98.com/rcsfingers.html#FIXP
 %desc:Some useful math functions
+%condition:!defined(CFUN_NO_FLOATS)
 %safe:true
 %begin-instrs
 #I	name	desc

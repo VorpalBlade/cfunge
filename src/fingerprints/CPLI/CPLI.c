@@ -20,6 +20,8 @@
  */
 
 #include "CPLI.h"
+
+#if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
 
 #include <math.h>
@@ -115,3 +117,4 @@ bool finger_CPLI_load(instructionPointer * ip)
 	manager_add_opcode(CPLI, 'V', abs)
 	return true;
 }
+#endif /* !defined(CFUN_NO_FLOATS) */
