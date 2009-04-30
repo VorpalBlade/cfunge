@@ -2,7 +2,7 @@
 %fprint:TURT
 %url:http://catseye.tc/projects/funge98/library/TURT.html
 %desc:Simple Turtle Graphics Library
-%condition:!defined(CFUN_NO_FLOATS)
+%condition:!defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
 %safe:true
 %begin-instrs
 #I	name	desc

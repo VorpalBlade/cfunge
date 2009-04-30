@@ -183,7 +183,7 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	// TOYS - Funge-98 Standard Toys
 	{ .fprint = 0x544f5953, .uri = NULL, .loader = &finger_TOYS_load, .opcodes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	  .url = "http://catseye.tc/projects/funge98/library/TOYS.html", .safe = true },
-#if !defined(CFUN_NO_FLOATS)
+#if !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
 	// TURT - Simple Turtle Graphics Library
 	{ .fprint = 0x54555254, .uri = NULL, .loader = &finger_TURT_load, .opcodes = "ABCDEFHILNPQRTU",
 	  .url = "http://catseye.tc/projects/funge98/library/TURT.html", .safe = true },

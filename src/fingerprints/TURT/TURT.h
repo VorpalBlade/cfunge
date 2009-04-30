@@ -25,10 +25,10 @@
 #include "../../global.h"
 #include "../manager.h"
 
-#if !defined(CFUN_NO_FLOATS)
+#if !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
 
 bool finger_TURT_load(instructionPointer * ip);
 
-#endif /* !defined(CFUN_NO_FLOATS) */
+#endif /* !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT) */
 
 #endif

@@ -32,6 +32,7 @@ mark_as_advanced(
 	CURSES_HAVE_CURSES_H
 	USE_CLOCK_GETTIME
 	ENABLE_FLOATS
+	ENABLE_TURT
 	USE_MUDFLAP
 	USE_WERROR
 	USE_VALGRIND
@@ -93,10 +94,15 @@ option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON
 
 option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
 
-option(ENABLE_FLOATS "Dsiable all fingerprints using floating point. (Not recommended for general use.)"  ON)
+option(ENABLE_FLOATS "Enable all fingerprints using floating point. (Recommended.)"  ON)
 if (NOT ENABLE_FLOATS)
 	add_definitions(-DCFUN_NO_FLOATS)
 endif (NOT ENABLE_FLOATS)
+
+option(ENABLE_TURT "Enable TURT. (Recommended.)" ON)
+if (NOT ENABLE_TURT)
+	add_definitions(-DCFUN_NO_TURT)
+endif (NOT ENABLE_TURT)
 
 
 
