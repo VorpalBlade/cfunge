@@ -27,6 +27,10 @@ mark_as_advanced(
 	LIBRT_LOCATION
 	BOEHM_INCLUDE_DIR
 	BOEHM_LIBRARY_GC
+	CURSES_CURSES_H_PATH
+	CURSES_FORM_LIBRARY
+	CURSES_HAVE_CURSES_H
+	USE_CLOCK_GETTIME
 	USE_MUDFLAP
 	USE_WERROR
 	USE_VALGRIND
@@ -86,6 +90,8 @@ endif(USE_GC)
 
 option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
+option(USE_CLOCK_GETTIME "Should we (try to) use clock_gettime() instead of gettimeofday()?"  ON)
+
 
 
 ################################################################################
@@ -113,6 +119,18 @@ if(NOT ENABLE_TRACE)
 	add_definitions(-DDISABLE_TRACE)
 endif(NOT ENABLE_TRACE)
 
+option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though) and some other features." OFF)
+if (HARDENED)
+	add_definitions(-D_FORTIFY_SOURCE=2)
+	# Slows down though.
+	CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
+endif (HARDENED)
+
+
+
+################################################################################
+# Options for cfunge developers debugging cfunge.
+
 option(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
 if(USE_MUDFLAP)
 	if (USE_GC)
@@ -135,13 +153,6 @@ if(USE_WERROR)
 		CFUNGE_CHECK_CFLAG(Werror -Werror)
 	endif (CMAKE_COMPILER_IS_GNUCC)
 endif(USE_WERROR)
-
-option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though) and some other features." OFF)
-if (HARDENED)
-	add_definitions(-D_FORTIFY_SOURCE=2)
-	# Slows down though.
-	CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
-endif (HARDENED)
 
 
 
@@ -215,13 +226,6 @@ CFUNGE_REQUIRE_FUNCTION(strdup)
 #  aren't available.
 CFUNGE_CHECK_FUNCTION(random)
 CFUNGE_CHECK_FUNCTION(srandom)
-#  clock_gettime is complex to check for since it can be in libc (FreeBSD) or in
-#  librt (Linux). Part of the check is near the end of the file.
-CFUNGE_CHECK_FUNCTION(clock_gettime)
-if (NOT CFUNGE_HAVE_clock_gettime)
-	find_library(LIBRT_LOCATION
-	             NAMES rt)
-endif (NOT CFUNGE_HAVE_clock_gettime)
 
 # Optional: C99 requires these but we fall back on double versions since many
 # systems still lack the long double versions.
@@ -312,6 +316,26 @@ if (USE_NCURSES)
 endif (USE_NCURSES)
 
 
+
+################################################################################
+# Check for clock_gettime() - needs to be done late due to possible libraries.
+#
+# clock_gettime is complex to check for since it can be in libc (FreeBSD) or in
+# librt (Linux).
+if (USE_CLOCK_GETTIME)
+	CFUNGE_CHECK_FUNCTION(clock_gettime)
+	if (NOT CFUNGE_HAVE_clock_gettime)
+		find_library(LIBRT_LOCATION
+					NAMES rt)
+		if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
+			get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
+			CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge rt clock_gettime ${LIBRT_PATH})
+		endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
+	endif (NOT CFUNGE_HAVE_clock_gettime)
+endif (USE_CLOCK_GETTIME)
+
+
+
 ################################################################################
 # Linking libraries
 
@@ -326,11 +350,6 @@ if(USE_MUDFLAP)
 	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")
 	target_link_libraries(cfunge mudflap)
 endif(USE_MUDFLAP)
-
-if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
-	get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
-	CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge rt clock_gettime ${LIBRT_PATH})
-endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 
 
 
