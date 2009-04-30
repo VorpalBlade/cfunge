@@ -66,7 +66,7 @@ set(MAN_INSTALL_PREFIX
 
 
 ################################################################################
-# Boehm GC
+# Options to enable optional dependencies.
 option(USE_GC "If this is enabled, use Boehm-GC." OFF)
 if(USE_GC)
 	pkg_check_modules(BOEHMGC REQUIRED bdw-gc>=7.0)
@@ -83,6 +83,8 @@ if(USE_GC)
 	link_directories(${BOEHMGC_LIBRARY_DIRS})
 	add_definitions(-DCFUN_USE_GC)
 endif(USE_GC)
+
+option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
 
 
@@ -242,6 +244,7 @@ CFUNGE_CHECK_FUNCTION(tanl)
 CFUNGE_CHECK_WARNING_FLAGS()
 
 
+
 ################################################################################
 # Stuff for debug/non-debug builds
 # No case insensitive string copmpare, lets convert to upper-case.
@@ -294,18 +297,19 @@ endif (HARDENED)
 ################################################################################
 # Check for ncurses - needs to be done late due to libraries.
 # Quite a mess yes.
-set(CURSES_NEED_NCURSES TRUE)
-find_package(Curses)
-CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
-if (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
-	# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
-	# builds as it contains the full path to ncurses.so
-	target_link_libraries(cfunge ncurses)
-	add_definitions(-DHAVE_NCURSES)
-else (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
-	message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
-endif (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
-
+if (USE_NCURSES)
+	set(CURSES_NEED_NCURSES TRUE)
+	find_package(Curses)
+	CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
+	if (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+		# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
+		# builds as it contains the full path to ncurses.so
+		target_link_libraries(cfunge ncurses)
+		add_definitions(-DHAVE_NCURSES)
+	else (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
+	endif (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+endif (USE_NCURSES)
 
 
 ################################################################################
