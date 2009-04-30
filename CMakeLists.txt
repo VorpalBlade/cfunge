@@ -91,9 +91,9 @@ endif(USE_GC)
 
 option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
-option(USE_CLOCK_GETTIME "Should we (try to) use clock_gettime() instead of gettimeofday()?"  ON)
+option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
 
-option(ENABLE_FLOATS "Dsiable all fingerprints using floating point. Not recommended for general use."  ON)
+option(ENABLE_FLOATS "Dsiable all fingerprints using floating point. (Not recommended for general use.)"  ON)
 if (NOT ENABLE_FLOATS)
 	add_definitions(-DCFUN_NO_FLOATS)
 endif (NOT ENABLE_FLOATS)
@@ -107,7 +107,7 @@ if(EXACT_BOUNDS)
 	add_definitions(-DCFUN_EXACT_BOUNDS)
 endif(EXACT_BOUNDS)
 
-option(USE_64BIT "Should 64-bit funge space cells be used (otherwise 32-bit)." ON)
+option(USE_64BIT "Use 64-bit funge space cells (if off: use 32-bit)." ON)
 if(USE_64BIT)
 	add_definitions(-DUSE64)
 else(USE_64BIT)

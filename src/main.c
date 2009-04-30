@@ -91,6 +91,11 @@ static void print_features(void)
 	puts(" * Err, this shouldn't happen, it seems cell size is not known...");
 #endif
 
+	// Features with ! are stuff most users doesn't want.
+#ifdef CFUN_NO_FLOATS
+	puts(" ! This binary is compiled without any floating point fingerprints.");
+#endif
+
 #ifdef FUZZ_TESTING
 	// We use this to warn users and to do sanity checking in the fuzz testing
 	// script.
