@@ -129,7 +129,7 @@ static size_t environ_count = 0;
 	stack_push_vector((m_pushstack), vector_create_ref((m_bounds_rect).x, (m_bounds_rect).y))
 /// Greatest point
 #define PUSH_REQ_14(m_pushstack, m_bounds_rect) \
-	stack_push_vector((m_pushstack), vector_create_ref((m_bounds_rect).x + (m_bounds_rect).w, (m_bounds_rect).y + (m_bounds_rect).h))
+	stack_push_vector((m_pushstack), vector_create_ref((m_bounds_rect).w, (m_bounds_rect).h))
 /// Date
 #define PUSH_REQ_15(m_pushstack, m_tm) \
 	stack_push((m_pushstack), (funge_cell)((m_tm)->tm_year * 256 * 256 + ((m_tm)->tm_mon + 1) * 256 + (m_tm)->tm_mday))
@@ -318,14 +318,14 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 		case 18: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
-			stack_push(pushStack, rect.x+rect.h);
+			stack_push(pushStack, rect.h);
 			break;
 		}
 		// Greatest point (x component)
 		case 19: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
-			stack_push(pushStack, rect.x+rect.w);
+			stack_push(pushStack, rect.w);
 			break;
 		}
 		case 20: { // Date ((year - 1900) * 256 * 256) + (month * 256) + (day of month)

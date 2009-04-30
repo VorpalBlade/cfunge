@@ -531,8 +531,8 @@ fungespace_get_bounds_rect(fungeRect * restrict rect)
 	rect->x = fspace.topLeftCorner.x;
 	rect->y = fspace.topLeftCorner.y;
 	// +1 because it is inclusive.
-	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x + 1;
-	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y + 1;
+	rect->w = fspace.bottomRightCorner.x - fspace.topLeftCorner.x;
+	rect->h = fspace.bottomRightCorner.y - fspace.topLeftCorner.y;
 }
 
 /**
