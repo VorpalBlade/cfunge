@@ -11,7 +11,7 @@ and
   bzr help revisionspec
 
 
-Changes since last release (as of r751)
+Changes since last release (as of r762)
 ---------------------------------------
 Major highlights:
  * cfunge can now track exact bounds for Funge Space (option at compile time)
@@ -43,6 +43,11 @@ Other important changes since last release:
    for changes in the API.
  * Fix build issue with IFFI.
  * Fix handling of SSE intrinsics and inline asm for ICC in funge-space.c.
+ * Build system:
+   * Add options to disable some optional features even if needed dependencies
+     found. Features that can be disabled are: clock_gettime(), ncurses,
+     fingerprints using floating point, TURT.
+   * Clean up CMakeLists.txt splitting some stuff out into separate files.
 
 
 0.4.0
