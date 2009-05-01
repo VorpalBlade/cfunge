@@ -12,6 +12,9 @@
 #include "../../src/global.h"
 #define GENX_INTERNAL
 #include "genx.h"
+
+#if !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
+
 #include <string.h>
 
 FUNGE_ATTR_FAST static inline void charProp(char * restrict p, int c, char prop)
@@ -376,3 +379,5 @@ FUNGE_ATTR_FAST void genxSetCharProps(char * restrict p)
 	rangeProp(p, 0x309D, 0x309E, GENX_NAMECHAR);
 	rangeProp(p, 0x30FC, 0x30FE, GENX_NAMECHAR);
 }
+
+#endif /* !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT) */

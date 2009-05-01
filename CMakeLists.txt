@@ -41,6 +41,7 @@ mark_as_advanced(
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/cmake/modules
+	${CMAKE_MODULE_PATH}
 )
 
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html

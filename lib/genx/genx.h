@@ -12,6 +12,9 @@
  */
 
 #include "../../src/global.h"
+
+#if !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
+
 #include <stdio.h>
 
 /**
@@ -311,5 +314,7 @@ const char * genxGetVersion(void);
 #ifdef GENX_INTERNAL
 FUNGE_ATTR_FAST void genxSetCharProps(char * restrict p);
 #endif
+
+#endif /* !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT) */
 
 #endif /* GENX_H */

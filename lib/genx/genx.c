@@ -8,12 +8,14 @@
 #define GENX_VERSION "beta5"
 #define GENX_INTERNAL
 
+#include "genx.h"
+
+#if !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT)
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-
-#include "genx.h"
 
 #define Boolean bool
 #define True 1
@@ -1883,3 +1885,5 @@ FUNGE_ATTR_FAST const char * genxGetVersion(void)
 {
 	return GENX_VERSION;
 }
+
+#endif /* !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT) */
