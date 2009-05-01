@@ -40,6 +40,9 @@
 
 const char **fungeargv = NULL;
 int fungeargc = 0;
+
+// Exclude some code if we are building in IFFI.
+#ifndef CFUN_IS_IFFI
 // Use a larger buffer for stdout in fully buffered mode.
 static char cfun_iobuf[BUFSIZ*4];
 
@@ -307,3 +310,4 @@ int main(int argc, char *argv[])
 	}
 	// NEVER REACHED.
 }
+#endif /* ! CFUN_IS_IFFI */
