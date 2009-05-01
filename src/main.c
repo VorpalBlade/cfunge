@@ -31,6 +31,7 @@
 #include <signal.h> /* signal */
 #include <string.h> /* strncmp */
 #include <unistd.h> /* getopt */
+#include <limits.h> /* CHAR_BIT */
 
 #include "diagnostic.h"
 #include "interpreter.h"
@@ -88,7 +89,7 @@ static void print_features(void)
 #elif defined(USE32)
 	puts(" * Cell size is 32 bits (4 bytes).");
 #else
-	puts(" * Err, this shouldn't happen, it seems cell size is not known...");
+#  error "Unknown cell size."
 #endif
 
 	// Features with ! are stuff most users doesn't want.
@@ -120,12 +121,98 @@ static void print_help(void)
 	puts(" -S           Enable sandbox mode (see README for details).");
 	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 109).");
 	puts(" -t level     Use given trace level. Default 0.");
-	puts(" -V           Show version information and exit.");
+	puts(" -V           Show version and copyright info and exit.");
+	puts(" -v           Show version and build info and exit.");
 	puts(" -W           Show warnings.");
 
 #ifdef DISABLE_TRACE
 	puts("\nNote that someone disabled trace in this binary, so -t will have no effect.");
 #endif
+	exit(EXIT_SUCCESS);
+}
+
+FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
+static void print_build_info(void) {
+	fputs("cfunge " CFUNGE_APPVERSION " [", stdout);
+#ifdef CONCURRENT_FUNGE
+	fputs("+con ", stdout);
+#else
+	fputs("-con ", stdout);
+#endif
+
+#ifndef DISABLE_TRACE
+	fputs("+trace ", stdout);
+#else
+	fputs("-trace ", stdout);
+#endif
+
+#ifdef CFUN_EXACT_BOUNDS
+	fputs("+exact-bounds ", stdout);
+#else
+	fputs("-exact-bounds ", stdout);
+#endif
+
+#ifdef HAVE_NCURSES
+	fputs("+ncurses ", stdout);
+#else
+	fputs("-ncurses ", stdout);
+#endif
+
+#ifdef CFUN_USE_GC
+	fputs("gc ", stdout);
+#endif
+
+#ifdef _FORTIFY_SOURCE
+	fputs("hardened ", stdout);
+#endif
+
+#ifdef DEBUG
+	fputs("debug ", stdout);
+#endif
+
+#ifndef NDEBUG
+	fputs("asserts ", stdout);
+#endif
+
+#ifdef ENABLE_VALGRIND
+	fputs("valgrind ", stdout);
+#endif
+
+#ifdef _MUDFLAP
+	fputs("mud ", stdout);
+#endif
+
+	// Features with ! are stuff most users doesn't want.
+#ifdef CFUN_NO_FLOATS
+	fputs("nofloat ", stdout);
+#endif
+
+#ifdef FUZZ_TESTING
+	fputs("fuzz ", stdout);
+#endif
+
+	// Pointer size and Cell size
+	printf("p:%zu c:%zu]\n", sizeof(void*) * CHAR_BIT, sizeof(funge_cell) * CHAR_BIT);
+
+	puts("Platform:      " CFUN_TARGET_PLATFORM);
+	puts("OS:            " CFUN_TARGET_OS);
+	puts("Compiler path: " CFUN_COMPILER);
+#ifdef CFUNGE_COMP_CLANG
+	puts("Compiler:      clang (unknown version) ");
+#elif defined(CFUNGE_COMP_ICC)
+	puts("Compiler:      ICC " FUNGE_CPP_STRINGIFY(__INTEL_COMPILER));
+#elif defined(CFUNGE_COMP_GCC)
+	puts("Compiler:      GCC " FUNGE_CPP_STRINGIFY(__GNUC__)
+	     "." FUNGE_CPP_STRINGIFY(__GNUC_MINOR__)
+	     "." FUNGE_CPP_STRINGIFY(__GNUC_PATCHLEVEL__)
+	     " (or compatible)");
+#else
+	puts("Compiler:      Unknown.");
+#endif
+	puts("Build type:    " CFUN_BUILD_TYPE);
+	puts("Compiled on:   " CFUN_COMPILED_ON);
+	puts("CFLAGS=\"" CFUN_USER_CFLAGS "\"");
+	puts("LDFLAGS=\"" CFUN_USER_LDFLAGS "\"");
 	exit(EXIT_SUCCESS);
 }
 
@@ -160,7 +247,7 @@ int main(int argc, char *argv[])
 	// We detect socket issues in other ways.
 	signal(SIGPIPE, SIG_IGN);
 
-	while ((opt = getopt(argc, argv, "+bEFfhSs:t:VW")) != -1) {
+	while ((opt = getopt(argc, argv, "+bEFfhSs:t:VvW")) != -1) {
 		switch (opt) {
 			case 'b':
 				setvbuf(stdout, cfun_iobuf, _IOFBF, sizeof(cfun_iobuf));
@@ -196,6 +283,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'V':
 				print_version();
+				break;
+			case 'v':
+				print_build_info();
 				break;
 			case 'W':
 				setting_enable_warnings = true;

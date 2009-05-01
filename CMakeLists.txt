@@ -63,6 +63,7 @@ include(CfungeRequireMultipleIncludes)
 include(CfungeCheckLibraryFunction)
 include(CfungeCheckLinkerFlag)
 include(CfungeCheckWarningFlags)
+include(CfungeSetBuildInfoFlags)
 include(MacroAddLinkFlags)
 
 set(MAN_INSTALL_PREFIX
@@ -267,6 +268,7 @@ CFUNGE_CHECK_WARNING_FLAGS()
 ################################################################################
 # Stuff for debug/non-debug builds
 # No case insensitive string copmpare, lets convert to upper-case.
+# NOTE: CMAKE_BUILD_TYPE_UPPERCASE is used in CFUNGE_SET_BUILD_INFO_FLAGS() too.
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	add_definitions(-DGC_DEBUG)
@@ -367,6 +369,12 @@ if(USE_MUDFLAP)
 	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")
 	target_link_libraries(cfunge mudflap)
 endif(USE_MUDFLAP)
+
+
+
+################################################################################
+# Build info
+CFUNGE_SET_BUILD_INFO_FLAGS()
 
 
 
