@@ -50,63 +50,64 @@ static char cfun_iobuf[BUFSIZ*4];
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_features(void)
 {
-	puts("Features compiled into this binary:");
+	puts("Features compiled into this binary:\n"
 #ifdef CONCURRENT_FUNGE
-	puts(" + Concurrency using t instruction is enabled.");
+	     " + Concurrency using t instruction is enabled.\n"
 #else
-	puts(" - Concurrency using t instruction is disabled.");
+	     " - Concurrency using t instruction is disabled.\n"
 #endif
 
 #ifndef DISABLE_TRACE
-	puts(" + Tracing using -t <level> option is enabled.");
+	     " + Tracing using -t <level> option is enabled.\n"
 #else
-	puts(" - Tracing using -t <level> option is disabled.");
+	     " - Tracing using -t <level> option is disabled.\n"
 #endif
 
 #ifdef CFUN_EXACT_BOUNDS
-	puts(" + This binary uses exact bounds in y.");
+	     " + This binary uses exact bounds in y.\n"
 #else
-	puts(" - This binary does not use exact bounds in y.");
+	     " - This binary does not use exact bounds in y.\n"
 #endif
 
 #ifdef CFUN_USE_GC
-	puts(" * This binary uses Boehm GC.");
+	     " * This binary uses Boehm GC.\n"
 #else
-	puts(" * This binary does not use Boehm GC.");
+	     " * This binary does not use Boehm GC.\n"
 #endif
 
 #ifdef DEBUG
-	puts(" * This binary is a debug build.");
+	     " * This binary is a debug build.\n"
 #endif
 
 #ifndef NDEBUG
-	puts(" * This binary is compiled with asserts.");
+	     " * This binary is compiled with asserts.\n"
 #endif
 
 #ifdef ENABLE_VALGRIND
-	puts(" * This binary is compiled with valgrind debugging annotations.");
+	     " * This binary is compiled with valgrind debugging annotations.\n"
 #endif
 
 #if defined(USE64)
-	puts(" * Cell size is 64 bits (8 bytes).");
+	     " * Cell size is 64 bits (8 bytes).\n"
 #elif defined(USE32)
-	puts(" * Cell size is 32 bits (4 bytes).");
+	     " * Cell size is 32 bits (4 bytes).\n"
 #else
 #  error "Unknown cell size."
 #endif
 
 	// Features with ! are stuff most users doesn't want.
 #ifdef CFUN_NO_FLOATS
-	puts(" ! This binary is compiled without any floating point fingerprints.");
+	     " ! This binary is compiled without any floating point fingerprints.\n"
 #endif
 
 #ifdef FUZZ_TESTING
 	// We use this to warn users and to do sanity checking in the fuzz testing
 	// script.
-	puts(" ! This is a fuzz testing build and thus not standard-conforming.");
+	     " ! This is a fuzz testing build and thus not standard-conforming.\n"
 #endif
 
-	cf_putchar_maybe_locked('\n');
+	); /* End of puts() call */
+
 	// This call does not return.
 	manager_list();
 }
@@ -114,121 +115,107 @@ static void print_features(void)
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_help(void)
 {
-	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]");
-	puts("A fast Befunge interpreter in C\n");
-	puts(" -b           Use fully buffered output (default is system default for stdout).");
-	puts(" -E           Show non-fatal error messages, fatal ones are always shown.");
-	puts(" -F           Disable all fingerprints.");
-	puts(" -f           Show list of features and fingerprints supported in this binary.");
-	puts(" -h           Show this help and exit.");
-	puts(" -S           Enable sandbox mode (see README for details).");
-	puts(" -s standard  Use the given standard (one of 93, 98 [default] and 109).");
-	puts(" -t level     Use given trace level. Default 0.");
-	puts(" -V           Show version and copyright info and exit.");
-	puts(" -v           Show version and build info and exit.");
-	puts(" -W           Show warnings.");
-
+	puts("Usage: cfunge [OPTIONS] [FILE] [PROGRAM OPTIONS]\n"
+	     "A fast Befunge interpreter in C\n\n"
+	     " -b           Use fully buffered output (default is system default for stdout).\n"
+	     " -E           Show non-fatal error messages, fatal ones are always shown.\n"
+	     " -F           Disable all fingerprints.\n"
+	     " -f           Show list of features and fingerprints supported in this binary.\n"
+	     " -h           Show this help and exit.\n"
+	     " -S           Enable sandbox mode (see README for details).\n"
+	     " -s standard  Use the given standard (one of 93, 98 [default] and 109).\n"
+	     " -t level     Use given trace level. Default 0.\n"
+	     " -V           Show version and copyright info and exit.\n"
+	     " -v           Show version and build info and exit.\n"
+	     " -W           Show warnings."
 #ifdef DISABLE_TRACE
-	puts("\nNote that someone disabled trace in this binary, so -t will have no effect.");
+	     "\nNote that someone disabled trace in this binary, so -t will have no effect."
 #endif
+	     );
 	exit(EXIT_SUCCESS);
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_build_info(void) {
-	fputs("cfunge " CFUNGE_APPVERSION " [", stdout);
+	printf("cfunge " CFUNGE_APPVERSION " ["
 #ifdef CONCURRENT_FUNGE
-	fputs("+con ", stdout);
+	       "+con "
 #else
-	fputs("-con ", stdout);
+	       "-con "
 #endif
-
 #ifndef DISABLE_TRACE
-	fputs("+trace ", stdout);
+	       "+trace "
 #else
-	fputs("-trace ", stdout);
+	       "-trace "
 #endif
-
 #ifdef CFUN_EXACT_BOUNDS
-	fputs("+exact-bounds ", stdout);
+	       "+exact-bounds "
 #else
-	fputs("-exact-bounds ", stdout);
+	       "-exact-bounds "
 #endif
-
 #ifdef HAVE_NCURSES
-	fputs("+ncurses ", stdout);
+	       "+ncurses "
 #else
-	fputs("-ncurses ", stdout);
+	       "-ncurses "
 #endif
-
 #ifdef CFUN_USE_GC
-	fputs("gc ", stdout);
+	       "gc "
 #endif
-
 #ifdef _FORTIFY_SOURCE
-	fputs("hardened ", stdout);
+	       "hardened "
 #endif
-
 #ifdef DEBUG
-	fputs("debug ", stdout);
+	       "debug "
 #endif
-
 #ifndef NDEBUG
-	fputs("asserts ", stdout);
+	       "asserts "
 #endif
-
 #ifdef ENABLE_VALGRIND
-	fputs("valgrind ", stdout);
+	       "valgrind "
 #endif
-
 #ifdef _MUDFLAP
-	fputs("mud ", stdout);
+	       "mud "
 #endif
-
-	// Features with ! are stuff most users doesn't want.
 #ifdef CFUN_NO_FLOATS
-	fputs("nofloat ", stdout);
+	       "nofloat "
 #endif
-
 #ifdef FUZZ_TESTING
-	fputs("fuzz ", stdout);
+	       "fuzz "
 #endif
-
 	// Pointer size and Cell size
-	printf("p:%zu c:%zu]\n", sizeof(void*) * CHAR_BIT, sizeof(funge_cell) * CHAR_BIT);
-
-	puts("Platform:      " CFUN_TARGET_PLATFORM);
-	puts("OS:            " CFUN_TARGET_OS);
-	puts("Compiler path: " CFUN_COMPILER);
+	       "p:%zu c:%zu]\n\n"
+           "Platform:      " CFUN_TARGET_PLATFORM "\n"
+	       "OS:            " CFUN_TARGET_OS "\n"
+	       "Compiler path: " CFUN_COMPILER "\n"
 #ifdef CFUNGE_COMP_CLANG
-	puts("Compiler:      clang (unknown version) ");
+	       "Compiler:      clang (unknown version)\n"
 #elif defined(CFUNGE_COMP_ICC)
-	puts("Compiler:      ICC " FUNGE_CPP_STRINGIFY(__INTEL_COMPILER));
+	       "Compiler:      ICC " FUNGE_CPP_STRINGIFY(__INTEL_COMPILER) "\n"
 #elif defined(CFUNGE_COMP_GCC)
-	puts("Compiler:      GCC " FUNGE_CPP_STRINGIFY(__GNUC__)
-	     "." FUNGE_CPP_STRINGIFY(__GNUC_MINOR__)
-	     "." FUNGE_CPP_STRINGIFY(__GNUC_PATCHLEVEL__)
-	     " (or compatible)");
+	       "Compiler:      GCC " FUNGE_CPP_STRINGIFY(__GNUC__)
+	       "." FUNGE_CPP_STRINGIFY(__GNUC_MINOR__)
+	       "." FUNGE_CPP_STRINGIFY(__GNUC_PATCHLEVEL__)
+	       " (or compatible)\n"
 #else
-	puts("Compiler:      Unknown.");
+	       "Compiler:      Unknown.\n"
 #endif
-	puts("Build type:    " CFUN_BUILD_TYPE);
-	puts("Compiled on:   " CFUN_COMPILED_ON);
-	puts("CFLAGS=\"" CFUN_USER_CFLAGS "\"");
-	puts("LDFLAGS=\"" CFUN_USER_LDFLAGS "\"");
+	       "Build type:    " CFUN_BUILD_TYPE "\n"
+	       "Compiled on:   " CFUN_COMPILED_ON "\n\n"
+	       "CFLAGS=\"" CFUN_USER_CFLAGS "\"\n"
+	       "LDFLAGS=\"" CFUN_USER_LDFLAGS "\"\n",
+	       sizeof(void*) * CHAR_BIT, sizeof(funge_cell) * CHAR_BIT);
 	exit(EXIT_SUCCESS);
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void print_version(void)
 {
-	puts("cfunge " CFUNGE_APPVERSION);
-	puts("Copyright (C) 2008-2009 Arvid Norlander.");
-	puts("This is free software.  You may redistribute copies of it under the terms of");
-	puts("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.");
-	puts("There is NO WARRANTY, to the extent permitted by law.\n");
-
-	puts("Written by Arvid Norlander.");
+	puts("cfunge " CFUNGE_APPVERSION "\n"
+	     "Copyright (C) 2008-2009 Arvid Norlander.\n"
+	     "This is free software.  You may redistribute copies of it under the terms of\n"
+	     "the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
+	     "There is NO WARRANTY, to the extent permitted by law.\n\n"
+	     "Written by Arvid Norlander.");
 
 	exit(EXIT_SUCCESS);
 }
