@@ -1,6 +1,6 @@
 %fingerprint-spec 1.4
 %fprint:CPLI
-%url:http://www.rcfunge98.com/rcsfingers.html#CPLI
+%url:http://rcfunge98.com/rcsfingers.html#CPLI
 %desc:Complex Integer extension
 %condition:!defined(CFUN_NO_FLOATS)
 %safe:true

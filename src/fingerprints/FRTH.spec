@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FRTH
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:Some common forth commands
 %safe:true
 %begin-instrs

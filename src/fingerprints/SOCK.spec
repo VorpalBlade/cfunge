@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:SOCK
-%url:http://www.rcfunge98.com/rcsfingers.html#SOCK
+%url:http://rcfunge98.com/rcsfingers.html#SOCK
 %desc:TCP/IP socket extension
 %safe:false
 %begin-instrs

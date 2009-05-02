@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FING
-%url:http://www.rcfunge98.com/rcsfingers.html#FING
+%url:http://rcfunge98.com/rcsfingers.html#FING
 %desc:Operate on single fingerprint semantics
 %safe:true
 %begin-instrs

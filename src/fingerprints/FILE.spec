@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:FILE
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:File I/O functions
 %safe:false
 %begin-instrs

@@ -1,6 +1,6 @@
 %fingerprint-spec 1.4
 %fprint:3DSP
-%url:http://www.rcfunge98.com/rcsfingers.html#3DSP
+%url:http://rcfunge98.com/rcsfingers.html#3DSP
 %desc:3D space manipulation extension
 %condition:!defined(CFUN_NO_FLOATS)
 %safe:true

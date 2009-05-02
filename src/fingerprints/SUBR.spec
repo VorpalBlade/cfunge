@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:SUBR
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:Subroutine extension
 %safe:true
 %begin-instrs

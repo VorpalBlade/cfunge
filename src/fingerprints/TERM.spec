@@ -1,6 +1,6 @@
 %fingerprint-spec 1.3
 %fprint:TERM
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:Terminal control functions
 %condition:defined(HAVE_NCURSES)
 %safe:true

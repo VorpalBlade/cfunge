@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:INDV
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:Pointer functions
 %safe:true
 %begin-instrs

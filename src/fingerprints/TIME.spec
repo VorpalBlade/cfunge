@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:TIME
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:Time and Date functions
 %safe:true
 %begin-instrs

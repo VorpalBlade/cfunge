@@ -1,6 +1,6 @@
 %fingerprint-spec 1.2
 %fprint:STRN
-%url:http://www.rcfunge98.com/rcsfingers.html
+%url:http://rcfunge98.com/rcsfingers.html
 %desc:String functions
 %safe:true
 %begin-instrs
