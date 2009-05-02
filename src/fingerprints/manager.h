@@ -123,7 +123,7 @@ bool manager_load(struct s_instructionPointer * restrict ip, funge_cell fingerpr
  * @param fingerprint Fingerprint to unload.
  * @return Returns false if it failed (caller should reflect the IP then), otherwise true.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_COLD FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool manager_unload(struct s_instructionPointer * restrict ip, funge_cell fingerprint);
 
 /**
