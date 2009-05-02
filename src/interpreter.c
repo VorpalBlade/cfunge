@@ -473,7 +473,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					ip_reverse(ip);
 				} else {
 					funge_cell fprint = 0;
-					if (FUNGE_UNLIKELY(setting_enable_warnings && (fpsize > 8))) {
+					if (FUNGE_UNLIKELY((fpsize > 8) && setting_enable_warnings)) {
 						diag_warn_format("WARN: %c (x=%" FUNGECELLPRI " y=%"
 							FUNGECELLPRI "): count is very large(%" FUNGECELLPRI
 							"), probably a bug.\n", (char)opcode,
