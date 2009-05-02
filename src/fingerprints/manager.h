@@ -129,7 +129,7 @@ bool manager_unload(struct s_instructionPointer * restrict ip, funge_cell finger
 /**
  * Print out list of supported fingerprints
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NORET
+FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 void manager_list(void);
 
 /// For use in fingerprint loading routines ONLY.
