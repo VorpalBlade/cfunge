@@ -16,3 +16,31 @@ to
 The parameter "length" should be like taking a strlen() on the program parameter
 (if program contains no embedded null-bytes). However as long as length is
 correct the code can handle embedded null bytes.
+
+Version 3
+---------
+Added CFUN_IS_IFFI to disable most of main.c.
+If you are not building with cmake, #define these as string constants:
+* CFUN_TARGET_PLATFORM
+  Platform such as returned by uname -m (on target).
+* CFUN_TARGET_OS
+  Platform as returned by uname -s (on target).
+* CFUN_COMPILER
+  Compiler (full path).
+* CFUN_BUILD_TYPE
+  Build type. For standard builds with cmake possible alternatives are:
+  None, Debug, Release, RelWithDebInfo and MinSizeRel.
+* CFUN_COMPILED_ON
+  A string constant like (shell syntax):
+  "$(uname -s) $(uname -r) ($(uname -m))".
+  This one represents the build system, not the target system (in case of cross
+  compilation).
+* CFUN_USER_CFLAGS
+  User defined CFLAGS (ones added by cfunge build system internally are not
+  included).
+* CFUN_USER_LDFLAGS
+  User defined LDFLAGS (ones added by cfunge build system internally are not
+  included).
+
+Note that defining CFUN_IS_IFFI will currently disable the place where these are
+used. This may change without prior notice.
