@@ -44,6 +44,13 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
 )
 
+# Set default build type.
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release CACHE STRING
+	    "Choose the type of build, options are: None(CMAKE_C_FLAGS only used) Debug Release RelWithDebInfo MinSizeRel."
+	    FORCE)
+endif (NOT CMAKE_BUILD_TYPE)
+
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
