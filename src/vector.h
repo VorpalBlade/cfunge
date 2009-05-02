@@ -46,7 +46,7 @@ typedef struct s_funge_vector {
  * Checks if vector is cardinal (as in ^>v<).
  * @param v The vector to check.
  */
-FUNGE_ATTR_PURE FUNGE_ATTR_FAST
+FUNGE_ATTR_PURE FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 bool vector_is_cardinal(const funge_vector * restrict v);
 
 #endif
