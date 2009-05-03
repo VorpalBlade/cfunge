@@ -11,39 +11,44 @@ and
   bzr help revisionspec
 
 
-Changes since last release (as of r762)
----------------------------------------
+0.4.1
+-----
 Major highlights:
- * cfunge can now track exact bounds for Funge Space (option at compile time)
+ * cfunge can now track exact bounds for Funge Space (option at compile time).
+ * Support for disabling some heavy parts of cfunge to reduce memory usage (see
+   below for details).
 Other important changes since last release:
  * For exact bounds: Implement sparse bounds minimising when difference is huge.
  * Reworked sysinfo code, now less overhead and more reused results (from time()
    and fungespace_get_bounds_rect()).
+ * Bug fix: y pushed bounds wrong in certain cases.
+ * Bug fix: Fixed OOM behaviour in cfunge on huge count for stack-stack begin.
  * DATE: Make sure constants are long double ones (L suffix). Do more of the
          conversion as integer math to reduce rounding errors. Make sure to
          always use int_least64_t internally for greatest precision. Add some
          missing function attributes.
- * Cleaned up warning flags in CMakeLists.txt.
- * Add system for diagnostics output, collected in one place. This should make
+ * TURT and FIXP: Use more exact value of pi than M_PI for long double
+   calculations.
+ * Added system for diagnostics output, collected in one place. This should make
    the error messages more uniform.
- * Add new command line option to show non-fatal errors.
- * Reorder some code in file loading to make sure we don't push uninitialised
+ * Added new command line switch (-E) to show non-fatal errors.
+ * Added the command line switch (-v) to display build info and features in a
+   compact format.
+ * Reordered some code in file loading to make sure we don't push uninitialised
    size in i when trying to load an empty file.
  * Removed unused functions (cf_strndup() and cf_strnlen()).
  * Cleaned up includes (removing unused includes in header and source files).
- * Use more exact value of pi than M_PI for long double calculations (affects
-   TURT and FIXP).
  * Avoid malloc() calls in BASE. The max needed size is small and thus we can
    safely use a VLA.
  * Avoid some malloc() calls for fingerprint opcode stacks when they are empty.
    Now the actual stacks are not allocated until they are needed. Also "inline"
    the opcode stack metadata into the ip structs to reduce memory overhead.
- * Fix OOM behaviour in cfunge on huge count for stack-stack begin.
  * Added the file doc/API_CHANGES documenting API changes. Please see that file
    for changes in the API.
- * Fix build issue with IFFI.
- * Fix handling of SSE intrinsics and inline asm for ICC in funge-space.c.
+ * Fixed build issue with IFFI.
+ * Fixed handling of SSE intrinsics and inline asm for ICC in funge-space.c.
  * Build system:
+   * Cleaned up warning flags in CMakeLists.txt.
    * Add options to disable some optional features even if needed dependencies
      found. Features that can be disabled are: clock_gettime(), ncurses,
      fingerprints using floating point, TURT.

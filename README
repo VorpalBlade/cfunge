@@ -6,7 +6,7 @@ don't. For example:
  * Advance tracing support, debugging protocol support system under development.
  * Passes mycology (of course other conforming interpreters does this, but most
    interpreters are, sadly, not conforming).
- * Tested using valgrind and similar tools.
+ * Tested using Valgrind and similar tools.
  * Tested with fuzz testing to ensure cfunge does not segfault on random stuff.
  * Coded for maximum performance AND correctness.
  * Support for selecting either 64-bit or 32-bit integers as datatype in
@@ -29,9 +29,6 @@ REQUIRED:
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 
- * cfunge requires IEC 60559 floating-point arithmetic (please see Annex F in
-   ISO/IEC 9899 for more details.)
-
  * A POSIX.1-2001 system with the memory mapped file option. It also needs the
    function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
    strdup() and memory mapped files are mandatory and part of the base.)
@@ -51,6 +48,9 @@ HIGHLY RECOMMENDED:
  * Ncurses (http://www.gnu.org/software/ncurses/), needed for the TERM
    fingerprint. This is most likely already installed. Ncurses will be
    automatically used if found.
+
+ * IEC 60559 floating-point arithmetic. Please see Annex F in ISO/IEC 9899 for
+   more details.
 
 OPTIONAL:
  * Boehm-GC (http://www.hpl.hp.com/personal/Hans_Boehm/gc/) version 7 or later.
