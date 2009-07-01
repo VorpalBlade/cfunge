@@ -875,6 +875,10 @@ void fungespace_load_string(const unsigned char * restrict program, size_t lengt
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
 			case ' ':
+				if (lastwascr) {
+					lastwascr = false;
+					FUNGE_INITIAL_NEWLINE
+				}
 				pos.x++;
 				break;
 			case '\r':
