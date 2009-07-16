@@ -35,13 +35,13 @@ FRTH
 Some common forth commands
 .TP
 HRTI
-High\-Resolution Timer Interface
+High-Resolution Timer Interface
 .TP
 INDV
 Pointer functions
 .TP
 JSTR
-Read and write strings in Funge\-Space
+Read and write strings in Funge-Space
 .TP
 MODU
 Modulo Arithmetic
@@ -86,7 +86,7 @@ TIME
 Time and Date functions
 .TP
 TOYS
-Funge\-98 Standard Toys
+Funge-98 Standard Toys
 .TP
 TURT
 Simple Turtle Graphics Library

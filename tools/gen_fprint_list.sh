@@ -134,7 +134,7 @@ genfprintinfo() {
 	if [[ $GENERATE_MAN ]]; then
 		MANENTRY1[$FPRINTHEX]="${FPRINT}"
 		# Fix this if we need to escape anything else.
-		MANENTRY2[$FPRINTHEX]="${fp_DESCRIPTION//-/\\-}"
+		MANENTRY2[$FPRINTHEX]="${fp_DESCRIPTION}"
 		if [[ "${fp_SAFE}" == "false" ]]; then
 			MANENTRY2[$FPRINTHEX]+=" (not available in sandbox mode)"
 		fi

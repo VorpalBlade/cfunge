@@ -6,7 +6,7 @@ Any file or filesystem IO is forbidden.
 .TP
 The list of environment variables the program can see in y are restricted.
 .TP
-Non\-safe fingerprints can not be loaded (this includes network and file system access as well as other things).
+Non-safe fingerprints can not be loaded (this includes network and file system access as well as other things).
 
 [IMPLEMENTATION DEFINED BEHAVIOUR]
 The Befunge98 standard leaves some things undefined, here is what cfunge do for some of those cases:
@@ -15,7 +15,7 @@ y pushes time in UTC not local time.
 .TP
 k with a negative argument reflects.
 .TP
-# across edge of Funge\-Space may or may not skip first char after wrapping depending on exact situation.
+# across edge of Funge-Space may or may not skip first char after wrapping depending on exact situation.
 .TP
 ( and ) with a negative count reflects and doesn't pop any fingerprint.
 .TP
