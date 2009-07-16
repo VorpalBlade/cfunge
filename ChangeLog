@@ -11,6 +11,20 @@ and
   bzr help revisionspec
 
 
+0.9.0
+-----
+This is a bug fix release. The version number changed to 0.9.0 to reflect that
+cfunge is now reaching a stable version.
+* Bug fix: In a file with CR line endings and lines with leading spaces, the
+  leading spaces were lost.
+* Bug fix: When j was used to jump backwads (negative argument) to a cell
+  directly on the edge of the current bounding box of the Funge Space, it would
+  incorrectly wrap. Fix this by peforming the normal moving forward of the IP
+  before the jump in j instead of after as usual for most other instructions.
+* Minor Bug fix: Hypens were incorrectly escaped when generating man pages in
+  tools/gen_fprint_list.sh. Fix and update man page to reflect.
+
+
 0.4.1
 -----
 Major highlights:
