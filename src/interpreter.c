@@ -196,6 +196,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				// Currently need to do it like this or wrapping
 				// won't work for j.
 				funge_cell jumps = stack_pop(ip->stack);
+				ip_forward(ip);
 				if (jumps != 0) {
 					funge_vector tmp;
 					tmp.x = ip->delta.x;
@@ -206,6 +207,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					ip->delta.x = tmp.x;
 					ip->delta.y = tmp.y;
 				}
+				ip->needMove = false;
 				break;
 			}
 			case '?': {
