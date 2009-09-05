@@ -50,7 +50,7 @@ FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 		command = (char*)stack_pop_string(ip->stack, NULL);
 
 		// Sanity test!
-		if (*command == '\0') {
+		if (!command || (*command == '\0')) {
 			stack_free_string(command);
 			stack_push(ip->stack, FUNGE_NOCOMMAND);
 			return;
