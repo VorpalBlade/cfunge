@@ -334,6 +334,8 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	v.y += ip->storageOffset.y;
 
 	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
+	if (FUNGE_UNLIKELY(!buffer))
+		goto error;
 
 	got = recv(sockets[s]->fd, buffer, (size_t)len, 0);
 
@@ -413,6 +415,8 @@ static void finger_SOCK_write(instructionPointer * ip)
 	v.y += ip->storageOffset.y;
 
 	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
+	if (FUNGE_UNLIKELY(!buffer))
+		goto error;
 
 	for (size_t i = 0; i < (size_t)len; ++i)
 		buffer[i] = (unsigned char)fungespace_get(vector_create_ref(v.x + (funge_cell)i, v.y));
