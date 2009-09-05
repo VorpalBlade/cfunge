@@ -50,7 +50,7 @@ FUNGE_ATTR_FAST void run_file_input(instructionPointer * restrict ip)
 		filename = (char*)stack_pop_string(ip->stack, NULL);
 
 		// Sanity test!
-		if (*filename == '\0') {
+		if (!filename || *filename == '\0') {
 			stack_free_string(filename);
 			ip_reverse(ip);
 			return;
@@ -93,7 +93,7 @@ FUNGE_ATTR_FAST void run_file_output(instructionPointer * restrict ip)
 		size = stack_pop_vector(ip->stack);
 
 		// Sanity test!
-		if (*filename == '\0' || size.x < 1 || size.y < 1) {
+		if (!filename || *filename == '\0' || size.x < 1 || size.y < 1) {
 			stack_free_string(filename);
 			ip_reverse(ip);
 			return;
