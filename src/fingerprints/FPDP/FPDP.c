@@ -211,6 +211,10 @@ static void finger_FPDP_fromascii(instructionPointer * ip)
 {
 	char * restrict str;
 	str = (char*)stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!str)) {
+		ip_reverse(ip);
+		return;
+	}
 	u.d = strtod(str, NULL);
 	pushDbl(ip);
 	stack_free_string(str);
