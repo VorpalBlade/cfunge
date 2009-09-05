@@ -133,7 +133,7 @@
 #  define FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
-#ifdef CFUNGE_COMP_GCC
+#if defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_ICC)
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
@@ -271,7 +271,7 @@ typedef uint32_t funge_unsigned_cell;
  *    major API breakage happened.
  *  This define was introduced between 0.3.3 and 0.3.4.
  */
-#define CFUNGE_VERSION 0x00090000
+#define CFUNGE_VERSION 0x00090001
 
 /// Since there may be no API changes between versions we also define this.
 #define CFUNGE_API_VERSION 3
