@@ -285,7 +285,9 @@ else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	remove_definitions(-DGC_DEBUG)
 	remove_definitions(-DDEBUG)
 	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
-	CFUNGE_CHECK_CFLAG(fno-ident -fno-ident)
+	if (CMAKE_COMPILER_IS_GNUCC)
+		CFUNGE_CHECK_CFLAG(fno-ident -fno-ident)
+	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 
 
