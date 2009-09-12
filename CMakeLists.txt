@@ -213,7 +213,7 @@ CFUNGE_REQUIRE_INCLUDE(sys/mman.h)
 
 
 ################################################################################
-# Existance of various functions
+# Existence of various functions
 # Some are sanity checks (required in standards), some are required by cfunge
 # but optional in standards, some are optionally used by cfunge.
 #
