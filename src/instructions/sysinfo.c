@@ -30,6 +30,7 @@
 #include "../settings.h"
 #include "../stack.h"
 #include "../vector.h"
+#include "../diagnostic.h"
 
 #include <unistd.h> /* environ (partly) */
 #include <time.h>   /* gmtime, time, time_t */
@@ -370,8 +371,11 @@ void run_sys_info(instructionPointer *ip)
 		push_yval(request, ip, ip->stack);
 	// Large positive, hard to calculate in advance, or may even be pick.
 	} else {
-		if (FUNGE_UNLIKELY(!sysinfo_tmp_stack))
+		if (FUNGE_UNLIKELY(!sysinfo_tmp_stack)) {
 			sysinfo_tmp_stack = stack_create();
+			if (FUNGE_UNLIKELY(!sysinfo_tmp_stack))
+				DIAG_OOM("Failed to allocate temp stack for sysinfo!");
+		}
 		push_all(ip, sysinfo_tmp_stack);
 		// Find out if we should act as pick or not...
 		if (sysinfo_tmp_stack->top > (size_t)request) {
