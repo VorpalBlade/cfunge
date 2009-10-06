@@ -17,7 +17,7 @@ Dependencies
 ------------
 REQUIRED:
  * cmake (http://www.cmake.org/) to generate Makefile for cfunge. At least
-   version 2.6 is required.
+   version 2.6.3 is required.
 
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    + GCC 3.4.6, 4.1.2, 4.2.1, 4.3.2 and 4.3.3 are known to work, other versions
