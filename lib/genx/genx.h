@@ -195,7 +195,7 @@ genxStatus genxStartElementLiteral(genxWriter w,
  * Start a predeclared element
  * - element must have been declared
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 genxStatus genxStartElement(genxElement e);
 
 /**
