@@ -22,6 +22,7 @@
 #include "FILE.h"
 #include "../../stack.h"
 #include "../../../lib/stringbuffer/stringbuffer.h"
+#include "../../diagnostic.h"
 
 #include <assert.h>
 #include <stdio.h> /* fclose, fopen, fread, fwrite ... */
@@ -126,7 +127,7 @@ static void finger_FILE_delete(instructionPointer * ip)
 	char * restrict filename;
 
 	filename = (char*)stack_pop_string(ip->stack, NULL);
-	if (unlink(filename) != 0) {
+	if (!filename || (unlink(filename) != 0)) {
 		ip_reverse(ip);
 	}
 
@@ -225,6 +226,16 @@ static void finger_FILE_ftell(instructionPointer * ip)
 	stack_push(ip->stack, (funge_cell)pos);
 }
 
+/// Lookup table below for modes below.
+static const char* const mode_table[] = {
+	/*0*/"rb",
+	/*1*/"wb",
+	/*2*/"ab",
+	/*3*/"r+b",
+	/*4*/"w+b",
+	/*5*/"a+b",
+};
+
 /// O - Open a file (Va = i/o buffer vector)
 static void finger_FILE_fopen(instructionPointer * ip)
 {
@@ -234,26 +245,24 @@ static void finger_FILE_fopen(instructionPointer * ip)
 	funge_cell h;
 
 	filename = (char*)stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!filename))
+		goto error;
 	mode = stack_pop(ip->stack);
 	vect = stack_pop_vector(ip->stack);
 
 	h = allocate_handle();
-	if (h == -1) {
+	if (FUNGE_UNLIKELY(h == -1)) {
 		goto error;
 	}
 
-	switch (mode) {
-		case 0: handles[h]->file = fopen(filename, "rb");  break;
-		case 1: handles[h]->file = fopen(filename, "wb");  break;
-		case 2: handles[h]->file = fopen(filename, "ab");  break;
-		case 3: handles[h]->file = fopen(filename, "r+b"); break;
-		case 4: handles[h]->file = fopen(filename, "w+b"); break;
-		case 5: handles[h]->file = fopen(filename, "a+b"); break;
-		default:
-			free_handle(h);
-			goto error;
+	if (FUNGE_UNLIKELY((mode < 0) || (mode > 5))) {
+		free_handle(h);
+		goto error;
+	} else {
+		handles[h]->file = fopen(filename, mode_table[mode]);
 	}
-	if (!handles[h]->file) {
+
+	if (FUNGE_UNLIKELY(!handles[h]->file)) {
 		free_handle(h);
 		goto error;
 	}
@@ -279,7 +288,7 @@ static void finger_FILE_fputs(instructionPointer * ip)
 
 	str = (char*)stack_pop_string(ip->stack, NULL);
 	h = stack_peek(ip->stack);
-	if (!valid_handle(h)) {
+	if (!valid_handle(h) || !str) {
 		ip_reverse(ip);
 	} else {
 		if (fputs(str, handles[h]->file) == EOF) {
@@ -393,7 +402,8 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 		FILE * fp = handles[h]->file;
 		funge_vector v = handles[h]->buffvect;
 		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(char));
-
+		if (FUNGE_UNLIKELY(!buf))
+			DIAG_OOM("Failed to allocate buffer");
 		for (funge_cell i = 0; i < n; i++) {
 			buf[i] = (unsigned char)fungespace_get(&v);
 			v.x++;
