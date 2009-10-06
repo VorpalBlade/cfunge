@@ -154,6 +154,17 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 								stringbuffer_destroy(sb);
 								return NULL;
 							}
+						// EOF.
+						} else if (n == 0) {
+							char * restrict result = stringbuffer_finish(sb, retlength);
+							close(outfds[0]);
+							free_nogc(buf);
+							if (*retlength == 0) {
+								free_nogc(result);
+								return NULL;
+							} else {
+								return result;
+							}
 						} else if (n > 0) {
 							buf[n] = '\0';
 							stringbuffer_append_string(sb, buf);

@@ -31,7 +31,11 @@
 #include "../TERM/TERM.h"
 
 #include <ncurses.h>
-#include <term.h>
+#ifdef TERM_H_IN_NCURSES
+#  include <ncurses/term.h>
+#else
+#  include <term.h>
+#endif
 
 #if defined(__OpenBSD__)
 // OpenBSD's ncurses sucks hard, it redefines bool.

@@ -213,7 +213,7 @@ CFUNGE_REQUIRE_INCLUDE(sys/mman.h)
 
 
 ################################################################################
-# Existance of various functions
+# Existence of various functions
 # Some are sanity checks (required in standards), some are required by cfunge
 # but optional in standards, some are optionally used by cfunge.
 #
@@ -331,14 +331,18 @@ if (USE_NCURSES)
 	set(CURSES_NEED_NCURSES TRUE)
 	find_package(Curses)
 	CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
-	if (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+	CHECK_INCLUDE_FILE(ncurses/term.h HAVE_NCURSES_TERM_H)
+	if (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
 		# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
 		# builds as it contains the full path to ncurses.so
 		target_link_libraries(cfunge ncurses)
 		add_definitions(-DHAVE_NCURSES)
-	else (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+		if (HAVE_NCURSES_TERM_H)
+			add_definitions(-DTERM_H_IN_NCURSES)
+		endif (HAVE_NCURSES_TERM_H)
+	else (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
 		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
-	endif (CURSES_FOUND AND HAVE_TERM_H AND CURSES_HAVE_CURSES_H)
+	endif (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
 endif (USE_NCURSES)
 
 
