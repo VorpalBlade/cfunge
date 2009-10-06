@@ -43,7 +43,7 @@ static void finger_STRN_append(instructionPointer * ip)
 		goto error;
 	}
 
-	c = cf_realloc(top, top_len + strlen(bottom) + 1);
+	c = cf_realloc(top, top_len + bottom_len + 1);
 	if (FUNGE_UNLIKELY(!c)) {
 		goto error;
 	}
@@ -71,6 +71,13 @@ static void finger_STRN_compare(instructionPointer * ip)
 	unsigned char * restrict b;
 	a = stack_pop_string(ip->stack, NULL);
 	b = stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!a || !b)) {
+		// Ok even if NULL.
+		stack_free_string(a);
+		stack_free_string(b);
+		ip_reverse(ip);
+		return;
+	}
 	stack_push(ip->stack, strcmp((char*)a, (char*)b));
 	stack_free_string(a);
 	stack_free_string(b);
@@ -81,6 +88,10 @@ static void finger_STRN_display(instructionPointer * ip)
 {
 	unsigned char * restrict s;
 	s = stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!s)) {
+		ip_reverse(ip);
+		return;
+	}
 	fputs((char*)s, stdout);
 	stack_free_string(s);
 }
@@ -93,6 +104,13 @@ static void finger_STRN_search(instructionPointer * ip)
 	unsigned char * c;
 	top = stack_pop_string(ip->stack, NULL);
 	bottom = stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!top || !bottom)) {
+		// Ok even if NULL.
+		stack_free_string(top);
+		stack_free_string(bottom);
+		ip_reverse(ip);
+		return;
+	}
 	c = (unsigned char*)strstr((char*)top, (char*)bottom);
 	if (c) {
 		stack_push_string(ip->stack, c, strlen((char*)c));
@@ -273,6 +291,10 @@ static void finger_STRN_atoi(instructionPointer * ip)
 {
 	unsigned char *s;
 	s = stack_pop_string(ip->stack, NULL);
+	if (FUNGE_UNLIKELY(!s)) {
+		ip_reverse(ip);
+		return;
+	}
 	stack_push(ip->stack, atoi((char*)s));
 	stack_free_string(s);
 }
