@@ -31,6 +31,7 @@
 #include <stdint.h>
 #include <stdio.h>   /* fputs, snprintf */
 #include <stdlib.h>  /* abs */
+#include <assert.h>
 
 // M_PIl is a GNU extension. This value should be enough
 // for 128-bit long double.
@@ -406,7 +407,7 @@ static void finger_TURT_set_heading(instructionPointer * ip)
 	turt.heading = toRad(stack_pop(ip->stack)); normalise();
 }
 
-
+FUNGE_ATTR_NONNULL
 static inline bool generate_path(genxWriter gw, uint32_t colour, const char * path,
                                  genxElement g_path, genxAttribute g_style, genxAttribute g_d)
 {
@@ -442,6 +443,8 @@ static inline bool generate_paths(genxWriter gw)
 	g_style = genxDeclareAttribute(gw, NULL, (constUtf8)"style", &status);
 	g_d     = genxDeclareAttribute(gw, NULL, (constUtf8)"d", &status);
 
+	assert((g_path != NULL) && (g_style != NULL) && (g_d != NULL));
+
 	if (p->penDown)
 		stringbuffer_append_string(sb, "M0,0 ");
 
@@ -464,8 +467,7 @@ static inline bool generate_paths(genxWriter gw)
 			sb = NULL;
 			generate_path(gw, p->d.colour, path_data, g_path, g_style, g_d);
 			// TODO: Should we free?
-			if (path_data)
-				free_nogc(path_data);
+			free_nogc(path_data);
 			path_data = NULL;
 		}
 		prev = p;
@@ -476,7 +478,7 @@ static inline bool generate_paths(genxWriter gw)
 	if (path_data_length > 0) {
 		generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
 	}
-	if (path_data) free_nogc(path_data);
+	free_nogc(path_data);
 	return true;
 }
 
