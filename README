@@ -22,7 +22,7 @@ REQUIRED:
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    + GCC 3.4.6, 4.1.2, 4.2.1, 4.3.2 and 4.3.3 are known to work, other versions
      may or may not work.
-   + ICC 10.1 is known to work too.
+   + ICC 10.1 and 11.1 are known to work too.
    + Open64 4.1 should work, but isn't recommended.
    + Very recent SVN versions of clang works on 32-bit x86 (as of 2009-03-28),
      but can currently not be recommended since clang is not very stable yet.
