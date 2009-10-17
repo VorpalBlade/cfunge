@@ -83,7 +83,7 @@ set(MAN_INSTALL_PREFIX
 ################################################################################
 # Options to enable optional dependencies.
 option(USE_GC "If this is enabled, use Boehm-GC." OFF)
-if(USE_GC)
+if (USE_GC)
 	pkg_check_modules(BOEHMGC REQUIRED bdw-gc>=7.0)
 
 	find_path(BOEHM_INCLUDE_DIR gc/gc.h
@@ -97,7 +97,7 @@ if(USE_GC)
 	include_directories(${BOEHM_INCLUDE_DIR})
 	link_directories(${BOEHMGC_LIBRARY_DIRS})
 	add_definitions(-DCFUN_USE_GC)
-endif(USE_GC)
+endif (USE_GC)
 
 option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
@@ -119,26 +119,26 @@ endif (NOT ENABLE_TURT)
 # Other options
 
 option(EXACT_BOUNDS "Handle shrinking bounds (slower and most programs don't need it, but follows the standard more closely)." ON)
-if(EXACT_BOUNDS)
+if (EXACT_BOUNDS)
 	add_definitions(-DCFUN_EXACT_BOUNDS)
-endif(EXACT_BOUNDS)
+endif (EXACT_BOUNDS)
 
 option(USE_64BIT "Use 64-bit funge space cells (if off: use 32-bit)." ON)
-if(USE_64BIT)
+if (USE_64BIT)
 	add_definitions(-DUSE64)
-else(USE_64BIT)
+else (USE_64BIT)
 	add_definitions(-DUSE32)
-endif(USE_64BIT)
+endif (USE_64BIT)
 
 option(CONCURRENT_FUNGE "Enable support for concurrent funge." ON)
-if(CONCURRENT_FUNGE)
+if (CONCURRENT_FUNGE)
 	add_definitions(-DCONCURRENT_FUNGE)
-endif(CONCURRENT_FUNGE)
+endif (CONCURRENT_FUNGE)
 
 option(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
-if(NOT ENABLE_TRACE)
+if (NOT ENABLE_TRACE)
 	add_definitions(-DDISABLE_TRACE)
-endif(NOT ENABLE_TRACE)
+endif (NOT ENABLE_TRACE)
 
 option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though) and some other features." OFF)
 if (HARDENED)
@@ -153,27 +153,27 @@ endif (HARDENED)
 # Options for cfunge developers debugging cfunge.
 
 option(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
-if(USE_MUDFLAP)
+if (USE_MUDFLAP)
 	if (USE_GC)
 		message(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
 	endif (USE_GC)
 	add_definitions(-fmudflap)
-endif(USE_MUDFLAP)
+endif (USE_MUDFLAP)
 
 option(USE_VALGRIND "Add special source annotations for the memory debugger valgrind (does not work with Boehm-GC)." OFF)
-if(USE_VALGRIND)
+if (USE_VALGRIND)
 	if (USE_GC)
 		message(FATAL_ERROR "You can't use valgrind and Boehm GC at the same time")
 	endif (USE_GC)
 	add_definitions(-DENABLE_VALGRIND)
-endif(USE_VALGRIND)
+endif (USE_VALGRIND)
 
-option(USE_WERROR "Should we build with -Werror" OFF)
-if(USE_WERROR)
+option(USE_WERROR "Should we build with -Werror (GCC only)" OFF)
+if (USE_WERROR)
 	if (CMAKE_COMPILER_IS_GNUCC)
 		CFUNGE_CHECK_CFLAG(Werror -Werror)
 	endif (CMAKE_COMPILER_IS_GNUCC)
-endif(USE_WERROR)
+endif (USE_WERROR)
 
 
 
@@ -356,7 +356,7 @@ if (USE_CLOCK_GETTIME)
 	CFUNGE_CHECK_FUNCTION(clock_gettime)
 	if (NOT CFUNGE_HAVE_clock_gettime)
 		find_library(LIBRT_LOCATION
-					NAMES rt)
+		             NAMES rt)
 		if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 			get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
 			CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge rt clock_gettime ${LIBRT_PATH})
@@ -374,14 +374,14 @@ if (ENABLE_FLOATS)
 	target_link_libraries(cfunge m)
 endif (ENABLE_FLOATS)
 
-if(USE_GC)
+if (USE_GC)
 	target_link_libraries(cfunge ${BOEHM_LIBRARY_GC})
-endif(USE_GC)
+endif (USE_GC)
 
-if(USE_MUDFLAP)
+if (USE_MUDFLAP)
 	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")
 	target_link_libraries(cfunge mudflap)
-endif(USE_MUDFLAP)
+endif (USE_MUDFLAP)
 
 
 
