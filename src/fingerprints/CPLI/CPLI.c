@@ -80,7 +80,7 @@ static void finger_CPLI_out(instructionPointer * ip)
 	r = stack_pop(ip->stack);
 	printf("%" FUNGECELLPRI, r);
 	if (i > 0)
-		cf_putchar_maybe_locked('+');
+		cf_putchar_unlocked('+');
 	printf("%" FUNGECELLPRI "i ", i);
 }
 

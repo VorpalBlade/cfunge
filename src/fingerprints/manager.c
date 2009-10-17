@@ -54,7 +54,7 @@ static inline void opcode_stack_duplicate(const fungeOpcodeStack * restrict old,
                                           fungeOpcodeStack * restrict new)
 {
 	if (old->top) {
-		new->entries = (fingerprintOpcode*)cf_malloc((old->top + 1) * sizeof(fingerprintOpcode));
+		new->entries = (fingerprintOpcode*)malloc((old->top + 1) * sizeof(fingerprintOpcode));
 		if (FUNGE_UNLIKELY(!new->entries)) {
 			DIAG_OOM("Couldn't allocate for fingerprint stack");
 		}
@@ -78,7 +78,7 @@ bool opcode_stack_push(instructionPointer * restrict ip, unsigned char opcode, f
 	// Check if we need to realloc. It may also be that stack->entries is NULL
 	// (both stack->top and stack->size are 0 then.
 	if (stack->top == stack->size) {
-		fingerprintOpcode* newstack = cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
+		fingerprintOpcode* newstack = realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(fingerprintOpcode));
 		if (FUNGE_UNLIKELY(!newstack))
 			return false;
 		stack->entries = newstack;
@@ -126,7 +126,7 @@ FUNGE_ATTR_FAST void manager_free(instructionPointer * restrict ip)
 	if (FUNGE_UNLIKELY(!ip))
 		return;
 	for (int i = 0; i < FINGEROPCODECOUNT; i++) {
-		cf_free(ip->fingerOpcodes[i].entries);
+		free(ip->fingerOpcodes[i].entries);
 	}
 }
 

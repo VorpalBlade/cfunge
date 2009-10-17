@@ -87,10 +87,10 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 			// Strdup to avoid the read only string warning.
 			// No need to free in child.
 			char * const arguments[] = {
-				strdup_nogc("perl"),
-				strdup_nogc("-e"),
-				strdup_nogc("open(CFUNGE_REALERR, \">&STDERR\"); open(STDERR, \">&STDOUT\"); print CFUNGE_REALERR eval($ARGV[0])"),
-				strdup_nogc(perlcode),
+				strdup("perl"),
+				strdup("-e"),
+				strdup("open(CFUNGE_REALERR, \">&STDERR\"); open(STDERR, \">&STDOUT\"); print CFUNGE_REALERR eval($ARGV[0])"),
+				strdup(perlcode),
 				NULL
 			};
 			if (!arguments[0] || !arguments[1] || !arguments[2]
@@ -133,7 +133,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 					sb = stringbuffer_new();
 					if (!sb)
 						return NULL;
-					buf = malloc_nogc((STRINGALLOCCHUNK + 1) * sizeof(char));
+					buf = malloc((STRINGALLOCCHUNK + 1) * sizeof(char));
 					if (!buf) {
 						stringbuffer_destroy(sb);
 						return NULL;
@@ -146,11 +146,11 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 						if (n == -1) {
 							close(outfds[0]);
 							if (readErrno == EAGAIN) {
-								free_nogc(buf);
+								free(buf);
 								return stringbuffer_finish(sb, retlength);
 							} else {
 								DIAG_ERROR_FORMAT_LOC("Read failed in run_perl: %s", strerror(readErrno));
-								free_nogc(buf);
+								free(buf);
 								stringbuffer_destroy(sb);
 								return NULL;
 							}
@@ -158,9 +158,9 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 						} else if (n == 0) {
 							char * restrict result = stringbuffer_finish(sb, retlength);
 							close(outfds[0]);
-							free_nogc(buf);
+							free(buf);
 							if (*retlength == 0) {
-								free_nogc(result);
+								free(result);
 								return NULL;
 							} else {
 								return result;
@@ -170,7 +170,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 							stringbuffer_append_string(sb, buf);
 							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
-								free_nogc(buf);
+								free(buf);
 								return stringbuffer_finish(sb, retlength);
 							}
 						}
@@ -206,7 +206,7 @@ static void finger_PERL_eval(instructionPointer * ip)
 		stack_push_string(ip->stack, (unsigned char*)result, length);
 	}
 	stack_free_string(perlcode);
-	free_nogc(result);
+	free(result);
 }
 
 /// I - As E but cast to integer.
@@ -227,7 +227,7 @@ static void finger_PERL_int_eval(instructionPointer * ip)
 			stack_push(ip->stack, (funge_cell)i);
 	}
 	stack_free_string(perlcode);
-	free_nogc(result);
+	free(result);
 }
 
 bool finger_PERL_load(instructionPointer * ip)

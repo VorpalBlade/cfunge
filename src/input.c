@@ -52,7 +52,7 @@ static inline bool get_line(void)
 FUNGE_ATTR_FAST static inline void discard_line(void)
 {
 	if (lastline != NULL)
-		cf_free(lastline);
+		free(lastline);
 	lastline = NULL;
 	lastline_current = NULL;
 }
@@ -76,7 +76,7 @@ FUNGE_ATTR_FAST bool input_getline(unsigned char ** str)
 	unsigned char * tmp;
 	if (!get_line())
 		return false;
-	tmp = (unsigned char*)cf_strdup(lastline_current);
+	tmp = (unsigned char*)strdup(lastline_current);
 	*str = tmp;
 	discard_line();
 	return true;

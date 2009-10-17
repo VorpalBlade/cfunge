@@ -38,12 +38,12 @@
 
 FUNGE_ATTR_FAST funge_stack * stack_create(void)
 {
-	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
+	funge_stack * tmp = (funge_stack*)malloc(sizeof(funge_stack));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
-	tmp->entries = (funge_cell*)cf_malloc_noptr(ALLOCCHUNKSIZE * sizeof(funge_cell));
+	tmp->entries = (funge_cell*)malloc(ALLOCCHUNKSIZE * sizeof(funge_cell));
 	if (FUNGE_UNLIKELY(!tmp->entries)) {
-		cf_free(tmp);
+		free(tmp);
 		return NULL;
 	}
 	tmp->size = ALLOCCHUNKSIZE;
@@ -56,10 +56,10 @@ FUNGE_ATTR_FAST void stack_free(funge_stack * stack)
 	if (FUNGE_UNLIKELY(!stack))
 		return;
 	if (FUNGE_LIKELY(stack->entries != NULL)) {
-		cf_free(stack->entries);
+		free(stack->entries);
 		stack->entries = NULL;
 	}
-	cf_free(stack);
+	free(stack);
 }
 
 #ifdef CONCURRENT_FUNGE
@@ -67,12 +67,12 @@ FUNGE_ATTR_FAST void stack_free(funge_stack * stack)
 FUNGE_ATTR_FAST FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline funge_stack * stack_duplicate(const funge_stack * old)
 {
-	funge_stack * tmp = (funge_stack*)cf_malloc(sizeof(funge_stack));
+	funge_stack * tmp = (funge_stack*)malloc(sizeof(funge_stack));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
-	tmp->entries = (funge_cell*)cf_malloc_noptr((old->top + 1) * sizeof(funge_cell));
+	tmp->entries = (funge_cell*)malloc((old->top + 1) * sizeof(funge_cell));
 	if (FUNGE_UNLIKELY(!tmp->entries)) {
-		cf_free(tmp);
+		free(tmp);
 		return NULL;
 	}
 	tmp->size = old->top + 1;
@@ -101,7 +101,7 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 		size_t newsize = stack->size + minfree;
 		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
 		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
-		stack->entries = (funge_cell*)cf_realloc(stack->entries, newsize * sizeof(funge_cell));
+		stack->entries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
@@ -125,7 +125,7 @@ FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, funge_cell value)
 
 	// Do we need to realloc?
 	if (FUNGE_UNLIKELY(stack->top == stack->size)) {
-		stack->entries = (funge_cell*)cf_realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(funge_cell));
+		stack->entries = (funge_cell*)realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
@@ -235,7 +235,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 	funge_cell c;
 	size_t index = 0;
 	// FIXME: This may very likely be more than is needed.
-	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	unsigned char * buf = (unsigned char*)malloc((stack->top + 1) * sizeof(char));
 	if (FUNGE_UNLIKELY(!buf)) {
 		if (len)
 			*len = 0;
@@ -254,7 +254,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 #ifdef UNUSED
 FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict stack, size_t len)
 {
-	unsigned char * restrict x = (unsigned char*)cf_malloc_noptr((len + 1) * sizeof(char));
+	unsigned char * restrict x = (unsigned char*)malloc((len + 1) * sizeof(char));
 	if (FUNGE_UNLIKELY(!x))
 		return NULL;
 
@@ -340,13 +340,13 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_create(void)
 	funge_stackstack * stackStack;
 	funge_stack      * stack;
 
-	stackStack = (funge_stackstack*)cf_malloc(sizeof(funge_stackstack) + sizeof(funge_stack*));
+	stackStack = (funge_stackstack*)malloc(sizeof(funge_stackstack) + sizeof(funge_stack*));
 	if (FUNGE_UNLIKELY(!stackStack))
 		return NULL;
 
 	stack = stack_create();
 	if (FUNGE_UNLIKELY(!stack)) {
-		cf_free(stackStack);
+		free(stackStack);
 		return NULL;
 	}
 
@@ -364,7 +364,7 @@ FUNGE_ATTR_FAST void stackstack_free(funge_stackstack * me)
 	for (size_t i = 0; i < me->size; i++)
 		stack_free(me->stacks[i]);
 
-	cf_free(me);
+	free(me);
 }
 
 #ifdef CONCURRENT_FUNGE
@@ -374,7 +374,7 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 
 	assert(old != NULL);
 
-	stackStack = (funge_stackstack*)cf_malloc(sizeof(funge_stackstack) + old->size * sizeof(funge_stack*));
+	stackStack = (funge_stackstack*)malloc(sizeof(funge_stackstack) + old->size * sizeof(funge_stack*));
 	if (FUNGE_UNLIKELY(!stackStack))
 		return NULL;
 
@@ -397,9 +397,6 @@ FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict i
 	                 FUNGECELLPRI " y=%" FUNGECELLPRI ". Reflecting.",
 	                 ip->position.x, ip->position.y);
 	// Lets hope.
-#ifdef CFUN_USE_GC
-	gc_collect_full();
-#endif
 }
 
 
@@ -415,7 +412,7 @@ static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, 
 		funge_cell* newentries;
 		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
 		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
-		newentries = (funge_cell*)cf_realloc(stack->entries, newsize * sizeof(funge_cell));
+		newentries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!newentries)) {
 			return false;
 		}
@@ -478,7 +475,7 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 	}
 
 	// Extend by one
-	stackStack = cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
+	stackStack = realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
 	if (FUNGE_UNLIKELY(!stackStack)) {
 		stack_free(TOSS);
 		oom_stackstack(ip);
@@ -534,7 +531,7 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 	ip->stack = SOSS;
 	// FIXME: Maybe we shouldn't realloc here to reduce overhead.
 	// Make it one smaller
-	stackStack = (funge_stackstack*)cf_realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size - 1) * sizeof(funge_stack*));
+	stackStack = (funge_stackstack*)realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size - 1) * sizeof(funge_stack*));
 	if (FUNGE_UNLIKELY(!stackStack)) {
 		oom_stackstack(ip);
 		return false;

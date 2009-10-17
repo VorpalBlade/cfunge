@@ -40,10 +40,8 @@ static void finger_BASE_output_binary(instructionPointer * ip)
 {
 	funge_cell x;
 	x = stack_pop(ip->stack);
-	cf_flockfile(stdout);
 	binary(x);
 	cf_putchar_unlocked(' ');
-	cf_funlockfile(stdout);
 }
 
 static void finger_BASE_output_octal(instructionPointer * ip)
@@ -75,7 +73,6 @@ static void finger_BASE_output_base(instructionPointer * ip)
 		return;
 	}
 
-	cf_flockfile(stdout);
 	if (base == 1) {
 		while (val--)
 			cf_putchar_unlocked('0');
@@ -93,7 +90,6 @@ static void finger_BASE_output_base(instructionPointer * ip)
 			cf_putchar_unlocked(result[i]);
 		cf_putchar_unlocked(' ');
 	}
-	cf_funlockfile(stdout);
 }
 
 static void finger_BASE_input_base(instructionPointer * ip)

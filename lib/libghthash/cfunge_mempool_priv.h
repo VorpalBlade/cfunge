@@ -90,7 +90,7 @@ FUNGE_ATTR_FAST
 bool CF_MEMPOOL_FUNC(setup, CF_MEMPOOL_VARIANT)(void)
 {
 	assert(pools == NULL);
-	pools = calloc_nogc(1, sizeof(pool_header));
+	pools = calloc(1, sizeof(pool_header));
 	if (!pools)
 		return false;
 	// No it isn't really initialise_mempoold.
@@ -110,7 +110,7 @@ void CF_MEMPOOL_FUNC(teardown, CF_MEMPOOL_VARIANT)(void)
 		CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(&pools[i]);
 	}
 	VALGRIND_DESTROY_MEMPOOL(pools);
-	free_nogc(pools);
+	free(pools);
 }
 
 
@@ -139,7 +139,7 @@ void CF_MEMPOOL_FUNC(free, CF_MEMPOOL_VARIANT)(CF_MEMPOOL_DATATYPE *ptr)
 FUNGE_ATTR_FAST
 static inline bool CF_MEMPOOL_FUNC(initialise_mempool, CF_MEMPOOL_VARIANT)(pool_header *pool)
 {
-	pool->base = malloc_nogc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
+	pool->base = malloc(sizeof(memory_block) * (POOL_ARRAY_COUNT + 1));
 	if (!pool->base)
 		return false;
 	pool->first_free = pool->base;
@@ -154,7 +154,7 @@ static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(pool_heade
 	if (!pool)
 		return;
 	if (pool->base)
-		free_nogc(pool->base);
+		free(pool->base);
 	pool->first_free = NULL;
 }
 
@@ -162,7 +162,7 @@ static inline void CF_MEMPOOL_FUNC(clear_mempool, CF_MEMPOOL_VARIANT)(pool_heade
 FUNGE_ATTR_FAST
 static inline bool CF_MEMPOOL_FUNC(add_mempool, CF_MEMPOOL_VARIANT)(void)
 {
-	pool_header *pools_new = realloc_nogc(pools, sizeof(pool_header) * (pools_size + 1));
+	pool_header *pools_new = realloc(pools, sizeof(pool_header) * (pools_size + 1));
 	if (!pools_new)
 		return false;
 	VALGRIND_MOVE_MEMPOOL(pools, pools_new);

@@ -244,7 +244,7 @@ static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, he_
 	 * some fragmentation. Thanks to Dru Lemley for this idea.
 	 */
 	if (!(p_he = CF_MEMPOOL_FUNC(CF_GHT_VAR, alloc)())) {
-		DIAG_OOM("cf_malloc failed in mempool_alloc!");
+		DIAG_OOM("malloc failed in mempool_alloc!");
 		// Not reached.
 		return NULL;
 	}
@@ -313,7 +313,7 @@ FUNGE_ATTR_FAST CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, c
 	CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht;
 	size_t i = 1;
 
-	if (!(p_ht = (CF_GHT_NAME(CF_GHT_VAR, hash_table_t)*)cf_malloc(sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_table_t))))) {
+	if (!(p_ht = (CF_GHT_NAME(CF_GHT_VAR, hash_table_t)*)malloc(sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_table_t))))) {
 		perror("malloc");
 		return NULL;
 	}
@@ -332,19 +332,19 @@ FUNGE_ATTR_FAST CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, c
 
 	/* Create an empty bucket list. */
 	if (!(p_ht->pp_entries =
-	      (CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)**)cf_malloc(p_ht->i_size * sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*)))) {
+	      (CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)**)malloc(p_ht->i_size * sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*)))) {
 		perror("malloc");
-		cf_free(p_ht);
+		free(p_ht);
 		return NULL;
 	}
 	memset(p_ht->pp_entries, 0,
 	       p_ht->i_size*sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*));
 
 	/* Initialise the number of entries in each bucket to zero */
-	if (!(p_ht->p_nr = (int*)cf_malloc(p_ht->i_size * sizeof(int)))) {
+	if (!(p_ht->p_nr = (int*)malloc(p_ht->i_size * sizeof(int)))) {
 		perror("malloc");
-		cf_free(p_ht->pp_entries);
-		cf_free(p_ht);
+		free(p_ht->pp_entries);
+		free(p_ht);
 		return NULL;
 	}
 	memset(p_ht->p_nr, 0, p_ht->i_size*sizeof(int));
@@ -632,15 +632,15 @@ FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, h
 			CF_GHT_NAME(CF_GHT_VAR, free_entry_chain)(p_ht->pp_entries[i]);
 			p_ht->pp_entries[i] = NULL;
 		}
-		cf_free(p_ht->pp_entries);
+		free(p_ht->pp_entries);
 		p_ht->pp_entries = NULL;
 	}
 	if (p_ht->p_nr) {
-		cf_free(p_ht->p_nr);
+		free(p_ht->p_nr);
 		p_ht->p_nr = NULL;
 	}
 
-	cf_free(p_ht);
+	free(p_ht);
 }
 
 /* Rehash the hash table (i.e. change its size and reinsert all
@@ -687,8 +687,8 @@ FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, rehash)(
 		}
 	}
 
-	cf_free(p_ht->pp_entries);
-	cf_free(p_ht->p_nr);
+	free(p_ht->pp_entries);
+	free(p_ht->p_nr);
 
 	/* ... and replace it with the new */
 	p_ht->i_size = p_tmp->i_size;
@@ -703,7 +703,7 @@ FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, rehash)(
 	/* Clean up */
 	p_tmp->pp_entries = NULL;
 	p_tmp->p_nr = NULL;
-	cf_free(p_tmp);
+	free(p_tmp);
 }
 
 #undef get_hash_value

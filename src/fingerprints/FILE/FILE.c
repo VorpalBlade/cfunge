@@ -51,7 +51,7 @@ static inline funge_cell findNextfree_handle(void)
 	}
 	// No free one, extend array..
 	{
-		FungeFileHandle** newlist = (FungeFileHandle**)cf_realloc(handles, (maxHandle + ALLOCCHUNK) * sizeof(FungeFileHandle*));
+		FungeFileHandle** newlist = (FungeFileHandle**)realloc(handles, (maxHandle + ALLOCCHUNK) * sizeof(FungeFileHandle*));
 		if (!newlist)
 			return -1;
 		handles = newlist;
@@ -73,7 +73,7 @@ static inline funge_cell allocate_handle(void)
 	if (h < 0)
 		return -1;
 
-	handles[h] = cf_malloc(sizeof(FungeFileHandle));
+	handles[h] = malloc(sizeof(FungeFileHandle));
 	if (!handles[h])
 		return -1;
 	return h;
@@ -89,7 +89,7 @@ static inline void free_handle(funge_cell h)
 	if (handles[h]->file != NULL) {
 		handles[h]->file = NULL;
 	}
-	cf_free(handles[h]);
+	free(handles[h]);
 	handles[h] = NULL;
 }
 
@@ -197,7 +197,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 			str = stringbuffer_finish(sb, &len);
 			stack_push_string(ip->stack, (unsigned char*)str, len);
 			stack_push(ip->stack, (funge_cell)len);
-			free_nogc(str);
+			free(str);
 			return;
 		}
 	}
@@ -318,7 +318,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 	} else {
 		size_t bytes_read;
 		FILE * fp = handles[h]->file;
-		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(unsigned char));
+		unsigned char * restrict buf = malloc((size_t)n * sizeof(unsigned char));
 		if (!buf) {
 			ip_reverse(ip);
 			return;
@@ -329,7 +329,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 			ip_reverse(ip);
 			if (ferror(fp)) {
 				clearerr(fp);
-				free_nogc(buf);
+				free(buf);
 				return;
 			}
 		}
@@ -340,7 +340,7 @@ static void finger_FILE_fread(instructionPointer * ip)
 				v.x++;
 			}
 		}
-		free_nogc(buf);
+		free(buf);
 	}
 }
 
@@ -401,7 +401,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	} else {
 		FILE * fp = handles[h]->file;
 		funge_vector v = handles[h]->buffvect;
-		unsigned char * restrict buf = malloc_nogc((size_t)n * sizeof(char));
+		unsigned char * restrict buf = malloc((size_t)n * sizeof(char));
 		if (FUNGE_UNLIKELY(!buf))
 			DIAG_OOM("Failed to allocate buffer");
 		for (funge_cell i = 0; i < n; i++) {
@@ -414,14 +414,14 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 				ip_reverse(ip);
 			}
 		}
-		free_nogc(buf);
+		free(buf);
 	}
 }
 
 FUNGE_ATTR_FAST static inline bool init_handle_list(void)
 {
 	assert(!handles);
-	handles = (FungeFileHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeFileHandle*));
+	handles = (FungeFileHandle**)calloc(ALLOCCHUNK, sizeof(FungeFileHandle*));
 	if (!handles)
 		return false;
 	maxHandle = ALLOCCHUNK;

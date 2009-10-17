@@ -197,14 +197,6 @@ static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
 FUNGE_ATTR_FAST bool
 fungespace_create(void)
 {
-	// Mark the static space area as pointer-free when using Boehm-GC.
-	// FIXME: Not sure the arguments are correct..
-	cf_mark_static_noptr(&cfun_static_space,
-	                     &cfun_static_space[FUNGESPACE_STATIC_X * FUNGESPACE_STATIC_Y]);
-	cf_mark_static_noptr(&cfun_static_use_count_col,
-	                     &cfun_static_use_count_col[FUNGESPACE_STATIC_X]);
-	cf_mark_static_noptr(&cfun_static_use_count_row,
-	                     &cfun_static_use_count_row[FUNGESPACE_STATIC_Y]);
 	// Fill static array with spaces.
 	// When possible use movntps, which reduces cache pollution (because it acts
 	// as if the memory was write combining).
@@ -1039,7 +1031,6 @@ fungespace_save_to_file(const char         * restrict filename,
 			goto error;
 		}
 #endif
-		cf_flockfile(file);
 		for (funge_cell y = offset->y; y < maxy; y++) {
 			for (funge_cell x = offset->x; x < maxx; x++) {
 				funge_cell value = fungespace_get(vector_create_ref(x, y));
@@ -1047,21 +1038,20 @@ fungespace_save_to_file(const char         * restrict filename,
 			}
 			cf_putc_unlocked('\n', file);
 		}
-		cf_funlockfile(file);
 	// Text mode...
 	} else {
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
-		unsigned char * restrict towrite = cf_malloc_noptr((size_t)(size->x * size->y + size->y) * sizeof(unsigned char));
+		unsigned char * restrict towrite = malloc((size_t)(size->x * size->y + size->y) * sizeof(unsigned char));
 		if (!towrite) {
 			goto error;
 		}
 		// Construct each line.
 		for (funge_cell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = (ssize_t)size->x;
-			funge_cell * restrict string = cf_malloc_noptr((size_t)size->x * sizeof(funge_cell));
+			funge_cell * restrict string = malloc((size_t)size->x * sizeof(funge_cell));
 			if (!string) {
-				cf_free(towrite);
+				free(towrite);
 				goto error;
 			}
 			for (funge_cell x = offset->x; x < maxx; x++) {
@@ -1078,7 +1068,7 @@ fungespace_save_to_file(const char         * restrict filename,
 				}
 				index += lastspace + 1;
 			}
-			cf_free(string);
+			free(string);
 			towrite[index] = (funge_cell)'\n';
 			index++;
 		}
@@ -1092,12 +1082,12 @@ fungespace_save_to_file(const char         * restrict filename,
 			if (lastnewline > 0) {
 				size_t retval = fwrite(towrite, sizeof(unsigned char), (size_t)(lastnewline + 1), file);
 				if (retval != (size_t)lastnewline + 1) {
-					cf_free(towrite);
+					free(towrite);
 					goto error;
 				}
 			}
 		}
-		cf_free(towrite);
+		free(towrite);
 	}
 	fclose(file);
 	return true;

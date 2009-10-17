@@ -69,12 +69,6 @@ static void print_features(void)
 	     " - This binary does not use exact bounds in y.\n"
 #endif
 
-#ifdef CFUN_USE_GC
-	     " * This binary uses Boehm GC.\n"
-#else
-	     " * This binary does not use Boehm GC.\n"
-#endif
-
 #ifdef DEBUG
 	     " * This binary is a debug build.\n"
 #endif
@@ -158,9 +152,6 @@ static void print_build_info(void) {
 #else
 	       "-ncurses "
 #endif
-#ifdef CFUN_USE_GC
-	       "gc "
-#endif
 #ifdef _FORTIFY_SOURCE
 	       "hardened "
 #endif
@@ -224,12 +215,6 @@ int main(int argc, char *argv[])
 {
 	int opt;
 
-#ifdef CFUN_USE_GC
-//	GC_find_leak = 1;
-	GC_all_interior_pointers = 1;
-	GC_INIT();
-//	atexit(&GC_gcollect);
-#endif
 #ifdef FUZZ_TESTING
 	alarm(3);
 #endif

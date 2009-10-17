@@ -47,11 +47,9 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 		return -1;
 	}
 
-	cf_flockfile(fp);
-
 	if (*lineptr == NULL || *n == 0) {
 		*n = 120;
-		*lineptr = (char *) cf_realloc(*lineptr, *n);
+		*lineptr = (char *) realloc(*lineptr, *n);
 		if (*lineptr == NULL) {
 			result = -1;
 			goto unlock_return;
@@ -85,7 +83,7 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 				goto unlock_return;
 			}
 
-			new_lineptr = (char *) cf_realloc(*lineptr, needed);
+			new_lineptr = (char *) realloc(*lineptr, needed);
 			if (new_lineptr == NULL) {
 				result = -1;
 				goto unlock_return;
@@ -104,9 +102,9 @@ cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 	(*lineptr)[cur_len] = '\0';
 	result = cur_len ? (ssize_t)cur_len : result;
 
+// Label name due to it previously using flockfile, no need for that in
+// cfunge.
 unlock_return:
-	cf_funlockfile(fp);  // doesn't set errno
-
 	return result;
 }
 

@@ -95,7 +95,7 @@ typedef struct CF_GHT_STRUCT(CF_GHT_VAR, hash_table) {
  * higher power of two.
  *
  * The hash table is created with @c ght_one_at_a_time_hash() as hash
- * function, automatic rehashing disabled, @c cf_malloc() as the memory
+ * function, automatic rehashing disabled, @c malloc() as the memory
  * allocator and no heuristics.
  *
  * @param i_size the number of buckets in the hash table. Giving a

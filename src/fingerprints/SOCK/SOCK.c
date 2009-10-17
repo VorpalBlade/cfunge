@@ -57,7 +57,7 @@ static inline funge_cell findNextfree_handle(void)
 	}
 	// No free one, extend array..
 	{
-		FungeSocketHandle** newlist = (FungeSocketHandle**)cf_realloc(sockets, (maxHandle + ALLOCCHUNK) * sizeof(FungeSocketHandle*));
+		FungeSocketHandle** newlist = (FungeSocketHandle**)realloc(sockets, (maxHandle + ALLOCCHUNK) * sizeof(FungeSocketHandle*));
 		if (!newlist)
 			return -1;
 		sockets = newlist;
@@ -79,7 +79,7 @@ static inline funge_cell allocate_handle(void)
 	if (h < 0)
 		return -1;
 
-	sockets[h] = cf_malloc(sizeof(FungeSocketHandle));
+	sockets[h] = malloc(sizeof(FungeSocketHandle));
 	if (!sockets[h])
 		return -1;
 	return h;
@@ -91,7 +91,7 @@ static inline void free_handle(funge_cell h)
 {
 	if (!sockets[h])
 		return;
-	cf_free(sockets[h]);
+	free(sockets[h]);
 	sockets[h] = NULL;
 }
 
@@ -333,7 +333,7 @@ static void finger_SOCK_receive(instructionPointer * ip)
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
-	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
+	buffer = malloc((size_t)len * sizeof(unsigned char));
 	if (FUNGE_UNLIKELY(!buffer))
 		goto error;
 
@@ -352,7 +352,7 @@ error:
 	ip_reverse(ip);
 end:
 	if (buffer)
-		cf_free(buffer);
+		free(buffer);
 }
 
 /// S - Create a socket
@@ -414,7 +414,7 @@ static void finger_SOCK_write(instructionPointer * ip)
 	v.x += ip->storageOffset.x;
 	v.y += ip->storageOffset.y;
 
-	buffer = cf_malloc_noptr((size_t)len * sizeof(unsigned char));
+	buffer = malloc((size_t)len * sizeof(unsigned char));
 	if (FUNGE_UNLIKELY(!buffer))
 		goto error;
 
@@ -433,12 +433,12 @@ error:
 	ip_reverse(ip);
 end:
 	if (buffer)
-		cf_free(buffer);
+		free(buffer);
 }
 
 FUNGE_ATTR_FAST static inline bool init_handle_list(void)
 {
-	sockets = (FungeSocketHandle**)cf_calloc(ALLOCCHUNK, sizeof(FungeSocketHandle*));
+	sockets = (FungeSocketHandle**)calloc(ALLOCCHUNK, sizeof(FungeSocketHandle*));
 	if (!sockets)
 		return false;
 	maxHandle = ALLOCCHUNK;

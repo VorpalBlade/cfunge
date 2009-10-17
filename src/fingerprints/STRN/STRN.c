@@ -43,7 +43,7 @@ static void finger_STRN_append(instructionPointer * ip)
 		goto error;
 	}
 
-	c = cf_realloc(top, top_len + bottom_len + 1);
+	c = realloc(top, top_len + bottom_len + 1);
 	if (FUNGE_UNLIKELY(!c)) {
 		goto error;
 	}
@@ -53,7 +53,7 @@ static void finger_STRN_append(instructionPointer * ip)
 	stack_push_string(ip->stack, (unsigned char*)c, strlen(c));
 
 	stack_free_string(bottom);
-	cf_free(c);
+	free(c);
 	return;
 error:
 	ip_reverse(ip);
@@ -164,7 +164,7 @@ static void finger_STRN_get(instructionPointer * ip)
 		return;
 	}
 	stack_push_string(ip->stack, (unsigned char*)s, len);
-	free_nogc(s);
+	free(s);
 }
 
 /// I - Input a string
@@ -182,7 +182,7 @@ static void finger_STRN_input(instructionPointer * ip)
 	if (newline)
 		newline[0] = '\0';
 	stack_push_string(ip->stack, line, strlen((char*)line));
-	cf_free(line);
+	free(line);
 }
 
 /// L - Leftmost n characters of string
@@ -283,7 +283,7 @@ static void finger_STRN_itoa(instructionPointer * ip)
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb, &len);
 	stack_push_string(ip->stack, (unsigned char*)s, len);
-	free_nogc(s);
+	free(s);
 }
 
 /// V - Retrieve value from string

@@ -129,7 +129,7 @@ static Drawing pic;
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline Path* create_path(Point a, bool b, uint32_t c)
 {
-	Path* p = cf_malloc(sizeof(Path));
+	Path* p = malloc(sizeof(Path));
 	if (!p)
 		return NULL;
 	p->next = NULL;
@@ -251,7 +251,7 @@ static inline void addPoint(void)
 
 	pic.dots_size++;
 	// FIXME: Handle OOM.
-	pic.dots = cf_realloc(pic.dots, pic.dots_size * sizeof(Dot));
+	pic.dots = realloc(pic.dots, pic.dots_size * sizeof(Dot));
 	pic.dots[pic.dots_size - 1].p = turt.p;
 	pic.dots[pic.dots_size - 1].colour = turt.colour;
 	newDraw();
@@ -283,14 +283,14 @@ static inline void freeResources(void)
 	if (p) {
 		while (p) {
 			Path* next = p->next;
-			cf_free(p);
+			free(p);
 			p = next;
 		}
-		cf_free(p);
+		free(p);
 	}
 	pic.pathBeg = NULL;
 	pic.path = NULL;
-	cf_free(pic.dots);
+	free(pic.dots);
 	pic.dots = NULL;
 	pic.dots_size = 0;
 }
@@ -467,7 +467,7 @@ static inline bool generate_paths(genxWriter gw)
 			sb = NULL;
 			generate_path(gw, p->d.colour, path_data, g_path, g_style, g_d);
 			// TODO: Should we free?
-			free_nogc(path_data);
+			free(path_data);
 			path_data = NULL;
 		}
 		prev = p;
@@ -478,7 +478,7 @@ static inline bool generate_paths(genxWriter gw)
 	if (path_data_length > 0) {
 		generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
 	}
-	free_nogc(path_data);
+	free(path_data);
 	return true;
 }
 

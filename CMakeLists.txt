@@ -25,8 +25,6 @@ mark_as_advanced(
 	EXECUTABLE_OUTPUT_PATH
 	LIBRARY_OUTPUT_PATH
 	LIBRT_LOCATION
-	BOEHM_INCLUDE_DIR
-	BOEHM_LIBRARY_GC
 	CURSES_CURSES_H_PATH
 	CURSES_FORM_LIBRARY
 	CURSES_HAVE_CURSES_H
@@ -82,23 +80,6 @@ set(MAN_INSTALL_PREFIX
 
 ################################################################################
 # Options to enable optional dependencies.
-option(USE_GC "If this is enabled, use Boehm-GC." OFF)
-if (USE_GC)
-	pkg_check_modules(BOEHMGC REQUIRED bdw-gc>=7.0)
-
-	find_path(BOEHM_INCLUDE_DIR gc/gc.h
-		${BOEHMGC_INCLUDE_DIRS}
-	)
-
-	find_library(BOEHM_LIBRARY_GC NAMES gc
-		PATHS
-		${BOEHMGC_LIBRARY_DIRS}
-	)
-	include_directories(${BOEHM_INCLUDE_DIR})
-	link_directories(${BOEHMGC_LIBRARY_DIRS})
-	add_definitions(-DCFUN_USE_GC)
-endif (USE_GC)
-
 option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
 option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
@@ -152,23 +133,19 @@ endif (HARDENED)
 ################################################################################
 # Options for cfunge developers debugging cfunge.
 
-option(USE_MUDFLAP "Enable mudflap pointer debugging library (does not work with Boehm-GC), needs GCC." OFF)
+option(USE_MUDFLAP "Enable mudflap pointer debugging library, requires GCC. Not recommended for general use." OFF)
 if (USE_MUDFLAP)
-	if (USE_GC)
-		message(FATAL_ERROR "You can't use mudflap and Boehm GC at the same time")
-	endif (USE_GC)
-	add_definitions(-fmudflap)
+	if (CMAKE_COMPILER_IS_GNUCC)
+		CFUNGE_CHECK_CFLAG(fmudflap -fmudflap)
+	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (USE_MUDFLAP)
 
-option(USE_VALGRIND "Add special source annotations for the memory debugger valgrind (does not work with Boehm-GC)." OFF)
+option(USE_VALGRIND "Add annotations for the memory debugger valgrind. Not recommended for general use." OFF)
 if (USE_VALGRIND)
-	if (USE_GC)
-		message(FATAL_ERROR "You can't use valgrind and Boehm GC at the same time")
-	endif (USE_GC)
 	add_definitions(-DENABLE_VALGRIND)
 endif (USE_VALGRIND)
 
-option(USE_WERROR "Should we build with -Werror (GCC only)" OFF)
+option(USE_WERROR "Should we build with -Werror (GCC only)." OFF)
 if (USE_WERROR)
 	if (CMAKE_COMPILER_IS_GNUCC)
 		CFUNGE_CHECK_CFLAG(Werror -Werror)
@@ -278,11 +255,9 @@ CFUNGE_CHECK_WARNING_FLAGS()
 # NOTE: CMAKE_BUILD_TYPE_UPPERCASE is used in CFUNGE_SET_BUILD_INFO_FLAGS() too.
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
-	add_definitions(-DGC_DEBUG)
 	add_definitions(-DDEBUG)
 else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	add_definitions(-DNDEBUG)
-	remove_definitions(-DGC_DEBUG)
 	remove_definitions(-DDEBUG)
 	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
 	if (CMAKE_COMPILER_IS_GNUCC)
@@ -373,10 +348,6 @@ endif (USE_CLOCK_GETTIME)
 if (ENABLE_FLOATS)
 	target_link_libraries(cfunge m)
 endif (ENABLE_FLOATS)
-
-if (USE_GC)
-	target_link_libraries(cfunge ${BOEHM_LIBRARY_GC})
-endif (USE_GC)
 
 if (USE_MUDFLAP)
 	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")

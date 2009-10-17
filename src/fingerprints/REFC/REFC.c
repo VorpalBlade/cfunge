@@ -39,7 +39,7 @@ static void finger_REFC_reference(instructionPointer * ip)
 	y = stack_pop(ip->stack);
 	x = stack_pop(ip->stack);
 	if (referencesSize == referencesTop + 1) {
-		funge_vector * newrefs = (funge_vector*)cf_realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(funge_vector));
+		funge_vector * newrefs = (funge_vector*)realloc(references, (referencesSize + ALLOCCHUNK) * sizeof(funge_vector));
 		if (newrefs == NULL) {
 			ip_reverse(ip);
 			return;
@@ -71,7 +71,7 @@ static void finger_REFC_dereference(instructionPointer * ip)
 FUNGE_ATTR_FAST static inline bool init_references(void)
 {
 	assert(!references);
-	references = (funge_vector*)cf_malloc_noptr(ALLOCCHUNK * sizeof(funge_vector));
+	references = (funge_vector*)malloc(ALLOCCHUNK * sizeof(funge_vector));
 	if (!references)
 		return false;
 	referencesSize = ALLOCCHUNK;

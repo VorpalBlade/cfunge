@@ -51,7 +51,7 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 		funge_cell * restrict elems;
 		funge_cell xu;
 
-		elems = cf_malloc_noptr(sizeof(funge_cell) * ip->stack->top);
+		elems = malloc(sizeof(funge_cell) * ip->stack->top);
 		if (!elems) {
 			ip_reverse(ip);
 			return;
@@ -64,7 +64,7 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 			stack_push(ip->stack, elems[i]);
 		}
 		stack_push(ip->stack, xu);
-		cf_free(elems);
+		free(elems);
 	}
 }
 

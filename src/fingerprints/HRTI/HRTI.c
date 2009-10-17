@@ -99,7 +99,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool check_ip_have_HRTI(instructionPointer * ip)
 {
 	if (!ip->fingerHRTItimestamp) {
-		ip->fingerHRTItimestamp = cf_malloc_noptr(sizeof(timetype));
+		ip->fingerHRTItimestamp = malloc(sizeof(timetype));
 		if (FUNGE_UNLIKELY(!ip->fingerHRTItimestamp))
 			return false;
 		ZERO_TIMETYPE((timetype*)ip->fingerHRTItimestamp);

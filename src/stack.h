@@ -136,8 +136,9 @@ unsigned char * stack_pop_string(funge_stack * restrict stack,
 /**
  * Free a 0"gnirts" that was popped with stack_pop_string().
  * Do NOT use for stack_pop_sized_string().
+ * FIXME: Remove?
  */
-#define stack_free_string(string) cf_free(string)
+#define stack_free_string(string) free(string)
 
 #ifdef UNUSED
 /**

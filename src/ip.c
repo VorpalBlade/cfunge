@@ -67,11 +67,11 @@ static inline bool ip_create_in_place(instructionPointer *me)
 #ifndef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST instructionPointer * ip_create(void)
 {
-	instructionPointer * tmp = (instructionPointer*)cf_malloc(sizeof(instructionPointer));
+	instructionPointer * tmp = (instructionPointer*)malloc(sizeof(instructionPointer));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
 	if (FUNGE_UNLIKELY(!ip_create_in_place(tmp))) {
-		cf_free(tmp);
+		free(tmp);
 		return NULL;
 	}
 	return tmp;
@@ -113,7 +113,7 @@ FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 		manager_free(ip);
 	}
 	if (ip->fingerHRTItimestamp) {
-		cf_free(ip->fingerHRTItimestamp);
+		free(ip->fingerHRTItimestamp);
 		ip->fingerHRTItimestamp = NULL;
 	}
 }
@@ -125,7 +125,7 @@ FUNGE_ATTR_FAST void ip_free(instructionPointer * restrict ip)
 	if (!ip)
 		return;
 	ip_free_resources(ip);
-	cf_free(ip);
+	free(ip);
 }
 #endif
 
@@ -154,7 +154,7 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST ipList* iplist_create(void)
 {
-	ipList * tmp = (ipList*)cf_malloc(sizeof(ipList) + sizeof(instructionPointer[ALLOCCHUNKSIZE]));
+	ipList * tmp = (ipList*)malloc(sizeof(ipList) + sizeof(instructionPointer[ALLOCCHUNKSIZE]));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
 	if (FUNGE_UNLIKELY(!ip_create_in_place(&tmp->ips[0])))
@@ -173,7 +173,7 @@ FUNGE_ATTR_FAST void iplist_free(ipList* me)
 	for (size_t i = 0; i <= me->top; i++) {
 		ip_free_resources(&me->ips[i]);
 	}
-	cf_free(me);
+	free(me);
 }
 #endif
 
@@ -189,7 +189,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 
 	// Grow if needed
 	if (list->size <= (list->top + 1)) {
-		list = (ipList*)cf_realloc(*me, sizeof(ipList) + sizeof(instructionPointer[(*me)->size + ALLOCCHUNKSIZE]));
+		list = (ipList*)realloc(*me, sizeof(ipList) + sizeof(instructionPointer[(*me)->size + ALLOCCHUNKSIZE]));
 		if (FUNGE_UNLIKELY(!list))
 			return -1;
 		*me = list;
@@ -273,7 +273,7 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 #if 0
 	if ((list->size - ALLOCCHUNKSIZE) > list->top) {
 		ipList *tmp;
-		tmp = (ipList*)cf_realloc(list, sizeof(ipList) + (list->size - ALLOCCHUNKSIZE) * sizeof(instructionPointer));
+		tmp = (ipList*)realloc(list, sizeof(ipList) + (list->size - ALLOCCHUNKSIZE) * sizeof(instructionPointer));
 		if (tmp) {
 			*me = tmp;
 			tmp->size - ALLOCCHUNKSIZE;
