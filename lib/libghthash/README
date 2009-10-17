@@ -4,7 +4,6 @@ Only the parts cfunge use are included. See website for more information on the
 library.
 
 It has been changed to:
- * Use Boehm-GC.
  * Use C99 stuff when possible.
  * Not be generic, but use the exact data types we handle.
  * Hard code stuff in to avoid function pointers.
