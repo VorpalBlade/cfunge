@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-project(CFUNGE C)
+project(cfunge C)
 
 cmake_minimum_required(VERSION 2.6.3)
 
@@ -38,7 +38,7 @@ mark_as_advanced(
 	USE_VALGRIND
 )
 
-# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/cmake/modules
 	${CMAKE_MODULE_PATH}
@@ -54,14 +54,14 @@ endif (NOT CMAKE_BUILD_TYPE)
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
-# Common cmake macros
+# Common cmake modules
 include(FindPkgConfig)
 include(CheckCCompilerFlag)
 include(CheckFunctionExists)
 include(CheckLibraryExists)
 include(CheckIncludeFile)
 
-# Cfunge specific macros.
+# Cfunge specific modules.
 include(CfungeCheckCflag)
 include(CfungeCheckFunction)
 include(CfungeRequireFunction)
