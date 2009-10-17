@@ -393,14 +393,17 @@ CFUNGE_SET_BUILD_INFO_FLAGS()
 
 ################################################################################
 # Generate man page
-add_custom_target(build-man
-	help2man -N "--name=A fast Befunge93/98/109 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in --include doc/cfunge-man-fingerprints.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
-	DEPENDS cfunge
-	WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
-	COMMENT "Generating man page..."
-	VERBATIM
-)
-
+find_program(HELP2MAN help2man
+             DOC "Path to help2man (for re-generating man page).")
+if (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
+	add_custom_target(build-man
+		help2man -N "--name=A fast Befunge93/98/109 interpreter in C" --help-option=-h --version-option=-V --include doc/cfunge-man.in --include doc/cfunge-man-fingerprints.in ${CFUNGE_BINARY_DIR}/cfunge > doc/cfunge.1
+		DEPENDS cfunge
+		WORKING_DIRECTORY ${CFUNGE_SOURCE_DIR}
+		COMMENT "Generating man page..."
+		VERBATIM
+	)
+endif (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
 
 
 ################################################################################
