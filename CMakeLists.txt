@@ -42,12 +42,20 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
 )
 
-# Set default build type.
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Release CACHE STRING
-	    "Choose the type of build, options are: None(CMAKE_C_FLAGS only used) Debug Release RelWithDebInfo MinSizeRel."
-	    FORCE)
-endif (NOT CMAKE_BUILD_TYPE)
+# Set default build type and debug cflags on first run, unless they have been
+# set on cmake/ccmake command line.
+if (NOT CONFIGURED)
+	if (NOT CMAKE_BUILD_TYPE)
+		set(CMAKE_BUILD_TYPE Release CACHE STRING
+		    "Choose the type of build, options are: None(CMAKE_C_FLAGS only used) Debug Release RelWithDebInfo MinSizeRel."
+		    FORCE)
+	endif (NOT CMAKE_BUILD_TYPE)
+	if (CMAKE_COMPILER_IS_GNUCC)
+		set(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb3"
+		    CACHE STRING "Flags used by the compiler during debug builds."
+		    FORCE)
+	endif (CMAKE_COMPILER_IS_GNUCC)
+endif (NOT CONFIGURED)
 
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -377,6 +385,7 @@ if (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
 endif (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
 
 
+
 ################################################################################
 # Installation
 install(TARGETS cfunge
@@ -385,3 +394,8 @@ install(TARGETS cfunge
 install(FILES doc/cfunge.1
 	DESTINATION ${MAN_INSTALL_PREFIX}/man1
 )
+
+
+################################################################################
+# Flag to keep track of if this is the first configure run or not.
+set(CONFIGURED ON CACHE INTERNAL "")
