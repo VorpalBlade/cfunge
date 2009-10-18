@@ -265,14 +265,17 @@ string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	add_definitions(-DDEBUG)
 else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
-	add_definitions(-DNDEBUG)
 	remove_definitions(-DDEBUG)
 	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
-	if (CMAKE_COMPILER_IS_GNUCC)
-		CFUNGE_CHECK_CFLAG(fno-ident -fno-ident)
-	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 
+
+################################################################################
+# Some CFLAGS that won't hurt debug builds but will help release builds.
+if (CMAKE_COMPILER_IS_GNUCC)
+	CFUNGE_CHECK_CFLAG(fno-math-errno -fno-math-errno)
+	CFUNGE_CHECK_CFLAG(fno-trapping-math -fno-trapping-math)
+endif (CMAKE_COMPILER_IS_GNUCC)
 
 
 ################################################################################
