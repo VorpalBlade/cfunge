@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
 	if (FUNGE_UNLIKELY(optind >= argc)) {
 		diag_fatal("No file provided.");
 	} else {
-		// Copy a argument count and a pointer to argv[optind] for later reuse
+		// Store argument count and a pointer to argv[optind] for later use
 		// by the y instruction.
 		fungeargc = argc - optind;
 		fungeargv = (const char**)&argv[optind];
