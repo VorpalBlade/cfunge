@@ -30,39 +30,39 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		CFUNGE_CHECK_CFLAG(Wall                         -Wall)
 		CFUNGE_CHECK_CFLAG(Wextra                       -Wextra)
 		CFUNGE_CHECK_CFLAG(pedantic                     -pedantic)
-	
+
 		CFUNGE_CHECK_CFLAG(Wwrite-strings               -Wwrite-strings)
-	
+
 		CFUNGE_CHECK_CFLAG(Wcast-align                  -Wcast-align)
 		CFUNGE_CHECK_CFLAG(Wcast-qual                   -Wcast-qual)
 		CFUNGE_CHECK_CFLAG(Wbad-function-cast           -Wbad-function-cast)
-	
+
 		CFUNGE_CHECK_CFLAG(Wstrict-prototypes           -Wstrict-prototypes)
 		CFUNGE_CHECK_CFLAG(Wmissing-prototypes          -Wmissing-prototypes)
 		CFUNGE_CHECK_CFLAG(Wmissing-declarations        -Wmissing-declarations)
 		CFUNGE_CHECK_CFLAG(Wold-style-definition        -Wold-style-definition)
-	
+
 		CFUNGE_CHECK_CFLAG(Wredundant-decls             -Wredundant-decls)
 		CFUNGE_CHECK_CFLAG(Wnested-externs              -Wnested-externs)
 		CFUNGE_CHECK_CFLAG(Wdeclaration-after-statement -Wdeclaration-after-statement)
-	
+
 		CFUNGE_CHECK_CFLAG(Wshadow                      -Wshadow)
 		CFUNGE_CHECK_CFLAG(Wundef                       -Wundef)
 		CFUNGE_CHECK_CFLAG(Wpacked                      -Wpacked)
 		CFUNGE_CHECK_CFLAG(Wfloat-equal                 -Wfloat-equal)
-	
+
 		CFUNGE_CHECK_CFLAG(Wstrict-aliasing_2           -Wstrict-aliasing=2)
 		#CFUNGE_CHECK_CFLAG(Wstrict-overflow_5          -Wstrict-overflow=5)
 		CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
-	
+
 		CFUNGE_CHECK_CFLAG(Wmissing-noreturn            -Wmissing-noreturn)
 		CFUNGE_CHECK_CFLAG(Wmissing-format-attribute    -Wmissing-format-attribute)
-	
+
 		CFUNGE_CHECK_CFLAG(Winit-self                   -Winit-self)
 		# GCC 4.1(?) or later
 		CFUNGE_CHECK_CFLAG(Wunsafe-loop-optimizations   -Wunsafe-loop-optimizations)
 		CFUNGE_CHECK_CFLAG(Wmissing-include-dirs        -Wmissing-include-dirs)
-	
+
 		CFUNGE_CHECK_CFLAG(Wunused-parameter            -Wunused-parameter)
 		# These are part of -Wall in GCC 4.3, but not in some older versions.
 		CFUNGE_CHECK_CFLAG(Wunused-function             -Wunused-function)
@@ -73,7 +73,7 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		CFUNGE_CHECK_CFLAG(Wparentheses                 -Wparentheses)
 		# Part of -pedantic in 4.3
 		CFUNGE_CHECK_CFLAG(Wpointer-arith               -Wpointer-arith)
-	
+
 		# Maintainer flags. Gives lots of false positives.
 		# add_definitions(-Wunreachable-code -fno-inline
 		#                 -fno-inline-functions-called-once -fno-inline-functions
