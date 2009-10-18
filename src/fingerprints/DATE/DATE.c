@@ -142,7 +142,7 @@ static void julian_to_ymd(ymd * restrict result, fprint_DATE_int date)
 	n = floorl((4*l)/146097.0L);
 	l -= floorl((146097*n+3)/4.0L);
 	i = floorl((4000*(l+1))/1461001.0L);
-	l = (int64_t)(l - floorl((1461*i)/4.0L)+31);
+	l = (fprint_DATE_int)(l - floorl((1461*i)/4.0L)+31);
 	j = floorl((80*l)/2447.0L);
 	result->day = (fprint_DATE_int)(l - floorl((2447*j)/80.0L));
 	l = floorl(j/11.0L);
