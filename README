@@ -38,6 +38,7 @@ REQUIRED:
    + FreeBSD 6.4 or later (earlier versions unknown).
    + Mac OS X (unknown version) has been reported to work but I don't have it
      myself and thus can't test it.
+   + NetBSD 5.0.1/amd64 is known to work.
    + OpenBSD 4.4 (sparc64): I have not managed to get cmake 2.6 to compile on
      OpenBSD, but I did manage to build cfunge by hand, required some strange
      workarounds and defines.
