@@ -110,7 +110,7 @@ bool fungespace_load(const char * restrict filename);
  * internally by cfunge itself but is not usually exposed. It is however needed
  * for IFFI (using cfunge as a library in C-INTERCAL).
  * @param program Program to load.
- * @param length  Length of string, needed since code need to be embedded
+ * @param length  Length of string, needed since code need to handle embedded
  * null bytes, thus strlen() won't work.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
