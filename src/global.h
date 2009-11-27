@@ -133,7 +133,8 @@
 #  define FUNGE_ATTR_FAST /* NO-OP */
 #endif
 
-#if defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_ICC)
+#if defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_ICC) \
+    || defined(CFUNGE_COMP_CLANG)
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
