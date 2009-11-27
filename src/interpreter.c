@@ -50,6 +50,10 @@
 #endif
 #include <assert.h>
 
+#ifdef CFUN_KLEE_TEST
+#  include <klee/klee.h>
+#endif
+
 /**
  * Either the IP or the IP list.
  */
@@ -632,7 +636,10 @@ static void debug_free(void)
 // Sets up random seed from time.
 FUNGE_ATTR_FAST static inline void interpreter_setup_random(void)
 {
-#ifdef HAVE_clock_gettime
+#if defined(CFUN_KLEE_TEST)
+	// Make klee tests deterministic.
+	srandom(4);
+#elif defined(HAVE_clock_gettime)
 	struct timespec tv;
 	if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
 		diag_fatal_format("clock_gettime() failed (needed for random seed): %s", strerror(errno));
@@ -649,19 +656,45 @@ FUNGE_ATTR_FAST static inline void interpreter_setup_random(void)
 #endif
 }
 
+#ifdef CFUN_KLEE_TEST_PROGRAM
+FUNGE_ATTR_FAST void klee_generate_program(void)
+{
+	unsigned char program_code[10];
+	klee_make_symbolic(program_code, sizeof(program_code), "program_code");
+
+	for (int i=0; i< sizeof(program_code); i++) {
+		klee_assume(program_code[i]<128);
+		klee_assume((program_code[i]>31)
+		            | (program_code[i] == '\n')
+		            | (program_code[i] == '\r'));
+		klee_assume(program_code[i] != 'm');
+		klee_assume(program_code[i] != 'l');
+		klee_assume(program_code[i] != 'h');
+#ifndef CONCURRENT_FUNGE
+		klee_assume(program_code[i] != 't');
+#endif
+	}
+	fungespace_load_string(program_code, sizeof(program_code));
+}
+#endif
+
 
 FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 {
 	if (FUNGE_UNLIKELY(!fungespace_create())) {
 		DIAG_FATAL_FORMAT_LOC("Couldn't create funge space: %s", strerror(errno));
 	}
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(CFUN_KLEE_TEST)
 	atexit(&debug_free);
 #endif
 	interpreter_setup_random();
+#ifdef CFUN_KLEE_TEST_PROGRAM
+	klee_generate_program();
+#else
 	if (FUNGE_UNLIKELY(!fungespace_load(filename))) {
 		diag_fatal_format("Failed to process file \"%s\": %s", filename, strerror(errno));
 	}
+#endif
 #ifdef CONCURRENT_FUNGE
 	IPList = iplist_create();
 	if (FUNGE_UNLIKELY(IPList == NULL)) {
