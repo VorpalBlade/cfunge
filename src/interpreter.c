@@ -628,6 +628,28 @@ static void debug_free(void)
 }
 #endif
 
+
+// Sets up random seed from time.
+FUNGE_ATTR_FAST static inline void interpreter_setup_random(void)
+{
+#ifdef HAVE_clock_gettime
+	struct timespec tv;
+	if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
+		diag_fatal_format("clock_gettime() failed (needed for random seed): %s", strerror(errno));
+	}
+	// Set up randomness
+	srandom((unsigned int)tv.tv_nsec);
+#else
+	struct timeval tv;
+	if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
+		diag_fatal_format("gettimeofday() failed (needed for random seed): %s", strerror(errno));
+	}
+	// Set up randomness
+	srandom((unsigned int)tv.tv_usec);
+#endif
+}
+
+
 FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 {
 	if (FUNGE_UNLIKELY(!fungespace_create())) {
@@ -636,6 +658,7 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 #ifndef NDEBUG
 	atexit(&debug_free);
 #endif
+	interpreter_setup_random();
 	if (FUNGE_UNLIKELY(!fungespace_load(filename))) {
 		diag_fatal_format("Failed to process file \"%s\": %s", filename, strerror(errno));
 	}
@@ -650,22 +673,5 @@ FUNGE_ATTR_FAST void interpreter_run(const char *filename)
 		DIAG_FATAL_LOC("Couldn't create instruction pointer!?");
 	}
 #endif
-	{
-#ifdef HAVE_clock_gettime
-		struct timespec tv;
-		if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
-			diag_fatal_format("clock_gettime() failed (needed for random seed): %s", strerror(errno));
-		}
-		// Set up randomness
-		srandom((unsigned int)tv.tv_nsec);
-#else
-		struct timeval tv;
-		if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
-			diag_fatal_format("gettimeofday() failed (needed for random seed): %s", strerror(errno));
-		}
-		// Set up randomness
-		srandom((unsigned int)tv.tv_usec);
-#endif
-	}
 	interpreter_main_loop();
 }
