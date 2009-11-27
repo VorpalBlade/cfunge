@@ -186,6 +186,7 @@ FUNGE_ATTR_FAST inline funge_cell stack_get_index(const funge_stack * restrict s
 
 FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)
 {
+	paranoid_assert(stack != NULL);
 	// TODO: Maybe scan two cells at once if we are using 32-bit cells on a
 	// 64-bit system?
 	for (size_t i = stack->top; i > 0; i--) {
@@ -203,6 +204,8 @@ FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)
 FUNGE_ATTR_FAST void stack_push_vector(funge_stack * restrict stack, const funge_vector * restrict value)
 {
 	// TODO: Optimise
+	paranoid_assert(stack != NULL);
+	paranoid_assert(value != NULL);
 	stack_push(stack, value->x);
 	stack_push(stack, value->y);
 }
@@ -211,6 +214,7 @@ FUNGE_ATTR_FAST funge_vector stack_pop_vector(funge_stack * restrict stack)
 {
 	// TODO: Optimise
 	funge_cell x, y;
+	paranoid_assert(stack != NULL);
 	y = stack_pop(stack);
 	x = stack_pop(stack);
 	return (funge_vector) { .x = x, .y = y };
@@ -234,8 +238,10 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 {
 	funge_cell c;
 	size_t index = 0;
+	unsigned char * buf;
+	paranoid_assert(stack != NULL);
 	// FIXME: This may very likely be more than is needed.
-	unsigned char * buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
+	buf = (unsigned char*)cf_malloc_noptr((stack->top + 1) * sizeof(char));
 	if (FUNGE_UNLIKELY(!buf)) {
 		if (len)
 			*len = 0;
@@ -272,8 +278,10 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_sized_string(funge_stack * restrict sta
  ***************/
 FUNGE_ATTR_FAST void stack_dup_top(funge_stack * restrict stack)
 {
+	funge_cell tmp;
+	paranoid_assert(stack != NULL);
 	// TODO: Optimise instead of doing it this way
-	funge_cell tmp = stack_peek(stack);
+	tmp = stack_peek(stack);
 	stack_push(stack, tmp);
 	// If it was empty, push a second zero.
 	if (stack->top == 1)
@@ -284,6 +292,7 @@ FUNGE_ATTR_FAST void stack_swap_top(funge_stack * restrict stack)
 {
 	// TODO: Optimise instead of doing it this way
 	funge_cell a, b;
+	paranoid_assert(stack != NULL);
 	// Well this have to work logically...
 	a = stack_pop(stack);
 	b = stack_pop(stack);
@@ -410,6 +419,7 @@ FUNGE_ATTR_FAST static void oom_stackstack(const instructionPointer * restrict i
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, size_t minfree)
 {
+	paranoid_assert(stack != NULL);
 	if ((stack->top + minfree) >= stack->size) {
 		size_t newsize = stack->size + minfree;
 		funge_cell* newentries;
@@ -428,6 +438,7 @@ static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
 {
+	paranoid_assert(stack != NULL);
 	stack_prealloc_space(stack, count);
 	memset(&stack->entries[stack->top], 0, count * sizeof(funge_cell));
 	stack->top += count;
@@ -437,6 +448,9 @@ static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stack * restrict src, size_t count)
 {
+	paranoid_assert(dest != NULL);
+	paranoid_assert(src != NULL);
+
 	stack_prealloc_space(dest, count);
 
 	// Figure out if we were asked to copy more items than actually exists:
