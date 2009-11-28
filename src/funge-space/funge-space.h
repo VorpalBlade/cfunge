@@ -104,7 +104,7 @@ void fungespace_wrap(funge_vector * restrict position,
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool fungespace_load(const char * restrict filename);
 
-#ifdef FUNGE_EXTERNAL_LIBRARY
+#if defined(FUNGE_EXTERNAL_LIBRARY) || defined(CFUN_KLEE_TEST_PROGRAM)
 /**
  * Load a string into Funge-Space at 0,0. Optimised. This code is used
  * internally by cfunge itself but is not usually exposed. It is however needed

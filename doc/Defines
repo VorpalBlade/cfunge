@@ -5,8 +5,23 @@ that you want one of these, then you don't.
 None of these is accessible as simple options in cmake. Some of these
 requires customised built systems to work (such as the klee ones).
 
+Apart from these there are several that can be enabled using the normal
+build system. In general those are documented in CMakeLists.txt.
+
+
+Testing & Debugging
+-------------------
 CFUN_KLEE_TEST           Define if you are going to test cfunge using klee.
 CFUN_KLEE_TEST_PROGRAM   Define to test random programs using klee.
 CFUN_PARANOIA            Enable extra asserts. Note that CFUN_KLEE_TEST
                          implies this.
 FUZZ_TESTING             Has to be defined to use tools/fuzz-test.sh.
+                         Note that this breaks Funge standard conformance
+                         in multiple ways.
+
+Support for IFFI
+----------------
+CFUN_IS_IFFI             Disables most part of main.c.
+FUNGE_EXTERNAL_LIBRARY   Enables the fungespace_load_string() prototype.
+FUNGE_NEW_HANDPRINT      Override 109 handprint. Normally defined in global.h
+FUNGE_OLD_HANDPRINT      Override 98 handprint. Normally defined in global.h
