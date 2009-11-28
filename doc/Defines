@@ -1,0 +1,12 @@
+For development purposes there are some specialised defines. These should
+not be used unless you are doing development on cfunge. If you don't know
+that you want one of these, then you don't.
+
+None of these is accessible as simple options in cmake. Some of these
+requires customised built systems to work (such as the klee ones).
+
+CFUN_KLEE_TEST           Define if you are going to test cfunge using klee.
+CFUN_KLEE_TEST_PROGRAM   Define to test random programs using klee.
+CFUN_PARANOIA            Enable extra asserts. Note that CFUN_KLEE_TEST
+                         implies this.
+FUZZ_TESTING             Has to be defined to use tools/fuzz-test.sh.
