@@ -41,6 +41,18 @@
 FUNGE_ATTR_FAST
 ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 
+/// Support macro for extra assertions.
+/// Currently mostly meant for klee, but this might change in the future.
+#if defined(CFUN_KLEE_TEST)
+#  include <klee/klee.h>
+#  define paranoid_assert(expr_) (klee_assert(expr_))
+#elif defined(CFUN_PARANOIA)
+#  include <assert.h>
+#  define paranoid_assert(expr_) (assert(expr_))
+#else
+#  define paranoid_assert(expr_) ((void)(0))
+#endif
+
 /**
  * @defgroup STDIO_UNLOCKED Unlocked I/O defines
  * These are useful in case of a lot of IO operations.

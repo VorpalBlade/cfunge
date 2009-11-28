@@ -32,6 +32,9 @@
 
 #include <stdarg.h>
 #include <stdlib.h> /* abort, exit */
+#ifdef CFUN_KLEE_TEST
+#  include <klee/klee.h>
+#endif
 
 /**
  * @defgroup diagnostics Diagnostics
@@ -48,6 +51,7 @@
 		abort(); \
 	} while(0)
 
+#ifndef CFUN_KLEE_TEST
 /**
  * Like DIAG_FATAL_LOC() but abort()s instead, thus hopefully producing core
  * dump. Meant for internal errors that should never happen.
@@ -57,8 +61,12 @@
 		fputs("CRITICAL ERROR " DIAG_SOURCELOC ": " m_message "\n", stderr); \
 		abort(); \
 	} while(0)
+#else
+#define DIAG_CRIT_LOC(m_message) \
+	klee_report_error(__FILE__, __LINE__, "CRITICAL: " m_message, "cf.err")
+#endif
 
-
+#ifndef CFUN_KLEE_TEST
 /**
  * Like diag_fatal() but includes file and line number, meant for errors that
  * should never happen (not for user typoing something).
@@ -68,7 +76,12 @@
 		fputs("FATAL " DIAG_SOURCELOC ": " m_message "\n", stderr); \
 		exit(EXIT_FAILURE); \
 	} while(0)
+#else
+#define DIAG_FATAL_LOC(m_message) \
+	klee_report_error(__FILE__, __LINE__, "FATAL: " m_message, "cf.err")
+#endif
 
+#ifndef CFUN_KLEE_TEST
 /**
  * Like diag_error() but includes file and line number, meant for errors that
  * should never happen (not for user typoing something).
@@ -78,6 +91,10 @@
 		if (FUNGE_UNLIKELY(setting_enable_errors)) \
 			fputs("ERROR " DIAG_SOURCELOC ": " m_message "\n", stderr); \
 	} while(0)
+#else
+#define DIAG_ERROR_LOC(m_message) \
+	klee_report_error(__FILE__, __LINE__, "ERROR: " m_message, "cf.err")
+#endif
 
 /**
  * Like diag_warn() but includes file and line number, meant for errors that
