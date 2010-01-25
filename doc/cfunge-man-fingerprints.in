@@ -7,6 +7,9 @@ Short descriptions of implemented fingerprints:
 BASE
 I/O for numbers in other bases
 .TP
+BOOL
+Logic Functions
+.TP
 CPLI
 Complex Integer extension
 .TP

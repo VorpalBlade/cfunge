@@ -24,8 +24,7 @@ REQUIRED:
      may or may not work.
    + ICC 10.1 and 11.1 are known to work too.
    + Open64 4.1 should work, but isn't recommended.
-   + Very recent SVN versions of clang works on 32-bit x86 (as of 2009-03-28),
-     but can currently not be recommended since clang is not very stable yet.
+   + clang 1.0 (LLVM 2.6)
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 
@@ -33,7 +32,7 @@ REQUIRED:
    function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
    strdup() and memory mapped files are mandatory and part of the base.)
    Operating systems known to work:
-   + Linux 2.6.27 (with glibc 2.8) and later (earlier versions unknown but will
+   + Linux 2.6.28 (with glibc 2.9) and later (earlier versions unknown but will
      probably work unless very old).
    + FreeBSD 6.4 or later (earlier versions unknown).
    + Mac OS X (unknown version) has been reported to work but I don't have it
@@ -112,6 +111,7 @@ with some exceptions:
 Short descriptions of implemented fingerprints:
  3DSP 3D space manipulation extension
  BASE I/O for numbers in other bases
+ BOOL Logic Functions
  CPLI Complex Integer extension
  DATE Date Functions
  DIRF Directory functions extension
