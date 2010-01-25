@@ -3,7 +3,7 @@
 ###########################################################################
 #                                                                         #
 #  cfunge - A standard-conforming Befunge93/98/109 interpreter in C.      #
-#  Copyright (C) 2008-2009  Arvid Norlander                               #
+#  Copyright (C) 2008-2010  Arvid Norlander                               #
 #                                                                         #
 #  This program is free software: you can redistribute it and/or modify   #
 #  it under the terms of the GNU General Public License as published by   #
