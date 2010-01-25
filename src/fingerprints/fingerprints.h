@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008-2009 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2010 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 
 #include "3DSP/3DSP.h"
 #include "BASE/BASE.h"
+#include "BOOL/BOOL.h"
 #include "CPLI/CPLI.h"
 #include "DATE/DATE.h"
 #include "DIRF/DIRF.h"
@@ -88,6 +89,9 @@ static const ImplementedFingerprintEntry ImplementedFingerprints[] = {
 	{ .fprint = 0x42415345, .uri = NULL, .loader = &finger_BASE_load, .opcodes = "BHINO",
 	  .url = "http://rcfunge98.com/rcsfingers.html#BASE", .safe = true },
 #endif
+	// BOOL - Logic Functions
+	{ .fprint = 0x424f4f4c, .uri = NULL, .loader = &finger_BOOL_load, .opcodes = "ANOX",
+	  .url = "http://rcfunge98.com/rcsfingers.html#BOOL", .safe = true },
 #if !defined(CFUN_NO_FLOATS)
 	// CPLI - Complex Integer extension
 	{ .fprint = 0x43504c49, .uri = NULL, .loader = &finger_CPLI_load, .opcodes = "ADMOSV",
