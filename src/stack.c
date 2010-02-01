@@ -149,9 +149,7 @@ FUNGE_ATTR_FAST void stack_discard(funge_stack * restrict stack, size_t n)
 {
 	assert(stack != NULL);
 
-	if (stack->top == 0) {
-		return;
-	} else if (stack->top > n) {
+	if (stack->top > n) {
 		stack->top -= n;
 	} else {
 		stack->top = 0;
