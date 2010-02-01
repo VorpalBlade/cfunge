@@ -520,7 +520,8 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 }
 
 
-FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell count)
+FUNGE_ATTR_FAST
+bool stackstack_end(instructionPointer * restrict ip, funge_cell count)
 {
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;
@@ -558,7 +559,8 @@ FUNGE_ATTR_FAST bool stackstack_end(instructionPointer * restrict ip, funge_cell
 }
 
 
-FUNGE_ATTR_FAST void stackstack_transfer(funge_cell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS)
+FUNGE_ATTR_FAST
+void stackstack_transfer(funge_cell count, funge_stack * restrict TOSS, funge_stack * restrict SOSS)
 {
 	assert(TOSS != NULL);
 	assert(SOSS != NULL);
