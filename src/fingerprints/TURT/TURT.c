@@ -66,23 +66,10 @@ typedef int32_t tc;
 #define TURT_MIN -163839999 + TURT_PADDING
 #define TURT_MAX  163839999 - TURT_PADDING
 
-#define FIXEDFMT   "%s%d.%04u"
-#define PRINTFIXED(n) ((n) < 0) ? "-" : "", getInt(n), getDec(n)
+#define TC_FMT "%"PRId32
 
 // For use with genx:
 static constUtf8 gns = NULL;
-
-FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline int getInt(tc c)
-{
-	return (c < 0 ? -c : c) / 10000;
-}
-
-FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
-static inline unsigned int getDec(tc c)
-{
-	return (unsigned int)(abs(c) % 10000);
-}
 
 typedef struct Point {
 	tc x, y;
@@ -312,15 +299,15 @@ static inline void print_header(genxWriter gw)
 	genxAddAttributeLiteral(gw, gns, (constUtf8)"xmlns", (constUtf8)"http://www.w3.org/2000/svg");
 	{
 		char sviewbox[256];
-		snprintf(sviewbox, sizeof(sviewbox), FIXEDFMT " " FIXEDFMT " " FIXEDFMT " " FIXEDFMT,
-		         PRINTFIXED(minx), PRINTFIXED(miny), PRINTFIXED(w), PRINTFIXED(h));
+		snprintf(sviewbox, sizeof(sviewbox), TC_FMT" "TC_FMT" "TC_FMT" "TC_FMT,
+		         minx, miny, w, h);
 		genxAddAttributeLiteral(gw, gns, (constUtf8)"viewBox", (constUtf8)sviewbox);
 	}
 	genxStartElementLiteral(gw, gns, (constUtf8)"defs");
 	genxStartElementLiteral(gw, gns, (constUtf8)"style");
 	genxAddAttributeLiteral(gw, gns, (constUtf8)"type", (constUtf8)"text/css");
 	genxAddText(gw,
-	            (constUtf8)"path{fill:none;stroke-width:0.00005px;stroke-linecap:round;stroke-linejoin:miter}");
+	            (constUtf8)"path{fill:none;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round}");
 	genxEndElement(gw);
 	genxEndElement(gw);
 	// This check is because we want transparency if possible.
@@ -330,10 +317,10 @@ static inline void print_header(genxWriter gw)
 		char sw[64];
 		char sh[64];
 		char scss[sizeof("fill:#112233;stroke:none")];
-		snprintf(sminx, sizeof(sminx), FIXEDFMT, PRINTFIXED(minx));
-		snprintf(sminy, sizeof(sminy), FIXEDFMT, PRINTFIXED(miny));
-		snprintf(sw, sizeof(sw), FIXEDFMT, PRINTFIXED(w));
-		snprintf(sh, sizeof(sh), FIXEDFMT, PRINTFIXED(h));
+		snprintf(sminx, sizeof(sminx), TC_FMT, minx);
+		snprintf(sminy, sizeof(sminy), TC_FMT, miny);
+		snprintf(sw, sizeof(sw), TC_FMT, w);
+		snprintf(sh, sizeof(sh), TC_FMT, h);
 		snprintf(scss, sizeof(scss), "fill:%s;stroke:none", toCSSColour(pic.bgColour));
 		genxStartElementLiteral(gw, gns, (constUtf8)"rect");
 		genxAddAttributeLiteral(gw, gns, (constUtf8)"style", (constUtf8)scss);
@@ -349,7 +336,7 @@ static inline void print_header(genxWriter gw)
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static inline void print_point(StringBuffer * sb, char prefix, tc x, tc y)
 {
-	stringbuffer_append_printf(sb, "%c" FIXEDFMT "," FIXEDFMT " ", prefix, PRINTFIXED(x), PRINTFIXED(y));
+	stringbuffer_append_printf(sb, "%c" TC_FMT "," TC_FMT " ", prefix, x, y);
 }
 
 
@@ -488,11 +475,11 @@ static inline bool generate_circle(genxWriter gw, Dot* dot,
 {
 	char buf[64];
 	genxStartElement(g_circle);
-	snprintf(buf, sizeof(buf), FIXEDFMT, PRINTFIXED(dot->p.x));
+	snprintf(buf, sizeof(buf), TC_FMT, dot->p.x);
 	genxAddAttribute(g_cx, (constUtf8)buf);
-	snprintf(buf, sizeof(buf), FIXEDFMT, PRINTFIXED(dot->p.y));
+	snprintf(buf, sizeof(buf), TC_FMT, dot->p.y);
 	genxAddAttribute(g_cy, (constUtf8)buf);
-	genxAddAttribute(g_r, (constUtf8)"0.000025");
+	genxAddAttribute(g_r, (constUtf8)"0.25");
 	genxAddAttribute(g_fill, (constUtf8)toCSSColour(dot->colour));
 	genxEndElement(gw);
 	return true;
