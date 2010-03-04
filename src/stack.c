@@ -172,10 +172,11 @@ FUNGE_ATTR_FAST inline funge_cell stack_peek(const funge_stack * restrict stack)
 FUNGE_ATTR_FAST inline funge_cell stack_get_index(const funge_stack * restrict stack, size_t index)
 {
 	assert(stack != NULL);
+	assert(index > 0);
 
 	if (stack->top == 0) {
 		return 0;
-	} else if (stack->top <= index) {
+	} else if (stack->top < index) {
 		return 0;
 	} else {
 		return stack->entries[index - 1];

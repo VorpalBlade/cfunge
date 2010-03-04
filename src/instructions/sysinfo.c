@@ -378,7 +378,7 @@ void run_sys_info(instructionPointer *ip)
 		}
 		push_all(ip, sysinfo_tmp_stack);
 		// Find out if we should act as pick or not...
-		if (sysinfo_tmp_stack->top > (size_t)request) {
+		if (sysinfo_tmp_stack->top >= (size_t)request) {
 			stack_push(ip->stack, sysinfo_tmp_stack->entries[sysinfo_tmp_stack->top - (size_t)request]);
 		} else {
 			// Act as pick
