@@ -84,19 +84,17 @@ static void finger_FRTH_forth_over(instructionPointer * ip)
 static void finger_FRTH_forth_pick(instructionPointer * ip)
 {
 	funge_cell u;
-	funge_cell s;
 	u = stack_pop(ip->stack);
-	s = (funge_cell)ip->stack->top;
 
 	if (u < 0) {
 		ip_reverse(ip);
 		return;
 	}
 
-	if (u >= s) {
+	if ((size_t)u >= ip->stack->top) {
 		stack_push(ip->stack, 0);
 	} else {
-		funge_cell i = stack_get_index(ip->stack, (size_t)(s - u));
+		funge_cell i = stack_get_index(ip->stack, ip->stack->top - (size_t)u);
 		stack_push(ip->stack, i);
 	}
 }
