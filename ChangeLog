@@ -11,18 +11,36 @@ and
   bzr help revisionspec
 
 
+Development version (up to r823)
+--------------------------------
+ * Removed scaling of coordinates from TURT.
+ * Fixed possible problem in FRTH for very large stack sizes (outside range of
+   funge cells, but inside range of size_t).
+ * Fixed bugs in run_sys_info in stack_get_index that together caused incorrect
+   behaviour for y picking of top of stack and for last 0 below env vars.
+ * Dropped support for Boehm-GC. It was not well tested and manual memory
+   management worked better.
+ * Various small fixes for clang and ICC.
+ * Various build system fixes.
+ * Add missing NULL pointer checks in code for i, o and = as well as in several
+   fingerprints.
+
+Added fingerprints:
+ * BOOL Logic Functions
+
+
 0.9.0
 -----
 This is a bug fix release. The version number changed to 0.9.0 to reflect that
 cfunge is now reaching a stable version.
-* Bug fix: In a file with CR line endings and lines with leading spaces, the
-  leading spaces were lost.
-* Bug fix: When j was used to jump backwads (negative argument) to a cell
-  directly on the edge of the current bounding box of the Funge Space, it would
-  incorrectly wrap. Fix this by peforming the normal moving forward of the IP
-  before the jump in j instead of after as usual for most other instructions.
-* Minor Bug fix: Hypens were incorrectly escaped when generating man pages in
-  tools/gen_fprint_list.sh. Fix and update man page to reflect.
+ * Bug fix: In a file with CR line endings and lines with leading spaces, the
+   leading spaces were lost.
+ * Bug fix: When j was used to jump backwads (negative argument) to a cell
+   directly on the edge of the current bounding box of the Funge Space, it would
+   incorrectly wrap. Fix this by peforming the normal moving forward of the IP
+   before the jump in j instead of after as usual for most other instructions.
+ * Minor Bug fix: Hypens were incorrectly escaped when generating man pages in
+   tools/gen_fprint_list.sh. Fix and update man page to reflect.
 
 
 0.4.1
