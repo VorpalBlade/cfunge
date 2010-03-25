@@ -1070,12 +1070,10 @@ fungespace_save_to_file(const char         * restrict filename,
 				lastspace--;
 			} while ((lastspace >= 0) && (string[lastspace] == ' '));
 
-			if (lastspace > 0) {
-				for (ssize_t i = 0; i <= lastspace; i++) {
-					towrite[index+i] = (unsigned char)string[i];
-				}
-				index += lastspace + 1;
+			for (ssize_t i = 0; i <= lastspace; i++) {
+				towrite[index+i] = (unsigned char)string[i];
 			}
+			index += lastspace + 1;
 			free(string);
 			towrite[index] = (funge_cell)'\n';
 			index++;
