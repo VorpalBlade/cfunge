@@ -150,10 +150,13 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 #undef FSPACE_ICC_INTRINSICS
 #undef FSPACE_GCC_INTRINSICS
 
+#ifdef CFUN_KLEE_TEST
+#  define CFUN_NO_SSE
+#endif
 
 // We don't want SSE if testing with klee.
 #if defined(CFUNGE_COMP_GCC_COMPAT) && defined(CFUNGE_ARCH_X86) \
-    && defined(__SSE__) && !defined(CFUN_KLEE_TEST)
+    && defined(__SSE__) && !defined(CFUN_NO_SSE)
 #  define FSPACE_CREATE_SSE 1
 #endif
 
