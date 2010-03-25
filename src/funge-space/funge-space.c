@@ -466,8 +466,11 @@ static inline void fungespace_check_pos(const funge_cell x, const funge_cell y)
 
 #define FSPACE_COUNT_OP_OR_NEW(m_var, m_op, m_a, m_key, m_val) \
 	do { \
-		if (m_var) \
+		if (m_var) { \
 			(*(m_var)) m_op; \
+			if (*(m_var) == 0) \
+				ght_fspacecount_remove((m_a), &m_key); \
+		} \
 		else if (ght_fspacecount_insert((m_a), m_val, &m_key) == -1) { \
 			ght_fspacecount_replace((m_a), m_val, &m_key); \
 		} \
