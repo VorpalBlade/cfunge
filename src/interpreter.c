@@ -679,7 +679,8 @@ FUNGE_ATTR_FAST void klee_generate_program(void)
 #endif
 
 
-FUNGE_ATTR_FAST void interpreter_run(const char *filename)
+FUNGE_ATTR_NORET FUNGE_ATTR_FAST
+void interpreter_run(const char *filename)
 {
 	if (FUNGE_UNLIKELY(!fungespace_create())) {
 		DIAG_FATAL_FORMAT_LOC("Couldn't create funge space: %s", strerror(errno));

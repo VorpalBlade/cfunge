@@ -24,7 +24,7 @@
 #include <stdlib.h> /* abort, exit */
 #include <stdio.h>
 
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
 void diag_fatal(const char* message)
 {
 	fprintf(stderr, "FATAL: %s\n", message);
@@ -45,8 +45,8 @@ void diag_warn(const char* message)
 		fprintf(stderr, "WARN: %s\n", message);
 }
 
-
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
+FUNGE_ATTR_FORMAT(printf,1,2)
 void diag_fatal_format(const char* format, ...)
 {
 	va_list ap;
