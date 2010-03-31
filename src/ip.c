@@ -189,7 +189,7 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 
 	// Grow if needed
 	if (list->size <= (list->top + 1)) {
-		list = (ipList*)realloc(*me, sizeof(ipList) + sizeof(instructionPointer[(*me)->size + ALLOCCHUNKSIZE]));
+		list = (ipList*)realloc(*me, sizeof(ipList) + sizeof(instructionPointer) * ((*me)->size + ALLOCCHUNKSIZE));
 		if (FUNGE_UNLIKELY(!list))
 			return -1;
 		*me = list;
