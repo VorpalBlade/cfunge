@@ -37,7 +37,8 @@
 #include "../../src/global.h"
 #include "../../src/diagnostic.h"
 
-#include "cfunge_mempool.h"
+#define CFUNGE_MEMPOOL_HASHLIB
+#include "../mempool/cfunge_mempool.h"
 
 /* Flags for the elements. This is currently unused. */
 #define FLAGS_NONE     0 /* No flags */

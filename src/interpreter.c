@@ -514,8 +514,11 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					exit(0);
 				} else {
 					*threadindex = iplist_terminate_ip(&IPList, *threadindex);
-					//if (IPList->top == 0)
+#  ifdef LARGE_IPLIST
+					IPList->ips[*threadindex]->needMove = false;
+#  else
 					IPList->ips[*threadindex].needMove = false;
+#  endif
 				}
 #else
 				exit(0);
@@ -564,8 +567,27 @@ static inline void interpreter_main_loop(void)
 			bool retval;
 			funge_cell opcode;
 
+#    ifdef LARGE_IPLIST
+			opcode = fungespace_get(&IPList->ips[i]->position);
+#    else
 			opcode = fungespace_get(&IPList->ips[i].position);
-#    ifndef DISABLE_TRACE
+#    endif
+
+#    if !defined(DISABLE_TRACE) && defined(LARGE_IPLIST)
+			if (FUNGE_UNLIKELY(setting_trace_level != 0)) {
+				if (setting_trace_level > 8) {
+					fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+					        i, IPList->ips[i]->ID, IPList->ips[i]->position.x,
+					        IPList->ips[i]->position.y, (char)opcode, opcode);
+					stack_print_top(IPList->ips[i]->stack);
+				} else if (setting_trace_level > 3) {
+					fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
+					        i, IPList->ips[i]->ID, IPList->ips[i]->position.x,
+					        IPList->ips[i]->position.y, (char)opcode, opcode);
+				} else if (setting_trace_level > 2)
+					fprintf(stderr, "%c", (char)opcode);
+			}
+#    elif !defined(DISABLE_TRACE) && !defined(LARGE_IPLIST)
 			if (FUNGE_UNLIKELY(setting_trace_level != 0)) {
 				if (setting_trace_level > 8) {
 					fprintf(stderr, "tix=%zd tid=%" FUNGECELLPRI " x=%" FUNGECELLPRI " y=%" FUNGECELLPRI ": %c (%" FUNGECELLPRI ")\n",
@@ -581,8 +603,13 @@ static inline void interpreter_main_loop(void)
 			}
 #    endif /* DISABLE_TRACE */
 
+#    ifdef LARGE_IPLIST
+			retval = execute_instruction(opcode, IPList->ips[i], &i);
+			thread_forward(IPList->ips[i]);
+#    else
 			retval = execute_instruction(opcode, &IPList->ips[i], &i);
 			thread_forward(&IPList->ips[i]);
+#    endif
 			if (!retval)
 				i--;
 		}

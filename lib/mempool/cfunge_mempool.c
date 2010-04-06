@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2010 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-// This file does not come from libght, however this code is for libght
-// exclusively.
 
 
 /*
@@ -41,6 +38,7 @@ Notes:
 
 */
 
+#define CFUNGE_MEMPOOL_INTERNAL
 #include "cfunge_mempool.h"
 
 #include <assert.h>
@@ -93,5 +91,24 @@ Notes:
 #  define pools               fspacecount_pools
 #  define pools_size          fspacecount_pools_size
 #  define free_list           fspacecount_free_list
+#  include "cfunge_mempool_priv.h"
+#endif
+
+#undef CF_MEMPOOL_VARIANT
+#undef CF_MEMPOOL_DATATYPE
+#undef memory_block
+#undef pool_header
+#undef pools
+#undef pools_size
+#undef free_list
+
+#ifdef LARGE_IPLIST
+#  define CF_MEMPOOL_VARIANT  ip
+#  define CF_MEMPOOL_DATATYPE struct s_instructionPointer
+#  define memory_block        memory_block_ip
+#  define pool_header         pool_ip_header
+#  define pools               ip_pools
+#  define pools_size          ip_pools_size
+#  define free_list           ip_free_list
 #  include "cfunge_mempool_priv.h"
 #endif

@@ -32,7 +32,8 @@
 #include "funge-space.h"
 #include "../diagnostic.h"
 #include "../../lib/libghthash/ght_hash_table.h"
-#include "../../lib/libghthash/cfunge_mempool.h"
+#define CFUNGE_MEMPOOL_HASHLIB
+#include "../../lib/mempool/cfunge_mempool.h"
 
 #include <assert.h>
 #include <errno.h>

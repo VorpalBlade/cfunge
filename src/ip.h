@@ -82,7 +82,11 @@ typedef struct s_ipList {
 	 * This array is slightly complex for speed reasons.
 	 * Main loop must iterate over it *backwards*, this allow easy splitting of last ip.
 	 */
+#ifdef LARGE_IPLIST
+	instructionPointer* ips[];
+#else
 	instructionPointer  ips[];
+#endif
 } ipList;
 #endif
 

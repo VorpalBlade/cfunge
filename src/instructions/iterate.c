@@ -150,7 +150,10 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 							ip->position = posinstr;
 							RUNSELF();
 							// Cludge for realloc again...
-#ifdef CONCURRENT_FUNGE
+#if defined(CONCURRENT_FUNGE) && defined(LARGE_IPLIST)
+							ip = (*IPList)->ips[oldindex];
+
+#elif defined(CONCURRENT_FUNGE)
 							ip = &((*IPList)->ips[oldindex]);
 #endif
 							// Check position here.
@@ -163,7 +166,10 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 							break;
 					}
 				}
-#ifdef CONCURRENT_FUNGE
+#if defined(CONCURRENT_FUNGE) && defined(LARGE_IPLIST)
+				if (kInstr == 't')
+					ip = (*IPList)->ips[oldindex];
+#elif defined(CONCURRENT_FUNGE)
 				if (kInstr == 't')
 					ip = &((*IPList)->ips[oldindex]);
 #endif

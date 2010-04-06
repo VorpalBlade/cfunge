@@ -124,6 +124,11 @@ if (CONCURRENT_FUNGE)
 	add_definitions(-DCONCURRENT_FUNGE)
 endif (CONCURRENT_FUNGE)
 
+option(LARGE_IPLIST "EXPERIMENTAL: Use alternative IP list that works better with a lot of IPs. No effect without CONCURRENT_FUNGE." OFF)
+if (CONCURRENT_FUNGE AND LARGE_IPLIST)
+	add_definitions(-DLARGE_IPLIST)
+endif (CONCURRENT_FUNGE AND LARGE_IPLIST)
+
 option(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
 if (NOT ENABLE_TRACE)
 	add_definitions(-DDISABLE_TRACE)
@@ -287,6 +292,7 @@ include_directories(${CFUNGE_SOURCE_DIR}/src/)
 ################################################################################
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
+	lib/mempool/*.c
 	lib/libghthash/*.c
 	lib/genx/*.c
 	lib/stringbuffer/*.c

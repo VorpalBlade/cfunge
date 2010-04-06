@@ -19,8 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #include "global.h"
 #include "ip.h"
+
+#ifdef LARGE_IPLIST
+#  define CFUNGE_MEMPOOL_IPS
+#  include "../lib/mempool/cfunge_mempool.h"
+#endif
 
 #include "diagnostic.h"
 #include "interpreter.h"
@@ -35,7 +41,11 @@
 #include <string.h> /* memcpy */
 
 /// For concurrent funge: how many new IPs to allocate in one go?
-#define ALLOCCHUNKSIZE 1
+#ifdef LARGE_IPLIST
+#  define ALLOCCHUNKSIZE 256
+#else
+#  define ALLOCCHUNKSIZE 32
+#endif
 
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline bool ip_create_in_place(instructionPointer *me)
@@ -116,6 +126,9 @@ FUNGE_ATTR_FAST static inline void ip_free_resources(instructionPointer * ip)
 		free(ip->fingerHRTItimestamp);
 		ip->fingerHRTItimestamp = NULL;
 	}
+#  ifdef LARGE_IPLIST
+	cf_mempool_ip_free(ip);
+#  endif
 }
 #endif
 
@@ -154,15 +167,33 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
 #ifdef CONCURRENT_FUNGE
 FUNGE_ATTR_FAST ipList* iplist_create(void)
 {
-	ipList * tmp = (ipList*)malloc(sizeof(ipList) + sizeof(instructionPointer[ALLOCCHUNKSIZE]));
-	if (FUNGE_UNLIKELY(!tmp))
+	ipList *list;
+	
+#ifdef LARGE_IPLIST
+	list = malloc(sizeof(ipList) + sizeof(instructionPointer*) * ALLOCCHUNKSIZE);
+	if (FUNGE_UNLIKELY(!list))
 		return NULL;
-	if (FUNGE_UNLIKELY(!ip_create_in_place(&tmp->ips[0])))
+
+	if (FUNGE_UNLIKELY(!cf_mempool_ip_setup()))
 		return NULL;
-	tmp->size = ALLOCCHUNKSIZE;
-	tmp->top = 0;
-	tmp->highestID = 0;
-	return tmp;
+
+	list->ips[0] = cf_mempool_ip_alloc();
+	if (FUNGE_UNLIKELY(!list->ips[0]))
+		return NULL;
+
+	if (FUNGE_UNLIKELY(!ip_create_in_place(list->ips[0])))
+		return NULL;
+#else
+	list = malloc(sizeof(ipList) + sizeof(instructionPointer) * ALLOCCHUNKSIZE);
+	if (FUNGE_UNLIKELY(!list))
+		return NULL;
+	if (FUNGE_UNLIKELY(!ip_create_in_place(&list->ips[0])))
+		return NULL;
+#endif
+	list->size = ALLOCCHUNKSIZE;
+	list->top = 0;
+	list->highestID = 0;
+	return list;
 }
 
 #ifndef NDEBUG
@@ -171,9 +202,16 @@ FUNGE_ATTR_FAST void iplist_free(ipList* me)
 	if (FUNGE_UNLIKELY(!me))
 		return;
 	for (size_t i = 0; i <= me->top; i++) {
+#  ifdef LARGE_IPLIST
+		ip_free_resources(me->ips[i]);
+#  else
 		ip_free_resources(&me->ips[i]);
+#  endif
 	}
 	free(me);
+#  ifdef LARGE_IPLIST
+	cf_mempool_ip_teardown();
+#  endif
 }
 #endif
 
@@ -189,7 +227,11 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 
 	// Grow if needed
 	if (list->size <= (list->top + 1)) {
+#ifdef LARGE_IPLIST
+		list = (ipList*)realloc(*me, sizeof(ipList) + sizeof(instructionPointer*) * ((*me)->size + ALLOCCHUNKSIZE));
+#else
 		list = (ipList*)realloc(*me, sizeof(ipList) + sizeof(instructionPointer) * ((*me)->size + ALLOCCHUNKSIZE));
+#endif
 		if (FUNGE_UNLIKELY(!list))
 			return -1;
 		*me = list;
@@ -219,16 +261,34 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	 * t0 | t1  | t2 |
 	 * t0 | t0a | t1 | t2
 	 */
+#ifdef LARGE_IPLIST
+	list->ips[index + 1] = cf_mempool_ip_alloc();
+	if (FUNGE_UNLIKELY(!list->ips[index + 1])) {
+		// We are in trouble
+		DIAG_ERROR_LOC("Could not allocate IP, probably out of memory.\nThings may be broken now, continuing anyway.");
+	}
+	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(list->ips[index], list->ips[index + 1]))) {
+		// We are in trouble
+		DIAG_ERROR_LOC("Could not duplicate IP resources, possibly out of memory?\nThings may be broken now, continuing anyway.");
+	}
+#else
 	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1]))) {
 		// We are in trouble
-		DIAG_ERROR_LOC("Could not create IP, possibly out of memory?\nThings may be broken now, continuing anyway.");
+		DIAG_ERROR_LOC("Could not duplicate IP resources, possibly out of memory?\nThings may be broken now, continuing anyway.");
 	}
+#endif
 
 	// Here we mirror new IP and do ID changes.
 	index++;
+#ifdef LARGE_IPLIST
+	ip_reverse(list->ips[index]);
+	ip_forward(list->ips[index]);
+	list->ips[index]->ID = ++list->highestID;
+#else
 	ip_reverse(&list->ips[index]);
 	ip_forward(&list->ips[index]);
 	list->ips[index].ID = ++list->highestID;
+#endif
 	list->top++;
 	return index - 1;
 }
@@ -253,7 +313,12 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 	 *  t0 | t1 | t3 | t4 | t5 |
 	 *
 	 */
+#ifdef LARGE_IPLIST
+	ip_free_resources(list->ips[index]);
+	
+#else
 	ip_free_resources(&list->ips[index]);
+#endif
 	// Do we need to move downwards?
 	if (index != list->top) {
 		/* Move downwards:
@@ -265,9 +330,13 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 		}
 	}
 	// Set stack to be invalid in the top one. This should help catch any bugs
-	// related to this.
+	// related to this. For large model we instead sets the top IP to NULL.
+#ifdef LARGE_IPLIST
+	list->ips[list->top] = NULL;
+#else
 	list->ips[list->top].stackstack = NULL;
 	list->ips[list->top].stack = NULL;
+#endif
 	list->top--;
 	// TODO: Shrink if difference is large
 #if 0
