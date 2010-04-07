@@ -307,7 +307,6 @@ FUNGE_ATTR_FAST ssize_t iplist_terminate_ip(ipList** me, size_t index)
 	 */
 #ifdef LARGE_IPLIST
 	ip_free_resources(list->ips[index]);
-	
 #else
 	ip_free_resources(&list->ips[index]);
 #endif
