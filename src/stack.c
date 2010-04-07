@@ -442,7 +442,8 @@ static inline void stack_zero_fill(funge_stack * restrict stack, size_t count)
 
 // This does an in-order bulk copy of count elements between two stacks.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static inline void stack_bulk_copy(funge_stack * restrict dest, const funge_stack * restrict src, size_t count)
+inline void stack_bulk_copy(funge_stack * restrict dest,
+                            const funge_stack * restrict src, size_t count)
 {
 	paranoid_assert(dest != NULL);
 	paranoid_assert(src != NULL);

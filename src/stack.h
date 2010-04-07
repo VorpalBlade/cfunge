@@ -199,6 +199,11 @@ FUNGE_ATTR_MALLOC FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
 funge_stackstack * stackstack_duplicate(const funge_stackstack * restrict old);
 #endif
 
+/// This does an in-order bulk copy of count elements between two stacks.
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void stack_bulk_copy(funge_stack * restrict dest,
+                     const funge_stack * restrict src, size_t count);
+
 /**
  * Begin a new stack on the stack-stack.
  * @param ip Instruction pointer (will operate on it's stack stack).

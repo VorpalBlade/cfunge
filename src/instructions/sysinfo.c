@@ -54,6 +54,11 @@ extern char **environ;
 #  endif
 #endif
 
+/// Temp stack for pushing on when needed. Faster.
+static funge_stack* restrict sysinfo_tmp_stack = NULL;
+/// Cache stack for env vars (since we don't implement EVAR this works fine).
+static funge_stack* restrict sysinfo_env_stack = NULL;
+
 #define FUNGE_FLAGS_CONCURRENT 0x01
 #define FUNGE_FLAGS_INPUT      0x02
 #define FUNGE_FLAGS_OUTPUT     0x04
@@ -182,22 +187,35 @@ static size_t environ_count = 0;
 /// Environment variables
 #define PUSH_REQ_20b(m_pushstack) \
 	do { \
-		size_t i = 0; \
-		stack_push((m_pushstack), (funge_cell)'\0'); \
-		while (environ[i]) { \
-			if (FUNGE_UNLIKELY(setting_enable_sandbox)) { \
-				if (FUNGE_LIKELY(!check_env_is_safe(environ[i]))) { \
-					i++; \
-					continue; \
-				} \
-			} \
-			stack_push_string((m_pushstack), (const unsigned char*)environ[i], strlen(environ[i])); \
-			i++; \
-		} \
+		if (FUNGE_UNLIKELY(!sysinfo_env_stack)) \
+			create_env_stack(); \
+		stack_bulk_copy((m_pushstack), sysinfo_env_stack, sysinfo_env_stack->top); \
 	} while(0)
 /// 109 handprint
 #define PUSH_REQ_21(m_pushstack) \
 	stack_push_string((m_pushstack), (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT))
+
+/// Creates and populates the env variable stack.
+/// @note Do not call if env stack already exists. Will result in memory leak.
+FUNGE_ATTR_FAST
+static void create_env_stack(void) {
+	size_t i = 0;
+	sysinfo_env_stack = stack_create();
+	if (FUNGE_UNLIKELY(!sysinfo_env_stack))
+		DIAG_OOM("Failed to allocate env stack for sysinfo!");
+
+	stack_push(sysinfo_env_stack, (funge_cell)'\0');
+	while (environ[i]) {
+		if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
+			if (FUNGE_LIKELY(!check_env_is_safe(environ[i]))) {
+				i++;
+				continue;
+			}
+		}
+		stack_push_string(sysinfo_env_stack, (const unsigned char*)environ[i], strlen(environ[i]));
+		i++;
+	}
+}
 
 /**
  * Push all of the y values (as would be done for 0y or such).
@@ -354,10 +372,6 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 	}
 }
 
-
-/// Temp stack for pushing on when needed. Faster.
-static funge_stack* restrict sysinfo_tmp_stack = NULL;
-
 FUNGE_ATTR_FAST
 void run_sys_info(instructionPointer *ip)
 {
@@ -376,6 +390,7 @@ void run_sys_info(instructionPointer *ip)
 			if (FUNGE_UNLIKELY(!sysinfo_tmp_stack))
 				DIAG_OOM("Failed to allocate temp stack for sysinfo!");
 		}
+		// TODO: We can probably skip pushing env and cmd line args every time.
 		push_all(ip, sysinfo_tmp_stack);
 		// Find out if we should act as pick or not...
 		if (sysinfo_tmp_stack->top >= (size_t)request) {
@@ -394,5 +409,7 @@ FUNGE_ATTR_FAST
 void sysinfo_cleanup(void) {
 	if (sysinfo_tmp_stack)
 		stack_free(sysinfo_tmp_stack);
+	if (sysinfo_env_stack)
+		stack_free(sysinfo_env_stack);
 }
 #endif
