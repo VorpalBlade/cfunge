@@ -120,6 +120,7 @@ void ip_free(instructionPointer * restrict ip);
 /**
  * Move the IP backwards one step.
  * @param m_ip Instruction pointer to operate on.
+ * @note This might not do what you want with regards to wrapping!
  */
 #define ip_backward(m_ip) \
 	do { \
@@ -151,6 +152,9 @@ void ip_free(instructionPointer * restrict ip);
 	} while(0)
 
 /// Set position of an IP to a new vector. Will wrap if needed (based on current delta).
+/// @deprecated
+/// In general just assign to ip->position instead. Then call fungespace_wrap()
+/// manually if actually needed.
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_position(instructionPointer * restrict ip, const funge_vector * restrict position);
 

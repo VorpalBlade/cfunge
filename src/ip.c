@@ -96,11 +96,11 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 	assert(new != NULL);
 	memcpy(new, old, sizeof(instructionPointer));
 
-	new->stackstack           = stackstack_duplicate(old->stackstack);
+	new->stackstack = stackstack_duplicate(old->stackstack);
 	if (FUNGE_UNLIKELY(!new->stackstack))
 		return false;
 
-	new->stack                = new->stackstack->stacks[new->stackstack->current];
+	new->stack = new->stackstack->stacks[new->stackstack->current];
 	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
 		manager_duplicate(old, new);
 	}
