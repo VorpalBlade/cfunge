@@ -150,9 +150,6 @@ void ip_free(instructionPointer * restrict ip);
 		(m_ip)->delta  = (funge_vector) { -(m_ip)->delta.y, (m_ip)->delta.x }; \
 	} while(0)
 
-/// Set delta of an IP to a new vector.
-FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
-void ip_set_delta(instructionPointer * restrict ip, const funge_vector * restrict delta);
 /// Set position of an IP to a new vector. Will wrap if needed (based on current delta).
 FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 void ip_set_position(instructionPointer * restrict ip, const funge_vector * restrict position);

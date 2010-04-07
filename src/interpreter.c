@@ -237,7 +237,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			case 'x': {
 				funge_vector pos = stack_pop_vector(ip->stack);
-				ip_set_delta(ip, &pos);
+				ip->delta = pos;
 				break;
 			}
 

@@ -66,7 +66,7 @@ static void finger_SUBR_call(instructionPointer * ip)
 	stack_free(tmpstack);
 
 	ip_set_position(ip, &pos);
-	ip_set_delta(ip, &SUBRnewDelta);
+	ip->delta = SUBRnewDelta;
 	ip->needMove = false;
 }
 
@@ -83,7 +83,7 @@ static void finger_SUBR_jump(instructionPointer * ip)
 	}
 
 	ip_set_position(ip, &pos);
-	ip_set_delta(ip, &SUBRnewDelta);
+	ip->delta = SUBRnewDelta;
 }
 
 /// O - Change to relative addressing
@@ -115,7 +115,7 @@ static void finger_SUBR_return(instructionPointer * ip)
 	vec = stack_pop_vector(ip->stack);
 	pos = stack_pop_vector(ip->stack);
 	ip_set_position(ip, &pos);
-	ip_set_delta(ip, &vec);
+	ip->delta = vec;
 
 	while (n--)
 		stack_push(ip->stack, stack_pop(tmpstack));
