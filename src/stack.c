@@ -31,7 +31,7 @@
 
 /// How many new items to allocate in one go?
 #define ALLOCSIZE_STACK 4096
-/// How many stack stack pointers we allocate in one go.
+/// How many stack pointers to allocate for the stack stack in one go.
 #define ALLOCSIZE_STACKSTACK 32
 
 
