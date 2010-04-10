@@ -435,7 +435,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			}
 			case '}':
-				if (ip->stackstack->size == 1) {
+				if (ip->stackstack->current == 0) {
 					ip_reverse(ip);
 				} else {
 					funge_cell count;
@@ -445,7 +445,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				}
 				break;
 			case 'u':
-				if (ip->stackstack->size == 1) {
+				if (ip->stackstack->current == 0) {
 					ip_reverse(ip);
 				} else {
 					funge_cell count;

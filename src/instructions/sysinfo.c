@@ -145,7 +145,7 @@ static size_t environ_count = 0;
 	stack_push((m_pushstack), (funge_cell)((m_tm)->tm_hour * 256 * 256 + (m_tm)->tm_min * 256 + (m_tm)->tm_sec))
 /// Stack stack count
 #define PUSH_REQ_17(m_pushstack, m_ip) \
-	stack_push((m_pushstack), (funge_cell)(m_ip)->stackstack->size)
+	stack_push((m_pushstack), (funge_cell)(m_ip)->stackstack->current + 1)
 /// Number of elements on stacks
 #define PUSH_REQ_18(m_pushstack, m_stackstack) \
 	do { \
