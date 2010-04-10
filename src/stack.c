@@ -30,7 +30,10 @@
 #include <string.h> /* memcpy, memset */
 
 /// How many new items to allocate in one go?
-#define ALLOCCHUNKSIZE 4096
+#define ALLOCSIZE_STACK 4096
+/// How many stack stack pointers we allocate in one go.
+#define ALLOCSIZE_STACKSTACK 32
+
 
 /******************************
  * Constructor and destructor *
@@ -41,12 +44,12 @@ funge_stack * stack_create(void)
 	funge_stack * tmp = (funge_stack*)malloc(sizeof(funge_stack));
 	if (FUNGE_UNLIKELY(!tmp))
 		return NULL;
-	tmp->entries = (funge_cell*)malloc(ALLOCCHUNKSIZE * sizeof(funge_cell));
+	tmp->entries = (funge_cell*)malloc(ALLOCSIZE_STACK * sizeof(funge_cell));
 	if (FUNGE_UNLIKELY(!tmp->entries)) {
 		free(tmp);
 		return NULL;
 	}
-	tmp->size = ALLOCCHUNKSIZE;
+	tmp->size = ALLOCSIZE_STACK;
 	tmp->top = 0;
 	return tmp;
 }
@@ -99,8 +102,8 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 {
 	if ((stack->top + minfree) >= stack->size) {
 		size_t newsize = stack->size + minfree;
-		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
-		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
+		// Round upwards to whole ALLOCSIZE_STACK sized blocks.
+		newsize += ALLOCSIZE_STACK - (newsize % ALLOCSIZE_STACK);
 		stack->entries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
@@ -125,11 +128,11 @@ FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, funge_cell value)
 
 	// Do we need to realloc?
 	if (FUNGE_UNLIKELY(stack->top == stack->size)) {
-		stack->entries = (funge_cell*)realloc(stack->entries, (stack->size + ALLOCCHUNKSIZE) * sizeof(funge_cell));
+		stack->entries = (funge_cell*)realloc(stack->entries, (stack->size + ALLOCSIZE_STACK) * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
-		stack->size += ALLOCCHUNKSIZE;
+		stack->size += ALLOCSIZE_STACK;
 	}
 	stack->entries[stack->top] = value;
 	stack->top++;
@@ -348,7 +351,7 @@ funge_stackstack * stackstack_create(void)
 	funge_stackstack * stackStack;
 	funge_stack      * stack;
 
-	stackStack = (funge_stackstack*)malloc(sizeof(funge_stackstack) + sizeof(funge_stack*));
+	stackStack = (funge_stackstack*)malloc(sizeof(funge_stackstack) + sizeof(funge_stack*) * ALLOCSIZE_STACKSTACK);
 	if (FUNGE_UNLIKELY(!stackStack))
 		return NULL;
 
@@ -358,7 +361,7 @@ funge_stackstack * stackstack_create(void)
 		return NULL;
 	}
 
-	stackStack->size = 1;
+	stackStack->size = ALLOCSIZE_STACKSTACK;
 	stackStack->current = 0;
 	stackStack->stacks[0] = stack;
 	return stackStack;
@@ -369,7 +372,7 @@ FUNGE_ATTR_FAST void stackstack_free(funge_stackstack * me)
 	if (FUNGE_UNLIKELY(!me))
 		return;
 
-	for (size_t i = 0; i < me->size; i++)
+	for (size_t i = 0; i <= me->current; i++)
 		stack_free(me->stacks[i]);
 
 	free(me);
@@ -419,8 +422,8 @@ static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, 
 	if ((stack->top + minfree) >= stack->size) {
 		size_t newsize = stack->size + minfree;
 		funge_cell* newentries;
-		// Round upwards to whole ALLOCCHUNKSIZEed blocks.
-		newsize += ALLOCCHUNKSIZE - (newsize % ALLOCCHUNKSIZE);
+		// Round upwards to whole ALLOCSIZE_STACKed blocks.
+		newsize += ALLOCSIZE_STACK - (newsize % ALLOCSIZE_STACK);
 		newentries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
 		if (FUNGE_UNLIKELY(!newentries)) {
 			return false;
@@ -488,16 +491,19 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 		return false;
 	}
 
-	// Extend by one
-	stackStack = realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + 1) * sizeof(funge_stack*));
-	if (FUNGE_UNLIKELY(!stackStack)) {
-		stack_free(TOSS);
-		oom_stackstack(ip);
-		return false;
+	// Extend the stack stack allocation if required:
+	if ((stackStack->size - 1) == stackStack->current) {
+		stackStack = realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size + ALLOCSIZE_STACKSTACK) * sizeof(funge_stack*));
+		if (FUNGE_UNLIKELY(!stackStack)) {
+			stack_free(TOSS);
+			oom_stackstack(ip);
+			return false;
+		}
+		stackStack->size += ALLOCSIZE_STACKSTACK;
 	}
+	
 	SOSS = stackStack->stacks[stackStack->current];
-
-	stackStack->size++;
+	
 	stackStack->current++;
 	stackStack->stacks[stackStack->current] = TOSS;
 
@@ -544,16 +550,10 @@ bool stackstack_end(instructionPointer * restrict ip, funge_cell count)
 	ip->storageOffset.y = storageOffset.y;
 
 	ip->stack = SOSS;
-	// FIXME: Maybe we shouldn't realloc here to reduce overhead.
-	// Make it one smaller
-	stackStack = (funge_stackstack*)realloc(stackStack, sizeof(funge_stackstack) + (stackStack->size - 1) * sizeof(funge_stack*));
-	if (FUNGE_UNLIKELY(!stackStack)) {
-		oom_stackstack(ip);
-		return false;
-	}
-	stackStack->size--;
+	stackStack->stacks[stackStack->current] = NULL;
+	// TODO: Should we shrink stack stack allocation if difference is large?
+	// Needs testing to figure out.
 	stackStack->current--;
-	ip->stackstack = stackStack;
 	stack_free(TOSS);
 	return true;
 }
