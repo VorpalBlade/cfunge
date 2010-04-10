@@ -42,13 +42,12 @@ typedef funge_vector fungeSpaceHashKey;
  * @warning Should only be called from internal setup code.
  * @return True if successful, otherwise false.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_WARN_UNUSED
 bool fungespace_create(void);
 /**
  * Destroy a Funge-space.
  * @warning Should only be called from internal tear-down code.
  */
-FUNGE_ATTR_FAST
 void fungespace_free(void);
 /**
  * Get a cell.

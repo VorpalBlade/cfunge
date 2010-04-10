@@ -201,8 +201,7 @@ static const v4si fspace_vector_init = {0x20, 0x0, 0x20, 0x0};
  * Setup and teardown code here. *
  *********************************/
 
-FUNGE_ATTR_FAST bool
-fungespace_create(void)
+bool fungespace_create(void)
 {
 	// Fill static array with spaces.
 	// When possible use movntps, which reduces cache pollution (because it acts
@@ -311,8 +310,7 @@ fungespace_create(void)
 }
 
 
-FUNGE_ATTR_FAST void
-fungespace_free(void)
+void fungespace_free(void)
 {
 	if (fspace.entries)
 		ght_fspace_finalize(fspace.entries);
@@ -395,7 +393,6 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 	*max = max_h;
 }
 
-FUNGE_ATTR_FAST
 static inline void fungespace_minimize_bounds(void)
 {
 	funge_cell minx, miny, maxx, maxy;
