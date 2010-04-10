@@ -56,8 +56,9 @@ extern char **environ;
 
 /// Temp stack for pushing on when needed. Faster.
 static funge_stack* restrict sysinfo_tmp_stack = NULL;
-/// Cache stack for env vars (since we don't implement EVAR this works fine).
-static funge_stack* restrict sysinfo_env_stack = NULL;
+/// Cache stack for env vars (since we don't implement EVAR this works fine)
+/// and argv.
+static funge_stack* restrict sysinfo_cache_stack = NULL;
 
 #define FUNGE_FLAGS_CONCURRENT 0x01
 #define FUNGE_FLAGS_INPUT      0x02
@@ -154,67 +155,73 @@ static size_t environ_count = 0;
 		stack_push((m_pushstack), (funge_cell)TOSSSize); \
 		break; \
 	} while(0)
-/// Argc (109)
-#define PUSH_REQ_19a(m_pushstack) \
-	stack_push((m_pushstack), fungeargc)
-/// Argv
-#define PUSH_REQ_19b(m_pushstack) \
-	do { \
-		stack_push((m_pushstack), (funge_cell)'\0');\
-		stack_push((m_pushstack), (funge_cell)'\0'); \
-		for (int i = fungeargc - 1; i >= 0; i--) { \
-			stack_push_string((m_pushstack), (const unsigned char*)fungeargv[i], strlen(fungeargv[i])); \
-		} \
-	} while(0)
-/// Environment variable count (109)
-#define PUSH_REQ_20a(m_pushstack) \
-	do { \
-		if (environ_count == 0) { \
-			size_t i = 0; \
-			while (environ[i]) { \
-				if (FUNGE_UNLIKELY(setting_enable_sandbox)) { \
-					if (FUNGE_UNLIKELY(!check_env_is_safe(environ[i]))) { \
-						i++; \
-						continue; \
-					} \
-				} \
-				environ_count++; \
-				i++; \
-			} \
-		} \
-		stack_push((m_pushstack), (funge_cell)environ_count); \
-	} while(0)
-/// Environment variables
-#define PUSH_REQ_20b(m_pushstack) \
-	do { \
-		if (FUNGE_UNLIKELY(!sysinfo_env_stack)) \
-			create_env_stack(); \
-		stack_bulk_copy((m_pushstack), sysinfo_env_stack, sysinfo_env_stack->top); \
-	} while(0)
-/// 109 handprint
-#define PUSH_REQ_21(m_pushstack) \
-	stack_push_string((m_pushstack), (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT))
 
-/// Creates and populates the env variable stack.
+
+/// Environment variables + argc/argv
+#define PUSH_CACHE_STACK(m_pushstack) \
+	do { \
+		if (FUNGE_UNLIKELY(!sysinfo_cache_stack)) \
+			create_cache_stack(); \
+		stack_bulk_copy((m_pushstack), sysinfo_cache_stack, sysinfo_cache_stack->top); \
+	} while(0)
+
+/// Creates and populates the env variable + argv stack.
 /// @note Do not call if env stack already exists. Will result in memory leak.
 FUNGE_ATTR_FAST
-static void create_env_stack(void) {
-	size_t i = 0;
-	sysinfo_env_stack = stack_create();
-	if (FUNGE_UNLIKELY(!sysinfo_env_stack))
+static void create_cache_stack(void) {
+	sysinfo_cache_stack = stack_create();
+	if (FUNGE_UNLIKELY(!sysinfo_cache_stack))
 		DIAG_OOM("Failed to allocate env stack for sysinfo!");
 
-	stack_push(sysinfo_env_stack, (funge_cell)'\0');
-	while (environ[i]) {
-		if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
-			if (FUNGE_LIKELY(!check_env_is_safe(environ[i]))) {
+	// 109 handprint
+	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
+		stack_push_string(sysinfo_cache_stack, (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
+	
+	// Environment variables
+	{
+		size_t i = 0;
+		stack_push(sysinfo_cache_stack, (funge_cell)'\0');
+		while (environ[i]) {
+			if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
+				if (FUNGE_LIKELY(!check_env_is_safe(environ[i]))) {
+					i++;
+					continue;
+				}
+			}
+			stack_push_string(sysinfo_cache_stack, (const unsigned char*)environ[i], strlen(environ[i]));
+			i++;
+		}
+	}
+
+	// Environment variable count (109)
+	if (FUNGE_UNLIKELY(setting_current_standard == stdver109)) {
+		if (environ_count == 0) {
+			size_t i = 0;
+			while (environ[i]) {
+				if (FUNGE_UNLIKELY(setting_enable_sandbox)) {
+					if (FUNGE_UNLIKELY(!check_env_is_safe(environ[i]))) {
+						i++;
+						continue;
+					}
+				}
+				environ_count++;
 				i++;
-				continue;
 			}
 		}
-		stack_push_string(sysinfo_env_stack, (const unsigned char*)environ[i], strlen(environ[i]));
-		i++;
+		stack_push(sysinfo_cache_stack, (funge_cell)environ_count);
 	}
+
+	// Argv
+	stack_push(sysinfo_cache_stack, (funge_cell)'\0');
+	stack_push(sysinfo_cache_stack, (funge_cell)'\0');
+	for (int i = fungeargc - 1; i >= 0; i--) {
+		stack_push_string(sysinfo_cache_stack, (const unsigned char*)fungeargv[i], strlen(fungeargv[i]));
+	}
+
+	// Argc (109)
+	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
+		stack_push(sysinfo_cache_stack, fungeargc);
+
 }
 
 /**
@@ -227,14 +234,10 @@ static void push_all(instructionPointer * restrict ip, funge_stack * restrict pu
 	fungeRect rect;
 	time_t now;
 	struct tm *curTime;
-	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
-		PUSH_REQ_21(pushStack);
-	PUSH_REQ_20b(pushStack);
-	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
-		PUSH_REQ_20a(pushStack);
-	PUSH_REQ_19b(pushStack);
-	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
-		PUSH_REQ_19a(pushStack);
+
+	// We cache the static "area" that makes up env vars, argv and argc.
+	PUSH_CACHE_STACK(pushStack);
+
 	PUSH_REQ_18(pushStack, ip->stackstack);
 	PUSH_REQ_17(pushStack, ip);
 	now = time(NULL);
@@ -393,6 +396,8 @@ void run_sys_info(instructionPointer *ip)
 		// TODO: We can probably skip pushing env and cmd line args every time.
 		push_all(ip, sysinfo_tmp_stack);
 		// Find out if we should act as pick or not...
+		// TODO: We can pre-calculate this really, if we have the env cache
+		// stack size + number of stack-stacks.
 		if (sysinfo_tmp_stack->top >= (size_t)request) {
 			stack_push(ip->stack, sysinfo_tmp_stack->entries[sysinfo_tmp_stack->top - (size_t)request]);
 		} else {
@@ -409,7 +414,7 @@ FUNGE_ATTR_FAST
 void sysinfo_cleanup(void) {
 	if (sysinfo_tmp_stack)
 		stack_free(sysinfo_tmp_stack);
-	if (sysinfo_env_stack)
-		stack_free(sysinfo_env_stack);
+	if (sysinfo_cache_stack)
+		stack_free(sysinfo_cache_stack);
 }
 #endif
