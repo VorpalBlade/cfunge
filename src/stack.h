@@ -56,7 +56,7 @@ typedef struct funge_stackstack {
 /**
  * Create a new stack.
  */
-FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 funge_stack * stack_create(void);
 /**
  * Destroy a stack.
@@ -183,7 +183,7 @@ void stack_print_top(const funge_stack * stack);
 /**
  * Create a new stack-stack.
  */
-FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 funge_stackstack * stackstack_create(void);
 /**
  * Free a stack-stack and any stacks it contain.

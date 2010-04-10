@@ -557,7 +557,7 @@ static inline void thread_forward(instructionPointer * restrict ip)
 #endif
 
 
-FUNGE_ATTR_FAST FUNGE_ATTR_NORET
+FUNGE_ATTR_NORET
 static inline void interpreter_main_loop(void)
 {
 #ifdef CONCURRENT_FUNGE
@@ -661,7 +661,7 @@ static void debug_free(void)
 
 
 // Sets up random seed from time.
-FUNGE_ATTR_FAST static inline void interpreter_setup_random(void)
+static inline void interpreter_setup_random(void)
 {
 #if defined(CFUN_KLEE_TEST)
 	// Make klee tests deterministic.
@@ -684,7 +684,7 @@ FUNGE_ATTR_FAST static inline void interpreter_setup_random(void)
 }
 
 #ifdef CFUN_KLEE_TEST_PROGRAM
-FUNGE_ATTR_FAST void klee_generate_program(void)
+void klee_generate_program(void)
 {
 	unsigned char program_code[10];
 	klee_make_symbolic(program_code, sizeof(program_code), "program_code");

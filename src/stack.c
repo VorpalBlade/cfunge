@@ -36,7 +36,7 @@
  * Constructor and destructor *
  ******************************/
 
-FUNGE_ATTR_FAST funge_stack * stack_create(void)
+funge_stack * stack_create(void)
 {
 	funge_stack * tmp = (funge_stack*)malloc(sizeof(funge_stack));
 	if (FUNGE_UNLIKELY(!tmp))
@@ -84,7 +84,7 @@ static inline funge_stack * stack_duplicate(const funge_stack * old)
 }
 #endif
 
-FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NORET
+FUNGE_ATTR_COLD FUNGE_ATTR_NORET
 static void stack_oom(void)
 {
 	DIAG_OOM("Failed to allocate enough memory for new stack items");
@@ -343,7 +343,7 @@ void stack_print_top(const funge_stack * stack)
  * Stack-stacks *
  ****************/
 
-FUNGE_ATTR_FAST funge_stackstack * stackstack_create(void)
+funge_stackstack * stackstack_create(void)
 {
 	funge_stackstack * stackStack;
 	funge_stack      * stack;

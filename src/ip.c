@@ -75,7 +75,7 @@ static inline bool ip_create_in_place(instructionPointer *me)
 }
 
 #ifndef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST instructionPointer * ip_create(void)
+instructionPointer * ip_create(void)
 {
 	instructionPointer * tmp = (instructionPointer*)malloc(sizeof(instructionPointer));
 	if (FUNGE_UNLIKELY(!tmp))
@@ -157,7 +157,7 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
  ***********/
 
 #ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST ipList* iplist_create(void)
+ipList* iplist_create(void)
 {
 	ipList *list;
 	

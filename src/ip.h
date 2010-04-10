@@ -94,7 +94,7 @@ typedef struct s_ipList {
 /**
  * Create a new instruction pointer.
  */
-FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 instructionPointer * ip_create(void);
 #endif
 
@@ -173,7 +173,7 @@ void ip_set_position(instructionPointer * restrict ip, const funge_vector * rest
  * Create a new IP list with the single default IP in it.
  * @warning Should only be called from internal setup code.
  */
-FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED
 ipList* iplist_create(void);
 
 #ifndef NDEBUG

@@ -36,7 +36,7 @@ static size_t linelength = 0;
 // Pointer to how far we consumed the current line.
 static char*  lastline_current = NULL;
 
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_WARN_UNUSED
 static inline bool get_line(void)
 {
 	if (!lastline || !lastline_current || (*lastline_current == '\0')) {
@@ -49,7 +49,7 @@ static inline bool get_line(void)
 	}
 	return true;
 }
-FUNGE_ATTR_FAST static inline void discard_line(void)
+static inline void discard_line(void)
 {
 	if (lastline != NULL)
 		free(lastline);
