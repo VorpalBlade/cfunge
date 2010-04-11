@@ -163,7 +163,8 @@ static void finger_STRN_get(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	stack_push_string(ip->stack, (unsigned char*)s, len);
+	// stringbuffer returns index of \0
+	stack_push_string(ip->stack, (unsigned char*)s, len-1);
 	free(s);
 }
 
@@ -282,7 +283,7 @@ static void finger_STRN_itoa(instructionPointer * ip)
 	}
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb, &len);
-	stack_push_string(ip->stack, (unsigned char*)s, len);
+	stack_push_string(ip->stack, (unsigned char*)s, len-1);
 	free(s);
 }
 
