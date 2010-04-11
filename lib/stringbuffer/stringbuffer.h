@@ -73,7 +73,8 @@ StringBuffer *stringbuffer_new(void);
  * @param sb The string buffer to deallocate.
  *
  * @param length The length of the string returned. In actuality the index
- * of the trailing \0 byte. So for strlen() substract one.
+ * of the trailing \0 byte. So for strlen() substract one. Note: This will be
+ * incorrect if you already put a zero byte in there yourself.
  *
  * @return The result string; to free it, call <code>free()</code> on it.
  */
