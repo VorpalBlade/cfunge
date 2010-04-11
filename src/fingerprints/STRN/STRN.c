@@ -25,6 +25,7 @@
 
 #include <stdlib.h> /* atoi */
 #include <string.h>
+#include <assert.h>
 
 #include "../../../lib/stringbuffer/stringbuffer.h"
 
@@ -148,13 +149,13 @@ static void finger_STRN_get(instructionPointer * ip)
 	while (true) {
 		funge_cell val;
 		val = fungespace_get(&pos);
+		if (val == 0) break;
 		stringbuffer_append_char(sb, val);
 		if (pos.x < bounds.x || pos.x > bounds.x + bounds.w) {
 			stringbuffer_destroy(sb);
 			ip_reverse(ip);
 			return;
 		}
-		if (val == 0) break;
 		pos.x += 1;
 	}
 	s = stringbuffer_finish(sb, &len);
@@ -163,7 +164,7 @@ static void finger_STRN_get(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	// stringbuffer returns index of \0
+	assert(len == strlen(s));
 	stack_push_string(ip->stack, (unsigned char*)s, len-1);
 	free(s);
 }
@@ -283,7 +284,8 @@ static void finger_STRN_itoa(instructionPointer * ip)
 	}
 	stringbuffer_append_printf(sb, "%" FUNGECELLPRI, n);
 	s = stringbuffer_finish(sb, &len);
-	stack_push_string(ip->stack, (unsigned char*)s, len-1);
+	assert(len == strlen(s));
+	stack_push_string(ip->stack, (unsigned char*)s, len);
 	free(s);
 }
 
