@@ -32,20 +32,26 @@
 // from one read to the next if there was any
 // left.
 static char*  lastline = NULL;
+// Size of buffer, may be grown by cf_getline()
+static size_t linesize = 0;
+// Length of current string in buffer. Needed in case of \0 bytes in it
 static size_t linelength = 0;
 // Pointer to how far we consumed the current line.
 static char*  lastline_current = NULL;
 
+#define IS_LINE_END(ptr) ((size_t)((ptr)-lastline) >= linelength)
+
 FUNGE_ATTR_WARN_UNUSED
 static inline bool get_line(void)
 {
-	if (!lastline || !lastline_current || (*lastline_current == '\0')) {
+	if (!lastline || !lastline_current || IS_LINE_END(lastline_current)) {
 		ssize_t retval;
 		fflush(stdout);
-		retval = cf_getline(&lastline, &linelength, stdin);
+		retval = cf_getline(&lastline, &linesize, stdin);
 		if (retval == -1)
 			return false;
 		lastline_current = lastline;
+		linelength = retval;
 	}
 	return true;
 }
@@ -54,6 +60,8 @@ static inline void discard_line(void)
 	if (lastline != NULL)
 		free(lastline);
 	lastline = NULL;
+	linelength = 0;
+	linesize = 0;
 	lastline_current = NULL;
 }
 
@@ -65,7 +73,7 @@ FUNGE_ATTR_FAST bool input_getchar(funge_cell * restrict chr)
 		return false;
 	tmp = *((unsigned char*)lastline_current);
 	lastline_current++;
-	if (lastline_current && (*lastline_current == '\0'))
+	if (lastline_current && IS_LINE_END(lastline_current))
 		discard_line();
 	*chr = (funge_cell)tmp;
 	return true;
@@ -76,6 +84,7 @@ FUNGE_ATTR_FAST bool input_getline(unsigned char ** str)
 	unsigned char * tmp;
 	if (!get_line())
 		return false;
+	// TODO: How to handle zero bytes?
 	tmp = (unsigned char*)strdup(lastline_current);
 	*str = tmp;
 	discard_line();
@@ -92,11 +101,12 @@ static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 // Return value is last index used in string.
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 static inline ptrdiff_t parse_int(const char * restrict s,
-                                  funge_cell * restrict value, funge_cell base)
+                                  funge_cell * restrict value,
+                                  funge_cell base,
+                                  const size_t length)
 {
 	funge_cell result = 0;
 	size_t i;
-	size_t length = strlen(s);
 
 	assert(s != NULL);
 	assert(value != NULL);
@@ -150,12 +160,13 @@ FUNGE_ATTR_FAST ret_getint input_getint(funge_cell * restrict value, int base)
 		}
 		found = true;
 		// Ok, we found it, lets convert it.
-		endptr = lastline_current + parse_int(lastline_current, value,
-		                                      (funge_cell)base);
+		endptr = lastline_current
+		       + parse_int(lastline_current, value, (funge_cell)base,
+		                   lastline_current - lastline + linelength);
 		break;
-	} while (*(lastline_current++) != '\0');
+	} while ((size_t)((lastline_current++)-lastline) < linelength);
 	// Discard rest of line if it is just newline, otherwise keep it.
-	if (endptr && ((*endptr == '\n') || (*endptr == '\r') || (*endptr == '\0')))
+	if (endptr && ((*endptr == '\n') || (*endptr == '\r') || IS_LINE_END(endptr)))
 		discard_line();
 	else
 		lastline_current = endptr;
