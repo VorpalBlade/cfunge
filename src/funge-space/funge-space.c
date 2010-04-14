@@ -162,7 +162,7 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 #endif
 
 #if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) \
-    && defined(CFUNGE_ARCH_X86_64) &&  !defined(CFUNGE_COMP_CLANG)
+    && defined(CFUNGE_ARCH_X86_64) && !defined(CFUNGE_COMP_CLANG)
 #  define FSPACE_CREATE_SSE_ASM 1
 #endif
 
