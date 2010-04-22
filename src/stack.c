@@ -467,7 +467,7 @@ inline void stack_bulk_copy(funge_stack * restrict dest,
 }
 
 FUNGE_ATTR_FAST
-bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const funge_vector * restrict storageOffset)
+bool stackstack_begin(instructionPointer * ip, funge_cell count, const funge_vector * restrict storageOffset)
 {
 	funge_stackstack *stackStack;
 	funge_stack      *TOSS, *SOSS;
@@ -527,7 +527,7 @@ bool stackstack_begin(instructionPointer * restrict ip, funge_cell count, const 
 
 
 FUNGE_ATTR_FAST
-bool stackstack_end(instructionPointer * restrict ip, funge_cell count)
+bool stackstack_end(instructionPointer * ip, funge_cell count)
 {
 	funge_stack      *TOSS, *SOSS;
 	funge_stackstack *stackStack;

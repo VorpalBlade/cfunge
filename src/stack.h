@@ -211,7 +211,7 @@ void stack_bulk_copy(funge_stack * restrict dest,
  * @param storageOffset New storage offset.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool stackstack_begin(struct s_instructionPointer * restrict ip,
+bool stackstack_begin(struct s_instructionPointer * ip,
                       funge_cell count,
                       const funge_vector * restrict storageOffset);
 /**
@@ -220,7 +220,7 @@ bool stackstack_begin(struct s_instructionPointer * restrict ip,
  * @param count How many items to copy over.
  */
 FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_FAST
-bool stackstack_end(struct s_instructionPointer * restrict ip,
+bool stackstack_end(struct s_instructionPointer * ip,
                     funge_cell count);
 /**
  * Transfer items from one stack to another (not in order).

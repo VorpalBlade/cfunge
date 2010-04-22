@@ -22,6 +22,7 @@ REQUIRED:
  * A C99 compiler, or one that supports a large subset of C99, like GCC.
    + GCC 3.4.6, 4.1.2, 4.2.1, 4.3.2 and 4.3.3 are known to work, other versions
      may or may not work.
+   ! Warning: GCC 4.5.0 breaks with -O3 currently. (Later versions unknown.)
    + ICC 10.1 and 11.1 are known to work too.
    + Open64 4.1 should work, but isn't recommended.
    + clang 1.0 (LLVM 2.6)
