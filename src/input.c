@@ -81,12 +81,10 @@ FUNGE_ATTR_FAST bool input_getchar(funge_cell * restrict chr)
 
 FUNGE_ATTR_FAST bool input_getline(unsigned char ** str)
 {
-	unsigned char * tmp;
 	if (!get_line())
 		return false;
 	// TODO: How to handle zero bytes?
-	tmp = (unsigned char*)strdup(lastline_current);
-	*str = tmp;
+	*str = (unsigned char*)strdup(lastline_current);
 	discard_line();
 	return true;
 }
