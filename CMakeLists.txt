@@ -278,8 +278,8 @@ endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 ################################################################################
 # Some CFLAGS that won't hurt debug builds but will help release builds.
 if (CMAKE_COMPILER_IS_GNUCC)
-	CFUNGE_CHECK_CFLAG(fno-math-errno -fno-math-errno)
-	CFUNGE_CHECK_CFLAG(fno-trapping-math -fno-trapping-math)
+	CFUNGE_CHECK_CFLAG(fno_math_errno -fno-math-errno)
+	CFUNGE_CHECK_CFLAG(fno_trapping_math -fno-trapping-math)
 endif (CMAKE_COMPILER_IS_GNUCC)
 
 
@@ -307,8 +307,8 @@ add_executable(cfunge ${CFUNGE_SOURCES})
 
 # Try various nice linker flags.
 CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_O1          -Wl,-O1)
-CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_as-needed   -Wl,--as-needed)
-CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_warn-common -Wl,--warn-common)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_as_needed   -Wl,--as-needed)
+CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_warn_common -Wl,--warn-common)
 if (HARDENED)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_relro -Wl,-z,relro)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_now   -Wl,-z,now)
