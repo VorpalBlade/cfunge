@@ -43,7 +43,10 @@ Notes:
 
 #include <assert.h>
 
-// Number of items in a pool.
+// Number of items in a pool. The optimal value will vary depending on size of
+// struct, our typical usage of them, and page size.
+// Further, we have to consider that the actual size of the entries will be
+// max(sizeof(void*),sizeof(payload)).
 #define POOL_ARRAY_COUNT 4096
 
 #ifdef ENABLE_VALGRIND
