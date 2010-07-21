@@ -165,7 +165,7 @@ static void finger_STRN_get(instructionPointer * ip)
 		return;
 	}
 	assert(len == strlen(s));
-	stack_push_string(ip->stack, (unsigned char*)s, len-1);
+	stack_push_string(ip->stack, (unsigned char*)s, len);
 	free(s);
 }
 
