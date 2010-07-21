@@ -1,0 +1,10 @@
+"NRTS"4($$ 'x00p 010p '@ v
+v                        <
+
+  At this point, there should be the string "x" with the
+  terminating \0 at (0,0), and a marker value 64 on stack.
+
+  If I now use STRN:G to get the string, the stack should
+  contain (from top) 120, 0, 64.
+
+> 00G .... a, @
