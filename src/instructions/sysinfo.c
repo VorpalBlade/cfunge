@@ -37,6 +37,7 @@
 #include <string.h> /* strlen */
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 
 // Temp variable used for pushing of stack size.
 static size_t TOSSSize = 0;
@@ -157,14 +158,6 @@ static size_t environ_count = 0;
 	} while(0)
 
 
-/// Environment variables + argc/argv
-#define PUSH_CACHE_STACK(m_pushstack) \
-	do { \
-		if (FUNGE_UNLIKELY(!sysinfo_cache_stack)) \
-			create_cache_stack(); \
-		stack_bulk_copy((m_pushstack), sysinfo_cache_stack, sysinfo_cache_stack->top); \
-	} while(0)
-
 /// Creates and populates the env variable + argv stack.
 /// @note Do not call if env stack already exists. Will result in memory leak.
 FUNGE_ATTR_FAST
@@ -236,7 +229,11 @@ static void push_all(instructionPointer * restrict ip, funge_stack * restrict pu
 	struct tm *curTime;
 
 	// We cache the static "area" that makes up env vars, argv and argc.
-	PUSH_CACHE_STACK(pushStack);
+	if (FUNGE_UNLIKELY(!sysinfo_cache_stack))
+		create_cache_stack();
+	// For clang analyzer (if this is NULL, create_cache_stack won't return).
+	assert(sysinfo_cache_stack != NULL);
+	stack_bulk_copy(pushStack, sysinfo_cache_stack, sysinfo_cache_stack->top);
 
 	PUSH_REQ_18(pushStack, ip->stackstack);
 	PUSH_REQ_17(pushStack, ip);
