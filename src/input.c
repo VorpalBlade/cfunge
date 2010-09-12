@@ -55,6 +55,7 @@ static inline bool get_line(void)
 	}
 	return true;
 }
+
 static inline void discard_line(void)
 {
 	if (lastline != NULL)
