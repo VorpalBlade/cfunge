@@ -267,7 +267,8 @@ static void push_all(instructionPointer * restrict ip, funge_stack * restrict pu
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 static void push_yval(funge_cell request, instructionPointer * restrict ip, funge_stack * restrict pushStack)
-{	switch (request) {
+{
+	switch (request) {
 		case 1: // Flags
 			PUSH_REQ_1(pushStack);
 			break;
