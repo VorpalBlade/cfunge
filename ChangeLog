@@ -11,7 +11,7 @@ and
   bzr help revisionspec
 
 
-Development version (up to r855)
+Development version (up to r861)
 --------------------------------
  * Removed scaling of coordinates from TURT.
  * Fixed possible problem in FRTH for very large stack sizes (outside range of
