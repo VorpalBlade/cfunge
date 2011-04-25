@@ -11,7 +11,7 @@ and
   bzr help revisionspec
 
 
-Development version (up to r823)
+Development version (up to r855)
 --------------------------------
  * Removed scaling of coordinates from TURT.
  * Fixed possible problem in FRTH for very large stack sizes (outside range of
@@ -24,6 +24,19 @@ Development version (up to r823)
  * Various build system fixes.
  * Add missing NULL pointer checks in code for i, o and = as well as in several
    fingerprints.
+ * Removed counts from hash tables if they reach zero. Needed for large model
+   funge-space bounds shrinking logic to be correct.
+ * Fixed bug in text mode file output for lines with a single (non-space) char
+   on them.
+ * Added experimental alternative IP list implementation, that stores pointers
+   to the IPs instead. Useful for very large number (thousands) of IPs.
+ * Cache env vars and other constant (per execution) data in y.
+ * Changed stack stack code to not realloc once for each call of { and }.
+ * Fixed bug in STRN G that resulted in an extra \0 being pushed.
+ * Handle zero bytes properly in stdin. Note that STRN still retains the old
+   behaviour and arguably should do so.
+ * Fixed STRN G: It incorrectly substracted 1 from string length when calling
+   stack_push_string().
 
 Added fingerprints:
  * BOOL Logic Functions
