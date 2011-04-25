@@ -54,6 +54,9 @@ if (NOT CONFIGURED)
 		set(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb3"
 		    CACHE STRING "Flags used by the compiler during debug builds."
 		    FORCE)
+        set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG"
+            CACHE STRING "Flags used by the compiler during release builds."
+            FORCE)
 	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (NOT CONFIGURED)
 
