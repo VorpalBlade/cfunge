@@ -83,6 +83,10 @@ StringBuffer *stringbuffer_new(void)
 
     sb->size = 256;
     sb->buf = malloc(sb->size);
+    if (sb->buf == NULL) {
+        free(sb);
+        return NULL;
+    }
     sb->pos = 0;
     return sb;
 }
