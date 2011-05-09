@@ -41,6 +41,13 @@
 FUNGE_ATTR_FAST
 ssize_t cf_getline(char **lineptr, size_t *n, FILE *stream);
 
+#if !defined(HAVE_strlcpy)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+size_t strlcpy(char *dst, const char *src, size_t siz);
+#elif defined(STRLCPY_IN_BSD)
+#  include <bsd/string.h>
+#endif
+
 /// Support macro for extra assertions.
 /// Currently mostly meant for klee, but this might change in the future.
 #if defined(CFUN_KLEE_TEST)

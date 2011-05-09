@@ -360,6 +360,24 @@ if (USE_CLOCK_GETTIME)
 endif (USE_CLOCK_GETTIME)
 
 
+################################################################################
+# Check for stlcpy. Like the check for clock_gettime it must be done
+# late due to possible libraries. It could exist in libbsd on some systems.
+#
+# We only need it for genx, which is only used with TURT.
+CFUNGE_CHECK_FUNCTION(strlcpy)
+if (NOT CFUNGE_HAVE_strlcpy)
+	find_library(LIBBSD_LOCATION
+	             NAMES bsd)
+	if (NOT ${LIBBSD_LOCATION} STREQUAL "LIBBSD_LOCATION-NOTFOUND")
+		get_filename_component(LIBBSD_PATH ${LIBBSD_LOCATION} PATH)
+		CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge bsd strlcpy ${LIBBSD_PATH})
+		# In this case we need <bsd/string.h>
+		# FIXME: Should fail gracefully if missing.
+		CFUNGE_REQUIRE_INCLUDE(bsd/string.h)
+		add_definitions(-DSTRLCPY_IN_BSD)
+	endif (NOT ${LIBBSD_LOCATION} STREQUAL "LIBBSD_LOCATION-NOTFOUND")
+endif (NOT CFUNGE_HAVE_strlcpy)
 
 ################################################################################
 # Linking libraries

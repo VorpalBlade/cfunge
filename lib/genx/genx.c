@@ -219,7 +219,7 @@ static genxStatus collectString(genxWriter w, collector * restrict c, constUtf8 
 		if ((w->status = growCollector(c, sl)) != GENX_SUCCESS)
 			return GENX_ALLOC_FAILED;
 
-	strcpy((char *) c->buf, (const char *) string);
+	strlcpy((char *) c->buf, (const char *) string, c->space);
 	return GENX_SUCCESS;
 }
 
