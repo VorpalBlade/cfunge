@@ -34,6 +34,7 @@
  * CFUNGE_COMP_GCC_COMPAT    - GCC or claims to be GCC
  * CFUNGE_COMP_ICC           - Actually ICC
  * CFUNGE_COMP_CLANG         - Really clang.
+ * CFUNGE_COMP_PATHSCALE     - Really a PathScale compiler.
  * CFUNGE_COMP_GCC           - In fact this is GCC. Or is someone pretending that
  *                             we don't know how to identify correctly.
  * CFUNGE_COMP_GCC3_COMPAT   - Claims to be GCC 3.x or later.
@@ -48,6 +49,8 @@
 #    define CFUNGE_COMP_ICC
 #  elif defined(__clang__)
 #    define CFUNGE_COMP_CLANG
+#  elif defined(__PATHSCALE__)
+#    define CFUNGE_COMP_PATHSCALE
 #  else
 #    define CFUNGE_COMP_GCC
 #  endif
@@ -134,7 +137,8 @@
 #endif
 
 #if defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_ICC) \
-    || defined(CFUNGE_COMP_CLANG)
+    || defined(CFUNGE_COMP_CLANG) || defined(CFUNGE_COMP_CLANG) \
+    || defined(CFUNGE_COMP_PATHSCALE)
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))

@@ -27,6 +27,7 @@ REQUIRED:
    + ICC 10.1 and 11.1 are known to work too.
    + Open64 4.1 should work, but isn't recommended.
    + clang 1.0 (LLVM 2.6) and clang 2.9 (LLVM 2.9) are known to work.
+   + PathScale EKOPath 4.0.10 is known to work.
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
    Other compilers may or may not work.
 
