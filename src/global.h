@@ -41,6 +41,7 @@
  * CFUNGE_COMP_GCC4_COMPAT   - Claims to be GCC 4 or later.
  * CFUNGE_COMP_GCC4_3_COMPAT - Claims to be GCC 4.3 or later.
  * CFUNGE_COMP_GCC4_4_COMPAT - Claims to be GCC 4.4 or later.
+ * CFUNGE_COMP_GCC4_6_COMPAT - Claims to be GCC 4.6 or later.
  */
 /*@{*/
 #ifdef __GNUC__
@@ -65,6 +66,9 @@
 #  endif
 #  if (defined(CFUNGE_COMP_GCC4_COMPAT) && (__GNUC_MINOR__ >= 4)) || (__GNUC__ >= 5)
 #    define CFUNGE_COMP_GCC4_4_COMPAT
+#  endif
+#  if (defined(CFUNGE_COMP_GCC4_COMPAT) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ >= 5)
+#    define CFUNGE_COMP_GCC4_6_COMPAT
 #  endif
 #endif
 /*@}*/

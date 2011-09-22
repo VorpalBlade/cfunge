@@ -157,18 +157,11 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 
 // We don't want SSE if testing with klee.
 #if defined(CFUNGE_COMP_GCC_COMPAT) && defined(CFUNGE_ARCH_X86) \
-    && defined(__SSE__) && !defined(CFUN_NO_SSE)
+    && (defined(__SSE__) || defined(__AVX__)) && !defined(CFUN_NO_SSE)
 #  define FSPACE_CREATE_SSE 1
 #endif
 
-#if defined(FSPACE_CREATE_SSE) && defined(__SSE2__) \
-    && defined(CFUNGE_ARCH_X86_64) && !defined(CFUNGE_COMP_CLANG) \
-    && !defined(CFUNGE_COMP_PATHSCALE)
-#  define FSPACE_CREATE_SSE_ASM 1
-#endif
-
-#if defined(FSPACE_CREATE_SSE) && !defined(FSPACE_CREATE_SSE_ASM)
-#  define FSPACE_CREATE_SSE_INT
+#ifdef FSPACE_CREATE_SSE
 #  ifdef CFUNGE_COMP_ICC
 #    define FSPACE_ICC_INTRINSICS
 #  else
@@ -208,69 +201,14 @@ bool fungespace_create(void)
 	// When possible use movntps, which reduces cache pollution (because it acts
 	// as if the memory was write combining).
 	//
-	// GCC's __builtin_ia32_movntps refuses to load thing in the fastest way, so
-	// provide an inline asm version too. Also __builtin_ia32_movntps generates
-	// terrible code for -O0. Worse than plain C variant with no vectorisation
-	// at all.
-	//
-	// Further using %[space] in the movntps resulted in the invalid asm:
-	// cfun_static_space(%rip)(%rax)
-	// I still had to list it as output though.
-	//
 	// For the pure-ISO C variant, something like -ftree-vectorize (GCC) or
 	// -xP (icc, generate for SSE/SSE2/SSE3) can be used to at least speed up
 	// the execution a bit. Though you will still get cache pollution.
 	//
-	// For the PIC variant GCC's i constraint generate a $ in front of the number
-	// which doesn't work here. So we do it manually with macros that expand to
-	// the correct sizes.
-	//
 	// I'm not sure if the sfence is needed. The AMD and Intel docs are a bit
 	// unclear about this. And it doesn't seem to be needed in practise. However
 	// I'd rather go for the safe alternative.
-#ifdef FSPACE_CREATE_SSE_ASM
-	// ICC can't deal with embedded "cfun_static_space".
-#  if defined(__pic__) || defined(__PIC__) || defined(CFUNGE_COMP_ICC)
-	__asm__ volatile ("\
-	leaq    %[space],%%rax\n\
-	leaq    "FUNGESPACE_DATASIZE_STR
-		"*"FUNGE_CPP_STRINGIFY(FUNGESPACE_STATIC_X)
-		"*"FUNGE_CPP_STRINGIFY(FUNGESPACE_STATIC_Y)"+%[space],%%rdx\n\
-	movdqa  %[mask],%%xmm0\n\
-	.p2align 4,,7\n\
-.Lcf_fungespace_create_init_loop:\n\
-	movntps %%xmm0,(%%rax)\n\
-	addq    $16,%%rax\n\
-	cmpq    %%rdx,%%rax\n\
-	jne     .Lcf_fungespace_create_init_loop\n\
-	sfence"
-	: [space] "=o"(cfun_static_space)
-	: [mask]  "m"(fspace_vector_init)
-	: "rax", "rdx", "xmm0");
-#  else
-	__asm__ volatile ("\
-	xor     %%eax,%%eax\n\
-	movdqa  %[mask],%%xmm0\n\
-	.p2align 4,,7\n\
-.Lcf_fungespace_create_init_loop:\n\
-	movntps %%xmm0,cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x10+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x20+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x30+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x40+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x50+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x60+cfun_static_space(%%rax)\n\
-	movntps %%xmm0,0x70+cfun_static_space(%%rax)\n\
-	add     $128,%%rax\n\
-	cmp     %[size],%%rax\n\
-	jne     .Lcf_fungespace_create_init_loop\n\
-	sfence"
-	: [space] "=o"(cfun_static_space)
-	: [mask]  "m"(fspace_vector_init)
-	, [size]  "i"(sizeof(cfun_static_space))
-	: "rax", "xmm0");
-#  endif
-#elif defined(FSPACE_CREATE_SSE_INT)
+#ifdef FSPACE_CREATE_SSE
 	// Handle ICC
 #  ifdef FSPACE_ICC_INTRINSICS
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
@@ -280,11 +218,18 @@ bool fungespace_create(void)
 	_mm_sfence();
 	// Handle other GCC compatible compilers.
 #  elif defined(FSPACE_GCC_INTRINSICS)
+	// Shut up a warning if we can, the cast below is safe
+#    ifdef CFUNGE_COMP_GCC4_6_COMPAT
+#      pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#    endif
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
 		// Cast to void to shut up warning about strict-aliasing rules.
 		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i*4,
 		                       *((const v4sf*)(const void*)&fspace_vector_init));
 	__builtin_ia32_sfence();
+#    ifdef CFUNGE_COMP_GCC4_6_COMPAT
+#      pragma GCC diagnostic pop
+#    endif
 #  else
 #    error "Unknown intrinsics selected. Should not happen."
 #  endif
