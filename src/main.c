@@ -191,7 +191,7 @@ static void print_build_info(void) {
 	       "Compiler:      Unknown.\n"
 #endif
 	       "Build type:    " CFUN_BUILD_TYPE "\n"
-	       "Compiled on:   " CFUN_COMPILED_ON "\n\n"
+	       "Configured on: " CFUN_COMPILED_ON "\n\n"
 	       "CFLAGS=\"" CFUN_USER_CFLAGS "\"\n"
 	       "LDFLAGS=\"" CFUN_USER_LDFLAGS "\"\n",
 	       sizeof(void*) * CHAR_BIT, sizeof(funge_cell) * CHAR_BIT);
