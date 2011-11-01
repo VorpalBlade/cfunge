@@ -684,6 +684,50 @@ static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
 	return true;
 }
 
+/* Thanks to Elliott Hird for the algorithm in the following wrapping code. */
+FUNGE_ATTR_CONST FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline funge_cell wrap_frac(funge_cell n, funge_cell d)
+{
+	return (n % d == 0) ? (n / d) : ((n+d) / d);
+}
+
+// a  = value in x or y
+// r  = min in x or y
+// s  = max in x or y
+// da = delta in x or y
+FUNGE_ATTR_CONST FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+static inline funge_cell wrap_frac_dir(funge_cell a, funge_cell r,
+                                       funge_cell s, funge_cell da)
+{
+	return (da > 0) ? wrap_frac(a-r, da) : wrap_frac(a-s, da);
+}
+
+FUNGE_ATTR_FAST
+static inline void wrap(funge_vector * restrict pos,
+                        const funge_vector * restrict delta)
+{
+	funge_cell m;
+#define FUNGESPACE_FY wrap_frac_dir(pos->y, fspace.topLeftCorner.y, fspace.bottomRightCorner.y, delta->y)
+#define FUNGESPACE_FX wrap_frac_dir(pos->x, fspace.topLeftCorner.x, fspace.bottomRightCorner.x, delta->x)
+	if (delta->x == 0  && delta->y == 0)
+		return; // Shouldn't happen, zero delta and outside the border.
+	else if (delta->x == 0)
+		m = FUNGESPACE_FY;
+	else if (delta->y == 0)
+		m = FUNGESPACE_FX;
+	else {
+		funge_cell fx = FUNGESPACE_FX;
+		funge_cell fy = FUNGESPACE_FY;
+		m = (fx < fy) ? fx : fy;
+	}
+	
+	pos->x = pos->x - (m*delta->x);
+	pos->y = pos->y - (m*delta->y);
+#undef FUNGESPACE_FY
+#undef FUNGESPACE_FX
+}
+/* End of algorithm contributed by Elliott Hird. */
+
 FUNGE_ATTR_FAST void
 fungespace_wrap(funge_vector * restrict position,
                 const funge_vector * restrict delta)
@@ -707,12 +751,16 @@ fungespace_wrap(funge_vector * restrict position,
 			else if (position->y > fspace.bottomRightCorner.y)
 				position->y = fspace.topLeftCorner.y - 1;
 		} else {
+#ifdef SLOW_WRAP
 			do {
 				position->x -= delta->x;
 				position->y -= delta->y;
 			} while (fungespace_in_range(position));
 			position->x += delta->x;
 			position->y += delta->y;
+#else
+			wrap(position, delta);
+#endif
 		}
 	}
 }
