@@ -93,7 +93,11 @@ set(MAN_INSTALL_PREFIX
 # Options to enable optional dependencies.
 option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
-option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
+if (NOT CMAKE_COMPILER_IS_CYGWIN)
+	option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
+else (NOT CMAKE_COMPILER_IS_CYGWIN) 
+	option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  OFF)
+endif (NOT CMAKE_COMPILER_IS_CYGWIN)
 
 option(ENABLE_FLOATS "Enable all fingerprints using floating point. (Recommended.)"  ON)
 if (NOT ENABLE_FLOATS)
