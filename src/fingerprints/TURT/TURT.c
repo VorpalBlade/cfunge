@@ -33,6 +33,11 @@
 #include <stdlib.h>  /* abs */
 #include <assert.h>
 
+// Cygwin hides M_PI under incorrect ifdef.
+#ifndef M_PI
+#  define 3.14159265358979323846
+#endif
+
 // M_PIl is a GNU extension. This value should be enough
 // for 128-bit long double.
 #ifndef M_PIl
