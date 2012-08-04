@@ -359,9 +359,9 @@ if (USE_NCURSES)
 		if (CURSES_HAVE_NCURSES_NCURSES_H)
 			add_definitions(-DNCURSES_H_IN_NCURSES)
 		endif (CURSES_HAVE_NCURSES_NCURSES_H)
-	else (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
+	else ()
 		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
-	endif (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
+	endif ()
 endif (USE_NCURSES)
 
 
