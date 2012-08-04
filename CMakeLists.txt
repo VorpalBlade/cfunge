@@ -175,8 +175,16 @@ endif (USE_WERROR)
 
 
 ################################################################################
-# Compiler defines.
-CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
+# Compiler defines. Cygwin has broken headers that hide some function prototypes
+# based on STRICT_ANSI instead of checking for the relevant _POSIX_C_SOURCE,
+# thus we use -std=gnu99 for it. Furthermore it thinks strdup is _GNU_SOURCE.
+if (CMAKE_COMPILER_IS_CYGWIN)
+	CFUNGE_CHECK_CFLAG(std_gnu99 -std=gnu99)
+	add_definitions(-D_GNU_SOURCE)
+else (CMAKE_COMPILER_IS_CYGWIN)
+	CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
+endif (CMAKE_COMPILER_IS_CYGWIN)
+
 # Feature test macros for exposing relevant definitions in headers.
 add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
 
@@ -278,7 +286,9 @@ if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	add_definitions(-DDEBUG)
 else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	remove_definitions(-DDEBUG)
-	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
+	if (NOT CMAKE_COMPILER_IS_CYGWIN)
+		CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
+	endif (NOT CMAKE_COMPILER_IS_CYGWIN)
 endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 
 
