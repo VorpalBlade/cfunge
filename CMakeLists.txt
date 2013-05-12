@@ -28,6 +28,9 @@ mark_as_advanced(
 	CURSES_CURSES_H_PATH
 	CURSES_FORM_LIBRARY
 	CURSES_HAVE_CURSES_H
+	CURSES_HAVE_NCURSES_CURSES_H
+	CURSES_HAVE_NCURSES_H
+	CURSES_HAVE_NCURSES_NCURSES_H
 	USE_CLOCK_GETTIME
 	ENABLE_FLOATS
 	ENABLE_TURT
@@ -91,9 +94,14 @@ set(MAN_INSTALL_PREFIX
 
 ################################################################################
 # Options to enable optional dependencies.
-option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 
-option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
+if (CMAKE_COMPILER_IS_CYGWIN)
+	option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  OFF)
+	option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  OFF)
+else (CMAKE_COMPILER_IS_CYGWIN)
+	option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
+	option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
+endif (CMAKE_COMPILER_IS_CYGWIN)
 
 option(ENABLE_FLOATS "Enable all fingerprints using floating point. (Recommended.)"  ON)
 if (NOT ENABLE_FLOATS)
@@ -171,8 +179,16 @@ endif (USE_WERROR)
 
 
 ################################################################################
-# Compiler defines.
-CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
+# Compiler defines. Cygwin has broken headers that hide some function prototypes
+# based on STRICT_ANSI instead of checking for the relevant _POSIX_C_SOURCE,
+# thus we use -std=gnu99 for it. Furthermore it thinks strdup is _GNU_SOURCE.
+if (CMAKE_COMPILER_IS_CYGWIN)
+	CFUNGE_CHECK_CFLAG(std_gnu99 -std=gnu99)
+	add_definitions(-D_GNU_SOURCE)
+else (CMAKE_COMPILER_IS_CYGWIN)
+	CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
+endif (CMAKE_COMPILER_IS_CYGWIN)
+
 # Feature test macros for exposing relevant definitions in headers.
 add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
 
@@ -274,7 +290,9 @@ if (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	add_definitions(-DDEBUG)
 else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	remove_definitions(-DDEBUG)
-	CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
+	if (NOT CMAKE_COMPILER_IS_CYGWIN)
+		CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
+	endif (NOT CMAKE_COMPILER_IS_CYGWIN)
 endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 
 
@@ -327,7 +345,7 @@ if (USE_NCURSES)
 	find_package(Curses)
 	CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
 	CHECK_INCLUDE_FILE(ncurses/term.h HAVE_NCURSES_TERM_H)
-	if (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
+	if (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND (CURSES_HAVE_CURSES_H OR CURSES_HAVE_NCURSES_CURSES_H))
 		# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
 		# builds as it contains the full path to ncurses.so
 		target_link_libraries(cfunge ncurses)
@@ -335,9 +353,15 @@ if (USE_NCURSES)
 		if (HAVE_NCURSES_TERM_H)
 			add_definitions(-DTERM_H_IN_NCURSES)
 		endif (HAVE_NCURSES_TERM_H)
-	else (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
+		if (CURSES_HAVE_NCURSES_CURSES_H)
+			add_definitions(-DCURSES_H_IN_NCURSES)
+		endif (CURSES_HAVE_NCURSES_CURSES_H)
+		if (CURSES_HAVE_NCURSES_NCURSES_H)
+			add_definitions(-DNCURSES_H_IN_NCURSES)
+		endif (CURSES_HAVE_NCURSES_NCURSES_H)
+	else ()
 		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
-	endif (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND CURSES_HAVE_CURSES_H)
+	endif ()
 endif (USE_NCURSES)
 
 

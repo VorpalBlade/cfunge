@@ -34,7 +34,11 @@
 
 #include "../NCRS/NCRS.h"
 
-#include <curses.h>
+#ifdef CURSES_H_IN_NCURSES
+#  include <ncurses/curses.h>
+#else
+#  include <curses.h>
+#endif
 #ifdef TERM_H_IN_NCURSES
 #  include <ncurses/term.h>
 #else

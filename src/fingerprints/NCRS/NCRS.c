@@ -30,7 +30,11 @@
 
 #include "../TERM/TERM.h"
 
-#include <ncurses.h>
+#ifdef NCURSES_H_IN_NCURSES
+#  include <ncurses/ncurses.h>
+#else
+#  include <ncurses.h>
+#endif
 #ifdef TERM_H_IN_NCURSES
 #  include <ncurses/term.h>
 #else
