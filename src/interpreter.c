@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008-2011 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2013 Arvid Norlander <anmaster AT tele2 DOT se>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -406,7 +406,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			}
 			case '&': {
-				funge_cell a;
+				funge_cell a = 0;
 				ret_getint gotint = rgi_noint;
 				while (gotint == rgi_noint)
 					gotint = input_getint(&a, 10);

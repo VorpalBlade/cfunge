@@ -39,7 +39,7 @@ FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline ssize_t
 cf_getdelim(char **lineptr, size_t *n, int delimiter, FILE *fp)
 {
-	ssize_t result;
+	ssize_t result = 0;
 	size_t cur_len = 0;
 
 	if (lineptr == NULL || n == NULL || fp == NULL) {

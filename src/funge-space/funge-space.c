@@ -788,7 +788,7 @@ static inline int do_mmap(const char * restrict filename,
 	char *addr = NULL;
 	struct stat sb;
 	int fd;
-	size_t len;
+	size_t len = 0;
 
 	fd = open(filename, O_RDONLY);
 	if (FUNGE_UNLIKELY(fd == -1))

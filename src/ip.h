@@ -53,13 +53,13 @@ typedef uint_fast8_t ipMode;
 /// Fields of the style fingerXXXX* are for fingerprint per-IP data.
 /// Please avoid such fields when possible.
 typedef struct s_instructionPointer {
-	funge_stack      * stack;            ///< Pointer to top stack.
-	funge_vector       position;         ///< Current position.
-	funge_vector       delta;            ///< Current delta.
-	funge_vector       storageOffset;    ///< The storage offset for current IP.
-	ipMode             mode;             ///< String or code mode.
+	funge_stack      * stack;              ///< Pointer to top stack.
+	funge_vector       position;           ///< Current position.
+	funge_vector       delta;              ///< Current delta.
+	funge_vector       storageOffset;      ///< The storage offset for current IP.
+	ipMode             mode;               ///< String or code mode.
 	// "Full" bool for very often checked flags.
-	bool               needMove;         ///< Should ip_forward be called at end of main loop. Is reset to true each time.
+	bool               needMove;           ///< Should ip_forward be called at end of main loop. Is reset to true each time.
 	bool               stringLastWasSpace; ///< Used in string mode for SGML style spaces.
 	// These are more uncommon flags, and will be turned into bitfields
 	// should that save space at some point (doesn't currently).

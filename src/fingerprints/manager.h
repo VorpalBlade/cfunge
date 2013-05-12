@@ -88,7 +88,6 @@ fingerprintOpcode opcode_stack_pop(struct s_instructionPointer * restrict ip, un
  * Free opcode stacks for IP
  * @warning Don't call this directly from fingerprints.
  * @param ip IP to operate on.
- * @return True if successful otherwise false.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void manager_free(struct s_instructionPointer * restrict ip);
