@@ -38,7 +38,7 @@
 #include "settings.h"
 #include "fingerprints/manager.h"
 
-const char **fungeargv = NULL;
+const char *const *fungeargv = NULL;
 int fungeargc = 0;
 
 // Exclude some code if we are building in IFFI.
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 		// Store argument count and a pointer to argv[optind] for later use
 		// by the y instruction.
 		fungeargc = argc - optind;
-		fungeargv = (const char**)&argv[optind];
+		fungeargv = (const char *const *)&argv[optind];
 		// Run the actual interpreter (never returns).
 		interpreter_run(argv[optind]);
 	}

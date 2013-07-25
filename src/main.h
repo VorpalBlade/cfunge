@@ -42,7 +42,7 @@
 ///
 /// Currently this points into the real argv of main(). Though that may change
 /// without prior notice.
-extern const char **fungeargv;
+extern const char *const *fungeargv;
 /// Copy of argc, don't modify.
 extern int fungeargc;
 /*@}*/
