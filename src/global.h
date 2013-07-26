@@ -215,12 +215,19 @@ typedef uint64_t funge_unsigned_cell;
 #  define FUNGECELL_MIN INT64_MIN
 /// Min value for funge_cell
 #  define FUNGECELL_MAX INT64_MAX
+/// Number of bits in a data cell.
+#  define FUNGE_CELL_BIT 64
 
 /**
  * Define the abs() function to use for the set data size.
  * This one is 64-bit.
  */
 #  define ABS(x) llabs(x)
+
+/**
+ * Function that implementds atoi() for the size of a funge cell.
+ */
+#  define FUNGE_ATOI(x) atoll(x)
 
 
 #elif defined(USE32)
@@ -238,6 +245,8 @@ typedef uint32_t funge_unsigned_cell;
 #  define FUNGECELL_MIN INT32_MIN
 /// Min value for funge_cell
 #  define FUNGECELL_MAX INT32_MAX
+/// Number of bits in a data cell.
+#  define FUNGE_CELL_BIT 32
 
 /**
  * Define the abs() function to use for the set data size.
@@ -245,6 +254,10 @@ typedef uint32_t funge_unsigned_cell;
  */
 #  define ABS(x) abs(x)
 
+/**
+ * Function that implementds atoi() for the size of a funge cell.
+ */
+#  define FUNGE_ATOI(x) atoi(x)
 
 #else
 #  error "Err, you actually got to select either 32-bit or 64-bit data type. If you used the normal build system this error should not happen."

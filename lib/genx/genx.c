@@ -382,8 +382,10 @@ static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 		w->status = GENX_ALLOC_FAILED;
 		return NULL;
 	}
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	w->status = listInsert(&w->prefixes, (void *) prefix, high);
+#pragma GCC diagnostic pop
 	if (w->status != GENX_SUCCESS)
 		return NULL;
 
@@ -975,7 +977,10 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 	genxAttribute a;
 
 	w->arec.ns = ns;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	w->arec.name = (utf8) name;
+#pragma GCC diagnostic pop
 
 	if (ns)
 		w->arec.atype = ATTR_PREFIXED;
@@ -1714,8 +1719,11 @@ FUNGE_ATTR_FAST genxStatus genxAddCharacter(genxWriter w, int c)
 	}
 	*next = 0;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-qual"
 	w->status =
 	    addChar(w, c, next, (constUtf8 *) & lasts, (constUtf8 *) & breaker);
+#pragma GCC diagnostic pop
 	if (w->status != GENX_SUCCESS)
 		return w->status;
 

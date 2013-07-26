@@ -28,30 +28,31 @@
 #include <assert.h>
 
 #include "../../../lib/stringbuffer/stringbuffer.h"
+#include "../../../lib/fungestring/funge_string.h"
 
 /// A - Append bottom string to upper string
 static void finger_STRN_append(instructionPointer * ip)
 {
-	char * top;
-	char * restrict bottom;
-	char * c = NULL;
+	funge_cell * top;
+	funge_cell * restrict bottom;
+	funge_cell * c = NULL;
 	size_t top_len;
 	size_t bottom_len;
 
-	top = (char*)stack_pop_string(ip->stack, &top_len);
-	bottom = (char*)stack_pop_string(ip->stack, &bottom_len);
+	top = stack_pop_string_multibyte(ip->stack, &top_len);
+	bottom = stack_pop_string_multibyte(ip->stack, &bottom_len);
 	if (FUNGE_UNLIKELY(!top || !bottom)) {
 		goto error;
 	}
 
-	c = realloc(top, top_len + bottom_len + 1);
+	c = realloc(top, (top_len + bottom_len + 1)*sizeof(funge_cell));
 	if (FUNGE_UNLIKELY(!c)) {
 		goto error;
 	}
-	memcpy(c + top_len, bottom, bottom_len);
+	memcpy(c + top_len, bottom, bottom_len*sizeof(funge_cell));
 	c[top_len + bottom_len] = '\0';
 
-	stack_push_string(ip->stack, (unsigned char*)c, strlen(c));
+	stack_push_string_multibyte(ip->stack, c, bottom_len + top_len);
 
 	stack_free_string(bottom);
 	free(c);
@@ -68,10 +69,14 @@ error:
 /// C - Compare strings
 static void finger_STRN_compare(instructionPointer * ip)
 {
-	unsigned char * restrict a;
-	unsigned char * restrict b;
-	a = stack_pop_string(ip->stack, NULL);
-	b = stack_pop_string(ip->stack, NULL);
+	funge_cell * restrict a;
+	funge_cell * restrict b;
+	size_t alen = 0, blen = 0, minlen;
+	funge_cell comparsion = 0;
+
+	a = stack_pop_string_multibyte(ip->stack, &alen);
+	b = stack_pop_string_multibyte(ip->stack, &blen);
+
 	if (FUNGE_UNLIKELY(!a || !b)) {
 		// Ok even if NULL.
 		stack_free_string(a);
@@ -79,7 +84,19 @@ static void finger_STRN_compare(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	stack_push(ip->stack, strcmp((char*)a, (char*)b));
+
+	minlen = (alen < blen) ? alen : blen;
+
+	for (size_t i = 0; i < minlen+1; i++)
+	{
+		funge_cell diff = a[i] - b[i];
+		if (diff != 0) {
+			comparsion = diff;
+			break;
+		}
+	}
+
+	stack_push(ip->stack, comparsion);
 	stack_free_string(a);
 	stack_free_string(b);
 }
@@ -100,11 +117,11 @@ static void finger_STRN_display(instructionPointer * ip)
 /// F - Search for bottom string in upper string
 static void finger_STRN_search(instructionPointer * ip)
 {
-	unsigned char * top;
-	unsigned char * restrict bottom;
-	unsigned char * c;
-	top = stack_pop_string(ip->stack, NULL);
-	bottom = stack_pop_string(ip->stack, NULL);
+	funge_cell * top;
+	funge_cell * restrict bottom;
+	funge_cell * c;
+	top = stack_pop_string_multibyte(ip->stack, NULL);
+	bottom = stack_pop_string_multibyte(ip->stack, NULL);
 	if (FUNGE_UNLIKELY(!top || !bottom)) {
 		// Ok even if NULL.
 		stack_free_string(top);
@@ -112,9 +129,9 @@ static void finger_STRN_search(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	c = (unsigned char*)strstr((char*)top, (char*)bottom);
+	c = funge_strstr(top, bottom);
 	if (c) {
-		stack_push_string(ip->stack, c, strlen((char*)c));
+		stack_push_string_multibyte(ip->stack, c, funge_strlen(c));
 	} else {
 		stack_push(ip->stack, '\0');
 	}
@@ -128,7 +145,7 @@ static void finger_STRN_get(instructionPointer * ip)
 	fungeRect bounds;
 	StringBuffer *sb;
 	size_t len;
-	char *s;
+	funge_cell *s;
 	funge_vector pos;
 
 	fungespace_get_bounds_rect(&bounds);
@@ -150,7 +167,7 @@ static void finger_STRN_get(instructionPointer * ip)
 		funge_cell val;
 		val = fungespace_get(&pos);
 		if (val == 0) break;
-		stringbuffer_append_char(sb, val);
+		stringbuffer_append_cell(sb, val);
 		if (pos.x < bounds.x || pos.x > bounds.x + bounds.w) {
 			stringbuffer_destroy(sb);
 			ip_reverse(ip);
@@ -158,14 +175,13 @@ static void finger_STRN_get(instructionPointer * ip)
 		}
 		pos.x += 1;
 	}
-	s = stringbuffer_finish(sb, &len);
+	s = stringbuffer_finish_multibyte(sb, &len);
 	if (FUNGE_UNLIKELY(!s)) {
 		stringbuffer_destroy(sb);
 		ip_reverse(ip);
 		return;
 	}
-	assert(len == strlen(s));
-	stack_push_string(ip->stack, (unsigned char*)s, len);
+	stack_push_string_multibyte(ip->stack, s, len);
 	free(s);
 }
 
@@ -192,16 +208,22 @@ static void finger_STRN_left(instructionPointer * ip)
 {
 	funge_cell n;
 	size_t len;
-	unsigned char *s;
+	funge_cell *s;
 	n = stack_pop(ip->stack);
-	s = stack_pop_string(ip->stack, &len);
-	if (n <= 0 || len < (size_t)n) {
+	s = stack_pop_string_multibyte(ip->stack, &len);
+	if (n < 0) {
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
+	} else if (n == 0) {
+		stack_push(ip->stack, '\0');
+		stack_free_string(s);
+		return;
+	} else if (len < (size_t)n) {
+		n = len;
 	}
 	stack_push(ip->stack, '\0');
-	stack_push_string(ip->stack, s, (size_t)(n - 1));
+	stack_push_string_multibyte(ip->stack, s, (size_t)(n - 1));
 	stack_free_string(s);
 }
 
@@ -209,24 +231,20 @@ static void finger_STRN_left(instructionPointer * ip)
 static void finger_STRN_slice(instructionPointer * ip)
 {
 	funge_cell n, p;
-	char *s;
+	funge_cell *s;
 	size_t slen;
 	n = stack_pop(ip->stack);
 	p = stack_pop(ip->stack);
-	s = (char*)stack_pop_string(ip->stack, &slen);
-	if (p < 0 || n < 0) {
+	s = stack_pop_string_multibyte(ip->stack, &slen);
+	if (p < 0 || n < 0 || slen < (size_t)p) {
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
-	}
-	if (slen < (size_t)(p + n)) {
-		stack_free_string(s);
-		ip_reverse(ip);
-		return;
+	} else if (slen < (size_t)(p + n)) {
+		n = slen - p;
 	}
 	s[p+n] = '\0';
-	// FIXME: strlen could use slen?
-	stack_push_string(ip->stack, (unsigned char*)s + p, strlen(s + p));
+	stack_push_string_multibyte(ip->stack, s + p, slen-p);
 	stack_free_string(s);
 }
 
@@ -259,15 +277,17 @@ static void finger_STRN_right(instructionPointer * ip)
 {
 	funge_cell n;
 	size_t len;
-	unsigned char *s;
+	funge_cell *s;
 	n = stack_pop(ip->stack);
-	s = stack_pop_string(ip->stack, &len);
-	if (n < 0 || len < (size_t)n) {
+	s = stack_pop_string_multibyte(ip->stack, &len);
+	if (n < 0) {
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
+	} else if (len < (size_t)n) {
+		n = len;
 	}
-	stack_push_string(ip->stack, s + (len - (size_t)n), (size_t)n);
+	stack_push_string_multibyte(ip->stack, s + (len - (size_t)n), (size_t)n);
 	stack_free_string(s);
 }
 
@@ -298,7 +318,7 @@ static void finger_STRN_atoi(instructionPointer * ip)
 		ip_reverse(ip);
 		return;
 	}
-	stack_push(ip->stack, atoi((char*)s));
+	stack_push(ip->stack, FUNGE_ATOI((char*)s));
 	stack_free_string(s);
 }
 

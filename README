@@ -61,6 +61,9 @@ Configuring
 Warning: Out of tree builds are highly recommended. Building in the source tree
 may work but is _completely_ untested.
 
+Warning: Only the make and ninja backends for cmake have been tested. Other
+backends may work, but are untested.
+
 To build using cmake, you can run these commands in the top source directory:
   mkdir build && cd build
   cmake ..

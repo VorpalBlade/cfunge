@@ -27,6 +27,7 @@
  *   parts of crossfire.
  * - Adding stringbuffer_destroy
  * - Adding GCC attributes.
+ * - Convert to using Funge multibyte.
  *
  */
 
@@ -44,7 +45,7 @@ struct StringBuffer {
      * The string buffer. The first {@link #pos} bytes contain the collected
      * string. It's size is at least {@link #size} bytes.
      */
-    char *buf;
+    funge_cell *buf;
 
     /**
      * The current length of {@link #buf}. The invariant <code>pos <
@@ -82,7 +83,7 @@ StringBuffer *stringbuffer_new(void)
     }
 
     sb->size = 256;
-    sb->buf = malloc(sb->size);
+    sb->buf = malloc(sb->size*sizeof(funge_cell));
     if (sb->buf == NULL) {
         free(sb);
         return NULL;
@@ -101,7 +102,26 @@ void stringbuffer_destroy(StringBuffer *sb)
 FUNGE_ATTR_FAST
 char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length)
 {
-    char *result;
+    char *buffer = malloc(sb->pos+1);
+    if (!buffer)
+        return NULL;
+
+    for (size_t i = 0; i < sb->pos; i++)
+        buffer[i] = (char)sb->buf[i];
+
+    buffer[sb->pos] = '\0';
+    
+    if (length)
+        *length = sb->pos;
+    free(sb->buf);
+    free(sb);
+    return buffer;
+}
+
+FUNGE_ATTR_FAST
+funge_cell *stringbuffer_finish_multibyte(StringBuffer * restrict sb, size_t * restrict length)
+{
+    funge_cell *result;
 
     sb->buf[sb->pos] = '\0';
     if (length)
@@ -120,34 +140,52 @@ void stringbuffer_append_char(StringBuffer *sb, const char c)
 }
 
 FUNGE_ATTR_FAST
+void stringbuffer_append_cell(StringBuffer *sb, const funge_cell c)
+{
+    stringbuffer_ensure(sb, 2);
+    sb->buf[sb->pos] = c;
+    sb->pos += 1;
+}
+
+FUNGE_ATTR_FAST
 void stringbuffer_append_string(StringBuffer *sb, const char *str)
 {
     size_t len;
 
     len = strlen(str);
     stringbuffer_ensure(sb, len+1);
-    memcpy(sb->buf+sb->pos, str, len);
+    for (size_t i = 0; i < len; i++)
+        sb->buf[sb->pos+i] = str[i];
     sb->pos += len;
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...)
+bool stringbuffer_append_printf(StringBuffer *sb, const char *format, ...)
 {
-    size_t size;
+    size_t size = 100;                 /* arbitrary guess */
+    char *buffer = malloc(size);
+    if (!buffer)
+        return false;
 
-    size = 100;                 /* arbitrary guess */
     for (;;) {
         int n;
         va_list arg;
+        char* new_buffer = realloc(buffer, size);
 
-        stringbuffer_ensure(sb, size);
+        if (!new_buffer)
+        {
+            free(buffer);
+            return false;
+        }
+        buffer = new_buffer;
 
         va_start(arg, format);
-        n = vsnprintf(sb->buf+sb->pos, size, format, arg);
+        n = vsnprintf(buffer, size, format, arg);
         va_end(arg);
 
         if (n > -1 && (size_t)n < size) {
-            sb->pos += (size_t)n;
+            stringbuffer_append_string(sb, buffer);
+            free(buffer);
             break;
         }
 
@@ -157,21 +195,24 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...)
             size *= 2;          /* twice the old size */
         }
     }
+    return true;
 }
 
 FUNGE_ATTR_FAST
-void stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
+bool stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
                                       const StringBuffer * restrict sb2)
 {
-    stringbuffer_ensure(sb, sb2->pos+1);
+    if (!stringbuffer_ensure(sb, sb2->pos+1))
+        return false;
     memcpy(sb->buf+sb->pos, sb2->buf, sb2->pos);
     sb->pos += sb2->pos;
+    return true;
 }
 
 FUNGE_ATTR_FAST
 static bool stringbuffer_ensure(StringBuffer *sb, size_t len)
 {
-    char *tmp;
+    funge_cell *tmp;
     size_t new_size;
 
     if (sb->pos+len <= sb->size) {
@@ -179,7 +220,7 @@ static bool stringbuffer_ensure(StringBuffer *sb, size_t len)
     }
 
     new_size = sb->pos+len+256;
-    tmp = realloc(sb->buf, new_size);
+    tmp = realloc(sb->buf, new_size * sizeof(funge_cell));
     if (tmp == NULL) {
         return false;
     }

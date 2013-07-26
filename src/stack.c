@@ -240,7 +240,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 {
 	funge_cell c;
 	size_t index = 0;
-	unsigned char * buf;
+	unsigned char *buf;
 	paranoid_assert(stack != NULL);
 	// FIXME: This may very likely be more than is needed.
 	buf = (unsigned char*)malloc((stack->top + 1) * sizeof(char));
@@ -252,6 +252,43 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 
 	while ((c = stack_pop(stack)) != '\0') {
 		buf[index++] = (unsigned char)c;
+	}
+	buf[index] = '\0';
+	if (len)
+		*len = index;
+	return buf;
+}
+
+FUNGE_ATTR_FAST void stack_push_string_multibyte(funge_stack * restrict stack, const funge_cell * restrict str, size_t len)
+{
+	assert(str != NULL);
+	assert(stack != NULL);
+	// Increment it once or it won't work
+	stack_prealloc_space(stack, len + 1);
+	{
+		const size_t top = stack->top + len;
+		for (ssize_t i = (ssize_t)len; i >= 0; i--)
+			stack->entries[top - (size_t)i] = str[i];
+		stack->top += len + 1;
+	}
+}
+
+FUNGE_ATTR_FAST funge_cell *stack_pop_string_multibyte(funge_stack * restrict stack, size_t * restrict len)
+{
+	funge_cell c;
+	size_t index = 0;
+	funge_cell *buf;
+	paranoid_assert(stack != NULL);
+	// FIXME: This may very likely be more than is needed.
+	buf = (funge_cell*)malloc((stack->top + 1) * sizeof(funge_cell));
+	if (FUNGE_UNLIKELY(!buf)) {
+		if (len)
+			*len = 0;
+		return NULL;
+	}
+
+	while ((c = stack_pop(stack)) != '\0') {
+		buf[index++] = c;
 	}
 	buf[index] = '\0';
 	if (len)

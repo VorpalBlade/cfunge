@@ -116,6 +116,7 @@ void stack_push_vector(funge_stack * restrict stack,
  */
 FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
 funge_vector stack_pop_vector(funge_stack * restrict stack);
+
 /**
  * Push a null-terminated string to a 0"gnirts".
  */
@@ -132,6 +133,23 @@ void stack_push_string(funge_stack * restrict stack,
 FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR((nonnull(1))) FUNGE_ATTR_FAST
 unsigned char * stack_pop_string(funge_stack * restrict stack,
                                  size_t * restrict len);
+
+/**
+ * Push a null-terminated multibyte-string to a 0"gnirts".
+ */
+FUNGE_ATTR_NONNULL FUNGE_ATTR_FAST
+void stack_push_string_multibyte(funge_stack * restrict stack,
+                                 const funge_cell * restrict str, size_t len);
+/**
+ * Pop a 0"gnirts" and return a null-terminated multibyte-string.
+ * Use stack_free_string() to free the string. This is due to that a different
+ * allocation function may be used for these strings.
+ * @param stack A pointer to the stack in question.
+ * @param len If non-NULL, the string length is stored in this variable.
+ */
+FUNGE_ATTR_MALLOC FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR((nonnull(1))) FUNGE_ATTR_FAST
+funge_cell * stack_pop_string_multibyte(funge_stack * restrict stack,
+                                        size_t * restrict len);
 
 /**
  * Free a 0"gnirts" that was popped with stack_pop_string().

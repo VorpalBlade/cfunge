@@ -77,10 +77,27 @@ StringBuffer *stringbuffer_new(void);
  * incorrect if you already put a zero byte in there yourself.
  *
  * @return The result string; to free it, call <code>free()</code> on it.
+ *         If NULL, the operation failed and the stringbuffer is still allocated
+ *         and must be destroyed with stringbuffer_destroy()
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length);
 
+/**
+ * Deallocate the string buffer instance and return the multibyte string.
+ *
+ * The passed string buffer must not be accessed afterwards.
+ *
+ * @param sb The string buffer to deallocate.
+ *
+ * @param length The length of the string returned. In actuality the index
+ * of the trailing \0 byte. So for strlen() substract one. Note: This will be
+ * incorrect if you already put a zero byte in there yourself.
+ *
+ * @return The result string; to free it, call <code>free()</code> on it.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+funge_cell *stringbuffer_finish_multibyte(StringBuffer * restrict sb, size_t * restrict length);
 
 /**
  * Deallocate the string buffer instance and don't resturn string.
@@ -104,6 +121,16 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stringbuffer_append_char(StringBuffer *sb, const char c);
 
 /**
+ * Append a funge cell to a string buffer instance.
+ *
+ * @param sb The string buffer to modify.
+ *
+ * @param c The char to append.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void stringbuffer_append_cell(StringBuffer *sb, const funge_cell c);
+
+/**
  * Append a string to a string buffer instance.
  *
  * @param sb The string buffer to modify.
@@ -119,9 +146,12 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str);
  * @param sb The string buffer to modify.
  *
  * @param format The format string to append.
+ *
+ * @return True if successful, false if the operation failed (most likely due
+ *         to out of memory).
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,2,3)
-void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
+bool stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 
 /**
  * Append the contents of a string buffer instance to another string buffer
@@ -130,9 +160,12 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
  * @param sb The string buffer to modify.
  *
  * @param sb2 The string buffer to append; it must be different from sb.
+ *
+ * @return True if successful, false if the operation failed (most likely due
+ *         to out of memory).
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-void stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
+bool stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
                                       const StringBuffer * restrict sb2);
 
 /*@}*/
