@@ -487,7 +487,7 @@ malformed:
 	return -1;
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 static inline Boolean isXMLChar(const genxWriter restrict w, int c)
 {
 	if (c < 0)
@@ -498,7 +498,7 @@ static inline Boolean isXMLChar(const genxWriter restrict w, int c)
 		return (c <= 0x10ffff);
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 static inline Boolean isLetter(const genxWriter restrict w, int c)
 {
 	if (c < 0 || c > 0xffff)
@@ -507,7 +507,7 @@ static inline Boolean isLetter(const genxWriter restrict w, int c)
 		return w->xmlChars[c] & GENX_LETTER;
 }
 
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 static inline Boolean isNameChar(const genxWriter restrict w, int c)
 {
 	if (c < 0 || c > 0xffff)
@@ -733,7 +733,7 @@ FUNGE_ATTR_FAST int genxScrubText(const genxWriter restrict w, constUtf8 in, utf
 /*
  * check one character
  */
-FUNGE_ATTR_FAST int genxCharClass(const genxWriter restrict w, int c)
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE int genxCharClass(const genxWriter restrict w, int c)
 {
 	int ret = 0;
 
@@ -768,11 +768,13 @@ static genxStatus checkNCName(genxWriter w, constUtf8 name)
 	return GENX_SUCCESS;
 }
 
-FUNGE_ATTR_FAST const char * genxGetErrorMessage(const genxWriter restrict w, genxStatus status)
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+const char * genxGetErrorMessage(const genxWriter restrict w, genxStatus status)
 {
 	return w->etext[status];
 }
-FUNGE_ATTR_FAST const char * genxLastErrorMessage(const genxWriter restrict w)
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+const char * genxLastErrorMessage(const genxWriter restrict w)
 {
 	return w->etext[w->status];
 }
@@ -880,7 +882,8 @@ busted:
 /**
  * get namespace prefix
  */
-FUNGE_ATTR_FAST utf8 genxGetNamespacePrefix(genxNamespace ns)
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+utf8 genxGetNamespacePrefix(genxNamespace ns)
 {
 	if (ns->declaration == NULL)
 		return NULL;
@@ -1703,19 +1706,19 @@ FUNGE_ATTR_FAST genxStatus genxAddCharacter(genxWriter w, int c)
 	lasts = breaker = next = cUTF8;
 
 	if (c < 0x80)
-		*next++ = c;
+		*next++ = (utf8Char)c;
 	else if (c < 0x800) {
-		*next++ = 0xc0 | (c >> 6);
-		*next++ = 0x80 | (c & 0x3f);
+		*next++ = (utf8Char)(0xc0 | (c >> 6));
+		*next++ = (utf8Char)(0x80 | (c & 0x3f));
 	} else if (c < 0x10000) {
-		*next++ = 0xe0 | (c >> 12);
-		*next++ = 0x80 | ((c & 0xfc0) >> 6);
-		*next++ = 0x80 | (c & 0x3f);
+		*next++ = (utf8Char)(0xe0 | (c >> 12));
+		*next++ = (utf8Char)(0x80 | ((c & 0xfc0) >> 6));
+		*next++ = (utf8Char)(0x80 | (c & 0x3f));
 	} else {
-		*next++ = 0xf0 | (c >> 18);
-		*next++ = 0x80 | ((c & 0x3f000) >> 12);
-		*next++ = 0x80 | ((c & 0xfc0) >> 6);
-		*next++ = 0x80 | (c & 0x3f);
+		*next++ = (utf8Char)(0xf0 | (c >> 18));
+		*next++ = (utf8Char)(0x80 | ((c & 0x3f000) >> 12));
+		*next++ = (utf8Char)(0x80 | ((c & 0xfc0) >> 6));
+		*next++ = (utf8Char)(0x80 | (c & 0x3f));
 	}
 	*next = 0;
 
@@ -1889,7 +1892,8 @@ genxStatus genxAddAttributeLiteral(genxWriter w, constUtf8 xmlns,
 /*
  * return version
  */
-FUNGE_ATTR_FAST const char * genxGetVersion(void)
+FUNGE_ATTR_FAST FUNGE_ATTR_CONST
+const char * genxGetVersion(void)
 {
 	return GENX_VERSION;
 }

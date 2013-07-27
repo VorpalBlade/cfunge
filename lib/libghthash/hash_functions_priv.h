@@ -55,7 +55,8 @@ FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
 /* CRC32 hash based on code from comp.compression FAQ.
  * Added by Dru Lemley <spambait@lemley.net>
  */
-FUNGE_ATTR_FAST ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, crc_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key)
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, crc_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key)
 {
 	const unsigned char *p;
 	ght_uint32_t  crc;

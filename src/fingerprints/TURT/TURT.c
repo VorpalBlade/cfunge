@@ -213,7 +213,7 @@ static inline void move(tc distance)
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline long double toRad(funge_cell c)
 {
-	return (M_PI / 180.0) * c;
+	return (M_PI / 180.0) * (double)c;
 }
 FUNGE_ATTR_FAST FUNGE_ATTR_CONST FUNGE_ATTR_WARN_UNUSED
 static inline funge_cell toDeg(long double r)

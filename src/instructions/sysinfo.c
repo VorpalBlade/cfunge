@@ -370,6 +370,9 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 		case 23: // Size of TOSS
 			stack_push(pushStack, (funge_cell)TOSSSize);
 			break;
+		default:
+			DIAG_CRIT_LOC("Invalid case in push_yval");
+			break;
 	}
 }
 

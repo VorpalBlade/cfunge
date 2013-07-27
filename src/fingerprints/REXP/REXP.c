@@ -21,6 +21,7 @@
 
 #include "REXP.h"
 #include "../../stack.h"
+#include "../../diagnostic.h"
 
 #include <sys/types.h> /* Regular expressions */
 #include <regex.h> /* Regular expressions */
@@ -106,6 +107,9 @@ static inline int translate_return_C(int error)
 		GenErrorCase(REG_ERANGE);
 		GenErrorCase(REG_ESPACE);
 		GenErrorCase(REG_ESUBREG);
+		default:
+			DIAG_ERROR_LOC("Unknown error in translate_return_C");
+			break;
 	}
 	// Should never be reached:
 	return -1;

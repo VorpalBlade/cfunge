@@ -23,6 +23,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 include(CfungeCheckCflag)
+include(CMakePushCheckState)
 
 macro(CFUNGE_CHECK_WARNING_FLAGS)
 	if (CMAKE_COMPILER_IS_GNUCC)
@@ -54,11 +55,15 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		CFUNGE_CHECK_CFLAG(Wfloat_equal                 -Wfloat-equal)
 
 		CFUNGE_CHECK_CFLAG(Wstrict_aliasing_2           -Wstrict-aliasing=2)
-		#CFUNGE_CHECK_CFLAG(Wstrict-overflow_5          -Wstrict-overflow=5)
+		CFUNGE_CHECK_CFLAG(Wstrict-overflow_5           -Wstrict-overflow=5)
 		CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
 
 		CFUNGE_CHECK_CFLAG(Wmissing_noreturn            -Wmissing-noreturn)
 		CFUNGE_CHECK_CFLAG(Wmissing_format_attribute    -Wmissing-format-attribute)
+		# Newer names
+		CFUNGE_CHECK_CFLAG(Wsuggest_attribute_const     -Wsuggest-attribute=const)
+		CFUNGE_CHECK_CFLAG(Wsuggest_attribute_noreturn  -Wsuggest-attribute=noreturn)
+		CFUNGE_CHECK_CFLAG(Wsuggest_attribute_format    -Wsuggest-attribute=format)
 
 		CFUNGE_CHECK_CFLAG(Winit_self                   -Winit-self)
 		# GCC 4.1(?) or later
@@ -76,17 +81,36 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		# Part of -pedantic in 4.3
 		CFUNGE_CHECK_CFLAG(Wpointer_arith               -Wpointer-arith)
 
+		# Various
+		CFUNGE_CHECK_CFLAG(Wswitch_enum                 -Wswitch-enum)
+		CFUNGE_CHECK_CFLAG(Wunused_but_set_parameter    -Wunused-but-set-parameter)
+		CFUNGE_CHECK_CFLAG(Wunused_but_set_variable     -Wunused-but-set-variable)
+		CFUNGE_CHECK_CFLAG(Wunused_local_typedefs       -Wunused-local-typedefs)
+		CFUNGE_CHECK_CFLAG(Wunused                      -Wunused)
+		CFUNGE_CHECK_CFLAG(Wuninitialized               -Wuninitialized)
+		CFUNGE_CHECK_CFLAG(Wmaybe_uninitialized         -Wmaybe-uninitialized)
+		CFUNGE_CHECK_CFLAG(Wtrampolines                 -Wtrampolines)
+		CFUNGE_CHECK_CFLAG(Wjump_misses_init            -Wjump-misses-init)
+		CFUNGE_CHECK_CFLAG(Wlogical_op                  -Wlogical-op)
+
 		# Maintainer flags. Gives lots of false positives.
+		#CFUNGE_CHECK_CFLAG(Wsuggest_attribute_pure      -Wsuggest-attribute=pure)
 		# add_definitions(-Wunreachable-code -fno-inline
 		#                 -fno-inline-functions-called-once -fno-inline-functions
 		#                 -fkeep-inline-functions -Wno-inline)
 		# Even more false positives
 		#add_definitions(-Wunreachable-code)
-		# Only with this meaning in GCC 4.3 (and false positives):
-		# -Wconversion
+		#
+		#CFUNGE_CHECK_CFLAG(Wswitch_default              -Wswitch-default)
+		#
+		# Only with this meaning in GCC 4.3+ (and false positives):
+		#CFUNGE_CHECK_CFLAG(Wconversion                  -Wconversion)
+		#CFUNGE_CHECK_CFLAG(Wno_sign_conversion          -Wno-sign-conversion)
+		cmake_push_check_state()
 		unset(CMAKE_REQUIRED_FLAGS)
 		# Test those where GCC gives warning on the test file cmake uses.
 		CFUNGE_CHECK_CFLAG(Wstrict_prototypes           -Wstrict-prototypes)
 		CFUNGE_CHECK_CFLAG(Wold_style_definition        -Wold-style-definition)
+		cmake_pop_check_state()
 	endif (CMAKE_COMPILER_IS_GNUCC)
 endmacro(CFUNGE_CHECK_WARNING_FLAGS)

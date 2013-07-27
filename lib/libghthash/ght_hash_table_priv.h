@@ -364,7 +364,7 @@ void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_
  * @see ght_fn_hash_t
  * @see ght_rotating_hash(), ght_crc_hash()
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST  FUNGE_ATTR_PURE
 ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, one_at_a_time_hash)(const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key);
 
 /**

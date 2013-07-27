@@ -57,7 +57,7 @@ static SCREEN* ncrs_screen = NULL;
 static WINDOW* ncrs_window = NULL;
 
 /// For use from TERM
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
 bool finger_NCRS_need_setupterm(void)
 {
 	return !ncrs_valid_state;

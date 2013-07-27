@@ -44,7 +44,8 @@ USER
 VISUAL
 %%
 
-FUNGE_ATTR_FAST bool check_env_is_safe(const char *envvar) {
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+bool check_env_is_safe(const char *envvar) {
 	const char * p;
 
 	p = strchr(envvar, '=');

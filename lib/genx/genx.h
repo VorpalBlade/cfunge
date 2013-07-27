@@ -65,6 +65,8 @@ typedef enum {
  * @defgroup genx_types Genx's types
  */
 /*@{*/
+/** An UTF-8 character */
+typedef unsigned char utf8Char;
 /** An UTF-8 string */
 typedef unsigned char * utf8;
 /** A const UTF-8 string */
@@ -106,7 +108,7 @@ void genxDispose(genxWriter w);
 /**
  * Get the prefix associated with a namespace
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 utf8 genxGetNamespacePrefix(genxNamespace ns);
 
 /*
@@ -274,7 +276,7 @@ genxStatus genxCheckText(const genxWriter restrict w, constUtf8 s);
  * Return character status, the OR of GENX_XML_CHAR,
  *  GENX_LETTER, and GENX_NAMECHAR
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 int genxCharClass(const genxWriter restrict w, int c);
 
 /**
@@ -294,19 +296,19 @@ int genxScrubText(const genxWriter restrict w, constUtf8 in, utf8 out);
  * @param w The genxWriter in question.
  * @param status What status to look up.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 const char * genxGetErrorMessage(const genxWriter restrict w, genxStatus status);
 /**
  * Return last error message.
  * @param w The genxWriter in question.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_PURE
 const char * genxLastErrorMessage(const genxWriter restrict w);
 
 /**
  * Return version of genx.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED FUNGE_ATTR_CONST
 const char * genxGetVersion(void);
 
 /*@}*/

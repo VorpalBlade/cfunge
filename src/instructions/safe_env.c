@@ -42,7 +42,7 @@
 #define MAX_HASH_VALUE 54
 /* maximum key range = 53, duplicates = 0 */
 
-FUNGE_ATTR_FAST static inline unsigned int
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE static inline unsigned int
 safe_env_hash (register const char *str, register unsigned int len)
 {
   static const unsigned char asso_values[] =
@@ -88,7 +88,7 @@ safe_env_hash (register const char *str, register unsigned int len)
   return hval + asso_values[(unsigned char)str[len - 1]];
 }
 
-FUNGE_ATTR_FAST static inline const char *
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE static inline const char *
 safe_in_word_set (register const char *str, register unsigned int len)
 {
   static const unsigned char lengthtable[] =
@@ -162,7 +162,8 @@ safe_in_word_set (register const char *str, register unsigned int len)
 #line 45 "safe_env.gperf"
 
 
-FUNGE_ATTR_FAST bool check_env_is_safe(const char *envvar) {
+FUNGE_ATTR_FAST FUNGE_ATTR_PURE
+bool check_env_is_safe(const char *envvar) {
 	const char * p;
 
 	p = strchr(envvar, '=');
