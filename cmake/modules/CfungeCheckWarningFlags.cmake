@@ -55,7 +55,6 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		CFUNGE_CHECK_CFLAG(Wfloat_equal                 -Wfloat-equal)
 
 		CFUNGE_CHECK_CFLAG(Wstrict_aliasing_2           -Wstrict-aliasing=2)
-		CFUNGE_CHECK_CFLAG(Wstrict-overflow_5           -Wstrict-overflow=5)
 		CFUNGE_CHECK_CFLAG(Wformat_2                    -Wformat=2)
 
 		CFUNGE_CHECK_CFLAG(Wmissing_noreturn            -Wmissing-noreturn)
@@ -111,6 +110,7 @@ macro(CFUNGE_CHECK_WARNING_FLAGS)
 		# Test those where GCC gives warning on the test file cmake uses.
 		CFUNGE_CHECK_CFLAG(Wstrict_prototypes           -Wstrict-prototypes)
 		CFUNGE_CHECK_CFLAG(Wold_style_definition        -Wold-style-definition)
+		#CFUNGE_CHECK_CFLAG(Wstrict-overflow_5           -Wstrict-overflow=5)
 		cmake_pop_check_state()
 	endif (CMAKE_COMPILER_IS_GNUCC)
 endmacro(CFUNGE_CHECK_WARNING_FLAGS)
