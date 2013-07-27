@@ -183,7 +183,7 @@ while true; do
 	if [[ $HAS_VALGRIND ]]; then
 		echo " * Running under valgrind"
 		(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
-		grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from 1\)" valgnd.output || die "Valgrind detected issues!"
+		grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from [0-9]+\)" valgnd.output || die "Valgrind detected issues!"
 	else
 		echo " * Skipping run under valgrind due to valgrind not being found"
 	fi
