@@ -187,11 +187,11 @@ while true; do
 	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|:%$#!'\'"${FPRINTINSTRS}" | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
 
 	echo " * Running free standing"
-	(./cfunge -S fuzz.tmp); checkerror "$?"
+	(./cfunge -S fuzz.tmp > cfunge.output); checkerror "$?"
 
 	if [[ $HAS_VALGRIND ]]; then
 		echo " * Running under valgrind"
-		(valgrind --leak-check=summary ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?" valgrind
+		(valgrind --leak-check=summary ./cfunge -S fuzz.tmp) > cfunge-valgnd.output 2> valgnd.output; checkerror "$?" valgrind
 		if grep -Eq "Valgrind's memory management: out of memory:" valgnd.output; then
 			echo "Valgrind ran out of memory. Oh well."
 		else
