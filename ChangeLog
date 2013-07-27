@@ -11,32 +11,48 @@ and
   bzr help revisionspec
 
 
-Development version (up to r861)
+Development version (up to r883)
 --------------------------------
- * Removed scaling of coordinates from TURT.
- * Fixed possible problem in FRTH for very large stack sizes (outside range of
-   funge cells, but inside range of size_t).
- * Fixed bugs in run_sys_info in stack_get_index that together caused incorrect
-   behaviour for y picking of top of stack and for last 0 below env vars.
- * Dropped support for Boehm-GC. It was not well tested and manual memory
-   management worked better.
- * Various small fixes for clang and ICC.
- * Various build system fixes.
- * Add missing NULL pointer checks in code for i, o and = as well as in several
-   fingerprints.
- * Removed counts from hash tables if they reach zero. Needed for large model
-   funge-space bounds shrinking logic to be correct.
- * Fixed bug in text mode file output for lines with a single (non-space) char
-   on them.
- * Added experimental alternative IP list implementation, that stores pointers
-   to the IPs instead. Useful for very large number (thousands) of IPs.
+New features and improvements:
+ * Added alternative IP list implementation, that stores pointers to the IPs
+   instead. Useful for very large number (thousands) of IPs. This is now the
+   default since the performance drop with a small number of threads is tiny
+   compared to the increase for a large number of threads.
  * Cache env vars and other constant (per execution) data in y.
  * Changed stack stack code to not realloc once for each call of { and }.
+ * Improved speed for non-cardinal warp.
+ * Made cfunge work with the PathScale EKOPath compiler.
+
+Changed features:
+ * Dropped support for Boehm-GC. It was not well tested and manual memory
+   management worked better.
+ * Removed scaling of coordinates from TURT.
+ * Dropped inline asm since intrinsics work well on modern GCC and ICC.
+ * Improved fuzz testing script.
+
+Major bug fixes:
+ * Fixed bugs in run_sys_info in stack_get_index that together caused
+   incorrect behaviour for y picking of top of stack and for last 0 below
+   env vars.
+ * Removed counts from hash tables if they reach zero. Needed for large model
+   funge-space bounds shrinking logic to be correct.
  * Fixed bug in STRN G that resulted in an extra \0 being pushed.
+ * Fixed STRN G, it incorrectly subtracted 1 from string length when
+   calling stack_push_string().
+ * Fixed several STRN functions truncating strings to unsigned chars.
+
+Minor bug fixes:
+ * Fixed possible problem in FRTH for very large stack sizes (outside range
+   of funge cells, but inside range of size_t).
+ * Various small fixes for clang and ICC.
+ * Various build system fixes.
  * Handle zero bytes properly in stdin. Note that STRN still retains the old
    behaviour and arguably should do so.
- * Fixed STRN G: It incorrectly substracted 1 from string length when calling
-   stack_push_string().
+ * Fixed various bugs (including memory leaks) when out of memory.
+ * Fixed bug in text mode file output for lines with a single (non-space)
+   char on them.
+ * Add missing NULL pointer checks in code for i, o and = as well as in several
+   fingerprints.
 
 Added fingerprints:
  * BOOL Logic Functions
@@ -52,7 +68,7 @@ cfunge is now reaching a stable version.
    directly on the edge of the current bounding box of the Funge Space, it would
    incorrectly wrap. Fix this by peforming the normal moving forward of the IP
    before the jump in j instead of after as usual for most other instructions.
- * Minor Bug fix: Hypens were incorrectly escaped when generating man pages in
+ * Minor bug fix: Hypens were incorrectly escaped when generating man pages in
    tools/gen_fprint_list.sh. Fix and update man page to reflect.
 
 
