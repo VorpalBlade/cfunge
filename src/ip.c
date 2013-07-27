@@ -257,16 +257,16 @@ FUNGE_ATTR_FAST ssize_t iplist_duplicate_ip(ipList** me, size_t index)
 	list->ips[index + 1] = cf_mempool_ip_alloc();
 	if (FUNGE_UNLIKELY(!list->ips[index + 1])) {
 		// We are in trouble
-		DIAG_ERROR_LOC("Could not allocate IP, probably out of memory.\nThings may be broken now, continuing anyway.");
+		DIAG_OOM("Could not allocate IP resources.");
 	}
 	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(list->ips[index], list->ips[index + 1]))) {
 		// We are in trouble
-		DIAG_ERROR_LOC("Could not duplicate IP resources, possibly out of memory?\nThings may be broken now, continuing anyway.");
+		DIAG_OOM("Could not duplicate IP resources.");
 	}
 #else
 	if (FUNGE_UNLIKELY(!ip_duplicate_in_place(&list->ips[index], &list->ips[index + 1]))) {
 		// We are in trouble
-		DIAG_ERROR_LOC("Could not duplicate IP resources, possibly out of memory?\nThings may be broken now, continuing anyway.");
+		DIAG_OOM("Could not duplicate IP resources.");
 	}
 #endif
 

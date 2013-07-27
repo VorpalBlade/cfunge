@@ -135,7 +135,7 @@ if (CONCURRENT_FUNGE)
 	add_definitions(-DCONCURRENT_FUNGE)
 endif (CONCURRENT_FUNGE)
 
-option(LARGE_IPLIST "EXPERIMENTAL: Use alternative IP list that works better with a lot of IPs. No effect without CONCURRENT_FUNGE." OFF)
+option(LARGE_IPLIST "Use alternative IP list that works better with a lot of IPs but is slower with few IPs. No effect without CONCURRENT_FUNGE." ON)
 if (CONCURRENT_FUNGE AND LARGE_IPLIST)
 	add_definitions(-DLARGE_IPLIST)
 endif (CONCURRENT_FUNGE AND LARGE_IPLIST)

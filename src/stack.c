@@ -430,7 +430,14 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 	for (size_t i = 0; i <= old->current; i++) {
 		stackStack->stacks[i] = stack_duplicate(old->stacks[i]);
 		if (FUNGE_UNLIKELY(!stackStack->stacks[i]))
+		{
+			// Clean up the partially created stack-stack.
+			for (size_t j = 0; j < i; j++) {
+				free(stackStack->stacks[i]);
+			}
+			free(stackStack);
 			return NULL;
+		}
 	}
 
 	stackStack->size = old->size;
