@@ -433,7 +433,7 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 		{
 			// Clean up the partially created stack-stack.
 			for (size_t j = 0; j < i; j++) {
-				free(stackStack->stacks[i]);
+				stack_free(stackStack->stacks[j]);
 			}
 			free(stackStack);
 			return NULL;

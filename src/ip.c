@@ -98,7 +98,11 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 
 	new->stackstack = stackstack_duplicate(old->stackstack);
 	if (FUNGE_UNLIKELY(!new->stackstack))
+	{
+		// We need to clear out pointers in the IP to avoid double free when we exit
+		memset(new, 0, sizeof(instructionPointer));
 		return false;
+	}
 
 	new->stack = new->stackstack->stacks[new->stackstack->current];
 	if (FUNGE_LIKELY(!setting_disable_fingerprints)) {
