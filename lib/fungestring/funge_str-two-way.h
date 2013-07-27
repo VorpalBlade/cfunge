@@ -271,11 +271,10 @@ two_way_short_needle (const funge_unsigned_cell *haystack, size_t haystack_len,
               while (memory < i + 1 && (CANON_ELEMENT (*pneedle--)
                                         == CANON_ELEMENT (*phaystack--)))
                 --i;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
               if (i + 1 < memory + 1)
                 return (RETURN_TYPE) (haystack + j);
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
               /* No match, so remember how many repetitions of period
                  on the right half were scanned.  */
               j += period;
@@ -363,11 +362,10 @@ two_way_short_needle (const funge_unsigned_cell *haystack, size_t haystack_len,
                     }
                   --i;
                 }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
               if (i == SIZE_MAX)
                 return (RETURN_TYPE) (haystack + j);
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
               j += period;
             }
           else

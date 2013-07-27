@@ -28,11 +28,10 @@ funge_cell *funge_strchr(const funge_cell *s,
 {
 	while (*s != '\0')
 	{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
 		if (*s == c)
 			return (funge_cell *)s;
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
 		s++;
 	}
 	return NULL;

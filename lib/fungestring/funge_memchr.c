@@ -30,11 +30,10 @@ void *funge_memchr(const void *s, funge_cell c, size_t n)
 
 	for (; p<end; p++)
 	{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
 		if (*p == c)
 			return (void *)p;
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
 	}
 
 	return NULL;

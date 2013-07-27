@@ -56,21 +56,19 @@ funge_strstr (const funge_cell *haystack_start,
     ok &= *haystack++ == *needle++;
   if (*needle)
     return NULL;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
   if (ok)
     return (funge_cell *) haystack_start;
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
 
   /* Reduce the size of haystack using strchr, since it has a smaller
      linear coefficient than the Two-Way algorithm.  */
   needle_len = needle - needle_start;
   haystack = funge_strchr(haystack_start + 1, *needle_start);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-qual"
+FUNGE_WARNING_IGNORE("-Wcast-qual")
   if (!haystack || FUNGE_EXPECT (needle_len == 1, 0))
     return (funge_cell *) haystack;
-#pragma GCC diagnostic pop
+FUNGE_WARNING_RESTORE()
   needle -= needle_len;
   haystack_len = (haystack > haystack_start + needle_len ? 1
                   : needle_len + haystack_start - haystack);

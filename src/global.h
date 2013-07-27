@@ -141,8 +141,7 @@
 #endif
 
 #if defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_ICC) \
-    || defined(CFUNGE_COMP_CLANG) || defined(CFUNGE_COMP_CLANG) \
-    || defined(CFUNGE_COMP_PATHSCALE)
+    || defined(CFUNGE_COMP_CLANG) || defined(CFUNGE_COMP_PATHSCALE)
 #  define FUNGE_ATTR_CONST         FUNGE_ATTR((const))
 #  define FUNGE_ATTR_ALWAYS_INLINE FUNGE_ATTR((always_inline))
 #  define FUNGE_ATTR_MALLOC        FUNGE_ATTR((malloc))
@@ -175,6 +174,26 @@
 #else
 #  define FUNGE_ATTR_COLD /* NO-OP */
 #  define FUNGE_ATTR_HOT  /* NO-OP */
+#endif
+
+#if defined(CFUNGE_COMP_PATHSCALE)
+
+/// Push the diagnostics and ignore a warning.
+#  define FUNGE_WARNING_IGNORE(warning)  /* NO-OP */
+/// Restore the diagnostics.
+#  define FUNGE_WARNING_RESTORE() /* NO-OP */
+
+#elif defined(CFUNGE_COMP_GCC) || defined(CFUNGE_COMP_CLANG)
+
+#  define FUNGE_PRAGMA_INNER(x) _Pragma(#x)
+#  define FUNGE_WARNING_IGNORE_INNER(w) FUNGE_PRAGMA_INNER(GCC diagnostic ignored w)
+
+/// Push the diagnostics and ignore a warning.
+#  define FUNGE_WARNING_IGNORE(warning) \
+      _Pragma("GCC diagnostic push") \
+      FUNGE_WARNING_IGNORE_INNER(warning)
+/// Restore the diagnostics.
+#  define FUNGE_WARNING_RESTORE()  _Pragma("GCC diagnostic pop")
 #endif
 
 /*@}*/
