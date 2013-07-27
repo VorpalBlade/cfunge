@@ -91,6 +91,8 @@ get_exit_code RET_KILL SIGKILL
 get_exit_code RET_SEGV SIGSEGV
 
 # Check return code and decide if we should end the script or continue.
+# Second argument is "valgrind" if the program was executed under valgrind.
+# This is needed to handle the valgrind running out of memory.
 checkerror() {
 	# Ok
 	if [[ $1 -eq 0 ]]; then
@@ -119,7 +121,14 @@ checkerror() {
 	elif [[ $1 -eq $RET_ALRM ]]; then
 		echo " * Exit code was $1 (SIGALRM). This is OK."
 		return
+	# We define this to be our OOM signal, since these are usually of no interest.
+	elif [[ $1 -eq 123 ]]; then
+		echo " * Exit code was $1 (Out of Memory). This is usually of no interest."
+		return
 	# Unknown
+	elif [[ $1 -eq 1 && $2 = "valgrind" ]]; then
+		echo " * Exit code was $1 while valgrind was running. This is usually means valgrind ran out of memory."
+		return
 	else
 		die  " * Exit code was $1 (unknown), probably issues there!"
 	fi
@@ -182,8 +191,17 @@ while true; do
 
 	if [[ $HAS_VALGRIND ]]; then
 		echo " * Running under valgrind"
-		(valgrind --leak-check=no ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?"
-		grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from [0-9]+\)" valgnd.output || die "Valgrind detected issues!"
+		(valgrind --leak-check=summary ./cfunge -S fuzz.tmp) 2> valgnd.output; checkerror "$?" valgrind
+		if grep -Eq "Valgrind's memory management: out of memory:" valgnd.output; then
+			echo "Valgrind ran out of memory. Oh well."
+		else
+			if (grep -Eq 'LEAK SUMMARY:' valgnd.output); then
+				grep -Eq "definitely lost: 0 bytes in 0 blocks" valgnd.output || die "Valgrind detected definite leaks!"
+				grep -Eq "indirectly lost: 0 bytes in 0 blocks" valgnd.output || die "Valgrind detected indirect leaks!"
+				grep -Eq "possibly lost: 0 bytes in 0 blocks" valgnd.output || die "Valgrind detected possible leaks!"
+			fi
+			grep -Eq "ERROR SUMMARY: 0 errors from 0 contexts \(suppressed: [0-9]+ from [0-9]+\)" valgnd.output || die "Valgrind detected issues!"
+		fi
 	else
 		echo " * Skipping run under valgrind due to valgrind not being found"
 	fi

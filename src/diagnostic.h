@@ -44,12 +44,21 @@
 /// For internal use in this header only.
 #define DIAG_SOURCELOC "[" __FILE__ ":" FUNGE_CPP_STRINGIFY(__LINE__) "]"
 
+#ifndef FUZZ_TESTING
 /// Print location in code, out of memory, message and abort().
 #define DIAG_OOM(m_reason) \
 	do { \
 		fputs("FATAL: Out of memory at " DIAG_SOURCELOC ":\n " m_reason "\n", stderr); \
 		abort(); \
 	} while(0)
+#else
+/// Print location in code, out of memory, message and exit with a special code for fuzz testing.
+#define DIAG_OOM(m_reason) \
+	do { \
+		fputs("FATAL: Out of memory at " DIAG_SOURCELOC ":\n " m_reason "\n", stderr); \
+		exit(123); \
+	} while(0)
+#endif
 
 #ifndef CFUN_KLEE_TEST
 /**

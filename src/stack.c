@@ -128,10 +128,11 @@ FUNGE_ATTR_FAST void stack_push(funge_stack * restrict stack, funge_cell value)
 
 	// Do we need to realloc?
 	if (FUNGE_UNLIKELY(stack->top == stack->size)) {
-		stack->entries = (funge_cell*)realloc(stack->entries, (stack->size + ALLOCSIZE_STACK) * sizeof(funge_cell));
-		if (FUNGE_UNLIKELY(!stack->entries)) {
+		funge_cell* new_entries = (funge_cell*)realloc(stack->entries, (stack->size + ALLOCSIZE_STACK) * sizeof(funge_cell));
+		if (FUNGE_UNLIKELY(!new_entries)) {
 			stack_oom();
 		}
+		stack->entries = new_entries;
 		stack->size += ALLOCSIZE_STACK;
 	}
 	stack->entries[stack->top] = value;

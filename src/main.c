@@ -33,6 +33,10 @@
 #include <unistd.h> /* getopt */
 #include <limits.h> /* CHAR_BIT */
 
+#ifdef FUZZ_TESTING
+#include <sys/resource.h>
+#endif
+
 #include "diagnostic.h"
 #include "interpreter.h"
 #include "settings.h"
@@ -216,7 +220,11 @@ int main(int argc, char *argv[])
 	int opt;
 
 #ifdef FUZZ_TESTING
+	struct rlimit limit;
 	alarm(3);
+	getrlimit(RLIMIT_AS, &limit);
+	limit.rlim_cur = 1024*1024*1024; // 1 GB
+	setrlimit(RLIMIT_AS, &limit);
 #endif
 
 	// We detect socket issues in other ways.
