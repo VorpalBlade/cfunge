@@ -44,6 +44,23 @@ Notes:
 
 */
 
+#ifndef CF_MEMPOOL_VARIANT
+#  error "CF_MEMPOOL_VARIANT must be defined"
+#endif
+
+#ifndef CF_MEMPOOL_VARIANT
+#  error "CF_MEMPOOL_VARIANT must be defined"
+#endif
+
+#define MACRO_CAT(a,b) MACRO_CAT2(a,b)
+#define MACRO_CAT2(a,b) a##b
+
+#  define memory_block        MACRO_CAT(memory_block_, CF_MEMPOOL_VARIANT)
+#  define pool_header         MACRO_CAT(pool_header_, CF_MEMPOOL_VARIANT)
+#  define pools               MACRO_CAT(CF_MEMPOOL_VARIANT, _pools)
+#  define pools_size          MACRO_CAT(CF_MEMPOOL_VARIANT, _pools_size)
+#  define free_list           MACRO_CAT(CF_MEMPOOL_VARIANT, _free_list)
+
 // This is either a memory block, or a pointer in the free list.
 typedef union memory_block {
 	// This should be first... Or mempool_free() won't work
@@ -218,3 +235,11 @@ static inline memory_block *CF_MEMPOOL_FUNC(get_next_free, CF_MEMPOOL_VARIANT)(v
 		return block;
 	}
 }
+
+#undef MACRO_CAT
+#undef MACRO_CAT2
+#undef memory_block
+#undef pool_header
+#undef pools
+#undef pools_size
+#undef free_list

@@ -71,47 +71,22 @@ Notes:
 
 #define CF_MEMPOOL_VARIANT  fspace
 #define CF_MEMPOOL_DATATYPE struct s_fspace_hash_entry
-#define memory_block        memory_block_fspace
-#define pool_header         pool_fspace_header
-#define pools               fspace_pools
-#define pools_size          fspace_pools_size
-#define free_list           fspace_free_list
 #include "cfunge_mempool_priv.h"
 
 #undef CF_MEMPOOL_VARIANT
 #undef CF_MEMPOOL_DATATYPE
-#undef memory_block
-#undef pool_header
-#undef pools
-#undef pools_size
-#undef free_list
 
 #ifdef CFUN_EXACT_BOUNDS
 #  define CF_MEMPOOL_VARIANT  fspacecount
 #  define CF_MEMPOOL_DATATYPE struct s_fspacecount_hash_entry
-#  define memory_block        memory_block_fspacecount
-#  define pool_header         pool_fspacecount_header
-#  define pools               fspacecount_pools
-#  define pools_size          fspacecount_pools_size
-#  define free_list           fspacecount_free_list
 #  include "cfunge_mempool_priv.h"
 #endif
 
 #undef CF_MEMPOOL_VARIANT
 #undef CF_MEMPOOL_DATATYPE
-#undef memory_block
-#undef pool_header
-#undef pools
-#undef pools_size
-#undef free_list
 
 #ifdef LARGE_IPLIST
 #  define CF_MEMPOOL_VARIANT  ip
 #  define CF_MEMPOOL_DATATYPE struct s_instructionPointer
-#  define memory_block        memory_block_ip
-#  define pool_header         pool_ip_header
-#  define pools               ip_pools
-#  define pools_size          ip_pools_size
-#  define free_list           ip_free_list
 #  include "cfunge_mempool_priv.h"
 #endif

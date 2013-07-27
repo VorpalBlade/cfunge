@@ -861,7 +861,7 @@ static inline
 #endif
 void fungespace_load_string(const unsigned char * restrict program, size_t length)
 {
-	bool lastwascr = false;
+	bool last_was_cr = false;
 	// Coord in Funge-Space.
 	funge_vector pos = {0, 0};
 
@@ -870,28 +870,28 @@ void fungespace_load_string(const unsigned char * restrict program, size_t lengt
 	for (size_t i = 0; i < length; i++) {
 		switch (program[i]) {
 			case ' ':
-				if (lastwascr) {
-					lastwascr = false;
+				if (last_was_cr) {
+					last_was_cr = false;
 					FUNGE_INITIAL_NEWLINE
 				}
 				pos.x++;
 				break;
 			case '\r':
-				if (lastwascr) {
+				if (last_was_cr) {
 					FUNGE_INITIAL_NEWLINE
 				}
-				lastwascr = true;
+				last_was_cr = true;
 				break;
 			case '\n':
-				lastwascr = false;
+				last_was_cr = false;
 				FUNGE_INITIAL_NEWLINE
 				break;
 			// Ignore form feed. Treat it as newline is treated in Unefunge.
 			case '\f':
 				break;
 			default:
-				if (lastwascr) {
-					lastwascr = false;
+				if (last_was_cr) {
+					last_was_cr = false;
 					FUNGE_INITIAL_NEWLINE
 				}
 				fungespace_set_initial((funge_cell)program[i], &pos);
