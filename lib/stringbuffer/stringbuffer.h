@@ -150,7 +150,7 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str);
  * @return True if successful, false if the operation failed (most likely due
  *         to out of memory).
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,2,3)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf, 2, 3)
 bool stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 
 /**

@@ -161,7 +161,8 @@ static size_t environ_count = 0;
 /// Creates and populates the env variable + argv stack.
 /// @note Do not call if env stack already exists. Will result in memory leak.
 FUNGE_ATTR_FAST
-static void create_cache_stack(void) {
+static void create_cache_stack(void)
+{
 	sysinfo_cache_stack = stack_create();
 	if (FUNGE_UNLIKELY(!sysinfo_cache_stack))
 		DIAG_OOM("Failed to allocate env stack for sysinfo!");
@@ -169,7 +170,7 @@ static void create_cache_stack(void) {
 	// 109 handprint
 	if (FUNGE_UNLIKELY(setting_current_standard == stdver109))
 		stack_push_string(sysinfo_cache_stack, (const unsigned char*)FUNGE_NEW_HANDPRINT, strlen(FUNGE_NEW_HANDPRINT));
-	
+
 	// Environment variables
 	{
 		size_t i = 0;
@@ -223,7 +224,8 @@ static void create_cache_stack(void) {
  * @param pushStack Stack to push on.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
-static void push_all(instructionPointer * restrict ip, funge_stack * restrict pushStack) {
+static void push_all(instructionPointer * restrict ip, funge_stack * restrict pushStack)
+{
 	fungeRect rect;
 	time_t now;
 	struct tm *curTime;
@@ -412,7 +414,8 @@ void run_sys_info(instructionPointer *ip)
 #ifndef NDEBUG
 /// Free some memory if debug build.
 FUNGE_ATTR_FAST
-void sysinfo_cleanup(void) {
+void sysinfo_cleanup(void)
+{
 	if (sysinfo_tmp_stack)
 		stack_free(sysinfo_tmp_stack);
 	if (sysinfo_cache_stack)

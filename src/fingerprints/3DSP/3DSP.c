@@ -97,7 +97,7 @@ static inline void push_vec(instructionPointer * restrict ip, const double vec[r
 FUNGE_ATTR_FAST
 static inline double vector_length(const double vec[restrict 3])
 {
-	return sqrt(vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]);
+	return sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
 }
 
 FUNGE_ATTR_FAST
@@ -109,7 +109,7 @@ static inline void writeMatrix(const instructionPointer * restrict ip,
 	for (funge_cell y = 0; y < 4; ++y) {
 		for (funge_cell x = 0; x < 4; ++x) {
 			floatint u;
-			u.f = (float)m[4*y + x];
+			u.f = (float)m[4 * y + x];
 			fungespace_set(u.i, vector_create_ref(basex + x, basey + y));
 		}
 	}
@@ -125,7 +125,7 @@ static inline void readMatrix(const instructionPointer * restrict ip,
 		for (funge_cell x = 0; x < 4; ++x) {
 			floatint u;
 			u.i = (int32_t)fungespace_get(vector_create_ref(basex + x, basey + y));
-			m[y*4 + x] = u.f;
+			m[y * 4 + x] = u.f;
 		}
 	}
 }
@@ -136,7 +136,7 @@ static inline void mulMatrixVector(const double m[restrict 16], const double v[r
 	for (size_t i = 0; i < 4; ++i) {
 		double n = 0;
 		for (size_t k = 0; k < 4; ++k)
-			n += m[i*4 + k] * v[k];
+			n += m[i * 4 + k] * v[k];
 		r[i] = n;
 	}
 }
@@ -148,8 +148,8 @@ static inline void mulMatrices(const double a[restrict 16], const double b[restr
 		for (size_t x = 0; x < 4; ++x) {
 			double n = 0;
 			for (size_t k = 0; k < 4; ++k)
-				n += a[y*4 + k] * b[k*4 + x];
-			r[y*4 + x] = n;
+				n += a[y * 4 + k] * b[k * 4 + x];
+			r[y * 4 + x] = n;
 		}
 	}
 }
@@ -291,26 +291,29 @@ static void finger_3DSP_matrix_rotate(instructionPointer * ip)
 
 	switch (axis) {
 		case 1: {
-			double m[16] = { 1, 0, 0, 0
-			               , 0, c,-s, 0
-			               , 0, s, c, 0
-			               , 0, 0, 0, 1};
+			double m[16] = { 1, 0,  0, 0
+			               , 0, c, -s, 0
+			               , 0, s,  c, 0
+			               , 0, 0,  0, 1
+			               };
 			writeMatrix(ip, &fV, m);
 			break;
 		}
 		case 2: {
-			double m[16] = { c, 0, s, 0
-			               , 0, 1, 0, 0
-			               ,-s, 0, c, 0
-			               , 0, 0, 0, 1};
+			double m[16] = {  c, 0, s, 0
+			               ,  0, 1, 0, 0
+			               , -s, 0, c, 0
+			               ,  0, 0, 0, 1
+			               };
 			writeMatrix(ip, &fV, m);
 			break;
 		}
 		case 3: {
-			double m[16] = { c,-s, 0, 0
-			               , s, c, 0, 0
-			               , 0, 0, 1, 0
-			               , 0, 0, 0, 1};
+			double m[16] = { c, -s, 0, 0
+			               , s,  c, 0, 0
+			               , 0,  0, 1, 0
+			               , 0,  0, 0, 1
+			               };
 			writeMatrix(ip, &fV, m);
 			break;
 		}
@@ -325,10 +328,11 @@ static void finger_3DSP_matrix_scale(instructionPointer * ip)
 	pop_vec(ip, v);
 	fV = stack_pop_vector(ip->stack);
 	{
-		double matrix[16] = {v[0],   0,   0,   0
-		                    ,   0,v[1],   0,   0
-		                    ,   0,   0,v[2],   0
-		                    ,   0,   0,   0,   1};
+		double matrix[16] = {v[0],    0,    0,   0
+		                    ,   0, v[1],    0,   0
+		                    ,   0,    0, v[2],   0
+		                    ,   0,    0 ,   0,   1
+		                    };
 		writeMatrix(ip, &fV, matrix);
 	}
 }
@@ -345,7 +349,8 @@ static void finger_3DSP_matrix_translate(instructionPointer * ip)
 		double matrix[16] = {   1,   0,   0,   v[0]
 		                    ,   0,   1,   0,   v[1]
 		                    ,   0,   0,   1,   v[2]
-		                    ,   0,   0,   0,   1};
+		                    ,   0,   0,   0,   1
+		                    };
 		writeMatrix(ip, &fV, matrix);
 	}
 }

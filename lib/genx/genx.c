@@ -75,7 +75,7 @@ struct genxNamespace_rec {
 	genxAttribute declaration;
 	genxAttribute defaultDecl;
 	int           declCount;
-	Boolean       baroque:1;
+	Boolean       baroque: 1;
 };
 
 struct genxElement_rec {
@@ -111,7 +111,7 @@ struct genxWriter_rec {
 	void *                   userData;
 	utf8                     empty;
 	int                      nextPrefix;
-	Boolean                  defaultNsDeclared:1;
+	Boolean                  defaultNsDeclared: 1;
 	genxAttribute            xmlnsEquals;
 	genxElement              nowStarting;
 	plist                    namespaces;
@@ -382,9 +382,9 @@ static constUtf8 storePrefix(genxWriter w, constUtf8 prefix, Boolean force)
 		w->status = GENX_ALLOC_FAILED;
 		return NULL;
 	}
-FUNGE_WARNING_IGNORE("-Wcast-qual")
+	FUNGE_WARNING_IGNORE("-Wcast-qual")
 	w->status = listInsert(&w->prefixes, (void *) prefix, high);
-FUNGE_WARNING_RESTORE()
+	FUNGE_WARNING_RESTORE()
 	if (w->status != GENX_SUCCESS)
 		return NULL;
 
@@ -531,7 +531,7 @@ genxWriter genxNew(void)
 	//if (alloc)
 	//	w = (genxWriter)(*alloc)(userData, sizeof(struct genxWriter_rec));
 	//else
-		w = (genxWriter) malloc(sizeof(struct genxWriter_rec));
+	w = (genxWriter) malloc(sizeof(struct genxWriter_rec));
 
 	if (w == NULL)
 		return NULL;
@@ -979,9 +979,9 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 	genxAttribute a;
 
 	w->arec.ns = ns;
-FUNGE_WARNING_IGNORE("-Wcast-qual")
+	FUNGE_WARNING_IGNORE("-Wcast-qual")
 	w->arec.name = (utf8) name;
-FUNGE_WARNING_RESTORE()
+	FUNGE_WARNING_RESTORE()
 
 	if (ns)
 		w->arec.atype = ATTR_PREFIXED;
@@ -1082,11 +1082,10 @@ static genxStatus sendxBounded(genxWriter w, constUtf8 start, constUtf8 end)
 {
 	if (w->sender)
 		return (*w->sender->sendBounded)(w->userData, start, end);
+	else if (fwrite(start, 1, end - start, w->file) != (size_t)(end - start))
+		return GENX_IO_ERROR;
 	else
-		if (fwrite(start, 1, end - start, w->file) != (size_t)(end - start))
-			return GENX_IO_ERROR;
-		else
-			return GENX_SUCCESS;
+		return GENX_SUCCESS;
 }
 
 #define SendCheck(w,s) if ((w->status=sendx(w,(constUtf8)s))!=GENX_SUCCESS) return w->status;
@@ -1720,10 +1719,10 @@ FUNGE_ATTR_FAST genxStatus genxAddCharacter(genxWriter w, int c)
 	}
 	*next = 0;
 
-FUNGE_WARNING_IGNORE("-Wcast-qual")
+	FUNGE_WARNING_IGNORE("-Wcast-qual")
 	w->status =
 	    addChar(w, c, next, (constUtf8 *) & lasts, (constUtf8 *) & breaker);
-FUNGE_WARNING_RESTORE()
+	FUNGE_WARNING_RESTORE()
 	if (w->status != GENX_SUCCESS)
 		return w->status;
 
@@ -1737,9 +1736,8 @@ FUNGE_ATTR_FAST genxStatus genxEndDocument(genxWriter w)
 
 	if (w->file)
 		fflush(w->file);
-	else
-		if ((w->status = (*w->sender->flush)(w->userData)) != GENX_SUCCESS)
-			return w->status;
+	else if ((w->status = (*w->sender->flush)(w->userData)) != GENX_SUCCESS)
+		return w->status;
 
 	w->sequence = SEQUENCE_NO_DOC;
 	return GENX_SUCCESS;

@@ -160,10 +160,10 @@ FUNGE_ATTR_FAST ret_getint input_getint(funge_cell * restrict value, int base)
 		found = true;
 		// Ok, we found it, lets convert it.
 		endptr = lastline_current
-		       + parse_int(lastline_current, value, (funge_cell)base,
-		                   lastline_current - lastline + linelength);
+		         + parse_int(lastline_current, value, (funge_cell)base,
+		                     lastline_current - lastline + linelength);
 		break;
-	} while ((size_t)((lastline_current++)-lastline) < linelength);
+	} while ((size_t)((lastline_current++) - lastline) < linelength);
 	// Discard rest of line if it is just newline, otherwise keep it.
 	if (endptr && ((*endptr == '\n') || (*endptr == '\r') || IS_LINE_END(endptr)))
 		discard_line();

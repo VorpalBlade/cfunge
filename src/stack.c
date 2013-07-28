@@ -374,7 +374,7 @@ void stack_print_top(const funge_stack * stack)
 	} else {
 		fprintf(stderr, "\tStack has %zu elements, top 5 (or less) elements:\n\t\t", stack->top);
 		for (ssize_t i = (ssize_t)stack->top; (i > 0) && (i > ((ssize_t)stack->top - 5)); i--)
-			fprintf(stderr, "%" FUNGECELLPRI " ", stack->entries[i-1]);
+			fprintf(stderr, "%" FUNGECELLPRI " ", stack->entries[i - 1]);
 		fputs("\n", stderr);
 	}
 }
@@ -429,8 +429,7 @@ FUNGE_ATTR_FAST funge_stackstack * stackstack_duplicate(const funge_stackstack *
 
 	for (size_t i = 0; i <= old->current; i++) {
 		stackStack->stacks[i] = stack_duplicate(old->stacks[i]);
-		if (FUNGE_UNLIKELY(!stackStack->stacks[i]))
-		{
+		if (FUNGE_UNLIKELY(!stackStack->stacks[i])) {
 			// Clean up the partially created stack-stack.
 			for (size_t j = 0; j < i; j++) {
 				stack_free(stackStack->stacks[j]);
@@ -507,7 +506,7 @@ inline void stack_bulk_copy(funge_stack * restrict dest,
 	}
 
 	// memcpy the rest.
-	memcpy(&dest->entries[dest->top], &src->entries[src->top - count], count*sizeof(funge_cell));
+	memcpy(&dest->entries[dest->top], &src->entries[src->top - count], count * sizeof(funge_cell));
 	dest->top += count;
 }
 
@@ -546,9 +545,9 @@ bool stackstack_begin(instructionPointer * ip, funge_cell count, const funge_vec
 		}
 		stackStack->size += ALLOCSIZE_STACKSTACK;
 	}
-	
+
 	SOSS = stackStack->stacks[stackStack->current];
-	
+
 	stackStack->current++;
 	stackStack->stacks[stackStack->current] = TOSS;
 

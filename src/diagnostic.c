@@ -46,7 +46,7 @@ void diag_warn(const char* message)
 }
 
 FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
-FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FORMAT(printf, 1, 2)
 void diag_fatal_format(const char* format, ...)
 {
 	va_list ap;

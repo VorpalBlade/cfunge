@@ -62,9 +62,9 @@ FUNGE_ATTR_FAST static inline void
 /* Move p_entry one up in its list. */
 FUNGE_ATTR_FAST
 static inline void CF_GHT_NAME(CF_GHT_VAR, transpose)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        ght_uint32_t l_bucket,
-        CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    ght_uint32_t l_bucket,
+    CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
 {
 	/*
 	 *  __    __    __    __
@@ -100,9 +100,9 @@ static inline void CF_GHT_NAME(CF_GHT_VAR, transpose)(
 /* Move p_entry first */
 FUNGE_ATTR_FAST
 static inline void CF_GHT_NAME(CF_GHT_VAR, move_to_front)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        ght_uint32_t l_bucket,
-        CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    ght_uint32_t l_bucket,
+    CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
 {
 	/*
 	 *  __    __    __
@@ -131,9 +131,9 @@ static inline void CF_GHT_NAME(CF_GHT_VAR, move_to_front)(
 
 FUNGE_ATTR_FAST
 static inline void CF_GHT_NAME(CF_GHT_VAR, remove_from_chain)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        ght_uint32_t l_bucket,
-        CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    ght_uint32_t l_bucket,
+    CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p)
 {
 	if (p->p_prev) {
 		p->p_prev->p_next = p->p_next;
@@ -158,8 +158,8 @@ static inline void CF_GHT_NAME(CF_GHT_VAR, remove_from_chain)(
 
 FUNGE_ATTR_FAST
 static inline bool CF_GHT_NAME(CF_GHT_VAR, CompareKeys)(
-        const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) * restrict a,
-        const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) * restrict b)
+    const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) * restrict a,
+    const CF_GHT_NAME(CF_GHT_VAR, hash_key_t) * restrict b)
 {
 	if (CF_GHT_COMPAREKEYS(a, b))
 		return true;
@@ -169,10 +169,10 @@ static inline bool CF_GHT_NAME(CF_GHT_VAR, CompareKeys)(
 /* Search for an element in a bucket */
 FUNGE_ATTR_FAST
 static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, search_in_bucket)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        ght_uint32_t l_bucket,
-        CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key,
-        const unsigned char i_heuristics)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    ght_uint32_t l_bucket,
+    CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_key,
+    const unsigned char i_heuristics)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_e;
 
@@ -199,7 +199,7 @@ static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, sea
 
 /* Free a chain of entries (in a bucket) */
 FUNGE_ATTR_FAST static inline void CF_GHT_NAME(CF_GHT_VAR, free_entry_chain)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
+    CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_e = p_entry;
 
@@ -213,8 +213,8 @@ FUNGE_ATTR_FAST static inline void CF_GHT_NAME(CF_GHT_VAR, free_entry_chain)(
 
 /* Fill in the data to a existing hash key */
 FUNGE_ATTR_FAST static inline void CF_GHT_NAME(CF_GHT_VAR, hk_fill)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_hk,
-        const CF_GHT_KEY *p_key)
+    CF_GHT_NAME(CF_GHT_VAR, hash_key_t) *p_hk,
+    const CF_GHT_KEY *p_key)
 {
 	assert(p_hk != NULL);
 
@@ -224,8 +224,8 @@ FUNGE_ATTR_FAST static inline void CF_GHT_NAME(CF_GHT_VAR, hk_fill)(
 /* Create an hash entry */
 FUNGE_ATTR_FAST
 static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, he_create)(
-        CF_GHT_DATA p_data,
-        const CF_GHT_KEY *p_key_data)
+    CF_GHT_DATA p_data,
+    const CF_GHT_KEY *p_key_data)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_he;
 
@@ -263,7 +263,7 @@ static inline CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *CF_GHT_NAME(CF_GHT_VAR, he_
 
 /* Finalize (free) a hash entry */
 FUNGE_ATTR_FAST static inline void CF_GHT_NAME(CF_GHT_VAR, he_finalize)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_he)
+    CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_he)
 {
 	assert(p_he != NULL);
 
@@ -332,13 +332,13 @@ FUNGE_ATTR_FAST CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, c
 
 	/* Create an empty bucket list. */
 	if (!(p_ht->pp_entries =
-	      (CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)**)malloc(p_ht->i_size * sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*)))) {
+	          (CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)**)malloc(p_ht->i_size * sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*)))) {
 		perror("malloc");
 		free(p_ht);
 		return NULL;
 	}
 	memset(p_ht->pp_entries, 0,
-	       p_ht->i_size*sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*));
+	       p_ht->i_size * sizeof(CF_GHT_NAME(CF_GHT_VAR, hash_entry_t)*));
 
 	/* Initialise the number of entries in each bucket to zero */
 	if (!(p_ht->p_nr = (int*)malloc(p_ht->i_size * sizeof(int)))) {
@@ -347,7 +347,7 @@ FUNGE_ATTR_FAST CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, c
 		free(p_ht);
 		return NULL;
 	}
-	memset(p_ht->p_nr, 0, p_ht->i_size*sizeof(int));
+	memset(p_ht->p_nr, 0, p_ht->i_size * sizeof(int));
 
 	p_ht->p_oldest = NULL;
 	p_ht->p_newest = NULL;
@@ -357,8 +357,8 @@ FUNGE_ATTR_FAST CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *CF_GHT_NAME(CF_GHT_VAR, c
 
 /* Set the rehashing status of the table. */
 FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, set_rehash)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        bool b_rehash)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    bool b_rehash)
 {
 	p_ht->i_automatic_rehash = b_rehash;
 }
@@ -380,9 +380,9 @@ size_t CF_GHT_NAME(CF_GHT_VAR, table_size)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t)
 /* Insert an entry into the hash table */
 FUNGE_ATTR_FAST
 int CF_GHT_NAME(CF_GHT_VAR, insert)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        CF_GHT_DATA p_entry_data,
-        const CF_GHT_KEY * restrict p_key_data)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    CF_GHT_DATA p_entry_data,
+    const CF_GHT_KEY * restrict p_key_data)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_entry;
 	ght_uint32_t l_key;
@@ -401,8 +401,8 @@ int CF_GHT_NAME(CF_GHT_VAR, insert)(
 	}
 
 	/* Rehash if the number of items inserted is too high. */
-	if (p_ht->i_automatic_rehash && p_ht->i_items > 2*p_ht->i_size) {
-		CF_GHT_NAME(CF_GHT_VAR, rehash)(p_ht, 2*p_ht->i_size);
+	if (p_ht->i_automatic_rehash && p_ht->i_items > 2 * p_ht->i_size) {
+		CF_GHT_NAME(CF_GHT_VAR, rehash)(p_ht, 2 * p_ht->i_size);
 		/* Recalculate l_key after CF_GHT_NAME(CF_GHT_VAR, rehash)  has updated i_size_mask */
 		l_key = get_hash_value(p_ht, &key) & p_ht->i_size_mask;
 	}
@@ -438,8 +438,8 @@ int CF_GHT_NAME(CF_GHT_VAR, insert)(
 /* Get an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_ATTR_FAST
 CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        const CF_GHT_KEY * restrict p_key_data)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    const CF_GHT_KEY * restrict p_key_data)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_e;
 	CF_GHT_NAME(CF_GHT_VAR, hash_key_t) key;
@@ -464,9 +464,9 @@ CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get)(
 /* Replace an entry from the hash table. The entry is returned, or NULL if it wasn't found */
 FUNGE_ATTR_FAST
 CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        CF_GHT_DATA p_entry_data,
-        const CF_GHT_KEY * restrict p_key_data)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    CF_GHT_DATA p_entry_data,
+    const CF_GHT_KEY * restrict p_key_data)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_e;
 	CF_GHT_NAME(CF_GHT_VAR, hash_key_t) key;
@@ -499,8 +499,8 @@ CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace)(
    returned (and NOT free'd). */
 FUNGE_ATTR_FAST
 CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        const CF_GHT_KEY * restrict p_key_data)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    const CF_GHT_KEY * restrict p_key_data)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_entry_t) *p_out;
 	CF_GHT_NAME(CF_GHT_VAR, hash_key_t) key;
@@ -542,9 +542,9 @@ CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(
 
 FUNGE_ATTR_FAST
 static inline void *CF_GHT_NAME(CF_GHT_VAR, first_keysize)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
-        const CF_GHT_KEY **pp_key, size_t *size)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+    const CF_GHT_KEY **pp_key, size_t *size)
 {
 	assert(p_ht && p_iterator);
 
@@ -580,8 +580,8 @@ void *CF_GHT_NAME(CF_GHT_VAR, first)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht
 
 FUNGE_ATTR_FAST
 static inline void *CF_GHT_NAME(CF_GHT_VAR, next_keysize)(
-        CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
-        const CF_GHT_KEY **pp_key, size_t *size)
+    CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+    const CF_GHT_KEY **pp_key, size_t *size)
 {
 	assert(p_iterator != NULL);
 
@@ -613,8 +613,8 @@ static inline void *CF_GHT_NAME(CF_GHT_VAR, next_keysize)(
    once initially before you use this function */
 FUNGE_ATTR_FAST
 void *CF_GHT_NAME(CF_GHT_VAR, next)(
-        CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
-        const CF_GHT_KEY **pp_key)
+    CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+    const CF_GHT_KEY **pp_key)
 {
 	return CF_GHT_NAME(CF_GHT_VAR, next_keysize)(p_iterator, pp_key, NULL);
 }
@@ -647,8 +647,8 @@ FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, h
  * items). This operation is slow and should not be used frequently.
  */
 FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, rehash)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
-        size_t i_size)
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht,
+    size_t i_size)
 {
 	CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_tmp;
 	CF_GHT_NAME(CF_GHT_VAR, iterator_t) iterator;

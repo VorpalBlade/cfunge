@@ -41,23 +41,23 @@
 
 
 struct StringBuffer {
-    /**
-     * The string buffer. The first {@link #pos} bytes contain the collected
-     * string. It's size is at least {@link #size} bytes.
-     */
-    funge_cell *buf;
+	/**
+	 * The string buffer. The first {@link #pos} bytes contain the collected
+	 * string. It's size is at least {@link #size} bytes.
+	 */
+	funge_cell *buf;
 
-    /**
-     * The current length of {@link #buf}. The invariant <code>pos <
-     * size</code> always holds; this means there is always enough room to
-     * attach a trailing \0 character.
-     */
-    size_t pos;
+	/**
+	 * The current length of {@link #buf}. The invariant <code>pos <
+	 * size</code> always holds; this means there is always enough room to
+	 * attach a trailing \0 character.
+	 */
+	size_t pos;
 
-    /**
-     * The allocation size of {@link #buf}.
-     */
-    size_t size;
+	/**
+	 * The allocation size of {@link #buf}.
+	 */
+	size_t size;
 };
 
 
@@ -75,156 +75,155 @@ static bool stringbuffer_ensure(StringBuffer *sb, size_t len);
 FUNGE_ATTR_FAST
 StringBuffer *stringbuffer_new(void)
 {
-    StringBuffer *sb;
+	StringBuffer *sb;
 
-    sb = malloc(sizeof(*sb));
-    if (sb == NULL) {
-        return NULL;
-    }
+	sb = malloc(sizeof(*sb));
+	if (sb == NULL) {
+		return NULL;
+	}
 
-    sb->size = 256;
-    sb->buf = malloc(sb->size*sizeof(funge_cell));
-    if (sb->buf == NULL) {
-        free(sb);
-        return NULL;
-    }
-    sb->pos = 0;
-    return sb;
+	sb->size = 256;
+	sb->buf = malloc(sb->size * sizeof(funge_cell));
+	if (sb->buf == NULL) {
+		free(sb);
+		return NULL;
+	}
+	sb->pos = 0;
+	return sb;
 }
 
 FUNGE_ATTR_FAST
 void stringbuffer_destroy(StringBuffer *sb)
 {
-    free(sb->buf);
-    free(sb);
+	free(sb->buf);
+	free(sb);
 }
 
 FUNGE_ATTR_FAST
 char *stringbuffer_finish(StringBuffer * restrict sb, size_t * restrict length)
 {
-    char *buffer = malloc(sb->pos+1);
-    if (!buffer)
-        return NULL;
+	char *buffer = malloc(sb->pos + 1);
+	if (!buffer)
+		return NULL;
 
-    for (size_t i = 0; i < sb->pos; i++)
-        buffer[i] = (char)sb->buf[i];
+	for (size_t i = 0; i < sb->pos; i++)
+		buffer[i] = (char)sb->buf[i];
 
-    buffer[sb->pos] = '\0';
-    
-    if (length)
-        *length = sb->pos;
-    free(sb->buf);
-    free(sb);
-    return buffer;
+	buffer[sb->pos] = '\0';
+
+	if (length)
+		*length = sb->pos;
+	free(sb->buf);
+	free(sb);
+	return buffer;
 }
 
 FUNGE_ATTR_FAST
 funge_cell *stringbuffer_finish_multibyte(StringBuffer * restrict sb, size_t * restrict length)
 {
-    funge_cell *result;
+	funge_cell *result;
 
-    sb->buf[sb->pos] = '\0';
-    if (length)
-        *length = sb->pos;
-    result = sb->buf;
-    free(sb);
-    return result;
+	sb->buf[sb->pos] = '\0';
+	if (length)
+		*length = sb->pos;
+	result = sb->buf;
+	free(sb);
+	return result;
 }
 
 FUNGE_ATTR_FAST
 void stringbuffer_append_char(StringBuffer *sb, const char c)
 {
-    stringbuffer_ensure(sb, 2);
-    sb->buf[sb->pos] = c;
-    sb->pos += 1;
+	stringbuffer_ensure(sb, 2);
+	sb->buf[sb->pos] = c;
+	sb->pos += 1;
 }
 
 FUNGE_ATTR_FAST
 void stringbuffer_append_cell(StringBuffer *sb, const funge_cell c)
 {
-    stringbuffer_ensure(sb, 2);
-    sb->buf[sb->pos] = c;
-    sb->pos += 1;
+	stringbuffer_ensure(sb, 2);
+	sb->buf[sb->pos] = c;
+	sb->pos += 1;
 }
 
 FUNGE_ATTR_FAST
 void stringbuffer_append_string(StringBuffer *sb, const char *str)
 {
-    size_t len;
+	size_t len;
 
-    len = strlen(str);
-    stringbuffer_ensure(sb, len+1);
-    for (size_t i = 0; i < len; i++)
-        sb->buf[sb->pos+i] = str[i];
-    sb->pos += len;
+	len = strlen(str);
+	stringbuffer_ensure(sb, len + 1);
+	for (size_t i = 0; i < len; i++)
+		sb->buf[sb->pos + i] = str[i];
+	sb->pos += len;
 }
 
 FUNGE_ATTR_FAST
 bool stringbuffer_append_printf(StringBuffer *sb, const char *format, ...)
 {
-    size_t size = 100;                 /* arbitrary guess */
-    char *buffer = malloc(size);
-    if (!buffer)
-        return false;
+	size_t size = 100;                 /* arbitrary guess */
+	char *buffer = malloc(size);
+	if (!buffer)
+		return false;
 
-    for (;;) {
-        int n;
-        va_list arg;
-        char* new_buffer = realloc(buffer, size);
+	for (;;) {
+		int n;
+		va_list arg;
+		char* new_buffer = realloc(buffer, size);
 
-        if (!new_buffer)
-        {
-            free(buffer);
-            return false;
-        }
-        buffer = new_buffer;
+		if (!new_buffer) {
+			free(buffer);
+			return false;
+		}
+		buffer = new_buffer;
 
-        va_start(arg, format);
-        n = vsnprintf(buffer, size, format, arg);
-        va_end(arg);
+		va_start(arg, format);
+		n = vsnprintf(buffer, size, format, arg);
+		va_end(arg);
 
-        if (n > -1 && (size_t)n < size) {
-            stringbuffer_append_string(sb, buffer);
-            free(buffer);
-            break;
-        }
+		if (n > -1 && (size_t)n < size) {
+			stringbuffer_append_string(sb, buffer);
+			free(buffer);
+			break;
+		}
 
-        if (n > -1) {
-            size = (size_t)(n+1);         /* precisely what is needed */
-        } else {
-            size *= 2;          /* twice the old size */
-        }
-    }
-    return true;
+		if (n > -1) {
+			size = (size_t)(n + 1);       /* precisely what is needed */
+		} else {
+			size *= 2;          /* twice the old size */
+		}
+	}
+	return true;
 }
 
 FUNGE_ATTR_FAST
 bool stringbuffer_append_stringbuffer(StringBuffer * restrict sb,
                                       const StringBuffer * restrict sb2)
 {
-    if (!stringbuffer_ensure(sb, sb2->pos+1))
-        return false;
-    memcpy(sb->buf+sb->pos, sb2->buf, sb2->pos);
-    sb->pos += sb2->pos;
-    return true;
+	if (!stringbuffer_ensure(sb, sb2->pos + 1))
+		return false;
+	memcpy(sb->buf + sb->pos, sb2->buf, sb2->pos);
+	sb->pos += sb2->pos;
+	return true;
 }
 
 FUNGE_ATTR_FAST
 static bool stringbuffer_ensure(StringBuffer *sb, size_t len)
 {
-    funge_cell *tmp;
-    size_t new_size;
+	funge_cell *tmp;
+	size_t new_size;
 
-    if (sb->pos+len <= sb->size) {
-        return true;
-    }
+	if (sb->pos + len <= sb->size) {
+		return true;
+	}
 
-    new_size = sb->pos+len+256;
-    tmp = realloc(sb->buf, new_size * sizeof(funge_cell));
-    if (tmp == NULL) {
-        return false;
-    }
-    sb->buf = tmp;
-    sb->size = new_size;
-    return true;
+	new_size = sb->pos + len + 256;
+	tmp = realloc(sb->buf, new_size * sizeof(funge_cell));
+	if (tmp == NULL) {
+		return false;
+	}
+	sb->buf = tmp;
+	sb->size = new_size;
+	return true;
 }

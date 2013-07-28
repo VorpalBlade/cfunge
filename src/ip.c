@@ -97,8 +97,7 @@ static inline bool ip_duplicate_in_place(const instructionPointer * restrict old
 	memcpy(new, old, sizeof(instructionPointer));
 
 	new->stackstack = stackstack_duplicate(old->stackstack);
-	if (FUNGE_UNLIKELY(!new->stackstack))
-	{
+	if (FUNGE_UNLIKELY(!new->stackstack)) {
 		// We need to clear out pointers in the IP to avoid double free when we exit
 		memset(new, 0, sizeof(instructionPointer));
 		return false;
@@ -164,7 +163,7 @@ FUNGE_ATTR_FAST inline void ip_set_position(instructionPointer * restrict ip, co
 ipList* iplist_create(void)
 {
 	ipList *list;
-	
+
 #ifdef LARGE_IPLIST
 	list = malloc(sizeof(ipList) + sizeof(instructionPointer*) * ALLOCCHUNKSIZE);
 	if (FUNGE_UNLIKELY(!list))

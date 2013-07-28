@@ -28,9 +28,9 @@
 #include <stdbool.h>
 
 #define RETURN_TYPE funge_cell *
-#define AVAILABLE(h, h_l, j, n_l)                        \
-  (!funge_memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))        \
-   && ((h_l) = (j) + (n_l)))
+#define AVAILABLE(h, h_l, j, n_l)                                  \
+	(!funge_memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))        \
+	 && ((h_l) = (j) + (n_l)))
 #define CHECK_EOL (1)
 #define RET0_IF_0(a) if (!a) goto ret0
 #include "funge_str-two-way.h"
@@ -40,45 +40,45 @@
    HAYSTACK.  */
 FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE
 funge_cell *
-funge_strstr (const funge_cell *haystack_start,
-              const funge_cell *needle_start)
+funge_strstr(const funge_cell *haystack_start,
+             const funge_cell *needle_start)
 {
-  const funge_cell *haystack = haystack_start;
-  const funge_cell *needle = needle_start;
-  size_t needle_len; /* Length of NEEDLE.  */
-  size_t haystack_len; /* Known minimum length of HAYSTACK.  */
-  bool ok = true; /* True if NEEDLE is prefix of HAYSTACK.  */
+	const funge_cell *haystack = haystack_start;
+	const funge_cell *needle = needle_start;
+	size_t needle_len; /* Length of NEEDLE.  */
+	size_t haystack_len; /* Known minimum length of HAYSTACK.  */
+	bool ok = true; /* True if NEEDLE is prefix of HAYSTACK.  */
 
-  /* Determine length of NEEDLE, and in the process, make sure
-     HAYSTACK is at least as long (no point processing all of a long
-     NEEDLE if HAYSTACK is too short).  */
-  while (*haystack && *needle)
-    ok &= *haystack++ == *needle++;
-  if (*needle)
-    return NULL;
-FUNGE_WARNING_IGNORE("-Wcast-qual")
-  if (ok)
-    return (funge_cell *) haystack_start;
-FUNGE_WARNING_RESTORE()
+	/* Determine length of NEEDLE, and in the process, make sure
+	   HAYSTACK is at least as long (no point processing all of a long
+	   NEEDLE if HAYSTACK is too short).  */
+	while (*haystack && *needle)
+		ok &= *haystack++ == *needle++;
+	if (*needle)
+		return NULL;
+	FUNGE_WARNING_IGNORE("-Wcast-qual")
+	if (ok)
+		return (funge_cell *) haystack_start;
+	FUNGE_WARNING_RESTORE()
 
-  /* Reduce the size of haystack using strchr, since it has a smaller
-     linear coefficient than the Two-Way algorithm.  */
-  needle_len = needle - needle_start;
-  haystack = funge_strchr(haystack_start + 1, *needle_start);
-FUNGE_WARNING_IGNORE("-Wcast-qual")
-  if (!haystack || FUNGE_EXPECT (needle_len == 1, 0))
-    return (funge_cell *) haystack;
-FUNGE_WARNING_RESTORE()
-  needle -= needle_len;
-  haystack_len = (haystack > haystack_start + needle_len ? 1
-                  : needle_len + haystack_start - haystack);
+	/* Reduce the size of haystack using strchr, since it has a smaller
+	   linear coefficient than the Two-Way algorithm.  */
+	needle_len = needle - needle_start;
+	haystack = funge_strchr(haystack_start + 1, *needle_start);
+	FUNGE_WARNING_IGNORE("-Wcast-qual")
+	if (!haystack || FUNGE_EXPECT(needle_len == 1, 0))
+		return (funge_cell *) haystack;
+	FUNGE_WARNING_RESTORE()
+	needle -= needle_len;
+	haystack_len = (haystack > haystack_start + needle_len ? 1
+	                : needle_len + haystack_start - haystack);
 
-  /* Perform the search.  Abstract memory is considered to be an array
-     of 'unsigned char' values, not an array of 'char' values.  See
-     ISO C 99 section 6.2.6.1.  */
-  return two_way_short_needle ((const funge_unsigned_cell *) haystack,
-                               haystack_len,
-                               (const funge_unsigned_cell *) needle, needle_len);
+	/* Perform the search.  Abstract memory is considered to be an array
+	   of 'unsigned char' values, not an array of 'char' values.  See
+	   ISO C 99 section 6.2.6.1.  */
+	return two_way_short_needle((const funge_unsigned_cell *) haystack,
+	                            haystack_len,
+	                            (const funge_unsigned_cell *) needle, needle_len);
 }
 
 #undef LONG_NEEDLE_THRESHOLD

@@ -190,8 +190,8 @@
 
 /// Push the diagnostics and ignore a warning.
 #  define FUNGE_WARNING_IGNORE(warning) \
-      _Pragma("GCC diagnostic push") \
-      FUNGE_WARNING_IGNORE_INNER(warning)
+	_Pragma("GCC diagnostic push") \
+	FUNGE_WARNING_IGNORE_INNER(warning)
 /// Restore the diagnostics.
 #  define FUNGE_WARNING_RESTORE()  _Pragma("GCC diagnostic pop")
 #endif

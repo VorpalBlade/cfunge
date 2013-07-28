@@ -481,9 +481,9 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 					funge_cell fprint = 0;
 					if (FUNGE_UNLIKELY((fpsize > 8) && setting_enable_warnings)) {
 						diag_warn_format("WARN: %c (x=%" FUNGECELLPRI " y=%"
-							FUNGECELLPRI "): count is very large(%" FUNGECELLPRI
-							"), probably a bug.\n", (char)opcode,
-							ip->position.x, ip->position.y, fpsize);
+						                 FUNGECELLPRI "): count is very large(%" FUNGECELLPRI
+						                 "), probably a bug.\n", (char)opcode,
+						                 ip->position.x, ip->position.y, fpsize);
 					}
 					while (fpsize--) {
 						fprint <<= 8;
@@ -689,9 +689,9 @@ void klee_generate_program(void)
 	unsigned char program_code[10];
 	klee_make_symbolic(program_code, sizeof(program_code), "program_code");
 
-	for (int i=0; i< sizeof(program_code); i++) {
-		klee_assume(program_code[i]<128);
-		klee_assume((program_code[i]>31)
+	for (int i = 0; i < sizeof(program_code); i++) {
+		klee_assume(program_code[i] < 128);
+		klee_assume((program_code[i] > 31)
 		            | (program_code[i] == '\n')
 		            | (program_code[i] == '\r'));
 		klee_assume(program_code[i] != 'm');

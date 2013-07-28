@@ -125,8 +125,8 @@ static fprint_DATE_int ymd_to_julian(const ymd * restrict date)
 		fprint_DATE_int a = floorl((14 - date->month) / 12.0L);
 		fprint_DATE_int y = Y + 4800 - a;
 		fprint_DATE_int m = date->month + 12 * a - 3;
-		long double jdn = date->day + floorl((153 * m + 2)/5.0L) + 365 * y
-		                + floorl(y/4.0L) - floorl(y/100.0L) + floorl(y/400.0L) - 32045;
+		long double jdn = date->day + floorl((153 * m + 2) / 5.0L) + 365 * y
+		                  + floorl(y / 4.0L) - floorl(y / 100.0L) + floorl(y / 400.0L) - 32045;
 		return roundl(jdn);
 	}
 }
@@ -139,13 +139,13 @@ static void julian_to_ymd(ymd * restrict result, fprint_DATE_int date)
 	// downwards all the time, not towards 0.
 	fprint_DATE_int l, n, i, j;
 	l = date + 68569;
-	n = floorl((4*l)/146097.0L);
-	l -= floorl((146097*n+3)/4.0L);
-	i = floorl((4000*(l+1))/1461001.0L);
-	l = (fprint_DATE_int)(l - floorl((1461*i)/4.0L)+31);
-	j = floorl((80*l)/2447.0L);
-	result->day = (fprint_DATE_int)(l - floorl((2447*j)/80.0L));
-	l = floorl(j/11.0L);
+	n = floorl((4 * l) / 146097.0L);
+	l -= floorl((146097 * n + 3) / 4.0L);
+	i = floorl((4000 * (l + 1)) / 1461001.0L);
+	l = (fprint_DATE_int)(l - floorl((1461 * i) / 4.0L) + 31);
+	j = floorl((80 * l) / 2447.0L);
+	result->day = (fprint_DATE_int)(l - floorl((2447 * j) / 80.0L));
+	l = floorl(j / 11.0L);
 	result->month = j + 2 - 12 * l;
 	result->year = 100 * (n - 49) + i + l;
 	// Handle year 0
@@ -214,7 +214,7 @@ static void finger_DATE_year_day_to_full(instructionPointer * ip)
 		funge_cell month = 0;
 		// Iterate though months, break when less than a month.
 		for (int i = 0; i < 12; i++) {
-			int mlength =  month_length(&(ymd){ .year = year, .month = i + 1 });
+			int mlength =  month_length(&(ymd) { .year = year, .month = i + 1 });
 			if ((dom - mlength) > 0) {
 				dom -= mlength;
 				month++;
@@ -248,7 +248,7 @@ static void finger_DATE_year_day(instructionPointer * ip)
 		return;
 	{
 		fprint_DATE_int jdn = ymd_to_julian(&date);
-		fprint_DATE_int jdn_start = ymd_to_julian(&(ymd){ .year = date.year, .month = 1, .day = 1 });
+		fprint_DATE_int jdn_start = ymd_to_julian(&(ymd) { .year = date.year, .month = 1, .day = 1 });
 		stack_push(ip->stack, (funge_cell)(jdn - jdn_start));
 	}
 }

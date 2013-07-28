@@ -190,8 +190,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 			}
 		}
 	// Yeah, can't break two levels otherwise...
-	endofloop:
-		{
+	endofloop: {
 			char * str;
 			size_t len;
 			str = stringbuffer_finish(sb, &len);

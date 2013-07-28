@@ -48,7 +48,7 @@ int fungeargc = 0;
 // Exclude some code if we are building in IFFI.
 #ifndef CFUN_IS_IFFI
 // Use a larger buffer for stdout in fully buffered mode.
-static char cfun_iobuf[BUFSIZ*4];
+static char cfun_iobuf[BUFSIZ * 4];
 
 // These are NOT worth inlineing, even though only called once.
 FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
@@ -93,18 +93,18 @@ static void print_features(void)
 #  error "Unknown cell size."
 #endif
 
-	// Features with ! are stuff most users doesn't want.
+	     // Features with ! are stuff most users doesn't want.
 #ifdef CFUN_NO_FLOATS
 	     " ! This binary is compiled without any floating point fingerprints.\n"
 #endif
 
 #ifdef FUZZ_TESTING
-	// We use this to warn users and to do sanity checking in the fuzz testing
-	// script.
+	     // We use this to warn users and to do sanity checking in the fuzz testing
+	     // script.
 	     " ! This is a fuzz testing build and thus not standard-conforming.\n"
 #endif
 
-	); /* End of puts() call */
+	    ); /* End of puts() call */
 
 	// This call does not return.
 	manager_list();
@@ -129,12 +129,13 @@ static void print_help(void)
 #ifdef DISABLE_TRACE
 	     "\nNote that someone disabled trace in this binary, so -t will have no effect."
 #endif
-	     );
+	    );
 	exit(EXIT_SUCCESS);
 }
 
 FUNGE_ATTR_NOINLINE FUNGE_ATTR_COLD FUNGE_ATTR_NORET
-static void print_build_info(void) {
+static void print_build_info(void)
+{
 	printf("cfunge " CFUNGE_APPVERSION " ["
 #ifdef CONCURRENT_FUNGE
 	       "+con "
@@ -177,9 +178,9 @@ static void print_build_info(void) {
 #ifdef FUZZ_TESTING
 	       "fuzz "
 #endif
-	// Pointer size and Cell size
+	       // Pointer size and Cell size
 	       "p:%zu c:%zu]\n\n"
-           "Platform:      " CFUN_TARGET_PLATFORM "\n"
+	       "Platform:      " CFUN_TARGET_PLATFORM "\n"
 	       "OS:            " CFUN_TARGET_OS "\n"
 	       "Compiler path: " CFUN_COMPILER "\n"
 #ifdef CFUNGE_COMP_CLANG
@@ -223,7 +224,7 @@ int main(int argc, char *argv[])
 	struct rlimit limit;
 	alarm(3);
 	getrlimit(RLIMIT_AS, &limit);
-	limit.rlim_cur = 1024*1024*1024; // 1 GB
+	limit.rlim_cur = 1024 * 1024 * 1024; // 1 GB
 	setrlimit(RLIMIT_AS, &limit);
 #endif
 
@@ -284,7 +285,7 @@ int main(int argc, char *argv[])
 		// Store argument count and a pointer to argv[optind] for later use
 		// by the y instruction.
 		fungeargc = argc - optind;
-		fungeargv = (const char *const *)&argv[optind];
+		fungeargv = (const char * const *)&argv[optind];
 		// Run the actual interpreter (never returns).
 		interpreter_run(argv[optind]);
 	}

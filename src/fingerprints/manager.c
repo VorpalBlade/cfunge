@@ -206,7 +206,8 @@ void manager_list(void)
 		// It will probably break if char isn't 8 bits.
 		funge_cell fprint = ImplementedFingerprints[i].fprint;
 		char fprintname[5] = { (char)(fprint >> 24), (char)(fprint >> 16),
-		                       (char)(fprint >> 8), (char)fprint, '\0' };
+		                       (char)(fprint >> 8), (char)fprint, '\0'
+		                     };
 
 		printf("0x%x %s%s %s\n",
 		       (unsigned)fprint,

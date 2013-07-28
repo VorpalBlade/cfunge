@@ -52,8 +52,8 @@ static void finger_CPLI_div(instructionPointer * ip)
 	ar = stack_pop(ip->stack);
 	denom = bi * bi + br * br;
 	if (denom != 0) {
-		stack_push(ip->stack, (ai*bi + ar*br) / denom);
-		stack_push(ip->stack, (ai*br - ar*bi) / denom);
+		stack_push(ip->stack, (ai * bi + ar * br) / denom);
+		stack_push(ip->stack, (ai * br - ar * bi) / denom);
 	} else {
 		stack_push(ip->stack, 0);
 		stack_push(ip->stack, 0);
@@ -68,8 +68,8 @@ static void finger_CPLI_mul(instructionPointer * ip)
 	br = stack_pop(ip->stack);
 	ai = stack_pop(ip->stack);
 	ar = stack_pop(ip->stack);
-	stack_push(ip->stack, ar*br - ai*bi);
-	stack_push(ip->stack, ar*bi + ai*br);
+	stack_push(ip->stack, ar * br - ai * bi);
+	stack_push(ip->stack, ar * bi + ai * br);
 }
 
 /// O - out

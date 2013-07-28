@@ -147,7 +147,7 @@ static inline void addPath(Point pt, bool penDown, uint32_t colour)
 FUNGE_ATTR_FAST
 static inline void normalise(void)
 {
-	while (turt.heading > 2*M_PIl)
+	while (turt.heading > 2 * M_PIl)
 		turt.heading -= 2 * M_PIl;
 	while (turt.heading < 0)
 		turt.heading += 2 * M_PIl;

@@ -121,100 +121,86 @@
    suffixes are determined by lexicographic comparison of
    periodicity.  */
 static size_t
-critical_factorization (const funge_unsigned_cell *needle, size_t needle_len,
-                        size_t *period)
+critical_factorization(const funge_unsigned_cell *needle, size_t needle_len,
+                       size_t *period)
 {
-  /* Index of last byte of left half, or SIZE_MAX.  */
-  size_t max_suffix, max_suffix_rev;
-  size_t j; /* Index into NEEDLE for current candidate suffix.  */
-  size_t k; /* Offset into current period.  */
-  size_t p; /* Intermediate period.  */
-  funge_unsigned_cell a, b; /* Current comparison bytes.  */
+	/* Index of last byte of left half, or SIZE_MAX.  */
+	size_t max_suffix, max_suffix_rev;
+	size_t j; /* Index into NEEDLE for current candidate suffix.  */
+	size_t k; /* Offset into current period.  */
+	size_t p; /* Intermediate period.  */
+	funge_unsigned_cell a, b; /* Current comparison bytes.  */
 
-  /* Invariants:
-     0 <= j < NEEDLE_LEN - 1
-     -1 <= max_suffix{,_rev} < j (treating SIZE_MAX as if it were signed)
-     min(max_suffix, max_suffix_rev) < global period of NEEDLE
-     1 <= p <= global period of NEEDLE
-     p == global period of the substring NEEDLE[max_suffix{,_rev}+1...j]
-     1 <= k <= p
-  */
+	/* Invariants:
+	   0 <= j < NEEDLE_LEN - 1
+	   -1 <= max_suffix{,_rev} < j (treating SIZE_MAX as if it were signed)
+	   min(max_suffix, max_suffix_rev) < global period of NEEDLE
+	   1 <= p <= global period of NEEDLE
+	   p == global period of the substring NEEDLE[max_suffix{,_rev}+1...j]
+	   1 <= k <= p
+	*/
 
-  /* Perform lexicographic search.  */
-  max_suffix = SIZE_MAX;
-  j = 0;
-  k = p = 1;
-  while (j + k < needle_len)
-    {
-      a = CANON_ELEMENT (needle[j + k]);
-      b = CANON_ELEMENT (needle[max_suffix + k]);
-      if (a < b)
-        {
-          /* Suffix is smaller, period is entire prefix so far.  */
-          j += k;
-          k = 1;
-          p = j - max_suffix;
-        }
-      else if (a == b)
-        {
-          /* Advance through repetition of the current period.  */
-          if (k != p)
-            ++k;
-          else
-            {
-              j += p;
-              k = 1;
-            }
-        }
-      else /* b < a */
-        {
-          /* Suffix is larger, start over from current location.  */
-          max_suffix = j++;
-          k = p = 1;
-        }
-    }
-  *period = p;
+	/* Perform lexicographic search.  */
+	max_suffix = SIZE_MAX;
+	j = 0;
+	k = p = 1;
+	while (j + k < needle_len) {
+		a = CANON_ELEMENT(needle[j + k]);
+		b = CANON_ELEMENT(needle[max_suffix + k]);
+		if (a < b) {
+			/* Suffix is smaller, period is entire prefix so far.  */
+			j += k;
+			k = 1;
+			p = j - max_suffix;
+		} else if (a == b) {
+			/* Advance through repetition of the current period.  */
+			if (k != p)
+				++k;
+			else {
+				j += p;
+				k = 1;
+			}
+		} else { /* b < a */
+			/* Suffix is larger, start over from current location.  */
+			max_suffix = j++;
+			k = p = 1;
+		}
+	}
+	*period = p;
 
-  /* Perform reverse lexicographic search.  */
-  max_suffix_rev = SIZE_MAX;
-  j = 0;
-  k = p = 1;
-  while (j + k < needle_len)
-    {
-      a = CANON_ELEMENT (needle[j + k]);
-      b = CANON_ELEMENT (needle[max_suffix_rev + k]);
-      if (b < a)
-        {
-          /* Suffix is smaller, period is entire prefix so far.  */
-          j += k;
-          k = 1;
-          p = j - max_suffix_rev;
-        }
-      else if (a == b)
-        {
-          /* Advance through repetition of the current period.  */
-          if (k != p)
-            ++k;
-          else
-            {
-              j += p;
-              k = 1;
-            }
-        }
-      else /* a < b */
-        {
-          /* Suffix is larger, start over from current location.  */
-          max_suffix_rev = j++;
-          k = p = 1;
-        }
-    }
+	/* Perform reverse lexicographic search.  */
+	max_suffix_rev = SIZE_MAX;
+	j = 0;
+	k = p = 1;
+	while (j + k < needle_len) {
+		a = CANON_ELEMENT(needle[j + k]);
+		b = CANON_ELEMENT(needle[max_suffix_rev + k]);
+		if (b < a) {
+			/* Suffix is smaller, period is entire prefix so far.  */
+			j += k;
+			k = 1;
+			p = j - max_suffix_rev;
+		} else if (a == b) {
+			/* Advance through repetition of the current period.  */
+			if (k != p)
+				++k;
+			else {
+				j += p;
+				k = 1;
+			}
+		} else { /* a < b */
+			/* Suffix is larger, start over from current location.  */
+			max_suffix_rev = j++;
+			k = p = 1;
+		}
+	}
 
-  /* Choose the longer suffix.  Return the first byte of the right
-     half, rather than the last byte of the left half.  */
-  if (max_suffix_rev + 1 < max_suffix + 1)
-    return max_suffix + 1;
-  *period = p;
-  return max_suffix_rev + 1;
+	/* Choose the longer suffix.  Return the first byte of the right
+	   half, rather than the last byte of the left half.  */
+	if (max_suffix_rev + 1 < max_suffix + 1)
+		return max_suffix + 1;
+	*period = p;
+	return max_suffix_rev + 1;
 }
 
 /* Return the first location of non-empty NEEDLE within HAYSTACK, or
@@ -228,159 +214,144 @@ critical_factorization (const funge_unsigned_cell *needle, size_t needle_len,
    If AVAILABLE modifies HAYSTACK_LEN (as in strstr), then at most 3 *
    HAYSTACK_LEN - NEEDLE_LEN comparisons occur in searching.  */
 static RETURN_TYPE
-two_way_short_needle (const funge_unsigned_cell *haystack, size_t haystack_len,
-                      const funge_unsigned_cell *needle, size_t needle_len)
+two_way_short_needle(const funge_unsigned_cell *haystack, size_t haystack_len,
+                     const funge_unsigned_cell *needle, size_t needle_len)
 {
-  size_t i; /* Index into current byte of NEEDLE.  */
-  size_t j; /* Index into current window of HAYSTACK.  */
-  size_t period; /* The period of the right half of needle.  */
-  size_t suffix; /* The index of the right half of needle.  */
+	size_t i; /* Index into current byte of NEEDLE.  */
+	size_t j; /* Index into current window of HAYSTACK.  */
+	size_t period; /* The period of the right half of needle.  */
+	size_t suffix; /* The index of the right half of needle.  */
 
-  /* Factor the needle into two halves, such that the left half is
-     smaller than the global period, and the right half is
-     periodic (with a period as large as NEEDLE_LEN - suffix).  */
-  suffix = critical_factorization (needle, needle_len, &period);
+	/* Factor the needle into two halves, such that the left half is
+	   smaller than the global period, and the right half is
+	   periodic (with a period as large as NEEDLE_LEN - suffix).  */
+	suffix = critical_factorization(needle, needle_len, &period);
 
-  /* Perform the search.  Each iteration compares the right half
-     first.  */
-  if (CMP_FUNC (needle, needle + period, suffix*sizeof(funge_unsigned_cell)) == 0)
-    {
-      /* Entire needle is periodic; a mismatch can only advance by the
-         period, so use memory to avoid rescanning known occurrences
-         of the period.  */
-      size_t memory = 0;
-      j = 0;
-      while (AVAILABLE (haystack, haystack_len, j, needle_len))
-        {
-          const funge_unsigned_cell *pneedle;
-          const funge_unsigned_cell *phaystack;
+	/* Perform the search.  Each iteration compares the right half
+	   first.  */
+	if (CMP_FUNC(needle, needle + period, suffix * sizeof(funge_unsigned_cell)) == 0) {
+		/* Entire needle is periodic; a mismatch can only advance by the
+		   period, so use memory to avoid rescanning known occurrences
+		   of the period.  */
+		size_t memory = 0;
+		j = 0;
+		while (AVAILABLE(haystack, haystack_len, j, needle_len)) {
+			const funge_unsigned_cell *pneedle;
+			const funge_unsigned_cell *phaystack;
 
-          /* Scan for matches in right half.  */
-          i = MAX (suffix, memory);
-          pneedle = &needle[i];
-          phaystack = &haystack[i + j];
-          while (i < needle_len && (CANON_ELEMENT (*pneedle++)
-                                    == CANON_ELEMENT (*phaystack++)))
-            ++i;
-          if (needle_len <= i)
-            {
-              /* Scan for matches in left half.  */
-              i = suffix - 1;
-              pneedle = &needle[i];
-              phaystack = &haystack[i + j];
-              while (memory < i + 1 && (CANON_ELEMENT (*pneedle--)
-                                        == CANON_ELEMENT (*phaystack--)))
-                --i;
-FUNGE_WARNING_IGNORE("-Wcast-qual")
-              if (i + 1 < memory + 1)
-                return (RETURN_TYPE) (haystack + j);
-FUNGE_WARNING_RESTORE()
-              /* No match, so remember how many repetitions of period
-                 on the right half were scanned.  */
-              j += period;
-              memory = needle_len - period;
-            }
-          else
-            {
-              j += i - suffix + 1;
-              memory = 0;
-            }
-        }
-    }
-  else
-    {
-      const funge_unsigned_cell *phaystack = &haystack[suffix];
-      /* The comparison always starts from needle[suffix], so cache it
-         and use an optimized first-character loop.  */
-      funge_unsigned_cell needle_suffix = CANON_ELEMENT (needle[suffix]);
+			/* Scan for matches in right half.  */
+			i = MAX(suffix, memory);
+			pneedle = &needle[i];
+			phaystack = &haystack[i + j];
+			while (i < needle_len && (CANON_ELEMENT(*pneedle++)
+			                          == CANON_ELEMENT(*phaystack++)))
+				++i;
+			if (needle_len <= i) {
+				/* Scan for matches in left half.  */
+				i = suffix - 1;
+				pneedle = &needle[i];
+				phaystack = &haystack[i + j];
+				while (memory < i + 1 && (CANON_ELEMENT(*pneedle--)
+				                          == CANON_ELEMENT(*phaystack--)))
+					--i;
+				FUNGE_WARNING_IGNORE("-Wcast-qual")
+				if (i + 1 < memory + 1)
+					return (RETURN_TYPE)(haystack + j);
+				FUNGE_WARNING_RESTORE()
+				/* No match, so remember how many repetitions of period
+				   on the right half were scanned.  */
+				j += period;
+				memory = needle_len - period;
+			} else {
+				j += i - suffix + 1;
+				memory = 0;
+			}
+		}
+	} else {
+		const funge_unsigned_cell *phaystack = &haystack[suffix];
+		/* The comparison always starts from needle[suffix], so cache it
+		   and use an optimized first-character loop.  */
+		funge_unsigned_cell needle_suffix = CANON_ELEMENT(needle[suffix]);
 
 #if CHECK_EOL
-      /* We start matching from the SUFFIX'th element, so make sure we
-         don't hit '\0' before that.  */
-      if (haystack_len < suffix + 1
-          && !AVAILABLE (haystack, haystack_len, 0, suffix + 1))
-        return NULL;
+		/* We start matching from the SUFFIX'th element, so make sure we
+		   don't hit '\0' before that.  */
+		if (haystack_len < suffix + 1
+		    && !AVAILABLE(haystack, haystack_len, 0, suffix + 1))
+			return NULL;
 #endif
 
-      /* The two halves of needle are distinct; no extra memory is
-         required, and any mismatch results in a maximal shift.  */
-      period = MAX (suffix, needle_len - suffix) + 1;
-      j = 0;
-      while (1
+		/* The two halves of needle are distinct; no extra memory is
+		   required, and any mismatch results in a maximal shift.  */
+		period = MAX(suffix, needle_len - suffix) + 1;
+		j = 0;
+		while (1
 #if !CHECK_EOL
-             && AVAILABLE (haystack, haystack_len, j, needle_len)
+		       && AVAILABLE(haystack, haystack_len, j, needle_len)
 #endif
-             )
-        {
-          funge_unsigned_cell haystack_char;
-          const funge_unsigned_cell *pneedle;
+		      ) {
+			funge_unsigned_cell haystack_char;
+			const funge_unsigned_cell *pneedle;
 
-          /* TODO: The first-character loop can be sped up by adapting
-             longword-at-a-time implementation of memchr/strchr.  */
-          if (needle_suffix
-              != (haystack_char = CANON_ELEMENT (*phaystack++)))
-            {
-              RET0_IF_0 (haystack_char);
+			/* TODO: The first-character loop can be sped up by adapting
+			   longword-at-a-time implementation of memchr/strchr.  */
+			if (needle_suffix
+			    != (haystack_char = CANON_ELEMENT(*phaystack++))) {
+				RET0_IF_0(haystack_char);
 #if !CHECK_EOL
-              ++j;
+				++j;
 #endif
-              continue;
-            }
+				continue;
+			}
 
 #if CHECK_EOL
-          /* Calculate J if it wasn't kept up-to-date in the first-character
-             loop.  */
-          j = phaystack - &haystack[suffix] - 1;
+			/* Calculate J if it wasn't kept up-to-date in the first-character
+			   loop.  */
+			j = phaystack - &haystack[suffix] - 1;
 #endif
 
-          /* Scan for matches in right half.  */
-          i = suffix + 1;
-          pneedle = &needle[i];
-          while (i < needle_len)
-            {
-              if (CANON_ELEMENT (*pneedle++)
-                  != (haystack_char = CANON_ELEMENT (*phaystack++)))
-                {
-                  RET0_IF_0 (haystack_char);
-                  break;
-                }
-              ++i;
-            }
-          if (needle_len <= i)
-            {
-              /* Scan for matches in left half.  */
-              i = suffix - 1;
-              pneedle = &needle[i];
-              phaystack = &haystack[i + j];
-              while (i != SIZE_MAX)
-                {
-                  if (CANON_ELEMENT (*pneedle--)
-                      != (haystack_char = CANON_ELEMENT (*phaystack--)))
-                    {
-                      RET0_IF_0 (haystack_char);
-                      break;
-                    }
-                  --i;
-                }
-FUNGE_WARNING_IGNORE("-Wcast-qual")
-              if (i == SIZE_MAX)
-                return (RETURN_TYPE) (haystack + j);
-FUNGE_WARNING_RESTORE()
-              j += period;
-            }
-          else
-            j += i - suffix + 1;
+			/* Scan for matches in right half.  */
+			i = suffix + 1;
+			pneedle = &needle[i];
+			while (i < needle_len) {
+				if (CANON_ELEMENT(*pneedle++)
+				    != (haystack_char = CANON_ELEMENT(*phaystack++))) {
+					RET0_IF_0(haystack_char);
+					break;
+				}
+				++i;
+			}
+			if (needle_len <= i) {
+				/* Scan for matches in left half.  */
+				i = suffix - 1;
+				pneedle = &needle[i];
+				phaystack = &haystack[i + j];
+				while (i != SIZE_MAX) {
+					if (CANON_ELEMENT(*pneedle--)
+					    != (haystack_char = CANON_ELEMENT(*phaystack--))) {
+						RET0_IF_0(haystack_char);
+						break;
+					}
+					--i;
+				}
+				FUNGE_WARNING_IGNORE("-Wcast-qual")
+				if (i == SIZE_MAX)
+					return (RETURN_TYPE)(haystack + j);
+				FUNGE_WARNING_RESTORE()
+				j += period;
+			} else
+				j += i - suffix + 1;
 
 #if CHECK_EOL
-          if (!AVAILABLE (haystack, haystack_len, j, needle_len))
-            break;
+			if (!AVAILABLE(haystack, haystack_len, j, needle_len))
+				break;
 #endif
 
-          phaystack = &haystack[suffix + j];
-        }
-    }
- ret0: __attribute__ ((unused))
-  return NULL;
+			phaystack = &haystack[suffix + j];
+		}
+	}
+ret0: __attribute__((unused))
+	return NULL;
 }
 
 #undef AVAILABLE

@@ -176,12 +176,12 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 						}
 					}
 
-				} else /* WIFEXITED */ {
+				} else { /* WIFEXITED */
 					// Error
 					close(outfds[0]);
 					return NULL;
 				}
-			} else /* waitpid */ {
+			} else { /* waitpid */
 				// Error
 				close(outfds[0]);
 				return NULL;

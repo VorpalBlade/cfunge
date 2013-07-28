@@ -27,5 +27,5 @@ size_t funge_strlen(const funge_cell *s)
 {
 	const funge_cell *p = s;
 	while (*p != '\0') p++;
-	return (size_t)(p-s);
+	return (size_t)(p - s);
 }

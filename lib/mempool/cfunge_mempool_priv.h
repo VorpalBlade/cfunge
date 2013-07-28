@@ -221,12 +221,12 @@ static inline memory_block *CF_MEMPOOL_FUNC(freelist_get, CF_MEMPOOL_VARIANT)(vo
 FUNGE_ATTR_FAST
 static inline memory_block *CF_MEMPOOL_FUNC(get_next_free, CF_MEMPOOL_VARIANT)(void)
 {
-	pool_header* pool = &pools[pools_size-1];
+	pool_header* pool = &pools[pools_size - 1];
 
 	if ((pool->first_free - pool->base) >= (intptr_t)(POOL_ARRAY_COUNT - 1)) {
 		if (!CF_MEMPOOL_FUNC(add_mempool, CF_MEMPOOL_VARIANT)())
 			return NULL;
-		pool = &pools[pools_size-1];
+		pool = &pools[pools_size - 1];
 	}
 	{
 		memory_block* block = pool->first_free;

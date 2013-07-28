@@ -213,7 +213,7 @@ bool fungespace_create(void)
 #  ifdef FSPACE_ICC_INTRINSICS
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
 		// Cast to void to shut up warning about strict-aliasing rules.
-		_mm_stream_ps(((float*)(void*)&cfun_static_space) + i*4,
+		_mm_stream_ps(((float*)(void*)&cfun_static_space) + i * 4,
 		              *((const __m128*)(const void*)&fspace_vector_init));
 	_mm_sfence();
 	// Handle other GCC compatible compilers.
@@ -224,7 +224,7 @@ bool fungespace_create(void)
 #    endif
 	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
 		// Cast to void to shut up warning about strict-aliasing rules.
-		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i*4,
+		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i * 4,
 		                       *((const v4sf*)(const void*)&fspace_vector_init));
 	__builtin_ia32_sfence();
 #    ifdef CFUNGE_COMP_GCC4_6_COMPAT
@@ -329,7 +329,7 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 		}
 	}
 	// Now scan static array.
-	for (size_t i = 0; i < sarray_len;i++)
+	for (size_t i = 0; i < sarray_len; i++)
 		if (sarray[i] > 0) {
 			funge_cell value = i - sarray_off;
 			if (max_h < value) max_h = value;
@@ -506,7 +506,7 @@ fungespace_get(const funge_vector * restrict position)
 	funge_unsigned_cell y = (funge_unsigned_cell)position->y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
-		return cfun_static_space[STATIC_COORD(x,y)];
+		return cfun_static_space[STATIC_COORD(x, y)];
 	} else {
 		funge_cell *tmp = (funge_cell*)ght_fspace_get(fspace.entries, position);
 		if (!tmp)
@@ -535,7 +535,7 @@ fungespace_get_offset(const funge_vector * restrict position,
 	y = (funge_unsigned_cell)tmp.y + FUNGESPACE_STATIC_OFFSET_Y;
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
-		return cfun_static_space[STATIC_COORD(x,y)];
+		return cfun_static_space[STATIC_COORD(x, y)];
 	} else {
 		result = (funge_cell*)ght_fspace_get(fspace.entries, &tmp);
 		if (!result)
@@ -560,9 +560,9 @@ fungespace_set_no_bounds_update(funge_cell value,
 
 	if (FUNGESPACE_RANGE_CHECK(x, y)) {
 #ifdef CFUN_EXACT_BOUNDS
-		funge_cell prev = cfun_static_space[STATIC_COORD(x,y)];
+		funge_cell prev = cfun_static_space[STATIC_COORD(x, y)];
 #endif
-		cfun_static_space[STATIC_COORD(x,y)] = value;
+		cfun_static_space[STATIC_COORD(x, y)] = value;
 #ifdef CFUN_EXACT_BOUNDS
 		if (value != prev) {
 			if ((prev == ' ') || (value == ' '))
@@ -688,7 +688,7 @@ static inline bool fspace_vector_is_cardinal(const funge_vector * restrict v)
 FUNGE_ATTR_CONST FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline funge_cell wrap_frac(funge_cell n, funge_cell d)
 {
-	return (n % d == 0) ? (n / d) : ((n+d) / d);
+	return (n % d == 0) ? (n / d) : ((n + d) / d);
 }
 
 // a  = value in x or y
@@ -699,7 +699,7 @@ FUNGE_ATTR_CONST FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static inline funge_cell wrap_frac_dir(funge_cell a, funge_cell r,
                                        funge_cell s, funge_cell da)
 {
-	return (da > 0) ? wrap_frac(a-r, da) : wrap_frac(a-s, da);
+	return (da > 0) ? wrap_frac(a - r, da) : wrap_frac(a - s, da);
 }
 
 FUNGE_ATTR_FAST
@@ -720,9 +720,9 @@ static inline void wrap(funge_vector * restrict pos,
 		funge_cell fy = FUNGESPACE_FY;
 		m = (fx < fy) ? fx : fy;
 	}
-	
-	pos->x = pos->x - (m*delta->x);
-	pos->y = pos->y - (m*delta->y);
+
+	pos->x = pos->x - (m * delta->x);
+	pos->y = pos->y - (m * delta->y);
 #undef FUNGESPACE_FY
 #undef FUNGESPACE_FX
 }
@@ -1058,7 +1058,7 @@ fungespace_save_to_file(const char         * restrict filename,
 				goto error;
 			}
 			for (funge_cell x = offset->x; x < maxx; x++) {
-				string[x-offset->x] = fungespace_get(vector_create_ref(x, y));
+				string[x - offset->x] = fungespace_get(vector_create_ref(x, y));
 			}
 
 			do {
@@ -1066,7 +1066,7 @@ fungespace_save_to_file(const char         * restrict filename,
 			} while ((lastspace >= 0) && (string[lastspace] == ' '));
 
 			for (ssize_t i = 0; i <= lastspace; i++) {
-				towrite[index+i] = (unsigned char)string[i];
+				towrite[index + i] = (unsigned char)string[i];
 			}
 			index += lastspace + 1;
 			free(string);

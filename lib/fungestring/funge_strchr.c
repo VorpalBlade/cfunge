@@ -26,12 +26,11 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_PURE
 funge_cell *funge_strchr(const funge_cell *s,
                          const funge_cell c)
 {
-	while (*s != '\0')
-	{
-FUNGE_WARNING_IGNORE("-Wcast-qual")
+	while (*s != '\0') {
+		FUNGE_WARNING_IGNORE("-Wcast-qual")
 		if (*s == c)
 			return (funge_cell *)s;
-FUNGE_WARNING_RESTORE()
+		FUNGE_WARNING_RESTORE()
 		s++;
 	}
 	return NULL;

@@ -28,12 +28,11 @@ void *funge_memchr(const void *s, funge_cell c, size_t n)
 	const funge_cell *p = (const funge_cell *)s;
 	const funge_cell *end = p + n;
 
-	for (; p<end; p++)
-	{
-FUNGE_WARNING_IGNORE("-Wcast-qual")
+	for (; p < end; p++) {
+		FUNGE_WARNING_IGNORE("-Wcast-qual")
 		if (*p == c)
 			return (void *)p;
-FUNGE_WARNING_RESTORE()
+		FUNGE_WARNING_RESTORE()
 	}
 
 	return NULL;

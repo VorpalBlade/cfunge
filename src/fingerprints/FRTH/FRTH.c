@@ -57,7 +57,7 @@ static void finger_FRTH_forth_roll(instructionPointer * ip)
 			return;
 		}
 		memcpy(elems, ip->stack->entries, sizeof(funge_cell) * ip->stack->top);
-		xu = elems[s - (u+1)];
+		xu = elems[s - (u + 1)];
 
 		stack_discard(ip->stack, (size_t)(u + 1));
 		for (size_t i = s - (size_t)u; i < s; i++) {

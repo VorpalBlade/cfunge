@@ -45,11 +45,11 @@ static void finger_STRN_append(instructionPointer * ip)
 		goto error;
 	}
 
-	c = realloc(top, (top_len + bottom_len + 1)*sizeof(funge_cell));
+	c = realloc(top, (top_len + bottom_len + 1) * sizeof(funge_cell));
 	if (FUNGE_UNLIKELY(!c)) {
 		goto error;
 	}
-	memcpy(c + top_len, bottom, bottom_len*sizeof(funge_cell));
+	memcpy(c + top_len, bottom, bottom_len * sizeof(funge_cell));
 	c[top_len + bottom_len] = '\0';
 
 	stack_push_string_multibyte(ip->stack, c, bottom_len + top_len);
@@ -87,8 +87,7 @@ static void finger_STRN_compare(instructionPointer * ip)
 
 	minlen = (alen < blen) ? alen : blen;
 
-	for (size_t i = 0; i < minlen+1; i++)
-	{
+	for (size_t i = 0; i < minlen + 1; i++) {
 		funge_cell diff = a[i] - b[i];
 		if (diff != 0) {
 			comparsion = diff;
@@ -243,8 +242,8 @@ static void finger_STRN_slice(instructionPointer * ip)
 	} else if (slen < (size_t)(p + n)) {
 		n = slen - p;
 	}
-	s[p+n] = '\0';
-	stack_push_string_multibyte(ip->stack, s + p, slen-p);
+	s[p + n] = '\0';
+	stack_push_string_multibyte(ip->stack, s + p, slen - p);
 	stack_free_string(s);
 }
 

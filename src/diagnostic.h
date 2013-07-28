@@ -173,21 +173,21 @@ void diag_warn(const char* message);
  * @param format Format string to use.
  */
 FUNGE_ATTR_FAST FUNGE_ATTR_COLD FUNGE_ATTR_NONNULL FUNGE_ATTR_NORET
-FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FORMAT(printf, 1, 2)
 void diag_fatal_format(const char* format, ...);
 
 /**
  * Prints "ERROR: formatted message" and returns.
  * @param format Format string to use.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf, 1, 2)
 void diag_error_format(const char* format, ...);
 
 /**
  * Prints "WARN: formatted message" and returns.
  * @param format Format string to use.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf,1,2)
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_FORMAT(printf, 1, 2)
 void diag_warn_format(const char* format, ...);
 
 /*@}*/

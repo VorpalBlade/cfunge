@@ -39,7 +39,7 @@ FUNGE_ATTR_FAST ght_uint32_t ght_one_at_a_time_hash(const ght_hash_key_t *p_key)
 	assert(p_key != NULL);
 
 	for (i = 0; i < sizeof(fungeSpaceHashKey); ++i) {
-		i_hash += ((const unsigned char*)&(p_key->p_key))[i];
+		i_hash += ((const unsigned char*) & (p_key->p_key))[i];
 		i_hash += (i_hash << 10);
 		i_hash ^= (i_hash >> 6);
 	}
@@ -64,10 +64,10 @@ ght_uint32_t CF_GHT_NAME(CF_GHT_VAR, crc_hash)(const CF_GHT_NAME(CF_GHT_VAR, has
 	assert(p_key != NULL);
 
 	crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
-	p = (const unsigned char *)&(p_key->p_key);
+	p = (const unsigned char *) & (p_key->p_key);
 
 	for (size_t i = 0; i < sizeof(CF_GHT_KEY); i++)
-		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ (p[i])];
+		crc = (crc << 8) ^ crc32_table[(crc >> 24) ^(p[i])];
 
 	return ~crc;            /* transmit complement, per CRC-32 spec */
 }
@@ -92,8 +92,7 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 
 	const unsigned char * data = (const unsigned char *)key;
 
-	while(len >= 4)
-	{
+	while (len >= 4) {
 		ght_uint32_t k = *(const ght_uint32_t *)data;
 
 		k *= m;
@@ -111,12 +110,11 @@ static inline ght_uint32_t MurmurHash2(const fungeSpaceHashKey * key)
 #if 0
 	// Handle the last few bytes of the input array
 
-	switch(len)
-	{
-	case 3: h ^= data[2] << 16;
-	case 2: h ^= data[1] << 8;
-	case 1: h ^= data[0];
-	        h *= m;
+	switch (len) {
+		case 3: h ^= data[2] << 16;
+		case 2: h ^= data[1] << 8;
+		case 1: h ^= data[0];
+			h *= m;
 	};
 #endif
 
@@ -139,7 +137,7 @@ FUNGE_ATTR_FAST ght_uint32_t murmur_hash(const ght_hash_key_t *p_key)
 #ifdef USE32
 	const ght_uint32_t m = 0xc6a4a793;
 
-	ght_uint32_t h = 0x7fd652ad ^ (8 * m), k;
+	ght_uint32_t h = 0x7fd652ad ^(8 * m), k;
 
 	k = p_key->p_key.x; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;
 	k = p_key->p_key.y; k *= m; k ^= k >> 16; k *= m; h += k; h *= m;

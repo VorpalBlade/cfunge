@@ -184,9 +184,9 @@ size_t CF_GHT_NAME(CF_GHT_VAR, table_size)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t)
  */
 FUNGE_ATTR_FAST
 int CF_GHT_NAME(CF_GHT_VAR, insert)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        CF_GHT_DATA p_entry_data,
-        const CF_GHT_KEY * restrict p_key_data);
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    CF_GHT_DATA p_entry_data,
+    const CF_GHT_KEY * restrict p_key_data);
 
 /**
  * Replace an entry in the hash table. This function will return an
@@ -203,9 +203,9 @@ int CF_GHT_NAME(CF_GHT_VAR, insert)(
  */
 FUNGE_ATTR_FAST
 CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, replace)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        CF_GHT_DATA p_entry_data,
-        const CF_GHT_KEY * restrict p_key_data);
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    CF_GHT_DATA p_entry_data,
+    const CF_GHT_KEY * restrict p_key_data);
 
 
 /**
@@ -234,8 +234,8 @@ CF_GHT_DATA *CF_GHT_NAME(CF_GHT_VAR, get)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) 
  */
 FUNGE_ATTR_FAST
 CF_GHT_DATA CF_GHT_NAME(CF_GHT_VAR, remove)(
-        CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
-        const CF_GHT_KEY * restrict p_key_data);
+    CF_GHT_NAME(CF_GHT_VAR, hash_table_t) * restrict p_ht,
+    const CF_GHT_KEY * restrict p_key_data);
 
 /**
  * Return the first entry in the hash table. This function should be
@@ -302,8 +302,8 @@ void *CF_GHT_NAME(CF_GHT_VAR, first)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht
  */
 FUNGE_ATTR_FAST
 void *CF_GHT_NAME(CF_GHT_VAR, next)(
-        CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
-        const CF_GHT_KEY **pp_key);
+    CF_GHT_NAME(CF_GHT_VAR, iterator_t) *p_iterator,
+    const CF_GHT_KEY **pp_key);
 
 /**
  * Rehash the hash table.
