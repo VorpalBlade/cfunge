@@ -786,11 +786,12 @@ const char * genxLastErrorMessage(const genxWriter restrict w)
  * DeclareNamespace - by far the most complex routine in Genx
  */
 FUNGE_ATTR_FAST
-genxNamespace genxDeclareNamespace(genxWriter w, constUtf8 uri,
+genxNamespace genxDeclareNamespace(genxWriter w,
+                                   constUtf8 uri,
                                    constUtf8 defaultPref,
                                    genxStatus * statusP)
 {
-	genxNamespace ns;
+	genxNamespace ns = NULL;
 	genxAttribute defaultDecl;
 	unsigned char newPrefix[100];
 
@@ -838,11 +839,15 @@ genxNamespace genxDeclareNamespace(genxWriter w, constUtf8 uri,
 
 		if ((ns->name = copy(uri)) == NULL) {
 			w->status = GENX_ALLOC_FAILED;
+			deallocate(ns);
 			goto busted;
 		}
 
-		if ((w->status = listAppend(&w->namespaces, ns)) != GENX_SUCCESS)
+		if ((w->status = listAppend(&w->namespaces, ns)) != GENX_SUCCESS) {
+			deallocate(ns->name);
+			deallocate(ns);
 			goto busted;
+		}
 		ns->defaultDecl = ns->declaration = NULL;
 		ns->declCount = 0;
 	}
@@ -976,7 +981,7 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 {
 	ssize_t high, low;
 	genxAttribute * aa = (genxAttribute *) w->attributes.pointers;
-	genxAttribute a;
+	genxAttribute a = NULL;
 
 	w->arec.ns = ns;
 	FUNGE_WARNING_IGNORE("-Wcast-qual")
@@ -1023,19 +1028,29 @@ static genxAttribute declareAttribute(genxWriter w, genxNamespace ns,
 
 	if ((a->name = copy(name)) == NULL) {
 		w->status = GENX_ALLOC_FAILED;
+		deallocate(a);
 		goto busted;
 	}
 
-	if ((w->status = initCollector(&a->value)) != GENX_SUCCESS)
+	if ((w->status = initCollector(&a->value)) != GENX_SUCCESS) {
+		deallocate(a->name);
+		deallocate(a);
 		goto busted;
+	}
 
 	if (valuestr)
-		if ((w->status = collectString(w, &a->value, valuestr)) != GENX_SUCCESS)
+		if ((w->status = collectString(w, &a->value, valuestr)) != GENX_SUCCESS) {
+			deallocate(a->name);
+			deallocate(a);
 			goto busted;
+		}
 
 	w->status = listInsert(&w->attributes, a, high);
-	if (w->status != GENX_SUCCESS)
+	if (w->status != GENX_SUCCESS) {
+		deallocate(a->name);
+		deallocate(a);
 		goto busted;
+	}
 
 	*statusP = GENX_SUCCESS;
 	return a;
