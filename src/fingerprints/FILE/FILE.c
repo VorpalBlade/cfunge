@@ -76,6 +76,7 @@ static inline funge_cell allocate_handle(void)
 	handles[h] = malloc(sizeof(FungeFileHandle));
 	if (!handles[h])
 		return -1;
+	handles[h]->file = NULL;
 	return h;
 }
 
@@ -249,17 +250,16 @@ static void finger_FILE_fopen(instructionPointer * ip)
 	mode = stack_pop(ip->stack);
 	vect = stack_pop_vector(ip->stack);
 
+	if (FUNGE_UNLIKELY((mode < 0) || (mode > 5))) {
+		goto error;
+	}
+	
 	h = allocate_handle();
 	if (FUNGE_UNLIKELY(h == -1)) {
 		goto error;
 	}
 
-	if (FUNGE_UNLIKELY((mode < 0) || (mode > 5))) {
-		free_handle(h);
-		goto error;
-	} else {
-		handles[h]->file = fopen(filename, mode_table[mode]);
-	}
+	handles[h]->file = fopen(filename, mode_table[mode]);
 
 	if (FUNGE_UNLIKELY(!handles[h]->file)) {
 		free_handle(h);
@@ -400,7 +400,7 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	} else {
 		FILE * fp = handles[h]->file;
 		funge_vector v = handles[h]->buffvect;
-		unsigned char * restrict buf = malloc((size_t)n * sizeof(char));
+		unsigned char * restrict buf = malloc((size_t)n * sizeof(unsigned char));
 		if (FUNGE_UNLIKELY(!buf))
 			DIAG_OOM("Failed to allocate buffer");
 		for (funge_cell i = 0; i < n; i++) {
