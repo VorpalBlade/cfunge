@@ -169,15 +169,23 @@ ipList* iplist_create(void)
 	if (FUNGE_UNLIKELY(!list))
 		return NULL;
 
-	if (FUNGE_UNLIKELY(!cf_mempool_ip_setup()))
+	if (FUNGE_UNLIKELY(!cf_mempool_ip_setup())) {
+		free(list);
 		return NULL;
+	}
 
 	list->ips[0] = cf_mempool_ip_alloc();
-	if (FUNGE_UNLIKELY(!list->ips[0]))
+	if (FUNGE_UNLIKELY(!list->ips[0])) {
+		free(list);
 		return NULL;
+	}
 
-	if (FUNGE_UNLIKELY(!ip_create_in_place(list->ips[0])))
+	if (FUNGE_UNLIKELY(!ip_create_in_place(list->ips[0]))) {
+		cf_mempool_ip_free(list->ips[0]);
+		free(list);
 		return NULL;
+	}
+	
 #else
 	list = malloc(sizeof(ipList) + sizeof(instructionPointer) * ALLOCCHUNKSIZE);
 	if (FUNGE_UNLIKELY(!list))
