@@ -244,7 +244,7 @@ FUNGE_ATTR_FAST unsigned char *stack_pop_string(funge_stack * restrict stack, si
 	unsigned char *buf;
 	paranoid_assert(stack != NULL);
 	// FIXME: This may very likely be more than is needed.
-	buf = (unsigned char*)malloc((stack->top + 1) * sizeof(char));
+	buf = (unsigned char*)malloc((stack->top + 1) * sizeof(unsigned char));
 	if (FUNGE_UNLIKELY(!buf)) {
 		if (len)
 			*len = 0;

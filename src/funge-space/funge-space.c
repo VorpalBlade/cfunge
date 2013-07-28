@@ -1021,6 +1021,8 @@ fungespace_save_to_file(const char         * restrict filename,
 	assert(filename != NULL);
 	assert(offset != NULL);
 	assert(size != NULL);
+	assert(size->x > 0);
+	assert(size->y > 0);
 
 	file = fopen(filename, "wb");
 	if (!file)
@@ -1046,13 +1048,15 @@ fungespace_save_to_file(const char         * restrict filename,
 		size_t index = 0;
 		// Extra size->y for adding a lot of \n...
 		unsigned char * restrict towrite = malloc((size_t)(size->x * size->y + size->y) * sizeof(unsigned char));
+		funge_cell * restrict string;
+		
 		if (!towrite) {
 			goto error;
 		}
 		// Construct each line.
+		string = malloc((size_t)size->x * sizeof(funge_cell));
 		for (funge_cell y = offset->y; y < maxy; y++) {
 			ssize_t lastspace = (ssize_t)size->x;
-			funge_cell * restrict string = malloc((size_t)size->x * sizeof(funge_cell));
 			if (!string) {
 				free(towrite);
 				goto error;
@@ -1069,10 +1073,10 @@ fungespace_save_to_file(const char         * restrict filename,
 				towrite[index + i] = (unsigned char)string[i];
 			}
 			index += lastspace + 1;
-			free(string);
 			towrite[index] = (funge_cell)'\n';
 			index++;
 		}
+		free(string);
 		// Remove trailing newlines.
 		{
 			ssize_t lastnewline = (ssize_t)index;

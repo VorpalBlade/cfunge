@@ -284,7 +284,9 @@ two_way_short_needle(const funge_unsigned_cell *haystack, size_t haystack_len,
 		/* The two halves of needle are distinct; no extra memory is
 		   required, and any mismatch results in a maximal shift.  */
 		period = MAX(suffix, needle_len - suffix) + 1;
+#if !CHECK_EOL
 		j = 0;
+#endif
 		while (1
 #if !CHECK_EOL
 		       && AVAILABLE(haystack, haystack_len, j, needle_len)
