@@ -47,6 +47,7 @@
 #  define bool _Bool
 #endif
 
+#define NCRS_VALIDATE_STATE_CLEANUP(_c) if (!ncrs_valid_state) { ip_reverse(ip); _c; return; }
 #define NCRS_VALIDATE_STATE() if (!ncrs_valid_state) { ip_reverse(ip); return; }
 
 /// Defines if we have ever ncrs_initialised.
@@ -234,7 +235,7 @@ static void finger_NCRS_refresh(instructionPointer * ip)
 static void finger_NCRS_write(instructionPointer * ip)
 {
 	unsigned char* str = stack_pop_string(ip->stack, NULL);
-	NCRS_VALIDATE_STATE();
+	NCRS_VALIDATE_STATE_CLEANUP(stack_free_string(str));
 	if (waddstr(ncrs_window, (char*)str) == ERR)
 		ip_reverse(ip);
 	stack_free_string(str);

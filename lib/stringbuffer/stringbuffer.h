@@ -141,6 +141,18 @@ FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
 void stringbuffer_append_string(StringBuffer *sb, const char *str);
 
 /**
+ * Append a buffer to a string buffer instance.
+ *
+ * @param sb The string buffer to modify.
+ *
+ * @param buffer The buffer to append.
+ * 
+ * @param len The length of the buffer.
+ */
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+void stringbuffer_append_buffer(StringBuffer *sb, const char *buffer, size_t len);
+
+/**
  * Append a formatted string to a string buffer instance.
  *
  * @param sb The string buffer to modify.

@@ -159,7 +159,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 							char * restrict result = stringbuffer_finish(sb, retlength);
 							close(outfds[0]);
 							free(buf);
-							if (*retlength == 0) {
+							if (!result || *retlength == 0) {
 								free(result);
 								return NULL;
 							} else {
@@ -167,7 +167,7 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 							}
 						} else if (n > 0) {
 							buf[n] = '\0';
-							stringbuffer_append_string(sb, buf);
+							stringbuffer_append_buffer(sb, buf, n);
 							if (n < STRINGALLOCCHUNK) {
 								close(outfds[0]);
 								free(buf);

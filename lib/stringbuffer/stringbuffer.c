@@ -150,12 +150,15 @@ void stringbuffer_append_cell(StringBuffer *sb, const funge_cell c)
 FUNGE_ATTR_FAST
 void stringbuffer_append_string(StringBuffer *sb, const char *str)
 {
-	size_t len;
+	stringbuffer_append_buffer(sb, str, strlen(str));
+}
 
-	len = strlen(str);
+FUNGE_ATTR_FAST
+void stringbuffer_append_buffer(StringBuffer *sb, const char *buffer, size_t len)
+{
 	stringbuffer_ensure(sb, len + 1);
 	for (size_t i = 0; i < len; i++)
-		sb->buf[sb->pos + i] = str[i];
+		sb->buf[sb->pos + i] = buffer[i];
 	sb->pos += len;
 }
 
