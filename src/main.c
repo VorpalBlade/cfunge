@@ -184,7 +184,9 @@ static void print_build_info(void)
 	       "OS:            " CFUN_TARGET_OS "\n"
 	       "Compiler path: " CFUN_COMPILER "\n"
 #ifdef CFUNGE_COMP_CLANG
-	       "Compiler:      clang (unknown version)\n"
+	       "Compiler:      clang " __clang_version__ "\n"
+#elif defined(CFUNGE_COMP_PATHSCALE)
+	       "Compiler:      PathScale EKOPath " __PATHSCALE__ "\n"
 #elif defined(CFUNGE_COMP_ICC)
 	       "Compiler:      ICC " FUNGE_CPP_STRINGIFY(__INTEL_COMPILER) "\n"
 #elif defined(CFUNGE_COMP_GCC)
