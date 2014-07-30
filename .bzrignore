@@ -3,6 +3,8 @@
 *.gcov
 *.log
 *.orig
+*.sublime-project
+*.sublime-workspace
 *.tmp
 ./*.svg
 ./.gdbinit
