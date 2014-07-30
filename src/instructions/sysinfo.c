@@ -405,7 +405,7 @@ void run_sys_info(instructionPointer *ip)
 			stack_push(ip->stack, sysinfo_tmp_stack->entries[sysinfo_tmp_stack->top - (size_t)request]);
 		} else {
 			// Act as pick
-			stack_push(ip->stack, stack_get_index(ip->stack, request - sysinfo_tmp_stack->top));
+			stack_push(ip->stack, stack_get_index(ip->stack, ip->stack->top + 1 - (request - sysinfo_tmp_stack->top)));
 		}
 		stack_clear(sysinfo_tmp_stack);
 	}
