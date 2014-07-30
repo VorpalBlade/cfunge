@@ -20,5 +20,7 @@
 ./doxygen-docs
 ./install_manifest.txt
 ./other
+.tags
+.tags_sorted_by_file
 Makefile
 tags
