@@ -372,8 +372,8 @@ void stack_print_top(const funge_stack * stack)
 	if (stack->top == 0) {
 		fputs("\tStack is empty.\n", stderr);
 	} else {
-		fprintf(stderr, "\tStack has %zu elements, top 5 (or less) elements:\n\t\t", stack->top);
-		for (ssize_t i = (ssize_t)stack->top; (i > 0) && (i > ((ssize_t)stack->top - 5)); i--)
+		fprintf(stderr, "\tStack has %zu elements, top 15 (or less) elements:\n\t\t", stack->top);
+		for (ssize_t i = (ssize_t)stack->top; (i > 0) && (i > ((ssize_t)stack->top - 15)); i--)
 			fprintf(stderr, "%" FUNGECELLPRI " ", stack->entries[i - 1]);
 		fputs("\n", stderr);
 	}
