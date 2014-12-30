@@ -151,7 +151,10 @@ static void finger_SOCK_accept(instructionPointer * ip)
 
 		i = allocate_handle();
 		if (i == -1)
+		{
+			close(as);
 			goto error;
+		}
 		sockets[i]->fd = as;
 		sockets[i]->family = sockets[s]->family;
 
