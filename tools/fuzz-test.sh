@@ -170,7 +170,7 @@ if [[ $1 ]]; then
 	FPRINT=$1
 	# TODO: This should use *.spec parsing really... Parsing fingerprints.h is
 	# legacy code.
-	FPRINTINSTRS=$(grep finger_${1}_load src/fingerprints/fingerprints.h | grep -Eo '"[A-Z]+"' | tr -d '"')
+	FPRINTINSTRS=$(grep "finger_${1}_load" src/fingerprints/fingerprints.h | grep -Eo '"[A-Z]+"' | tr -d '"')
 fi
 
 # This does not test fingerprints loaded randomly for the simple reason that it is very unlikely any will load.
