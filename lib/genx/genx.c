@@ -927,11 +927,14 @@ genxElement genxDeclareElement(genxWriter w,
 	el->writer = w;
 	el->ns = ns;
 	if ((el->type = copy(type)) == NULL) {
+		deallocate(el);
 		w->status = *statusP = GENX_ALLOC_FAILED;
 		return NULL;
 	}
 
 	if ((w->status = listAppend(&w->elements, el)) != GENX_SUCCESS) {
+		deallocate(el->type);
+		deallocate(el);
 		*statusP = w->status;
 		return NULL;
 	}
