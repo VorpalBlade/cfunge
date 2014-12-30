@@ -43,7 +43,7 @@ static size_t maxHandle = 0;
 
 /// Used by allocate_handle() below to find next free handle.
 FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
-static inline funge_cell findNextfree_handle(void)
+static inline funge_cell find_next_free_handle(void)
 {
 	for (size_t i = 0; i < maxHandle; i++) {
 		if (handles[i] == NULL)
@@ -69,7 +69,7 @@ static inline funge_cell allocate_handle(void)
 {
 	funge_cell h;
 
-	h = findNextfree_handle();
+	h = find_next_free_handle();
 	if (h < 0)
 		return -1;
 
@@ -265,7 +265,12 @@ static void finger_FILE_fopen(instructionPointer * ip)
 		free_handle(h);
 		goto error;
 	}
-	fcntl(fileno(handles[h]->file), F_SETFD, FD_CLOEXEC, 1);
+	if (fcntl(fileno(handles[h]->file), F_SETFD, FD_CLOEXEC, 1) != 0)
+	{
+		fclose(handles[h]->file);
+		free_handle(h);
+		goto error;
+	}
 	if ((mode == 2) || (mode == 5))
 		rewind(handles[h]->file);
 

@@ -56,8 +56,16 @@ static void finger_FING_swap(instructionPointer * ip)
 			op1 = &do_reflect;
 		if (!op2)
 			op2 = &do_reflect;
-		opcode_stack_push(ip, second, op1);
-		opcode_stack_push(ip, first, op2);
+		if (!opcode_stack_push(ip, second, op1))
+		{
+			ip_reverse(ip);
+			return;
+		}
+		if (!opcode_stack_push(ip, first, op2))
+		{
+			ip_reverse(ip);
+			return;
+		}
 	}
 }
 

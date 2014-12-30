@@ -73,7 +73,7 @@ typedef bool (*fingerprintLoader)(struct s_instructionPointer * ip);
  * @param opcode What opcode to add.
  * @param func Function pointer to routine implementing the instruction.
  */
-FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL
+FUNGE_ATTR_FAST FUNGE_ATTR_NONNULL FUNGE_ATTR_WARN_UNUSED
 bool opcode_stack_push(struct s_instructionPointer * restrict ip, unsigned char opcode, fingerprintOpcode func);
 /**
  * Pop an opcode from an stack returning it.

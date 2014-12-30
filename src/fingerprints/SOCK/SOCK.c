@@ -147,7 +147,11 @@ static void finger_SOCK_accept(instructionPointer * ip)
 		if (as == -1)
 			goto error;
 
-		fcntl(as, F_SETFD, FD_CLOEXEC, 1);
+		if (fcntl(as, F_SETFD, FD_CLOEXEC, 1) != 0)
+		{
+			close(as);
+			goto error;
+		}
 
 		i = allocate_handle();
 		if (i == -1)
@@ -387,7 +391,11 @@ static void finger_SOCK_create(instructionPointer * ip)
 		if (sockets[h]->fd == -1)
 			goto error;
 
-		fcntl(sockets[h]->fd, F_SETFD, FD_CLOEXEC, 1);
+		if (fcntl(sockets[h]->fd, F_SETFD, FD_CLOEXEC, 1) != 0)
+		{
+			close(sockets[h]->fd);
+			goto error;
+		}
 
 		sockets[h]->family = fam;
 
