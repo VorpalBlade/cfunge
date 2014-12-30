@@ -501,9 +501,18 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			}
 
 #ifdef CONCURRENT_FUNGE
-			case 't':
-				*threadindex = iplist_duplicate_ip(&IPList, *threadindex);
+			case 't': {
+				ssize_t new_index = iplist_duplicate_ip(&IPList, *threadindex);
+				// Handle possible failure.
+				if (new_index != -1) {
+					*threadindex = new_index;
+				} else {
+					// Yeah this is the same as the child normally,
+					// the program should check that the parent still exists.
+					ip_reverse(ip);
+				}
 				break;
+			}
 
 #endif /* CONCURRENT_FUNGE */
 
