@@ -76,11 +76,6 @@ size_t strlcpy(char *dst, const char *src, size_t siz);
 #endif /* _POSIX_THREAD_SAFE_FUNCTIONS */
 /*@}*/
 
-#if !defined(HAVE_random) || !defined(HAVE_srandom)
-#  define random rand
-#  define srandom srand
-#endif
-
 #ifdef __WIN32__
 #  error "Windows is unsupported, please use POSIX. No idea if cygwin works, it is on your own risk!"
 #endif

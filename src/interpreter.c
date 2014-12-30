@@ -26,6 +26,7 @@
 #include "funge-space/funge-space.h"
 #include "input.h"
 #include "ip.h"
+#include "prng.h"
 #include "settings.h"
 #include "stack.h"
 #include "vector.h"
@@ -217,7 +218,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			case '?': {
 				// May not be perfectly uniform.
 				// If this matters for you, contact me (with a patch).
-				long int rnd = random() % 4;
+				funge_unsigned_cell rnd = prng_generate_unsigned(4);
 				switch (rnd) {
 					case 0: ip_go_north(ip); break;
 					case 1: ip_go_east(ip); break;
@@ -669,29 +670,6 @@ static void debug_free(void)
 #endif
 
 
-// Sets up random seed from time.
-static inline void interpreter_setup_random(void)
-{
-#if defined(CFUN_KLEE_TEST)
-	// Make klee tests deterministic.
-	srandom(4);
-#elif defined(HAVE_clock_gettime)
-	struct timespec tv;
-	if (FUNGE_UNLIKELY(clock_gettime(CLOCK_REALTIME, &tv))) {
-		diag_fatal_format("clock_gettime() failed (needed for random seed): %s", strerror(errno));
-	}
-	// Set up randomness
-	srandom((unsigned int)tv.tv_nsec);
-#else
-	struct timeval tv;
-	if (FUNGE_UNLIKELY(gettimeofday(&tv, NULL))) {
-		diag_fatal_format("gettimeofday() failed (needed for random seed): %s", strerror(errno));
-	}
-	// Set up randomness
-	srandom((unsigned int)tv.tv_usec);
-#endif
-}
-
 #ifdef CFUN_KLEE_TEST_PROGRAM
 void klee_generate_program(void)
 {
@@ -724,7 +702,7 @@ void interpreter_run(const char *filename)
 #if !defined(NDEBUG) && !defined(CFUN_KLEE_TEST)
 	atexit(&debug_free);
 #endif
-	interpreter_setup_random();
+	prng_init();
 #ifdef CFUN_KLEE_TEST_PROGRAM
 	klee_generate_program();
 #else

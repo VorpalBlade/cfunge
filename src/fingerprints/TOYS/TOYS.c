@@ -20,11 +20,12 @@
  */
 
 #include "TOYS.h"
-#include "../../stack.h"
-#include "../../ip.h"
-#include "../../rect.h"
-#include "../../interpreter.h"
 #include "../../funge-space/funge-space.h"
+#include "../../interpreter.h"
+#include "../../ip.h"
+#include "../../prng.h"
+#include "../../rect.h"
+#include "../../stack.h"
 
 #include <stdlib.h> /* random */
 
@@ -321,7 +322,7 @@ static void finger_TOYS_barstool(instructionPointer * ip)
 /// U - tumbler (Like ? but replaces instruction with said random choice)
 static void finger_TOYS_tumbler(instructionPointer * ip)
 {
-	long int rnd = random() % 4;
+	funge_unsigned_cell rnd = prng_generate_unsigned(4);
 	switch (rnd) {
 		case 0: fungespace_set('^', &ip->position); ip_go_north(ip); break;
 		case 1: fungespace_set('>', &ip->position); ip_go_east(ip); break;

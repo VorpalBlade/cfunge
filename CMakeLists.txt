@@ -18,7 +18,7 @@
 
 project(CFUNGE C)
 
-cmake_minimum_required(VERSION 2.6.3)
+cmake_minimum_required(VERSION 2.8)
 
 mark_as_advanced(
 	CMAKE_BACKWARDS_COMPATIBILITY
@@ -52,7 +52,7 @@ if (NOT CONFIGURED)
 		set(CMAKE_BUILD_TYPE Release CACHE STRING
 		    "Choose the type of build, options are: None(CMAKE_C_FLAGS only used) Debug Release RelWithDebInfo MinSizeRel."
 		    FORCE)
-	endif (NOT CMAKE_BUILD_TYPE)
+	endif ()
 	if (CMAKE_COMPILER_IS_GNUCC)
 		set(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb3"
 		    CACHE STRING "Flags used by the compiler during debug builds."
@@ -60,8 +60,8 @@ if (NOT CONFIGURED)
         set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG"
             CACHE STRING "Flags used by the compiler during release builds."
             FORCE)
-	endif (CMAKE_COMPILER_IS_GNUCC)
-endif (NOT CONFIGURED)
+	endif ()
+endif ()
 
 # http://www.cmake.org/pipermail/cmake/2007-October/016786.html
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -101,17 +101,17 @@ if (CMAKE_COMPILER_IS_CYGWIN)
 else (CMAKE_COMPILER_IS_CYGWIN)
 	option(USE_NCURSES "Should we (try to) enable fingerprints needing ncurses?"  ON)
 	option(USE_CLOCK_GETTIME "Try to use clock_gettime() instead of gettimeofday(). (Recommended.)"  ON)
-endif (CMAKE_COMPILER_IS_CYGWIN)
+endif ()
 
 option(ENABLE_FLOATS "Enable all fingerprints using floating point. (Recommended.)"  ON)
 if (NOT ENABLE_FLOATS)
 	add_definitions(-DCFUN_NO_FLOATS)
-endif (NOT ENABLE_FLOATS)
+endif ()
 
 option(ENABLE_TURT "Enable TURT. (Recommended.)" ON)
 if (NOT ENABLE_TURT)
 	add_definitions(-DCFUN_NO_TURT)
-endif (NOT ENABLE_TURT)
+endif ()
 
 
 
@@ -121,36 +121,36 @@ endif (NOT ENABLE_TURT)
 option(EXACT_BOUNDS "Handle shrinking bounds (slower and most programs don't need it, but follows the standard more closely)." ON)
 if (EXACT_BOUNDS)
 	add_definitions(-DCFUN_EXACT_BOUNDS)
-endif (EXACT_BOUNDS)
+endif ()
 
 option(USE_64BIT "Use 64-bit funge space cells (if off: use 32-bit)." ON)
 if (USE_64BIT)
 	add_definitions(-DUSE64)
 else (USE_64BIT)
 	add_definitions(-DUSE32)
-endif (USE_64BIT)
+endif ()
 
 option(CONCURRENT_FUNGE "Enable support for concurrent funge." ON)
 if (CONCURRENT_FUNGE)
 	add_definitions(-DCONCURRENT_FUNGE)
-endif (CONCURRENT_FUNGE)
+endif ()
 
 option(LARGE_IPLIST "Use alternative IP list that works better with a lot of IPs but is slower with few IPs. No effect without CONCURRENT_FUNGE." ON)
 if (CONCURRENT_FUNGE AND LARGE_IPLIST)
 	add_definitions(-DLARGE_IPLIST)
-endif (CONCURRENT_FUNGE AND LARGE_IPLIST)
+endif ()
 
 option(ENABLE_TRACE "Enable support for tracing the execution (recommended)." ON)
 if (NOT ENABLE_TRACE)
 	add_definitions(-DDISABLE_TRACE)
-endif (NOT ENABLE_TRACE)
+endif ()
 
 option(HARDENED "If this is enabled, and GCC is used, enable stack smash protection (slows down though) and some other features." OFF)
 if (HARDENED)
 	add_definitions(-D_FORTIFY_SOURCE=2)
 	# Slows down though.
 	CFUNGE_CHECK_CFLAG(fstack-protector -fstack-protector)
-endif (HARDENED)
+endif ()
 
 
 
@@ -161,20 +161,20 @@ option(USE_MUDFLAP "Enable mudflap pointer debugging library, requires GCC. Not 
 if (USE_MUDFLAP)
 	if (CMAKE_COMPILER_IS_GNUCC)
 		CFUNGE_CHECK_CFLAG(fmudflap -fmudflap)
-	endif (CMAKE_COMPILER_IS_GNUCC)
-endif (USE_MUDFLAP)
+	endif ()
+endif ()
 
 option(USE_VALGRIND "Add annotations for the memory debugger valgrind. Not recommended for general use." OFF)
 if (USE_VALGRIND)
 	add_definitions(-DENABLE_VALGRIND)
-endif (USE_VALGRIND)
+endif ()
 
 option(USE_WERROR "Should we build with -Werror (GCC only)." OFF)
 if (USE_WERROR)
 	if (CMAKE_COMPILER_IS_GNUCC)
 		CFUNGE_CHECK_CFLAG(Werror -Werror)
-	endif (CMAKE_COMPILER_IS_GNUCC)
-endif (USE_WERROR)
+	endif ()
+endif ()
 
 
 
@@ -187,7 +187,7 @@ if (CMAKE_COMPILER_IS_CYGWIN)
 	add_definitions(-D_GNU_SOURCE)
 else (CMAKE_COMPILER_IS_CYGWIN)
 	CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
-endif (CMAKE_COMPILER_IS_CYGWIN)
+endif ()
 
 # Feature test macros for exposing relevant definitions in headers.
 add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
@@ -271,7 +271,7 @@ if (ENABLE_FLOATS)
 	CFUNGE_CHECK_FUNCTION(sinl)
 	CFUNGE_CHECK_FUNCTION(sqrtl)
 	CFUNGE_CHECK_FUNCTION(tanl)
-endif (ENABLE_FLOATS)
+endif ()
 
 
 
@@ -292,8 +292,8 @@ else (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 	remove_definitions(-DDEBUG)
 	if (NOT CMAKE_COMPILER_IS_CYGWIN)
 		CFUNGE_CHECK_CFLAG(fvisibility_hidden -fvisibility=hidden)
-	endif (NOT CMAKE_COMPILER_IS_CYGWIN)
-endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
+	endif ()
+endif ()
 
 
 ################################################################################
@@ -301,7 +301,7 @@ endif (CMAKE_BUILD_TYPE_UPPERCASE STREQUAL "DEBUG")
 if (CMAKE_COMPILER_IS_GNUCC)
 	CFUNGE_CHECK_CFLAG(fno_math_errno -fno-math-errno)
 	CFUNGE_CHECK_CFLAG(fno_trapping_math -fno-trapping-math)
-endif (CMAKE_COMPILER_IS_GNUCC)
+endif ()
 
 
 ################################################################################
@@ -334,7 +334,7 @@ CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_warn_common -Wl,--warn-common)
 if (HARDENED)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_relro -Wl,-z,relro)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_now   -Wl,-z,now)
-endif (HARDENED)
+endif ()
 
 
 
@@ -353,17 +353,17 @@ if (USE_NCURSES)
 		add_definitions(-DHAVE_NCURSES)
 		if (HAVE_NCURSES_TERM_H)
 			add_definitions(-DTERM_H_IN_NCURSES)
-		endif (HAVE_NCURSES_TERM_H)
+		endif ()
 		if (CURSES_HAVE_NCURSES_CURSES_H)
 			add_definitions(-DCURSES_H_IN_NCURSES)
-		endif (CURSES_HAVE_NCURSES_CURSES_H)
+		endif ()
 		if (CURSES_HAVE_NCURSES_NCURSES_H)
 			add_definitions(-DNCURSES_H_IN_NCURSES)
-		endif (CURSES_HAVE_NCURSES_NCURSES_H)
+		endif ()
 	else ()
 		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
 	endif ()
-endif (USE_NCURSES)
+endif ()
 
 
 
@@ -380,29 +380,47 @@ if (USE_CLOCK_GETTIME)
 		if (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
 			get_filename_component(LIBRT_PATH ${LIBRT_LOCATION} PATH)
 			CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge rt clock_gettime ${LIBRT_PATH})
-		endif (NOT ${LIBRT_LOCATION} STREQUAL "LIBRT_LOCATION-NOTFOUND")
-	endif (NOT CFUNGE_HAVE_clock_gettime)
-endif (USE_CLOCK_GETTIME)
+		endif ()
+	endif ()
+endif ()
+
 
 
 ################################################################################
-# Check for stlcpy. Like the check for clock_gettime it must be done
-# late due to possible libraries. It could exist in libbsd on some systems.
+# Check for arc4random and strlcpy
 #
-# We only need it for genx, which is only used with TURT.
+# These may be in libc (Various BSDs) or libbsd (Linux),
+# or not be found at all.
 CFUNGE_CHECK_FUNCTION(strlcpy)
-if (NOT CFUNGE_HAVE_strlcpy)
+CFUNGE_CHECK_FUNCTION(arc4random_buf)
+
+# Try again in libbsd if that exists.
+if (NOT CFUNGE_HAVE_strlcpy
+    OR NOT CFUNGE_HAVE_arc4random_buf)
+
 	find_library(LIBBSD_LOCATION
 	             NAMES bsd)
 	if (NOT ${LIBBSD_LOCATION} STREQUAL "LIBBSD_LOCATION-NOTFOUND")
 		get_filename_component(LIBBSD_PATH ${LIBBSD_LOCATION} PATH)
 		CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge bsd strlcpy ${LIBBSD_PATH})
-		# In this case we need <bsd/string.h>
-		# FIXME: Should fail gracefully if missing.
-		CFUNGE_REQUIRE_INCLUDE(bsd/string.h)
-		add_definitions(-DSTRLCPY_IN_BSD)
-	endif (NOT ${LIBBSD_LOCATION} STREQUAL "LIBBSD_LOCATION-NOTFOUND")
-endif (NOT CFUNGE_HAVE_strlcpy)
+		if (CFUNGE_HAVE_bsd_strlcpy)
+			# In this case we need <bsd/string.h>
+			# FIXME: Should fail gracefully if missing.
+			CFUNGE_REQUIRE_INCLUDE(bsd/string.h)
+			add_definitions(-DSTRLCPY_IN_BSD)
+		endif ()
+
+		CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge bsd arc4random_buf ${LIBBSD_PATH})
+		if (CFUNGE_HAVE_bsd_arc4random_buf)
+			# In this case we need <bsd/stdlib.h>
+			# FIXME: Should fail gracefully if missing.
+			CFUNGE_REQUIRE_INCLUDE(bsd/stdlib.h)
+			add_definitions(-DARC4RANDOM_IN_BSD)
+		endif ()
+	endif ()
+endif ()
+
+
 
 ################################################################################
 # Linking libraries
@@ -410,12 +428,12 @@ endif (NOT CFUNGE_HAVE_strlcpy)
 # Need -lm for some fingerprints.
 if (ENABLE_FLOATS)
 	target_link_libraries(cfunge m)
-endif (ENABLE_FLOATS)
+endif ()
 
 if (USE_MUDFLAP)
 	MACRO_ADD_LINK_FLAGS(cfunge "-fmudflap")
 	target_link_libraries(cfunge mudflap)
-endif (USE_MUDFLAP)
+endif ()
 
 
 
@@ -437,7 +455,7 @@ if (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
 		COMMENT "Generating man page..."
 		VERBATIM
 	)
-endif (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
+endif ()
 
 
 

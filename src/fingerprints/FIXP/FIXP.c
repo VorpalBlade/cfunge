@@ -22,10 +22,10 @@
 #include "FIXP.h"
 
 #if !defined(CFUN_NO_FLOATS)
+#include "../../prng.h"
 #include "../../stack.h"
 
 #include <math.h>
-#include <stdlib.h> /* random */
 
 // M_PIl is a GNU extension. This value should be enough
 // for 128-bit long double.
@@ -99,7 +99,7 @@ static void finger_FIXP_rand(instructionPointer * ip)
 	if (n == 0)
 		stack_push(ip->stack, 0);
 	else
-		stack_push(ip->stack, (funge_cell)(random() % n));
+		stack_push(ip->stack, (funge_cell)prng_generate_unsigned(n));
 }
 
 /// I - sin
