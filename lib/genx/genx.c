@@ -1082,7 +1082,7 @@ genxAttribute genxDeclareAttribute(genxWriter w,
 /*******************************
  * I/O
  */
-FUNGE_ATTR_FAST
+FUNGE_ATTR_FAST FUNGE_ATTR_WARN_UNUSED
 static genxStatus sendx(genxWriter w, constUtf8 s)
 {
 	if (w->sender)
@@ -1615,25 +1615,25 @@ static genxStatus addChar(genxWriter w, int c, constUtf8 next,
 			if ((w->status = sendxBounded(w, *breakerP, *lastsP)) != GENX_SUCCESS)
 				return w->status;
 			*breakerP = next;
-			sendx(w, (constUtf8) "&#xD;");
+			SendCheck(w, "&#xD;");
 			break;
 		case '<':
 			if ((w->status = sendxBounded(w, *breakerP, *lastsP)) != GENX_SUCCESS)
 				return w->status;
 			*breakerP = next;
-			sendx(w, (constUtf8) "&lt;");
+			SendCheck(w, "&lt;");
 			break;
 		case '&':
 			if ((w->status = sendxBounded(w, *breakerP, *lastsP)) != GENX_SUCCESS)
 				return w->status;
 			*breakerP = next;
-			sendx(w, (constUtf8) "&amp;");
+			SendCheck(w, "&amp;");
 			break;
 		case '>':
 			if ((w->status = sendxBounded(w, *breakerP, *lastsP)) != GENX_SUCCESS)
 				return w->status;
 			*breakerP = next;
-			sendx(w, (constUtf8) "&gt;");
+			SendCheck(w, "&gt;");
 			break;
 		default:
 			break;
