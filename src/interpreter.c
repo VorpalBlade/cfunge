@@ -370,7 +370,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				stack_push(ip->stack, fungespace_get(&ip->position));
 				break;
 			case 's':
-				ip_forward(ip);
+				ip_forward_no_wrap(ip);
 				fungespace_set(stack_pop(ip->stack), &ip->position);
 				break;
 

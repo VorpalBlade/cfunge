@@ -106,6 +106,15 @@ FUNGE_ATTR_FAST
 void ip_free(instructionPointer * restrict ip);
 #endif
 
+/**
+ * Move the IP forwards one step without wrapping.
+ * @param m_ip Instruction pointer to operate on.
+ */
+#define ip_forward_no_wrap(m_ip) \
+	do { \
+		(m_ip)->position.x += (m_ip)->delta.x; \
+		(m_ip)->position.y += (m_ip)->delta.y; \
+	} while(0)
 
 /**
  * Move the IP forwards one step.
@@ -113,10 +122,20 @@ void ip_free(instructionPointer * restrict ip);
  */
 #define ip_forward(m_ip) \
 	do { \
-		(m_ip)->position.x += (m_ip)->delta.x; \
-		(m_ip)->position.y += (m_ip)->delta.y; \
+		ip_forward_no_wrap(m_ip); \
 		fungespace_wrap(&((m_ip)->position), &((m_ip)->delta)); \
 	} while(0)
+
+/**
+ * Move the IP backwards one step without wrapping.
+ * @param m_ip Instruction pointer to operate on.
+ */
+#define ip_backward_no_wrap(m_ip) \
+	do { \
+		(m_ip)->position.x -= (m_ip)->delta.x; \
+		(m_ip)->position.y -= (m_ip)->delta.y; \
+	} while(0)
+
 /**
  * Move the IP backwards one step.
  * @param m_ip Instruction pointer to operate on.
@@ -124,8 +143,7 @@ void ip_free(instructionPointer * restrict ip);
  */
 #define ip_backward(m_ip) \
 	do { \
-		(m_ip)->position.x -= (m_ip)->delta.x; \
-		(m_ip)->position.y -= (m_ip)->delta.y; \
+		ip_backward_no_wrap(m_ip); \
 		fungespace_wrap(&((m_ip)->position), &((m_ip)->delta)); \
 	} while(0)
 
