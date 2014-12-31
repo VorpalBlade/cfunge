@@ -141,9 +141,17 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 
 					switch (kInstr) {
 #ifdef CONCURRENT_FUNGE
-						case 't':
-							*threadindex = iplist_duplicate_ip(IPList, *threadindex);
+						case 't': {
+							ssize_t new_index = iplist_duplicate_ip(IPList, *threadindex);
+							if (new_index != -1) {
+								*threadindex = new_index;
+							} else {
+								// Yeah this is the same as the child normally,
+								// the program should check that the parent still exists.
+								ip_reverse(ip);
+							}
 							break;
+						}
 #endif
 						case 'k':
 							// I HATE this one...
