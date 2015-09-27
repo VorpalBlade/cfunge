@@ -23,6 +23,7 @@
 #include "interpreter.h"
 
 #include "diagnostic.h"
+#include "division.h"
 #include "funge-space/funge-space.h"
 #include "input.h"
 #include "ip.h"
@@ -171,8 +172,15 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 	} else {
 		switch (opcode) {
 			case ' ': {
+#ifdef AFL_FUZZ_TESTING
+				long iterations = 500;
+#endif
 				do {
 					ip_forward(ip);
+#ifdef AFL_FUZZ_TESTING
+					if (!iterations--)
+						exit(123);
+#endif
 				} while (fungespace_get(&ip->position) == ' ');
 				ip->needMove = false;
 				ReturnFromexecute_instruction(true);
@@ -180,8 +188,15 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			case 'z':
 				break;
 			case ';': {
+#ifdef AFL_FUZZ_TESTING
+				long iterations = 500;
+#endif
 				do {
 					ip_forward(ip);
+#ifdef AFL_FUZZ_TESTING
+					if (!iterations--)
+						exit(123);
+#endif
 				} while (fungespace_get(&ip->position) != ';');
 				ReturnFromexecute_instruction(true);
 			}
@@ -238,6 +253,10 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				break;
 			case 'x': {
 				funge_vector pos = stack_pop_vector(ip->stack);
+#ifdef AFL_FUZZ_TESTING
+				if (pos.x == 0 && pos.y == 0)
+					exit(123);
+#endif
 				ip->delta = pos;
 				break;
 			}
@@ -320,20 +339,14 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				funge_cell a, b;
 				b = stack_pop(ip->stack);
 				a = stack_pop(ip->stack);
-				if (b == 0)
-					stack_push(ip->stack, 0);
-				else
-					stack_push(ip->stack, a / b);
+				stack_push(ip->stack, funge_division(a, b));
 				break;
 			}
 			case '%': {
 				funge_cell a, b;
 				b = stack_pop(ip->stack);
 				a = stack_pop(ip->stack);
-				if (b == 0)
-					stack_push(ip->stack, 0);
-				else
-					stack_push(ip->stack, a % b);
+				stack_push(ip->stack, funge_modulo(a, b));
 				break;
 			}
 
@@ -473,6 +486,10 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				funge_cell fpsize = stack_pop(ip->stack);
 				// Check for sanity (because we won't have any fingerprints
 				// outside such a range. This prevents long lockups here.
+#ifdef AFL_FUZZ_TESTING
+				if (fpsize > 500)
+					exit(123);
+#endif
 				if (fpsize < 1) {
 					ip_reverse(ip);
 				} else if (FUNGE_UNLIKELY(setting_disable_fingerprints)) {
@@ -570,12 +587,25 @@ static inline void thread_forward(instructionPointer * restrict ip)
 FUNGE_ATTR_NORET
 static inline void interpreter_main_loop(void)
 {
+#ifdef AFL_FUZZ_TESTING
+	long iterations = 1000;
+#endif
 #ifdef CONCURRENT_FUNGE
 	while (true) {
 		ssize_t i = IPList->top;
+#    ifdef AFL_FUZZ_TESTING
+		long thread_iterations = 1000;
+		// Give up after too many instructions
+		if (!iterations--)
+			exit(123);
+#    endif
 		while (i >= 0) {
 			bool retval;
 			funge_cell opcode;
+#    ifdef AFL_FUZZ_TESTING
+			if (!thread_iterations--)
+				exit(123);
+#    endif
 
 #    ifdef LARGE_IPLIST
 			opcode = fungespace_get(&IPList->ips[i]->position);
@@ -627,7 +657,11 @@ static inline void interpreter_main_loop(void)
 #else /* CONCURRENT_FUNGE */
 	while (true) {
 		funge_cell opcode;
-
+#    ifdef AFL_FUZZ_TESTING
+		// Give up after too many instructions
+		if (!iterations--)
+			exit(123);
+#    endif
 		opcode = fungespace_get(&IP->position);
 #    ifndef DISABLE_TRACE
 		if (FUNGE_UNLIKELY(setting_trace_level != 0)) {

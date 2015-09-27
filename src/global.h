@@ -315,7 +315,10 @@ typedef uint32_t funge_unsigned_cell;
 /// Since there may be no API changes between versions we also define this.
 #define CFUNGE_API_VERSION 3
 
-// Define if you use fuzz testing script.
+// Define if you use the bundled fuzz testing script.
 //#define FUZZ_TESTING
+
+// Define if you use AFL (american fuzzy lop) for fuzz testing.
+//#define AFL_FUZZ_TESTING
 
 #endif

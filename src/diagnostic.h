@@ -44,7 +44,7 @@
 /// For internal use in this header only.
 #define DIAG_SOURCELOC "[" __FILE__ ":" FUNGE_CPP_STRINGIFY(__LINE__) "]"
 
-#ifndef FUZZ_TESTING
+#if !defined(FUZZ_TESTING) && !defined(AFL_FUZZ_TESTING)
 /// Print location in code, out of memory, message and abort().
 #define DIAG_OOM(m_reason) \
 	do { \

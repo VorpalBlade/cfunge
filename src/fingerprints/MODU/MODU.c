@@ -38,7 +38,9 @@ static void finger_MODU_signed_result(instructionPointer * ip)
 	funge_cell x, y;
 	y = stack_pop(ip->stack);
 	x = stack_pop(ip->stack);
-	if (y) {
+	if (x == FUNGECELL_MIN && y == -1) {
+		stack_push(ip->stack, 0);
+	} else if (y) {
 		stack_push(ip->stack, x - floordiv(x, y) * y);
 	} else {
 		stack_push(ip->stack, 0);
@@ -50,7 +52,9 @@ static void finger_MODU_unsigned_result(instructionPointer * ip)
 	funge_cell x, y;
 	y = stack_pop(ip->stack);
 	x = stack_pop(ip->stack);
-	if (y) {
+	if (x == FUNGECELL_MIN && y == -1) {
+		stack_push(ip->stack, 0);
+	} else if (y) {
 		stack_push(ip->stack, ABS(x % y));
 	} else {
 		stack_push(ip->stack, 0);
@@ -63,7 +67,9 @@ static void finger_MODU_remainder(instructionPointer * ip)
 	funge_cell x, y;
 	y = stack_pop(ip->stack);
 	x = stack_pop(ip->stack);
-	if (y) {
+	if (x == FUNGECELL_MIN && y == -1) {
+		stack_push(ip->stack, 0);
+	} else if (y) {
 		// Well that's easy, this *is* C.
 		stack_push(ip->stack, x % y);
 	} else {

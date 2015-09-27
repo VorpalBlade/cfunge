@@ -25,6 +25,10 @@
 
 #include "diagnostic.h"
 
+#if defined(CFUN_KLEE_TEST) || defined(AFL_FUZZ_TESTING)
+#  undef HAVE_arc4random_buf
+#endif
+
 #ifdef HAVE_arc4random_buf
 #  define HAVE_ARC4RANDOM
 #  ifndef ARC4RANDOM_IN_BSD
@@ -57,7 +61,7 @@ typedef unsigned char u_char;
 #ifndef HAVE_ARC4RANDOM
 static void setup_libc_random(void)
 {
-#if defined(CFUN_KLEE_TEST)
+#if defined(CFUN_KLEE_TEST) || defined(AFL_FUZZ_TESTING)
 	// Make klee tests deterministic.
 	srandom(4);
 #elif defined(HAVE_clock_gettime)

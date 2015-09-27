@@ -23,6 +23,7 @@
 
 #if !defined(CFUN_NO_FLOATS)
 #include "../../stack.h"
+#include "../../division.h"
 
 #include <math.h>
 
@@ -51,13 +52,8 @@ static void finger_CPLI_div(instructionPointer * ip)
 	ai = stack_pop(ip->stack);
 	ar = stack_pop(ip->stack);
 	denom = bi * bi + br * br;
-	if (denom != 0) {
-		stack_push(ip->stack, (ai * bi + ar * br) / denom);
-		stack_push(ip->stack, (ai * br - ar * bi) / denom);
-	} else {
-		stack_push(ip->stack, 0);
-		stack_push(ip->stack, 0);
-	}
+	stack_push(ip->stack, funge_division(ai * bi + ar * br, denom));
+	stack_push(ip->stack, funge_division(ai * br - ar * bi, denom));
 }
 
 /// M - mul
