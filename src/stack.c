@@ -102,9 +102,17 @@ static inline void stack_prealloc_space(funge_stack * restrict stack, size_t min
 {
 	if ((stack->top + minfree) >= stack->size) {
 		size_t newsize = stack->size + minfree;
+		size_t allocation_size;
 		// Round upwards to whole ALLOCSIZE_STACK sized blocks.
 		newsize += ALLOCSIZE_STACK - (newsize % ALLOCSIZE_STACK);
-		stack->entries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
+
+		// Guard against overflow.
+		allocation_size = newsize * sizeof(funge_cell);
+		if (FUNGE_UNLIKELY(allocation_size < newsize))
+		{
+			stack_oom();
+		}
+		stack->entries = (funge_cell*)realloc(stack->entries, allocation_size);
 		if (FUNGE_UNLIKELY(!stack->entries)) {
 			stack_oom();
 		}
@@ -465,10 +473,18 @@ static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, 
 	paranoid_assert(stack != NULL);
 	if ((stack->top + minfree) >= stack->size) {
 		size_t newsize = stack->size + minfree;
+		size_t allocation_size;
 		funge_cell* newentries;
 		// Round upwards to whole ALLOCSIZE_STACKed blocks.
 		newsize += ALLOCSIZE_STACK - (newsize % ALLOCSIZE_STACK);
-		newentries = (funge_cell*)realloc(stack->entries, newsize * sizeof(funge_cell));
+		
+		// Guard against overflow.
+		allocation_size = newsize * sizeof(funge_cell);
+		if (FUNGE_UNLIKELY(allocation_size < newsize))
+		{
+			return false;
+		}
+		newentries = (funge_cell*)realloc(stack->entries, allocation_size);
 		if (FUNGE_UNLIKELY(!newentries)) {
 			return false;
 		}
