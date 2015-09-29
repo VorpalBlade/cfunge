@@ -308,9 +308,9 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 			}
 			case 'k':
 #ifdef CONCURRENT_FUNGE
-				run_iterate(ip, &IPList, threadindex, false);
+				run_iterate(ip, &IPList, threadindex);
 #else
-				run_iterate(ip, false);
+				run_iterate(ip);
 #endif
 				break;
 

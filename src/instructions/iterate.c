@@ -28,11 +28,23 @@
 #include "../ip.h"
 #include "../settings.h"
 
+#ifdef AFL_FUZZ_TESTING
+#  ifdef CONCURRENT_FUNGE
+#    define RUNSELF() run_iterate_implement(ip, IPList, threadindex, true, maxRecursion-1)
+#  else
+#    define RUNSELF() run_iterate_implement(ip, true, maxRecursion-1)
+#  endif
+#else
+#  ifdef CONCURRENT_FUNGE
+#    define RUNSELF() run_iterate_implement(ip, IPList, threadindex, true)
+#  else
+#    define RUNSELF() run_iterate_implement(ip, true)
+#  endif
+#endif
+
 #ifdef CONCURRENT_FUNGE
-#  define RUNSELF() run_iterate(ip, IPList, threadindex, true)
 #  define RUNINSTR() execute_instruction(kInstr, ip, threadindex)
 #else
-#  define RUNSELF() run_iterate(ip, true)
 #  define RUNINSTR() execute_instruction(kInstr, ip)
 #endif
 
@@ -69,13 +81,40 @@ static inline funge_cell find_next_instr(instructionPointer * restrict ip, funge
 	return kInstr;
 }
 
-#ifdef CONCURRENT_FUNGE
-FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
+/**
+ * Implements the k instruction, prototype differ depending on if
+ * CONCURRENT_FUNGE is defined.
+ * @param ip Instruction pointer to operate on.
+ * @param IPList Pointer to IP list (only if CONCURRENT_FUNGE is defined).
+ * @param threadindex What index in IPList the IP we operate on is.
+ *                    (only if CONCURRENT_FUNGE is defined).
+ * @param isRecursive Should be false, only set to true by k itself when iterating over another k.
+ */
+#ifdef AFL_FUZZ_TESTING
+
+#  ifdef CONCURRENT_FUNGE
+static FUNGE_ATTR_FAST void run_iterate_implement(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive, long maxRecursion)
+#  else
+static FUNGE_ATTR_FAST void run_iterate_implement(instructionPointer * restrict ip, bool isRecursive, long maxRecursion)
+#  endif
+
 #else
-FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecursive)
+
+#  ifdef CONCURRENT_FUNGE
+static FUNGE_ATTR_FAST void run_iterate_implement(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex, bool isRecursive)
+#  else
+static FUNGE_ATTR_FAST void run_iterate_implement(instructionPointer * restrict ip, bool isRecursive)
+#  endif
+
 #endif
 {
 	funge_cell iters = stack_pop(ip->stack);
+	#ifdef AFL_FUZZ_TESTING
+	if (maxRecursion == 0)
+		exit(123);
+	if (iters > 600)
+		iters = 600;
+	#endif
 	if (iters == 0) {
 		funge_cell kInstr;
 		// Skip past next instruction.
@@ -195,3 +234,29 @@ FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, bool isRecurs
 		}
 	}
 }
+
+#ifdef AFL_FUZZ_TESTING
+#  ifdef CONCURRENT_FUNGE
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
+{
+	run_iterate_implement(ip, IPList, threadindex, false, 5);
+}
+#  else
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip)
+{
+	run_iterate_implement(ip, false, 5);
+}
+#  endif
+#else
+#  ifdef CONCURRENT_FUNGE
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip, ipList ** IPList, ssize_t * restrict threadindex)
+{
+	run_iterate_implement(ip, IPList, threadindex, false);
+}
+#  else
+FUNGE_ATTR_FAST void run_iterate(instructionPointer * restrict ip)
+{
+	run_iterate_implement(ip, false);
+}
+#  endif
+#endif
