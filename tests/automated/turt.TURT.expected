@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with cfunge (https://github.com/VorpalBlade/cfunge) -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" baseProfile="full" version="1.1" viewBox="-1 -6 32 12"><defs><style type="text/css">path{fill:none;stroke-width:0.5px;stroke-linecap:round;stroke-linejoin:round}</style></defs><rect height="12" style="fill:#0000ff;stroke:none" width="32" x="-1" y="-6"></rect><path d="M0,0 L9,0 M11,0 L25,0 " style="stroke:#000000"></path><path d="M25,0 L25,5 " style="stroke:#ff0001"></path><path d="M25,5 L30,5 " style="stroke:#000000"></path><circle cx="25" cy="-5" fill="#000000" r="0.25"></circle><circle cx="0" cy="-5" fill="#00f000" r="0.25"></circle></svg>

@@ -1,0 +1,661 @@
+0 1 2 3 4 5 6 7 
+GOOD: , works
+GOOD: : duplicates
+GOOD: empty stack pops zero
+GOOD: 2-2 = 0
+GOOD: | works
+GOOD: 0! = 1
+GOOD: 7! = 0
+GOOD: 8*0 = 0
+GOOD: # < jumps into <
+GOOD: \ swaps
+GOOD: 01` = 0
+GOOD: 10` = 1
+GOOD: 900pg gets 9
+GOOD: p modifies space
+Befunge-98 detected.
+GOOD: wraparound works
+GOOD: a pushes 10
+GOOD: b-f push 11-15
+GOOD: [ turns left
+GOOD: ] turns right
+GOOD: instructions between ; are skipped
+UNDEF: # across left edge hits easternmost cell in file
+UNDEF: # across left edge hits easternmost cell on line
+GOOD: 0k^ doesn't execute ^
+GOOD: 1k[ turns left from k
+GOOD: 4k # jumps 4 times from k
+GOOD: 2k ;;;5 executes 5 thrice
+GOOD: 2k# jumps twice from k
+GOOD: ak47k$ leaves 3 fours on stack
+GOOD: 2k6 leaves 3 sixes on stack
+GOOD: putting to and getting (-3 -2) worked, assuming working negative Funge-Space
+GOOD: 9 / 2 = 4
+GOOD: 9 % 2 = 1
+About to test division by zero...
+GOOD: 1 / 0 = 0
+GOOD: 1 % 0 = 0
+GOOD: SGML spaces
+GOOD: n clears 15-cell stack: assuming it works
+GOOD: r reflects
+GOOD: 21w turns right
+GOOD: ' pushes 20
+GOOD: 'vs^ goes through
+GOOD: 'vs places v
+GOOD: z doesn't reflect
+GOOD: 3j jumps over 3 cells
+GOOD: 04-j jumps backward the right number of cells
+GOOD: 1j ^ jumps into ^
+GOOD: 10x goes east
+GOOD: 1-1x goes southwest
+GOOD: 32x sets delta to (3, 2)
+Assuming we can trust x...
+GOOD: wraparound with non-cardinal delta appears to work
+GOOD: { transfers cells correctly
+GOOD: { sets storage offset correctly, and p uses it
+GOOD: } resets storage offset
+GOOD: } transfers cells correctly
+GOOD: { with negative argument works
+GOOD: } with negative argument works
+GOOD: } reflects when stack stack has only one stack
+GOOD: u reflects when stack stack has only one stack
+GOOD: u with zero count does nothing
+GOOD: u with a positive count transfers cells correctly
+GOOD: u with a negative count transfers cells correctly
+y claims all of the following:
+	That t is implemented
+	That i is implemented
+	That o is implemented
+	That = is implemented
+	That buffered I/O is being used
+	That the number of bytes per cell is 8 
+	That the interpreter's handprint is 1128682830 
+	That the interpreter's version is 90 
+	That the behaviour of = is equivalent to C system()
+	That the system's path separator is /
+	That this Funge has 2 dimensions
+	That the ID of the current IP is 0 
+	That the team number of the current IP is 0 
+	That the position of the IP was ( 64 89 )
+	That the delta of the IP was ( -1 0 )
+	That the offset of the IP was ( 0 0 )
+	That the least point containing a non-space cell is ( -3 -2 )
+	That the greatest point, relative to that point, is ( 183 911 )
+	That the day of the month is # 
+	That the month is # 
+	That the year is # 
+	That the time is # : # : # 
+	That the size of the stack stack is 1 
+	That the stack sizes are [ 0 ] from top to bottom
+	That the command-line arguments were: [ "mycology.b98" ]
+	That the environment variables are:
+		TEST_ENV=test
+Best that the above claims are manually verified to be correct.
+GOOD: 1y works
+GOOD: 5y works
+GOOD: dy works
+GOOD: 1y and 5y do not disagree about =
+No reliable cross-platform method of testing: assume = works
+Loaded 'mycorand.bf' with i.
+If an infinite loop occurs or the program terminates afterward, most likely either an instruction was overwritten with a space character or one of ?p{ are exhibiting incorrect behaviour.
+
+GOOD: i pushed correct Va (60, 119)
+GOOD: i pushed correct Vb (90, 16)
+Entering MycoRand...
+
+The directions were generated in the order ####
+? was met # times
+
+Successfully exited MycoRand. Rerun a few times to ensure ? works.
+GOOD: i works in text mode
+Opening mycotmp0.tmp... failed.
+Trying to write to it with o...
+Wrote to mycotmp0.tmp with o.
+Reading back with i...
+GOOD: read written data to (-10, -10)
+GOOD: (-8, -9) is @
+GOOD: read data in binary mode to (-10, -10)
+GOOD: (0, -10) is 13 
+Wrote to mycotmp0.tmp with o in linear text mode.
+GOOD: o removed space prior to newline
+UNDEF: o doesn't remove spaces prior to newline-valued cells
+UNDEF: o didn't write EOL to EOF
+
+1y says this is Concurrent Funge-98
+
+Going to test concurrent execution with 2 IPs.
+Assuming that instructions without any particular concurrency-related behaviour, such as ^>v<#, take one tick.
+Will continue to produce textual output, so strings must work correctly where concurrency is concerned: "a b" should take 5 ticks, 'a should take 1.
+
+GOOD: basic concurrency seems to work
+GOOD: reflected IP copied stack
+Parent IP: ID 0 
+Child IP: ID 1 
+GOOD: child IP executed before parent IP
+GOOD: single space takes 0 ticks
+GOOD: multiple spaces take 0 ticks
+GOOD: z takes 1 tick
+GOOD: jumping over code with ; takes 0 ticks
+GOOD: 5kz takes 3 ticks
+GOOD: "a  b" takes 5 ticks
+
+Done testing concurrent execution.
+
+GOOD: y acts as pick instruction if given large enough argument
+GOOD: ] turns flying IP right
+GOOD: : on empty stack makes stack size 2 according to y
+GOOD: \ on empty stack makes stack size 2 according to y
+
+GOOD: ( pops correctly
+GOOD: ) pops correctly
+
+Here's how your interpreter deals with some possibilities unmentioned in the specification...
+UNDEF: k with a negative argument reflects
+UNDEF: the empty string wrapped around the edge of space contains 1 character(s) (hopefully spaces)
+UNDEF: ( with a negative count reflects and pops 0 times or less than the absolute value of the count
+UNDEF: ) with a negative count reflects and pops 0 times or less than the absolute value of the count
+
+GOOD: null byte in string and zero compare as equal
+GOOD: ' followed by a byte greater than 127 works
+GOOD: form feed does not appear to exist in Funge-Space
+GOOD: y reports shrunk bounds correctly after spacing top-left corner
+GOOD: y reports shrunk bounds correctly after spacing right edge
+GOOD: y reports shrunk bounds correctly after spacing bottom edge
+
+The Befunge-98 core has been completely tested.
+Moving on to fingerprints.
+A line (consider it UNDEF, though not marked as such) will be emitted for each fingerprint tested for, whether or not the interpreter supports it.
+If the interpreter loads the fingerprint, subsequent lines will be GOOD or BAD depending on whether the interpreter behaves according to the fingerprint's specification.
+Fingerprints will be unloaded after being tested. If ) does not work, it will fail silently.
+
+Testing fingerprint NULL... loaded.
+GOOD: all of A-Z reflected
+
+Testing fingerprint HRTI... loaded.
+UNDEF: G gives clock granularity as 1 microseconds
+GOOD: T reflected when called before M
+UNDEF: S pushed # 
+UNDEF: T after M pushed # and a second T, after # ys, pushed # 
+GOOD: ET reflected
+
+Testing fingerprint MODE... not loaded.
+Testing fingerprint MODU... loaded.
+GOOD: a04-M pushes -2
+Assuming that "C-language integer remainder" refers to C99 C, it used to be undefined...
+GOOD: a04-R pushes 2
+GOOD: 0a-04-R pushes -2
+GOOD: 0a-04-U pushes 2
+
+Testing fingerprint ORTH... loaded.
+GOOD: 56A pushes 4
+GOOD: 56E pushes 3
+GOOD: 56O pushes 7
+GOOD: G works
+GOOD: P works
+GOOD: Cannot test S reliably. If this line begins with "GOOD: ", it worked.
+GOOD: X seems to work
+GOOD: Y seems to work
+GOOD: V changes dx correctly
+GOOD: W changes dy correctly
+GOOD: 0Z ramps
+GOOD: 1Z doesn't ramp
+
+Testing fingerprint PERL... loaded.
+UNDEF: S claims that Perl isn't already loaded
+UNDEF: 0"5-1" E pushed 52 
+Perl might not be installed, so it could be the (stringified) error code for not having found Perl, or then it should be 52, the ASCII value of 4.
+UNDEF: 0"5-1" I pushed 4 
+Again, it could be an error code or 4.
+
+Testing fingerprint REFC... loaded.
+UNDEF: 12R34R56R pushed the scalars [ 1 2 3 ]
+GOOD: D returned first vector
+GOOD: D returned second vector
+GOOD: D returned third vector
+GOOD: D returned first vector the second time
+
+Testing fingerprint ROMA... loaded.
+GOOD: I pushes 1 
+GOOD: V pushes 5 
+GOOD: X pushes 10 
+GOOD: L pushes 50 
+GOOD: C pushes 100 
+GOOD: D pushes 500 
+GOOD: M pushes 1000 
+
+Testing fingerprint TOYS... loaded.
+GOOD: A works
+UNDEF: 12B leaves stack as [ -1 3 ] (from top to bottom)
+GOOD: 3DDD is zero
+GOOD: IIDD is zero
+GOOD: 123456789abcdefE is 120
+GOOD: 112345P is 120
+GOOD: 882*1-N is -127
+GOOD: 64H is 96
+GOOD: b7*03-H is 9
+UNDEF: 0f-03-H is -2, meaning H did a signed right shift
+GOOD: C works as a basic copy
+GOOD: K works as a basic copy
+GOOD: M works as a basic move
+GOOD: V works as a basic move
+GOOD: overlapping copy with C works
+GOOD: overlapping copy with K works
+GOOD: overlapping move with M works
+GOOD: overlapping move with V works
+GOOD: S works
+UNDEF: F pops j after i
+GOOD: F works
+GOOD: G works
+GOOD: 1J moves itself south one row
+GOOD: 01-J moves itself north one row
+GOOD: 01-O moves its row one column to the west
+GOOD: 1O moves its row one column to the east
+GOOD: L gets left-hand space
+GOOD: L gets left-hand normal cell
+GOOD: R gets right-hand space
+GOOD: R gets right-hand normal cell
+GOOD: Q works
+GOOD: 00T goes right
+GOOD: 01T goes down
+UNDEF: 02T reflects
+GOOD: U transmuted into all of ><^v
+GOOD: 000p000W goes through
+GOOD: 000p100W waits indefinitely
+GOOD: 000p01-00W reflects
+GOOD: X works
+GOOD: Y works
+UNDEF: Z in Befunge reflects
+
+Testing fingerprint TURT... loaded.
+Cannot test TURT's drawing correctness in any way, both due to technical reasons and the fact that the precise results are undefined.
+Checked will be only that the instructions don't reflect and pop/push correctly.
+The resulting image should contain two dots diagonally adjacent to each other.
+GOOD: L pops correctly
+GOOD: R pops correctly
+GOOD: H pops correctly
+GOOD: F pops correctly
+GOOD: B pops correctly
+GOOD: P pops correctly
+GOOD: C pops correctly
+GOOD: N pops correctly
+GOOD: D pops correctly
+GOOD: T pops correctly
+GOOD: E pushed 1
+GOOD: A pushed 1
+GOOD: Q pushed (1, 1)
+UNDEF: U pushed, from top to bottom, [ 163839998 163839998 -163839998 -163839998 ]
+GOOD: I didn't push or pop (or cheated and pushed 1)
+
+Testing fingerprint BASE... loaded.
+UNDEF: B outputs 40 as 101000 
+UNDEF: H outputs 40 as 28 
+UNDEF: O outputs 40 as 50 
+UNDEF: N outputs 40 in base 0 as nothing: it reflected
+UNDEF: N outputs 40 in base 1 as 0000000000000000000000000000000000000000 
+UNDEF: N outputs 40 in base 2 as 101000 
+UNDEF: N outputs 40 in base 3 as 1111 
+UNDEF: N outputs 40 in base 4 as 220 
+UNDEF: N outputs 40 in base 5 as 130 
+UNDEF: N outputs 40 in base 6 as 104 
+UNDEF: N outputs 40 in base 7 as 55 
+UNDEF: N outputs 40 in base 8 as 50 
+UNDEF: N outputs 40 in base 9 as 44 
+UNDEF: N outputs 40 in base 10 as 40 
+UNDEF: N outputs 40 in base 11 as 37 
+UNDEF: N outputs 40 in base 12 as 34 
+UNDEF: N outputs 40 in base 13 as 31 
+UNDEF: N outputs 40 in base 14 as 2c 
+UNDEF: N outputs 40 in base 15 as 2a 
+UNDEF: N outputs 40 in base 16 as 28 
+UNDEF: N outputs 40 in base 17 as 26 
+UNDEF: N outputs 40 in base 18 as 24 
+UNDEF: N outputs 40 in base 19 as 22 
+UNDEF: N outputs 40 in base 20 as 20 
+UNDEF: N outputs 40 in base 21 as 1j 
+UNDEF: N outputs 40 in base 22 as 1i 
+UNDEF: N outputs 40 in base 23 as 1h 
+UNDEF: N outputs 40 in base 24 as 1g 
+UNDEF: N outputs 40 in base 25 as 1f 
+UNDEF: N outputs 40 in base 26 as 1e 
+UNDEF: N outputs 40 in base 27 as 1d 
+UNDEF: N outputs 40 in base 28 as 1c 
+UNDEF: N outputs 40 in base 29 as 1b 
+UNDEF: N outputs 40 in base 30 as 1a 
+UNDEF: N outputs 40 in base 31 as 19 
+UNDEF: N outputs 40 in base 32 as 18 
+UNDEF: N outputs 40 in base 33 as 17 
+UNDEF: N outputs 40 in base 34 as 16 
+UNDEF: N outputs 40 in base 35 as 15 
+UNDEF: N outputs 40 in base 36 as 14 
+UNDEF: N outputs 40 in base 37 as nothing: it reflected
+UNDEF: N outputs 40 in base 38 as nothing: it reflected
+UNDEF: N outputs 40 in base 39 as nothing: it reflected
+UNDEF: N outputs 40 in base 40 as nothing: it reflected
+
+Testing fingerprint CPLI... loaded.
+GOOD: ( 1+2i) + (3+4i) is ( 4+6i) according to A
+GOOD: ( 3+4i) - (2+ i) is ( 1+3i) according to S
+GOOD: ( 1+2i) * (3+4i) is (10-5i) according to M
+GOOD: (88-4i) / (9+4i) is ( 8-4i) according to D
+GOOD: 34V is 5
+UNDEF: abO outputs 10+11i 
+UNDEF: 0a-bO outputs -10+11i 
+UNDEF: a0b-O outputs 10-11i 
+UNDEF: 0a-0b-O outputs -10-11i 
+
+Testing fingerprint DATE... loaded.
+GOOD: C pushed [2131,08,31] given 2500000
+GOOD: C pushed [-9999,04,01] given -1930544
+GOOD: J pushes 98645 given [-4444,12,24]
+GOOD: J reflects given [0,0,0]
+GOOD: J pushes 990634 given [-2001,2,29]
+GOOD: J pushes -1119007 given [-7777,2,29]
+GOOD: A claims 2008-04-01 minus 32 days is 2008-02-29
+GOOD: D claims the number of days from 2008-04-01 to 2008-02-29 is -32
+GOOD: T claims the 366th day of 2008 is 2008-12-31
+GOOD: T reflects given day 400 of 2008
+GOOD: W claims 2008-08-14 was a Thursday
+GOOD: Y claims 2008-08-14 was the 227th day of the year
+GOOD: Y reflects given [0,1,1]
+GOOD: Y reflects given [1,0,1]
+GOOD: Y reflects given [1,1,0]
+GOOD: Y reflects given [2008,15,1]
+GOOD: Y reflects given [2008,1,32]
+
+Testing fingerprint DIRF... loaded.
+UNDEF: either C doesn't work or the 'mycodirf' directory doesn't exist
+GOOD: created 'mycodirf' with M
+GOOD: entered 'mycodirf' directory with C
+GOOD: left 'mycodirf' with a C to '..'
+GOOD: can't C into 'mycodirf' after R
+GOOD: created 'mycodirf' with M
+Removed 'mycodirf' with R.
+
+Testing fingerprint EVAR... not loaded.
+Testing fingerprint FILE... loaded.
+GOOD: couldn't open 'mycotemp.tmp' for reading with O
+GOOD: opened mycotemp.tmp' for writing with O
+GOOD: L pushed 0
+Put foo\nbar\nbaz with P.
+GOOD: L pushed 11
+GOOD: closed file with C
+GOOD: reopened file in append+read mode
+Sought to beginning of file with 00S.
+GOOD: G pushed correct line length
+GOOD: G read 'foo\n'
+GOOD: 7R read bar\nbaz
+GOOD: closed file with C
+GOOD: reopened file in truncate+read mode
+Wrote bar\nbaz with W.
+Sought to beginning of file with 20S107-S.
+GOOD: G pushed correct line length
+GOOD: G read 'bar\n'
+GOOD: G pushed correct line length
+GOOD: G read 'baz'
+GOOD: G pushed 2 zeroes
+GOOD: 1R reflected
+GOOD: closed file with C
+GOOD: deleted mycotemp.tmp with D
+GOOD: deleted mycotmp0.tmp with D
+
+Testing fingerprint FING... loaded.
+To test FING properly, we need another fingerprint. For its implementation simplicity, ROMA was chosen to be required.
+ROMA loaded.
+GOOD: 'X'AZ seems to have worked
+GOOD: after f7+0Z, A reflects
+GOOD: ff+0Z reflected
+GOOD: 0ff+Z reflected
+GOOD: after 'AY, A pushes 10
+GOOD: after 0Y, A reflected
+GOOD: after 0Y, A reflected
+GOOD: 'yY reflected
+ROMA unloaded.
+GOOD: after bc+0Z'V'BZ"ROMA"4), A pushes 10 and B pushes 5
+GOOD after 'A'BX, A pushes 5 and B pushes 10
+GOOD: after 02X, A reflected and C pushed 5
+GOOD: 'b'CX reflected
+GOOD: 'B'cX reflected
+GOOD: cleaned B with 'BY
+GOOD: cleaned C with 'CY
+
+Testing fingerprint FIXP... loaded.
+GOOD: b6A is 2
+GOOD: 93O is 11
+GOOD: c6X is 10
+GOOD: C says cos(35) is 0.8192 or 0.8191
+GOOD: I says sin(35) is 0.5736 or 0.5735
+GOOD: T says tan(35) is 0.7002
+GOOD: B says acos(1) is 0
+GOOD: B says acos(0) is 90
+GOOD: B says acos(-1) is 180
+GOOD: J says asin(0.3) is 17.4576
+UNDEF: 2aaaa****J pushes -9223372036854775808 
+GOOD: U says atan(2348.2368) is 89.9756
+UNDEF: called 3D # times and got [ # # # # # # # # # ]
+GOOD: 01-N is 1
+GOOD: 0S is 0
+GOOD: 2S is 1
+GOOD: 03-S is -1
+GOOD: 5V is 05-V
+GOOD: P says 16777216 * pi is 52707178 or 52707179
+GOOD: Q says sqrt(200) is 14
+GOOD: 23R is 8
+GOOD: 203-R is 0
+GOOD: 02-3R is -8
+GOOD: 02-03-R is 0
+GOOD: 02R is 0
+UNDEF: 002-R pushes -9223372036854775808 
+GOOD: 20R is 1
+GOOD: 02-0R is 1
+UNDEF: 00R pushes 1 
+
+Testing fingerprint FPSP... loaded.
+Because floating point equality is, with epsilons, too tricky, and without them, poorly defined, and because rounding with I is too inaccurate, results of calculations will be UNDEF. The precisely correct answer will follow, to 6 decimal places: the calculated result can be compared to it.
+
+UNDEF: cFP outputs 12.000000 
+UNDEF: 0"1234.567890"R results in 1234.567871 
+GOOD: 8FI is 8
+UNDEF: aFeFA results in 24.000000 (24)
+UNDEF: cF7FS results in 5.000000 (5)
+UNDEF: 6FaFM results in 60.000000 (60)
+UNDEF: ASMDF say 355/113 is 3.141593 (3.141593)
+UNDEF: D says 1/0 is inf (NaN or +infinity)
+UNDEF: D says -1/0 is -inf (NaN or -infinity)
+UNDEF: B says sin(4.2) is -0.871576 (-0.871576)
+UNDEF: C says cos(42) is -0.399985 (-0.399985)
+UNDEF: T says tan(-.42) is -0.446573 (-0.446573)
+UNDEF: E says asin(2) is nan (actually complex: NaN)
+UNDEF: H says acos(0) is 1.570796 (1.570796)
+UNDEF: G says atan(100) is 1.560797 (1.560797)
+UNDEF: K says ln(0) is -inf (-infinity)
+UNDEF: K says ln(1) is 0.000000 (0)
+UNDEF: K says ln(2) is 0.693147 (0.693147)
+UNDEF: L says log10(20) is 1.301030 (1.301030)
+UNDEF: X says exp(3) is 20.085537 (20.085537)
+UNDEF: N says -0 is -0.000000 (-0)
+UNDEF: V says abs(-15) is 15.000000 (15)
+UNDEF: Q says sqrt(8) is 2.828427 (2.828427)
+UNDEF: Y says pow(-8, 9) is -134217728.000000 (-134217728)
+UNDEF: Y says pow(2, -7) is 0.007812 (0.007813)
+
+Testing fingerprint FPDP... loaded.
+Because floating point equality is, with epsilons, too tricky, and without them, poorly defined, and because rounding with I is too inaccurate, results of calculations will be UNDEF. The precisely correct answer will follow, to 6 decimal places: the calculated result can be compared to it.
+
+UNDEF: cFP outputs 12.000000 
+UNDEF: 0"1234.567890"R results in 1234.567890 
+GOOD: 8FI is 8
+UNDEF: aFeFA results in 24.000000 (24)
+UNDEF: cF7FS results in 5.000000 (5)
+UNDEF: 6FaFM results in 60.000000 (60)
+UNDEF: ASMDF say 355/113 is 3.141593 (3.141593)
+UNDEF: D says 1/0 is inf (NaN or +infinity)
+UNDEF: D says -1/0 is -inf (NaN or -infinity)
+UNDEF: B says sin(4.2) is -0.871576 (-0.871576)
+UNDEF: C says cos(42) is -0.399985 (-0.399985)
+UNDEF: T says tan(-.42) is -0.446573 (-0.446573)
+UNDEF: E says asin(2) is nan (actually complex: NaN)
+UNDEF: H says acos(0) is 1.570796 (1.570796)
+UNDEF: G says atan(100) is 1.560797 (1.560797)
+UNDEF: K says ln(0) is -inf (-infinity)
+UNDEF: K says ln(1) is 0.000000 (0)
+UNDEF: K says ln(2) is 0.693147 (0.693147)
+UNDEF: L says log10(20) is 1.301030 (1.301030)
+UNDEF: X says exp(3) is 20.085537 (20.085537)
+UNDEF: N says -0 is -0.000000 (-0)
+UNDEF: V says abs(-15) is 15.000000 (15)
+UNDEF: Q says sqrt(8) is 2.828427 (2.828427)
+UNDEF: Y says pow(-8, 9) is -134217728.000000 (-134217728)
+UNDEF: Y says pow(2, -7) is 0.007812 (0.007813)
+
+Testing fingerprint 3DSP... loaded.
+Loaded and unloaded FPSP, assuming it and its F and P commands will work from now on...
+As with FPSP, all results will be printed as UNDEF, with the precisely correct result following.
+
+UNDEF: (1 2 3) + (4 5 6) with A = ( 5.000000 7.000000 9.000000 ), expected (5 7 9)
+UNDEF: (5 7 9) - (1 2 3) with B = ( 4.000000 5.000000 6.000000 ), expected (4 5 6)
+UNDEF: (1 2 3) x (4 5 6) with C = ( -3.000000 6.000000 -3.000000 ), expected (-3 6 -3)
+UNDEF: (1 2 3) * (4 5 6) with M = ( 4.000000 10.000000 18.000000 ), expected (4 10 18)
+UNDEF: (1 2 3) . (4 5 6) with D = 32.000000 (expected 32)
+UNDEF: N of (4 3 0) = ( 0.800000 0.600000 0.000000 ), expected (0.8 0.6 0)
+UNDEF: V of (9 6 3) = ( 3.000000 2.000000 ), expected (3 2)
+UNDEF: V of (7 8 0) = ( 7.000000 8.000000 ), expected (7 8)
+UNDEF: L of (2 3 6) = 7.000000 (expected 7)
+UNDEF: 5 * (1 2 3) with Z = ( 5.000000 10.000000 15.000000 ), expected (5 10 15)
+GOOD: U duplicated (1 2 3) correctly
+UNDEF: ((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)) . (1 2 3) with X = ( 18.000000 46.000000 74.000000 ), expected (18 46 74)
+UNDEF: R with axis 2 and angle 30 created (( 0.866025 0.000000 0.500000 0.000000 ) ( 0.000000 1.000000 0.000000 0.000000 ) ( -0.500000 0.000000 0.866025 0.000000 ) ( 0.000000 0.000000 0.000000 1.000000 )), expected ((0.866025 0 0.5 0) (0 1 0 0) (-0.5 0 0.866025 0) (0 0 0 1))
+UNDEF: S with (2 3 4) created (( 2.000000 0.000000 0.000000 0.000000 ) ( 0.000000 3.000000 0.000000 0.000000 ) ( 0.000000 0.000000 4.000000 0.000000 ) ( 0.000000 0.000000 0.000000 1.000000 )), expected ((2 0 0 0) (0 3 0 0) (0 0 4 0) (0 0 0 1))
+UNDEF: T with (2 3 4) created (( 1.000000 0.000000 0.000000 2.000000 ) ( 0.000000 1.000000 0.000000 3.000000 ) ( 0.000000 0.000000 1.000000 4.000000 ) ( 0.000000 0.000000 0.000000 1.000000 )), expected ((1 0 0 2) (0 1 0 3) (0 0 1 4) (0 0 0 1))
+UNDEF: ((1 2 3 4) (5 6 7 8) (9 10 11 12) (13 14 15 16)) . ((0 1 2 3) (4 5 6 7) (8 9 10 11) (12 13 14 15)) with Y = (( 80.000000 90.000000 100.000000 110.000000 ) ( 176.000000 202.000000 228.000000 254.000000 ) ( 272.000000 314.000000 356.000000 398.000000 ) ( 368.000000 426.000000 484.000000 542.000000 )), expected ((80 90 100 110) (176 202 228 254) (272 314 356 398) (368 426 484 542))
+GOOD: P duplicated ((0 1 2 3) (4 5 6 7) (8 9 10 11) (12 13 14 15)) correctly
+
+Testing fingerprint FRTH... loaded.
+GOOD: D after n is 0
+GOOD: y and D agree that stack size after y is 53 
+GOOD: L rolls value correctly
+GOOD: P picks value correctly
+GOOD: O overs value correctly
+GOOD: R rots value correctly
+
+Testing fingerprint IIPC... not loaded.
+Testing fingerprint IMAP... not loaded.
+Testing fingerprint INDV... loaded.
+GOOD: G works
+GOOD: P works
+GOOD: V uses logical order
+GOOD: W works
+GOOD: G applies storage offsets properly
+
+Testing fingerprint REXP... loaded.
+Testing a regular expressions engine is outside the scope of Mycology: will test only that the fingerprint's commands basically work.
+UNDEF: F before C didn't reflect
+GOOD: "$)\*)\]zr[aB.(\(\)\ooF(\^"2C did not reflect
+GOOD: "zab-rab oof"0E pushed correct match count 4
+GOOD: "zab-rab oof"0E pushed correct results "foo bar-baz", "foo", " bar-baz", and "-baz"
+GOOD: F didn't reflect
+UNDEF: second F didn't reflect
+GOOD: E after F reflected
+
+Testing fingerprint SOCK... loaded.
+Every instruction will, of course, be tested, but not in combination with every possible parameter.
+There are too many possible things that can be done, when combined with all the possible options and parameters for each instruction, to fully test everything.
+
+GOOD: Created a PF_INET, SOCK_STREAM TCP socket with S
+UNDEF: S pushed # 
+GOOD: set SO_REUSEADDR with O
+GOOD: bound to local port 51959 with B
+GOOD: set listening mode with backlog size 1 with L
+GOOD: created another socket with S
+UNDEF: S pushed # 
+GOOD: converted 127.0.0.1 for C with I
+UNDEF: I pushed 16777343 
+GOOD: connected to local port 51959 with C
+GOOD: accepted connection with A
+UNDEF: A pushed address # and port # 
+GOOD: A didn't overwrite original socket
+GOOD: closed original socket with K
+GOOD: sent "Foobar" with W
+GOOD: W pushed 6
+GOOD: closed socket with K
+GOOD: received data with R
+GOOD: R received correct data
+GOOD: R pushed 6
+GOOD: closed socket with K
+UNDEF: SCKE not included in SOCK
+
+Testing fingerprint SCKE... loaded.
+UNDEF: 0"1.0.0.721"H pushed 16777343 
+GOOD: P pushed 0 for socket without data
+GOOD: P pushed nonzero for socket with data
+
+Testing fingerprint STRN... loaded.
+GOOD: A works
+GOOD: C claims "foo" is greater than "Foo"
+GOOD: C claims "Bar" is less than "bar"
+GOOD: C claims "qUx" is equal to itself
+GOOD: F finds 'oba' in 'Foobar'
+GOOD: F pushes 0 on 'foo' in 'bar'
+GOOD: Cannot test D reliably. If this line begins with "GOOD: ", it worked.
+GOOD: G works
+GOOD: P works
+GOOD: "zaB"2L is "Ba"
+UNDEF: 00L leaves 0 on stack
+UNDEF: "ooF"01-L reflects
+GOOD: "zaB"2R is "az"
+UNDEF: 00R leaves 0 on stack
+UNDEF: "ooF"01-R reflects
+GOOD: "zaBraBooF"34M is "BarB"
+UNDEF: 000M leaves 0 on stack
+UNDEF: "ooF"101-M reflects
+UNDEF: "ooF"01-1M reflects
+UNDEF: "ooF"42M reflects
+UNDEF: "ooF"24M leaves "o" on stack
+GOOD: 0N is 0
+GOOD: "foo"N is 3
+GOOD: "0987654321"VS is 1234567890
+
+Testing fingerprint SUBR... loaded.
+GOOD: J worked
+GOOD: set mode with O
+GOOD: J worked
+GOOD: C worked
+GOOD: C transfers stack elements correctly
+GOOD: R worked
+GOOD: R transfers stack elements correctly
+GOOD: set mode with A
+GOOD: C worked
+GOOD: C transfers stack elements correctly
+GOOD: R worked
+GOOD: R transfers stack elements correctly
+
+Testing fingerprint TIME... loaded.
+UNDEF: YODHMS claim that the local time is (or was a few moments ago) # - # - #   # : # : # 
+UNDEF: YODHMS claim that the GMT   time is (or was a few moments ago) # - # - #   # : # : # 
+GOOD: L seems to work
+UNDEF: F claims that it is the 77 day of the year
+UNDEF: W claims that it is the 1 day of the week, starting from sunday
+
+Testing fingerprint JSTR... loaded.
+GOOD: P works
+GOOD: G works
+
+About to test detailed () behaviour with two fingerprints.
+MODU and ROMA were chosen for their simplicity (for implementers) and partially overlapping instruction set.
+Loaded ROMA, then MODU.
+GOOD: M has MODU semantics
+GOOD: CDILRUVX doesn't reflect
+Unloaded ROMA.
+GOOD: M has ROMA semantics
+GOOD: RU doesn't reflect
+GOOD: all of CDILVX reflected
+Unloaded MODU.
+GOOD: R and U reflected
+
+About to test, using ROMA, whether t copies the parent IP's loaded fingerprint semantics to the child IP.
+This is unmentioned in the specification, and thus is UNDEF.
+Loaded ROMA.
+Forked into child IP.
+UNDEF: IVXLCDM didn't reflect: child IP has ROMA loaded
+
+The Mycology Befunge-98 test suite is practically done.
+Trying to quit with q. If the return status is 15, consider it GOOD...

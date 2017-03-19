@@ -16,5 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(automated)
-add_subdirectory(mycology)
+# If the mycology sub module is checked out, run it.
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
+	add_test(
+		NAME mycology
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/mycology_runner.sh
+		        ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py
+		        $<TARGET_FILE:cfunge>
+		        ${CMAKE_CURRENT_SOURCE_DIR})
+endif()

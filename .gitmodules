@@ -1,0 +1,3 @@
+[submodule "tests/mycology/src"]
+	path = tests/mycology/src
+	url = https://github.com/Deewiant/Mycology

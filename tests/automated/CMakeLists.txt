@@ -17,11 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 function(cfunge_test test_name)
-
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name})
 	add_test(
 		NAME ${test_name}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name})
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name}
+		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name})
 endfunction()
 
 cfunge_test(bounds.b98)
@@ -44,4 +44,5 @@ cfunge_test(subr-test.b98)
 cfunge_test(sysinfo-pick.b98)
 cfunge_test(test-formfeed.b98)
 cfunge_test(turt.b98)
+cfunge_test(turt2.b98)
 cfunge_test(wrap.b98)

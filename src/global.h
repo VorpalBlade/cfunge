@@ -289,7 +289,7 @@ typedef uint32_t funge_unsigned_cell;
 #endif
 #ifndef FUNGE_NEW_HANDPRINT
 /// Funge-109 Handprint: An URL.
-#  define FUNGE_NEW_HANDPRINT "http://kuonet.org/~anmaster/cfunge"
+#  define FUNGE_NEW_HANDPRINT "https://github.com/VorpalBlade/cfunge"
 #endif
 #ifdef FUNGEHANDPRINT
 #  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"

@@ -529,7 +529,7 @@ static void finger_TURT_print_drawing(instructionPointer * ip)
 	}
 
 	fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n", file);
-	fputs("<!-- Created with cfunge (http://kuonet.org/~anmaster/cfunge/) -->\n", file);
+	fputs("<!-- Created with cfunge (https://github.com/VorpalBlade/cfunge) -->\n", file);
 	fputs("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n", file);
 
 	if (genxStartDocFile(gw, file) != GENX_SUCCESS) {
