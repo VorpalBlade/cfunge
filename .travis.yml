@@ -7,12 +7,14 @@ addons:
     sources:
       # Needed for newer CMake
       - george-edison55-precise-backports
+      # For newer python
+      - ubuntu-toolchain-r-test
     packages:
       - cmake
       - cmake-data
       - ninja-build
       - perl # For tests
-      - python3 # For tests
+      - python3.5 # For tests
 
 # Set up build matrix
 compiler:
