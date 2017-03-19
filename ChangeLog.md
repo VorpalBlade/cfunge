@@ -1,19 +1,12 @@
-ChangeLog
-=========
+# ChangeLog
 This is a overview of changes users may care about. Detailed changelog can be
-done using bzr (does not work in tarballs, you need a development checkout for this):
-  bzr log -rtag:tag.. --short
-Example (list changes compared to 0.1.0)
-  bzr log -rtag:0.1.0.. --short
-For more info:
-  bzr help log
-and
-  bzr help revisionspec
+displayed using git (does not work in tarballs, you need a development checkout
+for this).
 
 
-Development version (up to r883)
---------------------------------
+## Development version (up to r883)
 New features and improvements:
+
  * Added alternative IP list implementation, that stores pointers to the IPs
    instead. Useful for very large number (thousands) of IPs. This is now the
    default since the performance drop with a small number of threads is tiny
@@ -24,6 +17,7 @@ New features and improvements:
  * Made cfunge work with the PathScale EKOPath compiler.
 
 Changed features:
+
  * Dropped support for Boehm-GC. It was not well tested and manual memory
    management worked better.
  * Removed scaling of coordinates from TURT.
@@ -31,6 +25,7 @@ Changed features:
  * Improved fuzz testing script.
 
 Major bug fixes:
+
  * Fixed bugs in run_sys_info in stack_get_index that together caused
    incorrect behaviour for y picking of top of stack and for last 0 below
    env vars.
@@ -42,6 +37,7 @@ Major bug fixes:
  * Fixed several STRN functions truncating strings to unsigned chars.
 
 Minor bug fixes:
+
  * Fixed possible problem in FRTH for very large stack sizes (outside range
    of funge cells, but inside range of size_t).
  * Various small fixes for clang and ICC.
@@ -55,13 +51,14 @@ Minor bug fixes:
    fingerprints.
 
 Added fingerprints:
+
  * BOOL Logic Functions
 
 
-0.9.0
------
+## 0.9.0
 This is a bug fix release. The version number changed to 0.9.0 to reflect that
 cfunge is now reaching a stable version.
+
  * Bug fix: In a file with CR line endings and lines with leading spaces, the
    leading spaces were lost.
  * Bug fix: When j was used to jump backwads (negative argument) to a cell
@@ -72,13 +69,15 @@ cfunge is now reaching a stable version.
    tools/gen_fprint_list.sh. Fix and update man page to reflect.
 
 
-0.4.1
------
+## 0.4.1
 Major highlights:
+
  * cfunge can now track exact bounds for Funge Space (option at compile time).
  * Support for disabling some heavy parts of cfunge to reduce memory usage (see
    below for details).
+
 Other important changes since last release:
+
  * For exact bounds: Implement sparse bounds minimising when difference is huge.
  * Reworked sysinfo code, now less overhead and more reused results (from time()
    and fungespace_get_bounds_rect()).
@@ -116,12 +115,12 @@ Other important changes since last release:
    * Clean up CMakeLists.txt splitting some stuff out into separate files.
 
 
-0.4.0
------
+## 0.4.0
 This release add support for some more fingerprints, speed up execution quite
 a bit, and fixes several bugs. See details below.
 
 Important changes in this release:
+
  * cfunge now depend on cmake 2.6 (or later).
  * cfunge is now quite a bit faster thanks to many parts rewritten in a faster
    way. This includes:
@@ -147,8 +146,8 @@ Important changes in this release:
      * Annotate some branches as "probably not taken", this includes error paths
        for failed malloc() and such.
      * When looping over a block of the Funge-Space like:
-         for (x=0; x<maxx; x++)
-           for (y=0; y<maxy; y++)
+         `for (x=0; x<maxx; x++)
+            for (y=0; y<maxy; y++)`
        make sure the x-loop is the outermost loop in order to increase locality
        of reference in the static Funge-Space area (doesn't matter for the hash
        area outside that).
@@ -210,13 +209,15 @@ Important changes in this release:
  * List of fingerprints in man page is now auto generated.
 
 Added fingerprints:
+
  * DATE Date Functions
  * NCRS Ncurses Extension
 
 
-0.3.3
------
+## 0.3.3
+
 Major highlights:
+
  * Massively faster Funge-Space for the commonly used area. cfunge now uses a
    static array for the Funge-Space that most common programs use (a chunk
    around 0,0 that is).
@@ -236,6 +237,7 @@ Major highlights:
    places.
 
 Important changes in this release:
+
  * Fixed off by one in TIME.
  * Made STRN use the global input buffer.
  * Fixed alignment bugs in several of the test programs.
@@ -275,9 +277,10 @@ Important changes in this release:
    around 0,0 that is).
 
 
-0.3.2
------
+## 0.3.2
+
 Important changes in this release:
+
  * Fix small bug in K in SOCK causing the instruction to fail if the socket
    wasn't connected.
  * Add checks for some long double math.h functions that didn't exist on
@@ -286,9 +289,10 @@ Important changes in this release:
  * Update FING to match updated specs.
 
 
-0.3.1
------
+## 0.3.1
+
 Important changes in this release:
+
  * Code now use memcpy() to copy IP for t, then deep copy of the remaining
    elements.
  * Fixed crash with nested k instructions on t.
@@ -304,13 +308,15 @@ Important changes in this release:
  * When using GC do not use ec (extensible cords). It caused segfault...
 
 Added fingerprints:
+
  * SCKE TCP/IP async socket and dns resolving extension
  * SOCK TCP/IP socket extension
 
 
-0.3.0
------
+## 0.3.0
+
 Important changes in this release:
+
  * Fixed a few bugs in loading code.
  * Added support for showing top 5 elements on the stack when tracing.
  * Fixed several bugs in StackPreallocSpace() that resulted in crashes later on.
@@ -347,6 +353,7 @@ Important changes in this release:
    * FUNGEDATA*PRI for printf renamed to FUNGECELL*PRI.
 
 Added fingerprints:
+
  * 3DSP 3D space manipulation extension
  * FING Operate on single fingerprint semantics
  * FRTH Some common forth commands
@@ -355,6 +362,7 @@ Added fingerprints:
  * TERM Terminal control functions
 
 Changes to fingerprints:
+
  * Fixed many bugs in TURT.
  * FILE got extended with the instruction D, added it.
  * Removed PNTR, it was a deprecated alias for INDV.
@@ -364,15 +372,17 @@ Changes to fingerprints:
 There was no 0.2.1, it got turned into 0.3.0.
 
 
-0.2.1-pre2
-----------
+## 0.2.1-pre2
+
 Important changes in this release:
+
  * Speedup in pushing strings on stack.
  * Aliases for fingerprints supported (spec fileformat changed).
  * Added doxygen documentation for API exposed to fingerprints.
  * To help C-INTERCAL add a FungeSpaceLoadString()
 
 Added fingerprints:
+
  * FILE File I/O functions
  * INDV Pointer functions
  * JSTR Read and write strings in Funge-Space
@@ -381,9 +391,10 @@ Added fingerprints:
  * TURT Simple Turtle Graphics Library
 
 
-0.2.1-pre1
-----------
+## 0.2.1-pre1
+
 Important changes in this release:
+
  * Support for the (optional) i, o and = instructions.
  * Internal API was cleaned up to be more consistent with itself.
  * Fix some places were cfunge wasn't 100% standard conforming.
@@ -394,6 +405,7 @@ Important changes in this release:
  * And some added fingerprints.
 
 Added fingerprints:
+
  * CPLI Complex Integer extension
  * FIXP Some useful math functions
  * FPDP Double precision floating point
@@ -403,12 +415,13 @@ Added fingerprints:
  * TOYS Funge-98 Standard Toys
 
 
-0.2.0
------
+## 0.2.0
+
 This release adds fingerprint support (along with several fingerprints),
 concurrency, a lot of bug fixes and implementing missing features.
 
 Added fingerprints:
+
  * BASE I/O for numbers in other bases
  * DIRF Directory functions extension (not available in sandbox mode)
  * MODU Modulo Arithmetic Extension
@@ -419,6 +432,6 @@ Added fingerprints:
  * SUBR Subroutine extension
 
 
-0.1.0
------
+## 0.1.0
+
 Initial release. Had basic support for what is required in Befunge98 standard.
