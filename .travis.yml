@@ -11,6 +11,8 @@ addons:
       - cmake
       - cmake-data
       - ninja-build
+      - perl # For tests
+      - python3 # For tests
 
 # Set up build matrix
 compiler:
@@ -24,3 +26,4 @@ script:
   - mkdir build && cd build
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G Ninja ..
   - ninja
+  - ctest --output-on-failure

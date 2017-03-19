@@ -18,7 +18,9 @@
 
 project(CFUNGE C)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
+
+enable_testing()
 
 mark_as_advanced(
 	CMAKE_BACKWARDS_COMPATIBILITY
@@ -457,6 +459,10 @@ if (NOT ${HELP2MAN} STREQUAL "HELP2MAN-NOTFOUND")
 	)
 endif ()
 
+
+################################################################################
+# Tests
+add_subdirectory(tests)
 
 
 ################################################################################

@@ -31,8 +31,8 @@ include(CheckIncludeFiles)
 
 macro(CFUNGE_REQUIRE_MULTIPLE_INCLUDES _files _name)
 	CHECK_INCLUDE_FILES("${_files}" "CFUNGE_CHECKMULTIINCLUDES_${_name}")
-	if (NOT "CFUNGE_CHECKMULTIINCLUDES_${_name}")
+	if (NOT CFUNGE_CHECKMULTIINCLUDES_${_name})
 		message(FATAL_ERROR
 		        "Your system seems to be missing one or several of the headers \"${_files}\" which are required by cfunge.")
-	endif (NOT "CFUNGE_CHECKMULTIINCLUDES_${_name}")
+	endif ()
 endmacro(CFUNGE_REQUIRE_MULTIPLE_INCLUDES)

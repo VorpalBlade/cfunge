@@ -30,8 +30,8 @@ include(CheckIncludeFile)
 
 macro(CFUNGE_REQUIRE_INCLUDE _name)
 	CHECK_INCLUDE_FILE(${_name} "CFUNGE_CHECKINCLUDE_${_name}")
-	if (NOT "CFUNGE_CHECKINCLUDE_${_name}")
+	if (NOT CFUNGE_CHECKINCLUDE_${_name})
 		message(FATAL_ERROR
 		        "Your system seems to be missing the header \"${_name}\" which is required by cfunge.")
-	endif (NOT "CFUNGE_CHECKINCLUDE_${_name}")
+	endif ()
 endmacro(CFUNGE_REQUIRE_INCLUDE)
