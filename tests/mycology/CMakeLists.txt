@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # If the mycology sub module is checked out, run it.
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mycology.b98")
 	add_test(
 		NAME mycology
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -25,4 +25,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src")
 		        ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py
 		        $<TARGET_FILE:cfunge>
 		        ${CMAKE_CURRENT_SOURCE_DIR})
+else()
+	message(WARNING "Mycology sub module missing, can not run mycology test.")
 endif()
