@@ -4,7 +4,11 @@ displayed using git (does not work in tarballs, you need a development checkout
 for this).
 
 
-## Development version (up to r883)
+## Development version (up to move to github)
+
+During the development of this release the project was migrated from bzr on
+launchpad to git on GitHub.
+
 New features and improvements:
 
  * Added alternative IP list implementation, that stores pointers to the IPs
@@ -22,7 +26,8 @@ Changed features:
    management worked better.
  * Removed scaling of coordinates from TURT.
  * Dropped inline asm since intrinsics work well on modern GCC and ICC.
- * Improved fuzz testing script.
+ * Improved fuzz testing script, and support for AFL fuzz testing.
+ * Show more of the stack while tracing.
 
 Major bug fixes:
 
@@ -35,6 +40,12 @@ Major bug fixes:
  * Fixed STRN G, it incorrectly subtracted 1 from string length when
    calling stack_push_string().
  * Fixed several STRN functions truncating strings to unsigned chars.
+ * Fixed bug in FILE causing a read of uninitialized memory when O (fopen) was
+   called with an invalid mode.
+ * Fix issue where using y for picking from stack would count from the wrong
+   end of the stack.
+ * Fix error handling of t (split).
+ * Fix s wrapping and add test for it.
 
 Minor bug fixes:
 
@@ -49,6 +60,10 @@ Minor bug fixes:
    char on them.
  * Add missing NULL pointer checks in code for i, o and = as well as in several
    fingerprints.
+ * Fix several memory leaks on malloc failure (out of memory).
+ * Fix pointer to out of scope buffer discovered with Coverity Scan.
+ * Fix crash on integer division of -2^63 / -1
+ * Fix some allocation size overflows in stack code.
 
 Added fingerprints:
 
@@ -56,6 +71,7 @@ Added fingerprints:
 
 
 ## 0.9.0
+
 This is a bug fix release. The version number changed to 0.9.0 to reflect that
 cfunge is now reaching a stable version.
 
@@ -70,6 +86,7 @@ cfunge is now reaching a stable version.
 
 
 ## 0.4.1
+
 Major highlights:
 
  * cfunge can now track exact bounds for Funge Space (option at compile time).
@@ -116,6 +133,7 @@ Other important changes since last release:
 
 
 ## 0.4.0
+
 This release add support for some more fingerprints, speed up execution quite
 a bit, and fixes several bugs. See details below.
 
