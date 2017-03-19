@@ -19,7 +19,7 @@ def cleanup():
     """Clean up output files from the test"""
     try:
         os.unlink('cfunge_TURT.svg')
-    except FileNotFoundError:
+    except OSError:
         pass
 
 
