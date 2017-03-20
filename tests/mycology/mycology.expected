@@ -632,8 +632,8 @@ Testing fingerprint TIME... loaded.
 UNDEF: YODHMS claim that the local time is (or was a few moments ago) # - # - #   # : # : # 
 UNDEF: YODHMS claim that the GMT   time is (or was a few moments ago) # - # - #   # : # : # 
 GOOD: L seems to work
-UNDEF: F claims that it is the 77 day of the year
-UNDEF: W claims that it is the 1 day of the week, starting from sunday
+UNDEF: F claims that it is the # day of the year
+UNDEF: W claims that it is the # day of the week, starting from sunday
 
 Testing fingerprint JSTR... loaded.
 GOOD: P works

@@ -12,4 +12,6 @@ exec \
 	sed '/UNDEF: T after M pushed /s/[0-9][0-9]*/#/g' | \
 	sed '/UNDEF: called 3D 9 times and got /s/[0-9] /# /g' | \
 	sed '/UNDEF: A pushed address /s/[0-9][0-9]*/#/g' | \
-	sed '/UNDEF: YODHMS claim that the /s/[0-9][0-9]*/#/g'
+	sed '/UNDEF: YODHMS claim that the /s/[0-9][0-9]*/#/g' | \
+	sed '/UNDEF: F claims that it is the/s/[0-9][0-9]*/#/g' | \
+	sed '/UNDEF: W claims that it is the/s/[0-9][0-9]*/#/g'
