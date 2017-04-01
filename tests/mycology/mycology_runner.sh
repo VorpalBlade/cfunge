@@ -4,8 +4,8 @@
 # $2 Path to cfunge
 # $3 Path to mycology directory (where this file resides)
 
-for i in "$3"/src/*.b98 "$3"/src/*.bf "$3/mycology.expected" "$3"/*.expected; do
-	cp "$i" .
-done
+cp "$3"/src/*.b98 "$3"/src/*.bf "$3"/*.expected .
 
-exec "$1" "$2" mycology.b98 "$3/mycology_output_filter.sh" --exit-code 15
+"$1" "$2" mycology.b98 "$3/mycology_output_filter.sh" --exit-code 15 || exit 1
+
+echo -e "1\nx\n7\n16\nabc\n" | "$1" "$2" mycouser.b98 || exit 1
