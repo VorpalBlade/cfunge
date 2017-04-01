@@ -36,6 +36,7 @@ script:
     ctest --output-on-failure
 
 after_success:
+  - |
     if [[ -f "${TRAVIS_BUILD_DIR}/.coverage_generated" ]]; then
       bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
     fi
