@@ -1,3 +1,8 @@
+coverage:
+  range: 60..100
+  round: down
+  precision: 5
+
 ignore:
   # Ignore external libraries
   - "lib/genx"

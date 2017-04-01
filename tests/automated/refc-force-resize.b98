@@ -1,0 +1,2 @@
+"CFER"4(v ; Forces cfunge to realloc the REFC list three times. Should not crash. ;
+        >  fkR @

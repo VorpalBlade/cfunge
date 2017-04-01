@@ -33,6 +33,9 @@ script:
     fi
     cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE CFLAGS="$EXTRA_CFLAGS" $EXTRA_FLAGS -G Ninja ..
     ninja
+    # For debugging purposes show details of cfunge:
+    ./cfunge -v
+    ./cfunge -f
     ctest --output-on-failure
     if [[ $? -eq 0 && -f "${TRAVIS_BUILD_DIR}/.coverage_generated" ]]; then
       ninja cfunge_coverage
