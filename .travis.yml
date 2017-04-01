@@ -39,7 +39,6 @@ script:
     fi
 
 after_success:
-  - cd build
   - |
     if [[ -f "${TRAVIS_BUILD_DIR}/.coverage_generated" ]]; then
       lcov --directory . --capture --output-file coverage.info # capture coverage info
