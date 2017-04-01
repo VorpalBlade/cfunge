@@ -14,4 +14,5 @@ exec \
 	sed '/UNDEF: A pushed address /s/[0-9][0-9]*/#/g' | \
 	sed '/UNDEF: YODHMS claim that the /s/[0-9][0-9]*/#/g' | \
 	sed '/UNDEF: F claims that it is the/s/[0-9][0-9]*/#/g' | \
-	sed '/UNDEF: W claims that it is the/s/[0-9][0-9]*/#/g'
+	sed '/UNDEF: W claims that it is the/s/[0-9][0-9]*/#/g' | \
+	sed '/UNDEF: G gives clock granularity as /s/[0-9][0-9]*/#/g'

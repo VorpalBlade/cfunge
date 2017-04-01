@@ -469,7 +469,7 @@ if (CFUNGE_ENABLE_COVERAGE)
 	include(CodeCoverage)
 	setup_target_for_coverage(cfunge_coverage ctest coverage)
 	add_dependencies(cfunge_coverage cfunge)
-	add_definitions(${CMAKE_C_FLAGS_COVERAGE})
+	add_definitions(${CMAKE_C_FLAGS_COVERAGE} -DCFUNGE_COVERAGE)
 	target_link_libraries(cfunge gcov)
 endif()
 

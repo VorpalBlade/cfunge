@@ -1,0 +1,8 @@
+Hi there:
+Second command
+Will run: exit 2
+
+Retval (should be 0): 0 
+
+Retval (should be 2): 2 
+GOOD: = pushed -2 on zero length string.

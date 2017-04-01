@@ -1,4 +1,4 @@
-< v ,a =  v# "echo 'Hi there (and now a ls):'; ls" 0
+< v ,a =  v# "echo 'Hi there:'; echo 'Second command'" 0
           > 0a"detcelfer =" >:#,_@
   > 0" :)0 eb dluohs( lavteR" >:#,_ $ . a,   v
 
