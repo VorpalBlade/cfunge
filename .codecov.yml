@@ -1,0 +1,3 @@
+ignore:
+  # Ignore external libraries
+  - "lib/genx"
