@@ -13,6 +13,7 @@ addons:
       - ninja-build
       - perl # For tests
       - python3 # For tests
+      - lcov # For coverage
 
 # Set up build matrix
 compiler:
@@ -24,6 +25,17 @@ env:
 
 script:
   - mkdir build && cd build
-  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G Ninja ..
-  - ninja
-  - ctest --output-on-failure
+  # Only build coverage for one variant
+  - |
+    if [[ $CC == gcc && $BUILD_TYPE == Debug ]]; then
+      touch "${TRAVIS_BUILD_DIR}/.coverage_generated"
+      EXTRA_FLAGS="-DCFUNGE_ENABLE_COVERAGE:BOOL=ON"
+    fi
+    cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE CFLAGS="$EXTRA_CFLAGS" $EXTRA_FLAGS -G Ninja ..
+    ninja
+    ctest --output-on-failure
+
+after_success:
+    if [[ -f "${TRAVIS_BUILD_DIR}/.coverage_generated" ]]; then
+      bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+    fi

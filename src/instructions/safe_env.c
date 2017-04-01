@@ -1,4 +1,4 @@
-/* ANSI-C code produced by gperf version 3.0.3 */
+/* ANSI-C code produced by gperf version 3.0.4 */
 /* Command-line: gperf safe_env.gperf  */
 /* Computed positions: -k'4,$' */
 
@@ -29,7 +29,6 @@
 #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
-#line 7 "safe_env.gperf"
 
 #include <string.h>
 #include <stdbool.h>
@@ -159,7 +158,6 @@ safe_in_word_set (register const char *str, register unsigned int len)
     }
   return 0;
 }
-#line 45 "safe_env.gperf"
 
 
 FUNGE_ATTR_FAST FUNGE_ATTR_PURE

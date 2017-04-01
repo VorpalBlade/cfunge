@@ -78,12 +78,12 @@ include(CheckIncludeFile)
 # Cfunge specific modules.
 include(CfungeCheckCflag)
 include(CfungeCheckFunction)
-include(CfungeRequireFunction)
-include(CfungeRequireInclude)
-include(CfungeRequireMultipleIncludes)
 include(CfungeCheckLibraryFunction)
 include(CfungeCheckLinkerFlag)
 include(CfungeCheckWarningFlags)
+include(CfungeRequireFunction)
+include(CfungeRequireInclude)
+include(CfungeRequireMultipleIncludes)
 include(CfungeSetBuildInfoFlags)
 include(MacroAddLinkFlags)
 
@@ -463,6 +463,15 @@ endif ()
 ################################################################################
 # Tests
 add_subdirectory(tests)
+
+option(CFUNGE_ENABLE_COVERAGE "Enable coverage build target" OFF)
+if (CFUNGE_ENABLE_COVERAGE)
+	include(CodeCoverage)
+	setup_target_for_coverage(cfunge_coverage ctest coverage)
+	add_dependencies(cfunge_coverage cfunge)
+	add_definitions(${CMAKE_C_FLAGS_COVERAGE})
+	target_link_libraries(cfunge gcov)
+endif()
 
 
 ################################################################################
