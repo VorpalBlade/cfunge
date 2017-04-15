@@ -1,0 +1,71 @@
+"ELIF"4(v ; Test error handling for FILE ;
+
+   Tests with invalid file handle
+
+        >     8 #vC na")eldnah dilavni( C :DAB"  >:#,_v
+v                >  na")eldnah dilavni( C :DOOG" >:#,_>
+
+>             8 #vG na")eldnah dilavni( G :DAB"  >:#,_v
+v                >  na")eldnah dilavni( G :DOOG" >:#,_>
+
+>             8 #vL na")eldnah dilavni( L :DAB"  >:#,_v
+v                >  na")eldnah dilavni( L :DOOG" >:#,_>
+
+>             8 #vP na")eldnah dilavni( P :DAB"  >:#,_v
+v                >  na")eldnah dilavni( P :DOOG" >:#,_>
+
+>             8 #vR na")eldnah dilavni( R :DAB"  >:#,_v
+v                >  na")eldnah dilavni( R :DOOG" >:#,_>
+
+>             8 #vS na")eldnah dilavni( S :DAB"  >:#,_v
+v                >  na")eldnah dilavni( S :DOOG" >:#,_>
+
+>             8 #vW na")eldnah dilavni( W :DAB"  >:#,_v
+v                >  na")eldnah dilavni( W :DOOG" >:#,_>
+
+   Tests with open file (write only)
+
+<v Ov#"file.test"0 1 -50 -50
+v> ; Store handle at (0,0) ; 00p
+    > na")1( deliaf O :DAB"  >:#,_@
+>v
+v> 00g 0d"a"P
+
+>           00g #vG na")ylno etirw( G :DAB"  >:#,_v
+v                >  na")ylno etirw( G :DOOG" >:#,_>
+
+>         00g 1 #vR na")ylno etirw( R :DAB"  >:#,_v
+v                >  na")ylno etirw( R :DOOG" >:#,_>
+
+>       00g 9 9 #vS na")1( S :DAB"  >:#,_v
+v                >  na")1( S :DOOG" >:#,_>
+
+   Close write only file, reopen read only
+
+<v Ov#"file.test"0 0 -50 -50  Cgn
+v> ; Store handle at (0,0) ; 00p
+    > na")2( deliaf O :DAB"  >:#,_@
+
+
+>           00g #vG na")ylno daer( G :DOOG"  >:#,_v
+v                >  na")ylno daer( G :DAB"   >:#,_>
+
+>        00g 5- #vR na")tnuoc evitagen( R :DAB"  >:#,_v
+v                >  na")tnuoc evitagen( R :DOOG" >:#,_>
+
+>     00g  0"a" #vP na")ylno daer( P :DAB"  >:#,_v
+v                >  na")ylno daer( P :DOOG" >:#,_>
+
+>     00g  6    #vW na")ylno daer( W :DAB"  >:#,_v
+v                >  na")ylno daer( W :DOOG" >:#,_>
+
+
+   Close read only file, delete it
+
+>ngCn"tset.elif"#vD na")1( D :DOOG"  >:#,_v
+v                >  na")1( D :DAB  " >:#,_>
+
+>      "hcuson" #vD na")elif hcuson( D :DAB"  >:#,_v
+v                >  na")elif hcuson( D :DOOG" >:#,_>
+
+>@
