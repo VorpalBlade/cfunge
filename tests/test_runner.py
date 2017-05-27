@@ -39,7 +39,7 @@ def compare_contents(name, expected, actual, test_filter):
                 raise
             ret_code = process.poll()
             if ret_code:
-                raise subprocess.CalledProcessError(retcode, process.args, output=filtered_actual)
+                raise subprocess.CalledProcessError(ret_code, process.args, output=filtered_actual)
     if expected == filtered_actual:
         return True
     else:

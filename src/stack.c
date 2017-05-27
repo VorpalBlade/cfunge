@@ -173,11 +173,9 @@ FUNGE_ATTR_FAST inline funge_cell stack_peek(const funge_stack * restrict stack)
 {
 	assert(stack != NULL);
 
-	if (stack->top == 0) {
+	if (stack->top == 0)
 		return 0;
-	} else {
-		return stack->entries[stack->top - 1];
-	}
+	return stack->entries[stack->top - 1];
 }
 
 
@@ -186,13 +184,11 @@ FUNGE_ATTR_FAST inline funge_cell stack_get_index(const funge_stack * restrict s
 	assert(stack != NULL);
 	assert(index > 0);
 
-	if (stack->top == 0) {
+	if (stack->top == 0)
 		return 0;
-	} else if (stack->top < index) {
+	if (stack->top < index)
 		return 0;
-	} else {
-		return stack->entries[index - 1];
-	}
+	return stack->entries[index - 1];
 }
 
 FUNGE_ATTR_FAST inline size_t stack_strlen(const funge_stack * restrict stack)

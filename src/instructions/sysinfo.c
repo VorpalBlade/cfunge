@@ -67,7 +67,7 @@ static funge_stack* restrict sysinfo_cache_stack = NULL;
 #define FUNGE_FLAGS_EXECUTE    0x08
 #define FUNGE_FLAGS_STD109     0x20
 
-#define FUNGE_FLAGS_NOTSANDBOX FUNGE_FLAGS_INPUT | FUNGE_FLAGS_OUTPUT | FUNGE_FLAGS_EXECUTE
+#define FUNGE_FLAGS_NOTSANDBOX (FUNGE_FLAGS_INPUT | FUNGE_FLAGS_OUTPUT | FUNGE_FLAGS_EXECUTE)
 
 #ifdef CONCURRENT_FUNGE
 #  define FUNGE_FLAGS_BASIC FUNGE_FLAGS_CONCURRENT
@@ -298,52 +298,52 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 		case 9: // TEAM ID
 			PUSH_REQ_9(pushStack);
 			break;
-		// Vector of current IP position (y component)
+			// Vector of current IP position (y component)
 		case 10:
 			stack_push(pushStack, ip->position.y);
 			break;
-		// Vector of current IP position (x component)
+			// Vector of current IP position (x component)
 		case 11:
 			stack_push(pushStack, ip->position.x);
 			break;
-		// Delta of current IP (y component)
+			// Delta of current IP (y component)
 		case 12:
 			stack_push(pushStack, ip->delta.y);
 			break;
-		// Delta of current IP (x component)
+			// Delta of current IP (x component)
 		case 13:
 			stack_push(pushStack, ip->delta.x);
 			break;
-		// Storage offset of current IP (y component)
+			// Storage offset of current IP (y component)
 		case 14:
 			stack_push(pushStack, ip->storageOffset.y);
 			break;
-		// Storage offset of current IP (x component)
+			// Storage offset of current IP (x component)
 		case 15:
 			stack_push(pushStack, ip->storageOffset.x);
 			break;
-		// Least point (y component)
+			// Least point (y component)
 		case 16: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
 			stack_push(pushStack, rect.y);
 			break;
 		}
-		// Least point (x component)
+			// Least point (x component)
 		case 17: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
 			stack_push(pushStack, rect.x);
 			break;
 		}
-		// Greatest point (y component)
+			// Greatest point (y component)
 		case 18: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
 			stack_push(pushStack, rect.h);
 			break;
 		}
-		// Greatest point (x component)
+			// Greatest point (x component)
 		case 19: {
 			fungeRect rect;
 			fungespace_get_bounds_rect(&rect);
@@ -386,10 +386,10 @@ void run_sys_info(instructionPointer *ip)
 	// Negative or 0: push all
 	if (request <= 0) {
 		push_all(ip, ip->stack);
-	// Simple to get single cell in this range
+		// Simple to get single cell in this range
 	} else if (request < 24) {
 		push_yval(request, ip, ip->stack);
-	// Large positive, hard to calculate in advance, or may even be pick.
+		// Large positive, hard to calculate in advance, or may even be pick.
 	} else {
 		if (FUNGE_UNLIKELY(!sysinfo_tmp_stack)) {
 			sysinfo_tmp_stack = stack_create();

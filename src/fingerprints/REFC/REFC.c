@@ -43,10 +43,9 @@ static void finger_REFC_reference(instructionPointer * ip)
 		if (newrefs == NULL) {
 			ip_reverse(ip);
 			return;
-		} else {
-			references = newrefs;
-			referencesSize += ALLOCCHUNK;
 		}
+		references = newrefs;
+		referencesSize += ALLOCCHUNK;
 	}
 	// TODO: Return same value for the same cell each time!
 	// Yes cell 0 will never be used, but that is a hack to prevent having

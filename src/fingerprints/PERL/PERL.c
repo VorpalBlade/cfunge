@@ -78,7 +78,6 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 			close(outfds[0]);
 			close(outfds[1]);
 			return NULL;
-			break;
 
 		case 0: {
 			// Child
@@ -113,7 +112,6 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 				DIAG_ERROR_FORMAT_LOC("Failed to run perl: %s", strerror(errno));
 			}
 			_Exit(2);
-			break;
 		}
 
 		default: {

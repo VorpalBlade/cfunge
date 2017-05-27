@@ -22,7 +22,7 @@ N	neg	negate
 P	print	output number
 Q	sqrt	square root
 R	fromascii	create float from ascii
-S	sub	substract
+S	sub	subtract
 T	tan	tan
 V	abs	absolute value
 X	exp	exp

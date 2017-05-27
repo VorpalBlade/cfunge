@@ -112,20 +112,20 @@ static inline ptrdiff_t parse_int(const char * restrict s,
 
 	for (i = 0; i <= length; i++) {
 		// Will it overflow?
-		if (result > (FUNGECELL_MAX / base)) {
+		if (result > (FUNGECELL_MAX / base))
 			break;
-		} else {
+		{
 			funge_cell tmp;
 			char c = s[i];
 			// Pointer into digits.
-			const char * p = strchr(digits, c);
+			const char *p = strchr(digits, c);
 			// Still a digit?
-			if (!p || ((p - digits) >= (ptrdiff_t)base))
+			if (!p || ((p - digits) >= (ptrdiff_t) base))
 				break;
 
-			tmp = (funge_cell)(p - digits);
+			tmp = (funge_cell) (p - digits);
 			// Break if it will overflow!
-			if ((result * base) > (FUNGECELL_MAX  - tmp))
+			if ((result * base) > (FUNGECELL_MAX - tmp))
 				break;
 			result = (result * base) + tmp;
 		}

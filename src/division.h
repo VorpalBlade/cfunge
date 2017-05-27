@@ -40,10 +40,9 @@ static inline funge_cell funge_division(funge_cell numerator, funge_cell denomin
 {
 	if (denominator == 0)
 		return 0;
-	else if (numerator == FUNGECELL_MIN && denominator == -1)
+	if (numerator == FUNGECELL_MIN && denominator == -1)
 		return FUNGECELL_MIN;
-	else
-		return numerator / denominator;
+	return numerator / denominator;
 }
 
 /**
@@ -57,10 +56,9 @@ static inline funge_cell funge_modulo(funge_cell numerator, funge_cell denominat
 {
 	if (denominator == 0)
 		return 0;
-	else if (numerator == FUNGECELL_MIN && denominator == -1)
+	if (numerator == FUNGECELL_MIN && denominator == -1)
 		return 0;
-	else
-		return numerator % denominator;
+	return numerator % denominator;
 }
 #endif
 

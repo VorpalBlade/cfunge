@@ -63,7 +63,6 @@ error:
 		stack_free_string(top);
 	if (bottom)
 		stack_free_string(bottom);
-	return;
 }
 
 /// C - Compare strings
@@ -214,11 +213,13 @@ static void finger_STRN_left(instructionPointer * ip)
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
-	} else if (n == 0) {
+	}
+	if (n == 0) {
 		stack_push(ip->stack, '\0');
 		stack_free_string(s);
 		return;
-	} else if (len < (size_t)n) {
+	}
+	if (len < (size_t)n) {
 		n = len;
 	}
 	stack_push(ip->stack, '\0');
@@ -239,7 +240,8 @@ static void finger_STRN_slice(instructionPointer * ip)
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
-	} else if (slen < (size_t)(p + n)) {
+	}
+	if (slen < (size_t)(p + n)) {
 		n = slen - p;
 	}
 	s[p + n] = '\0';
@@ -283,7 +285,8 @@ static void finger_STRN_right(instructionPointer * ip)
 		stack_free_string(s);
 		ip_reverse(ip);
 		return;
-	} else if (len < (size_t)n) {
+	}
+	if (len < (size_t)n) {
 		n = len;
 	}
 	stack_push_string_multibyte(ip->stack, s + (len - (size_t)n), (size_t)n);

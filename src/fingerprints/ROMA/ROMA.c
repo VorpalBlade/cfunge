@@ -26,7 +26,7 @@
 #define ROMAPUSH(x, y) \
 	static void finger_ROMA_push ## x (instructionPointer * ip) \
 	{ \
-		stack_push(ip->stack, (funge_cell)y); \
+		stack_push(ip->stack, (funge_cell)(y)); \
 	}
 
 ROMAPUSH(I, 1)

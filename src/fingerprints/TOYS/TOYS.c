@@ -167,7 +167,7 @@ static void finger_TOYS_fishhook(instructionPointer * ip)
 
 	if (!n)
 		return;
-	else if (n < 0) {
+	if (n < 0) {
 		for (funge_cell y = bounds.y; y <= (bounds.y + bounds.h); ++y)
 			fungespace_set(fungespace_get(vector_create_ref(ip->position.x, y)), vector_create_ref(ip->position.x, y + n));
 	} else if (n > 0) {
@@ -248,7 +248,7 @@ static void finger_TOYS_boulder(instructionPointer * ip)
 
 	if (!n)
 		return;
-	else if (n < 0) {
+	if (n < 0) {
 		for (funge_cell x = bounds.x; x <= (bounds.x + bounds.w); ++x)
 			fungespace_set(fungespace_get(vector_create_ref(x, ip->position.y)), vector_create_ref(x + n, ip->position.y));
 	} else if (n > 0) {

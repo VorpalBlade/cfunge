@@ -158,7 +158,7 @@ static inline void mulMatrices(const double a[restrict 16], const double b[restr
  * Fingerprint instructions *
  ****************************/
 
-/// A - Add two 3d vectors
+/// A - Add two 3D vectors
 static void finger_3DSP_add(instructionPointer * ip)
 {
 	double a[3], b[3];
@@ -171,7 +171,7 @@ static void finger_3DSP_add(instructionPointer * ip)
 	push_vec(ip, a);
 }
 
-/// B - Subtract two 3d vectors
+/// B - Subtract two 3D vectors
 static void finger_3DSP_sub(instructionPointer * ip)
 {
 	double a[3], b[3];
@@ -184,7 +184,7 @@ static void finger_3DSP_sub(instructionPointer * ip)
 	push_vec(ip, a);
 }
 
-/// C - Cross porduct of two vectors
+/// C - Cross product of two vectors
 static void finger_3DSP_cross(instructionPointer * ip)
 {
 	double a[3], b[3], c[3];
@@ -220,7 +220,7 @@ static void finger_3DSP_length(instructionPointer * ip)
 	push_float(ip, (float)vector_length(a));
 }
 
-/// M - Multiply two 3d vectors
+/// M - Multiply two 3D vectors
 static void finger_3DSP_mul(instructionPointer * ip)
 {
 	double a[3], b[3];
@@ -364,7 +364,7 @@ static void finger_3DSP_duplicate(instructionPointer * ip)
 	push_vec_float(ip, a);
 }
 
-/// V - Map 3d point to 2d view
+/// V - Map 3D point to 2D view
 static void finger_3DSP_map(instructionPointer * ip)
 {
 	double v[3];

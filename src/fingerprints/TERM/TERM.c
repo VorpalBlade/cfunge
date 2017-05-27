@@ -58,7 +58,7 @@
 
 static bool term_initialised = false;
 
-#define valid(s) ((s != 0) && s != (char *)-1)
+#define valid(s) (((s) != 0) && (s) != (char *)-1)
 
 /// C - Clear screen
 static void finger_TERM_clear_screen(FUNGE_ATTR_UNUSED instructionPointer * ip)
@@ -72,7 +72,8 @@ static void finger_TERM_go_down(instructionPointer * ip)
 	funge_cell n = stack_pop(ip->stack);
 	if (n == 0) {
 		return;
-	} else if (n < 0) {
+	}
+	if (n < 0) {
 		while (n++)
 			putp(cursor_up);
 	} else {
@@ -120,7 +121,8 @@ static void finger_TERM_go_up(instructionPointer * ip)
 	funge_cell n = stack_pop(ip->stack);
 	if (n == 0) {
 		return;
-	} else if (n < 0) {
+	}
+	if (n < 0) {
 		while (n++)
 			putp(cursor_down);
 	} else {

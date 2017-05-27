@@ -10,6 +10,6 @@ A	add	add
 D	div	divide
 M	mul	multiply
 O	out	output
-S	sub	substract
+S	sub	subtract
 V	abs	absolute value
 %end

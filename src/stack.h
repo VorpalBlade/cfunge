@@ -174,7 +174,7 @@ unsigned char * stack_pop_sized_string(funge_stack * restrict stack,
 #endif
 
 /// Clear all items from a stack.
-#define stack_clear(stack) { stack->top = 0; }
+#define stack_clear(stack) { (stack)->top = 0; }
 /**
  * Duplicate top element of the stack.
  */

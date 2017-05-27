@@ -32,7 +32,7 @@
 #include <sys/wait.h>
 
 // On empty string
-#define FUNGE_NOCOMMAND -2
+#define FUNGE_NOCOMMAND (-2)
 
 FUNGE_ATTR_FAST void run_system_execute(instructionPointer * restrict ip)
 {

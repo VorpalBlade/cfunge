@@ -29,10 +29,10 @@ static inline unsigned char pop_stack_spec(instructionPointer * ip)
 {
 	funge_cell n = stack_pop(ip->stack);
 	if (n < 0) return 0;
-	else if (n <= 25) return (unsigned char)((funge_cell)'A' + n);
-	else if (n < 'A') return 0;
-	else if (n <= 'Z') return (unsigned char)n;
-	else return 0;
+	if (n <= 25) return (unsigned char)((funge_cell)'A' + n);
+	if (n < 'A') return 0;
+	if (n <= 'Z') return (unsigned char)n;
+	return 0;
 }
 
 /// Used for pushing a reflect on stack.

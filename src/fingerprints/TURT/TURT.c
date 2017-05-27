@@ -68,8 +68,8 @@ typedef int32_t tc;
 // that limits our width to 32767.9999, hence the min and max values
 // we add a PADDING value to get nice viewBoxes for small drawings
 #define TURT_PADDING 1
-#define TURT_MIN -163839999 + TURT_PADDING
-#define TURT_MAX  163839999 - TURT_PADDING
+#define TURT_MIN (-163839999 + TURT_PADDING)
+#define TURT_MAX ( 163839999 - TURT_PADDING)
 
 #define TC_FMT "%"PRId32
 
@@ -419,8 +419,7 @@ static inline bool generate_paths(genxWriter gw)
 	genxAttribute g_style, g_d;
 	genxStatus status;
 	Path *p, *prev = NULL;
-	StringBuffer * sb;
-	char * path_data;
+	StringBuffer *sb;
 	size_t path_data_length;
 
 	p = pic.pathBeg;
@@ -431,9 +430,9 @@ static inline bool generate_paths(genxWriter gw)
 	if (!sb)
 		return false;
 	// Create elements.
-	g_path  = genxDeclareElement(gw, NULL, (constUtf8)"path", &status);
-	g_style = genxDeclareAttribute(gw, NULL, (constUtf8)"style", &status);
-	g_d     = genxDeclareAttribute(gw, NULL, (constUtf8)"d", &status);
+	g_path = genxDeclareElement(gw, NULL, (constUtf8) "path", &status);
+	g_style = genxDeclareAttribute(gw, NULL, (constUtf8) "style", &status);
+	g_d = genxDeclareAttribute(gw, NULL, (constUtf8) "d", &status);
 
 	assert((g_path != NULL) && (g_style != NULL) && (g_d != NULL));
 
@@ -455,22 +454,23 @@ static inline bool generate_paths(genxWriter gw)
 			print_point(sb, 'M', p->d.p.x, p->d.p.y);
 		}
 		if (p->next && (p->d.colour != p->next->d.colour)) {
-			path_data = stringbuffer_finish(sb, NULL);
+			char *path_data = stringbuffer_finish(sb, NULL);
 			sb = NULL;
 			generate_path(gw, p->d.colour, path_data, g_path, g_style, g_d);
 			// TODO: Should we free?
 			free(path_data);
-			path_data = NULL;
 		}
 		prev = p;
 		p = p->next;
 	}
 	// Final printout:
-	path_data = stringbuffer_finish(sb, &path_data_length);
-	if (path_data_length > 0) {
-		generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
+	{
+		char *path_data = stringbuffer_finish(sb, &path_data_length);
+		if (path_data_length > 0) {
+			generate_path(gw, prev->d.colour, path_data, g_path, g_style, g_d);
+		}
+		free(path_data);
 	}
-	free(path_data);
 	return true;
 }
 

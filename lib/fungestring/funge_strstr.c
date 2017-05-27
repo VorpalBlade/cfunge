@@ -32,7 +32,7 @@
 	(!funge_memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))        \
 	 && ((h_l) = (j) + (n_l)))
 #define CHECK_EOL (1)
-#define RET0_IF_0(a) if (!a) goto ret0
+#define RET0_IF_0(a) if (!(a)) goto ret0
 #include "funge_str-two-way.h"
 
 /* Return the first occurrence of NEEDLE in HAYSTACK.  Return HAYSTACK

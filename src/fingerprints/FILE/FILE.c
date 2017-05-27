@@ -133,7 +133,6 @@ static void finger_FILE_delete(instructionPointer * ip)
 	}
 
 	stack_free_string(filename);
-	return;
 }
 
 
@@ -319,7 +318,8 @@ static void finger_FILE_fread(instructionPointer * ip)
 	if (n <= 0) {
 		ip_reverse(ip);
 		return;
-	} else {
+	}
+	{
 		size_t bytes_read;
 		FILE * fp = handles[h]->file;
 		unsigned char * restrict buf = malloc((size_t)n * sizeof(unsigned char));
@@ -402,7 +402,8 @@ static void finger_FILE_fwrite(instructionPointer * ip)
 	if (n <= 0) {
 		ip_reverse(ip);
 		return;
-	} else {
+	}
+	{
 		FILE * fp = handles[h]->file;
 		funge_vector v = handles[h]->buffvect;
 		unsigned char * restrict buf = malloc((size_t)n * sizeof(unsigned char));

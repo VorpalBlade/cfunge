@@ -93,8 +93,8 @@
 typedef uint32_t ght_uint32_t;
 
 #ifdef GHT_USE_MACROS
-#  define ght_size(p_ht) (p_ht->i_items)
-#  define ght_table_size(p_ht) (p_ht->i_size)
+#  define ght_size(p_ht) ((p_ht)->i_items)
+#  define ght_table_size(p_ht) ((p_ht)->i_size)
 #endif
 
 // I hate the preprocessor
