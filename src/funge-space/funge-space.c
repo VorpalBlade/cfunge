@@ -138,18 +138,12 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
  * Logic to select SSE asm, intrinsics or pure C versions.
  *
  * FSPACE_CREATE_SSE      - SSE code.
- * FSPACE_CREATE_SSE_ASM  - Inline SSE asm for x86_64.
- * FSPACE_CREATE_SSE_INT  - SSE intrinsics.
- * FSPACE_ICC_INTRINSICS  - ICC SSE intrinsics.
- * FSPACE_GCC_INTRINSICS  - GCC SSE intrinsics.
+ * FSPACE_XMM_INTRINSICS  - Use xmmintrin.h intrinsics.
 
  */
 
 #undef FSPACE_CREATE_SSE
-#undef FSPACE_CREATE_SSE_ASM
-#undef FSPACE_CREATE_SSE_INT
-#undef FSPACE_ICC_INTRINSICS
-#undef FSPACE_GCC_INTRINSICS
+#undef FSPACE_XMM_INTRINSICS
 
 #ifdef CFUN_KLEE_TEST
 #  define CFUN_NO_SSE
@@ -162,23 +156,15 @@ static funge_unsigned_cell cfun_static_use_count_row[FUNGESPACE_STATIC_Y];
 #endif
 
 #ifdef FSPACE_CREATE_SSE
-#  ifdef CFUNGE_COMP_ICC
-#    define FSPACE_ICC_INTRINSICS
-#  else
-#    define FSPACE_GCC_INTRINSICS
-#  endif
+#  define FSPACE_XMM_INTRINSICS
 #endif
 
-// Handle ICC/GCC differences.
-#ifdef FSPACE_ICC_INTRINSICS
+#ifdef FSPACE_XMM_INTRINSICS
 #  include <xmmintrin.h>
 #endif
 
 #ifdef FSPACE_CREATE_SSE
 typedef int32_t v4si __attribute__((vector_size(16)));
-#  ifdef FSPACE_GCC_INTRINSICS
-typedef float v4sf __attribute__((vector_size(16)));
-#  endif
 #  ifdef USE32
 #    define FUNGESPACE_DATASIZE_STR "4"
 static const v4si fspace_vector_init = {0x20, 0x20, 0x20, 0x20};
@@ -210,28 +196,19 @@ bool fungespace_create(void)
 	// I'd rather go for the safe alternative.
 #ifdef FSPACE_CREATE_SSE
 	// Handle ICC
-#  ifdef FSPACE_ICC_INTRINSICS
-	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
-		// Cast to void to shut up warning about strict-aliasing rules.
-		_mm_stream_ps(((float*)(void*)&cfun_static_space) + i * 4,
-		              *((const __m128*)(const void*)&fspace_vector_init));
-	_mm_sfence();
-	// Handle other GCC compatible compilers.
-#  elif defined(FSPACE_GCC_INTRINSICS)
-	// Shut up a warning if we can, the cast below is safe
+#  ifdef FSPACE_XMM_INTRINSICS
 #    ifdef CFUNGE_COMP_GCC4_6_COMPAT
 #      pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #    endif
-	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++)
+	for (size_t i = 0; i < (sizeof(cfun_static_space) / 16); i++) {
 		// Cast to void to shut up warning about strict-aliasing rules.
-		__builtin_ia32_movntps(((float*)(void*)&cfun_static_space) + i * 4,
-		                       *((const v4sf*)(const void*)&fspace_vector_init));
-	__builtin_ia32_sfence();
+		_mm_stream_ps(((float*)(void*)&cfun_static_space) + i * 4,
+		              *((const __m128*)(const void*)&fspace_vector_init));
+	}
 #    ifdef CFUNGE_COMP_GCC4_6_COMPAT
 #      pragma GCC diagnostic pop
 #    endif
-#  else
-#    error "Unknown intrinsics selected. Should not happen."
+	_mm_sfence();
 #  endif
 #else
 	for (size_t i = 0; i < sizeof(cfun_static_space) / sizeof(funge_cell); i++)
@@ -331,7 +308,7 @@ largemodel_minimise(funge_cell * restrict max, funge_cell * restrict min,
 	// Now scan static array.
 	for (size_t i = 0; i < sarray_len; i++)
 		if (sarray[i] > 0) {
-			funge_cell value = i - sarray_off;
+			funge_cell value = (funge_cell)(i - sarray_off);
 			if (max_h < value) max_h = value;
 			if (min_h > value) min_h = value;
 		}
@@ -1070,9 +1047,9 @@ fungespace_save_to_file(const char         * restrict filename,
 			} while ((lastspace >= 0) && (string[lastspace] == ' '));
 
 			for (ssize_t i = 0; i <= lastspace; i++) {
-				towrite[index + i] = (unsigned char)string[i];
+				towrite[index + (size_t)i] = (unsigned char)string[i];
 			}
-			index += lastspace + 1;
+			index += (size_t)(lastspace + 1);
 			towrite[index] = (funge_cell)'\n';
 			index++;
 		}
