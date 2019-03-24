@@ -140,10 +140,10 @@ static size_t environ_count = 0;
 	stack_push_vector((m_pushstack), vector_create_ref((m_bounds_rect).w, (m_bounds_rect).h))
 /// Date
 #define PUSH_REQ_15(m_pushstack, m_tm) \
-	stack_push((m_pushstack), (funge_cell)((m_tm)->tm_year * 256 * 256 + ((m_tm)->tm_mon + 1) * 256 + (m_tm)->tm_mday))
+	stack_push((m_pushstack), (funge_cell)((m_tm).tm_year * 256 * 256 + ((m_tm).tm_mon + 1) * 256 + (m_tm).tm_mday))
 /// Time
 #define PUSH_REQ_16(m_pushstack, m_tm) \
-	stack_push((m_pushstack), (funge_cell)((m_tm)->tm_hour * 256 * 256 + (m_tm)->tm_min * 256 + (m_tm)->tm_sec))
+	stack_push((m_pushstack), (funge_cell)((m_tm).tm_hour * 256 * 256 + (m_tm).tm_min * 256 + (m_tm).tm_sec))
 /// Stack stack count
 #define PUSH_REQ_17(m_pushstack, m_ip) \
 	stack_push((m_pushstack), (funge_cell)(m_ip)->stackstack->current + 1)
@@ -228,7 +228,7 @@ static void push_all(instructionPointer * restrict ip, funge_stack * restrict pu
 {
 	fungeRect rect;
 	time_t now;
-	struct tm *curTime;
+	struct tm curTime;
 
 	// We cache the static "area" that makes up env vars, argv and argc.
 	if (FUNGE_UNLIKELY(!sysinfo_cache_stack))
@@ -240,7 +240,7 @@ static void push_all(instructionPointer * restrict ip, funge_stack * restrict pu
 	PUSH_REQ_18(pushStack, ip->stackstack);
 	PUSH_REQ_17(pushStack, ip);
 	now = time(NULL);
-	curTime = gmtime(&now);
+	gmtime_r(&now, &curTime);
 	PUSH_REQ_16(pushStack, curTime);
 	PUSH_REQ_15(pushStack, curTime);
 	fungespace_get_bounds_rect(&rect);
@@ -352,17 +352,17 @@ static void push_yval(funge_cell request, instructionPointer * restrict ip, fung
 		}
 		case 20: { // Date ((year - 1900) * 256 * 256) + (month * 256) + (day of month)
 			time_t now;
-			struct tm *curTime;
+			struct tm curTime;
 			now = time(NULL);
-			curTime = gmtime(&now);
+			gmtime_r(&now, &curTime);
 			PUSH_REQ_15(pushStack, curTime);
 			break;
 		}
 		case 21: { // Time (hour * 256 * 256) + (minute * 256) + (second)
 			time_t now;
-			struct tm *curTime;
+			struct tm curTime;
 			now = time(NULL);
-			curTime = gmtime(&now);
+			gmtime_r(&now, &curTime);
 			PUSH_REQ_16(pushStack, curTime);
 			break;
 		}

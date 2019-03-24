@@ -141,8 +141,9 @@ void manager_list(void);
 /// @param opcode Instruction char (range A-Z)
 /// @param name Function name. Real function name constructed from fprint and this.
 #define manager_add_opcode(fprint, opcode, name) \
-	if (FUNGE_UNLIKELY(!opcode_stack_push(ip, (opcode), &finger_ ## fprint ## _ ## name))) \
-		return false;
+	if (FUNGE_UNLIKELY(!opcode_stack_push(ip, (opcode), &finger_ ## fprint ## _ ## name))) { \
+		return false; \
+	}
 
 // Now include ip.h, we couldn't before.
 #include "../ip.h"

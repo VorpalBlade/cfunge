@@ -29,25 +29,25 @@ static bool TIMEuseUTC = false;
 
 #define GetTheTime \
 	time_t now; \
-	struct tm *curTime; \
+	struct tm curTime; \
 	now = time(NULL); \
 	if (TIMEuseUTC) \
-		curTime = gmtime(&now); \
+		gmtime_r(&now, &curTime); \
 	else \
-		curTime = localtime(&now);
+		localtime_r(&now, &curTime);
 
 /// D - Get day of month.
 static void finger_TIME_day(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_mday);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_mday);
 }
 
 /// F - Get day of year.
 static void finger_TIME_day_of_year(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_yday);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_yday);
 }
 
 /// G - Set to use UTC.
@@ -59,8 +59,8 @@ static void finger_TIME_use_gmt(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// H - Get hour.
 static void finger_TIME_hour(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_hour);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_hour);
 }
 
 /// L - Set to use local time.
@@ -72,49 +72,49 @@ static void finger_TIME_use_local(FUNGE_ATTR_UNUSED instructionPointer * ip)
 /// M - Get minute.
 static void finger_TIME_minute(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_min);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_min);
 }
 
 /// O - Get month.
 static void finger_TIME_month(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_mon + 1);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_mon + 1);
 }
 
 /// S - Get second.
 static void finger_TIME_second(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_sec);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_sec);
 }
 
 /// W - Get day of week.
 static void finger_TIME_day_of_week(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, curTime->tm_wday + 1);
+	GetTheTime;
+	stack_push(ip->stack, curTime.tm_wday + 1);
 }
 
 /// Y - Get year.
 static void finger_TIME_year(instructionPointer * ip)
 {
-	GetTheTime
-	stack_push(ip->stack, 1900 + curTime->tm_year);
+	GetTheTime;
+	stack_push(ip->stack, 1900 + curTime.tm_year);
 }
 
 bool finger_TIME_load(instructionPointer * ip)
 {
-	manager_add_opcode(TIME, 'D', day)
-	manager_add_opcode(TIME, 'F', day_of_year)
-	manager_add_opcode(TIME, 'G', use_gmt)
-	manager_add_opcode(TIME, 'H', hour)
-	manager_add_opcode(TIME, 'L', use_local)
-	manager_add_opcode(TIME, 'M', minute)
-	manager_add_opcode(TIME, 'O', month)
-	manager_add_opcode(TIME, 'S', second)
-	manager_add_opcode(TIME, 'W', day_of_week)
-	manager_add_opcode(TIME, 'Y', year)
+	manager_add_opcode(TIME, 'D', day);
+	manager_add_opcode(TIME, 'F', day_of_year);
+	manager_add_opcode(TIME, 'G', use_gmt);
+	manager_add_opcode(TIME, 'H', hour);
+	manager_add_opcode(TIME, 'L', use_local);
+	manager_add_opcode(TIME, 'M', minute);
+	manager_add_opcode(TIME, 'O', month);
+	manager_add_opcode(TIME, 'S', second);
+	manager_add_opcode(TIME, 'W', day_of_week);
+	manager_add_opcode(TIME, 'Y', year);
 	return true;
 }
