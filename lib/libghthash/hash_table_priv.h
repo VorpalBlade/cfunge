@@ -622,11 +622,10 @@ void *CF_GHT_NAME(CF_GHT_VAR, next)(
 /* Finalize (free) a hash table */
 FUNGE_ATTR_FAST void CF_GHT_NAME(CF_GHT_VAR, finalize)(CF_GHT_NAME(CF_GHT_VAR, hash_table_t) *p_ht)
 {
-	size_t i;
-
 	assert(p_ht != NULL);
 
 	if (p_ht->pp_entries) {
+        size_t i;
 		/* For each bucket, free all entries */
 		for (i = 0; i < p_ht->i_size; i++) {
 			CF_GHT_NAME(CF_GHT_VAR, free_entry_chain)(p_ht->pp_entries[i]);

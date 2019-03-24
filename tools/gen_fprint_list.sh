@@ -104,7 +104,8 @@ genfprintinfo() {
 	local fp_URL fp_SAFE fp_OPCODES fp_DESCRIPTION
 	local fp_F109_URI fp_CONDITION
 	local fp_ALIASES
-	local fp_OPCODE_NAMES
+	# Unused, but set by parse_spec
+	local fp_OPCODE_NAMES fp_OPCODE_DESC
 
 	progress "Processing $FPRINT"
 

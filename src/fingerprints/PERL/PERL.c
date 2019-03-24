@@ -123,10 +123,8 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 			if (waitpid(pid, &status, 0) != -1) {
 				if (WIFEXITED(status)) {
 					// Ok... get output :)
-					ssize_t n;
 					StringBuffer * sb;
 					char * buf;
-					int readErrno;
 
 					sb = stringbuffer_new();
 					if (!sb)
@@ -139,8 +137,8 @@ static char * run_perl(const char * restrict perlcode, size_t * restrict retleng
 
 					// Read the result
 					while (true) {
-						n = read(outfds[0], buf, STRINGALLOCCHUNK);
-						readErrno = errno;
+						ssize_t n = read(outfds[0], buf, STRINGALLOCCHUNK);
+						int readErrno = errno;
 						if (n == -1) {
 							close(outfds[0]);
 							if (readErrno == EAGAIN) {
