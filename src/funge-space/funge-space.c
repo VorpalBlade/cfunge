@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008-2013 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2013 Arvid Norlander <VorpalBlade AT users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1026,7 +1026,7 @@ fungespace_save_to_file(const char         * restrict filename,
 		// Extra size->y for adding a lot of \n...
 		unsigned char * restrict towrite = malloc((size_t)(size->x * size->y + size->y) * sizeof(unsigned char));
 		funge_cell * restrict string;
-		
+
 		if (!towrite) {
 			goto error;
 		}

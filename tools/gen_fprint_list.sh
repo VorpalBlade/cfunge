@@ -206,7 +206,7 @@ cat > "fingerprints.h" << EOF
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008-2013 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2013 Arvid Norlander <VorpalBlade AT users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /* -*- mode: C; coding: utf-8; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*-
  *
  * cfunge - A standard-conforming Befunge93/98/109 interpreter in C.
- * Copyright (C) 2008-2013 Arvid Norlander <anmaster AT tele2 DOT se>
+ * Copyright (C) 2008-2013 Arvid Norlander <VorpalBlade AT users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,7 +473,7 @@ static inline bool stack_prealloc_space_non_fatal(funge_stack * restrict stack, 
 		funge_cell* newentries;
 		// Round upwards to whole ALLOCSIZE_STACKed blocks.
 		newsize += ALLOCSIZE_STACK - (newsize % ALLOCSIZE_STACK);
-		
+
 		// Guard against overflow.
 		allocation_size = newsize * sizeof(funge_cell);
 		if (FUNGE_UNLIKELY(allocation_size < newsize))
