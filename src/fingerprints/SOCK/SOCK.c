@@ -462,15 +462,15 @@ bool finger_SOCK_load(instructionPointer * ip)
 		if (!init_handle_list())
 			return false;
 
-	manager_add_opcode(SOCK, 'A', accept)
-	manager_add_opcode(SOCK, 'B', bind)
-	manager_add_opcode(SOCK, 'C', open)
-	manager_add_opcode(SOCK, 'I', fromascii)
-	manager_add_opcode(SOCK, 'K', kill)
-	manager_add_opcode(SOCK, 'L', listen)
-	manager_add_opcode(SOCK, 'O', setopt)
-	manager_add_opcode(SOCK, 'R', receive)
-	manager_add_opcode(SOCK, 'S', create)
-	manager_add_opcode(SOCK, 'W', write)
+	manager_add_opcode(SOCK, 'A', accept);
+	manager_add_opcode(SOCK, 'B', bind);
+	manager_add_opcode(SOCK, 'C', open);
+	manager_add_opcode(SOCK, 'I', fromascii);
+	manager_add_opcode(SOCK, 'K', kill);
+	manager_add_opcode(SOCK, 'L', listen);
+	manager_add_opcode(SOCK, 'O', setopt);
+	manager_add_opcode(SOCK, 'R', receive);
+	manager_add_opcode(SOCK, 'S', create);
+	manager_add_opcode(SOCK, 'W', write);
 	return true;
 }

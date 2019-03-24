@@ -177,11 +177,11 @@ bool finger_HRTI_load(instructionPointer * ip)
 {
 	if (FUNGE_UNLIKELY(!setup_HRTI(ip)))
 		return false;
-	manager_add_opcode(HRTI, 'E', erase_mark)
-	manager_add_opcode(HRTI, 'G', granularity)
-	manager_add_opcode(HRTI, 'M', mark)
-	manager_add_opcode(HRTI, 'T', timer)
-	manager_add_opcode(HRTI, 'S', second)
+	manager_add_opcode(HRTI, 'E', erase_mark);
+	manager_add_opcode(HRTI, 'G', granularity);
+	manager_add_opcode(HRTI, 'M', mark);
+	manager_add_opcode(HRTI, 'T', timer);
+	manager_add_opcode(HRTI, 'S', second);
 
 	return true;
 }

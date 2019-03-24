@@ -228,27 +228,27 @@ static void finger_FPDP_print(instructionPointer * ip)
 
 bool finger_FPDP_load(instructionPointer * ip)
 {
-	manager_add_opcode(FPDP, 'A', add)
-	manager_add_opcode(FPDP, 'B', sin)
-	manager_add_opcode(FPDP, 'C', cos)
-	manager_add_opcode(FPDP, 'D', div)
-	manager_add_opcode(FPDP, 'E', asin)
-	manager_add_opcode(FPDP, 'F', fromint)
-	manager_add_opcode(FPDP, 'G', atan)
-	manager_add_opcode(FPDP, 'H', acos)
-	manager_add_opcode(FPDP, 'I', toint)
-	manager_add_opcode(FPDP, 'K', ln)
-	manager_add_opcode(FPDP, 'L', log10)
-	manager_add_opcode(FPDP, 'M', mul)
-	manager_add_opcode(FPDP, 'N', neg)
-	manager_add_opcode(FPDP, 'P', print)
-	manager_add_opcode(FPDP, 'Q', sqrt)
-	manager_add_opcode(FPDP, 'R', fromascii)
-	manager_add_opcode(FPDP, 'S', sub)
-	manager_add_opcode(FPDP, 'T', tan)
-	manager_add_opcode(FPDP, 'V', abs)
-	manager_add_opcode(FPDP, 'X', exp)
-	manager_add_opcode(FPDP, 'Y', pow)
+	manager_add_opcode(FPDP, 'A', add);
+	manager_add_opcode(FPDP, 'B', sin);
+	manager_add_opcode(FPDP, 'C', cos);
+	manager_add_opcode(FPDP, 'D', div);
+	manager_add_opcode(FPDP, 'E', asin);
+	manager_add_opcode(FPDP, 'F', fromint);
+	manager_add_opcode(FPDP, 'G', atan);
+	manager_add_opcode(FPDP, 'H', acos);
+	manager_add_opcode(FPDP, 'I', toint);
+	manager_add_opcode(FPDP, 'K', ln);
+	manager_add_opcode(FPDP, 'L', log10);
+	manager_add_opcode(FPDP, 'M', mul);
+	manager_add_opcode(FPDP, 'N', neg);
+	manager_add_opcode(FPDP, 'P', print);
+	manager_add_opcode(FPDP, 'Q', sqrt);
+	manager_add_opcode(FPDP, 'R', fromascii);
+	manager_add_opcode(FPDP, 'S', sub);
+	manager_add_opcode(FPDP, 'T', tan);
+	manager_add_opcode(FPDP, 'V', abs);
+	manager_add_opcode(FPDP, 'X', exp);
+	manager_add_opcode(FPDP, 'Y', pow);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

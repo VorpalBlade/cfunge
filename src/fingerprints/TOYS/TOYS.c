@@ -393,31 +393,31 @@ static void finger_TOYS_barn_door(instructionPointer * ip)
 
 bool finger_TOYS_load(instructionPointer * ip)
 {
-	manager_add_opcode(TOYS, 'A', gable)
-	manager_add_opcode(TOYS, 'B', pair_of_shoes)
-	manager_add_opcode(TOYS, 'C', bracelet)
-	manager_add_opcode(TOYS, 'D', toilet_seat)
-	manager_add_opcode(TOYS, 'E', pitchfork_head)
-	manager_add_opcode(TOYS, 'F', calipers)
-	manager_add_opcode(TOYS, 'G', counterclockwise)
-	manager_add_opcode(TOYS, 'H', pair_of_stilts)
-	manager_add_opcode(TOYS, 'I', doric_column)
-	manager_add_opcode(TOYS, 'J', fishhook)
-	manager_add_opcode(TOYS, 'K', scissors)
-	manager_add_opcode(TOYS, 'L', corner)
-	manager_add_opcode(TOYS, 'M', kittycat)
-	manager_add_opcode(TOYS, 'N', lightning_bolt)
-	manager_add_opcode(TOYS, 'O', boulder)
-	manager_add_opcode(TOYS, 'P', mailbox)
-	manager_add_opcode(TOYS, 'Q', necklace)
-	manager_add_opcode(TOYS, 'R', can_opener)
-	manager_add_opcode(TOYS, 'S', chicane)
-	manager_add_opcode(TOYS, 'T', barstool)
-	manager_add_opcode(TOYS, 'U', tumbler)
-	manager_add_opcode(TOYS, 'V', dixiecup)
-	manager_add_opcode(TOYS, 'W', television_antenna)
-	manager_add_opcode(TOYS, 'X', buried_treasure)
-	manager_add_opcode(TOYS, 'Y', slingshot)
-	manager_add_opcode(TOYS, 'Z', barn_door)
+	manager_add_opcode(TOYS, 'A', gable);
+	manager_add_opcode(TOYS, 'B', pair_of_shoes);
+	manager_add_opcode(TOYS, 'C', bracelet);
+	manager_add_opcode(TOYS, 'D', toilet_seat);
+	manager_add_opcode(TOYS, 'E', pitchfork_head);
+	manager_add_opcode(TOYS, 'F', calipers);
+	manager_add_opcode(TOYS, 'G', counterclockwise);
+	manager_add_opcode(TOYS, 'H', pair_of_stilts);
+	manager_add_opcode(TOYS, 'I', doric_column);
+	manager_add_opcode(TOYS, 'J', fishhook);
+	manager_add_opcode(TOYS, 'K', scissors);
+	manager_add_opcode(TOYS, 'L', corner);
+	manager_add_opcode(TOYS, 'M', kittycat);
+	manager_add_opcode(TOYS, 'N', lightning_bolt);
+	manager_add_opcode(TOYS, 'O', boulder);
+	manager_add_opcode(TOYS, 'P', mailbox);
+	manager_add_opcode(TOYS, 'Q', necklace);
+	manager_add_opcode(TOYS, 'R', can_opener);
+	manager_add_opcode(TOYS, 'S', chicane);
+	manager_add_opcode(TOYS, 'T', barstool);
+	manager_add_opcode(TOYS, 'U', tumbler);
+	manager_add_opcode(TOYS, 'V', dixiecup);
+	manager_add_opcode(TOYS, 'W', television_antenna);
+	manager_add_opcode(TOYS, 'X', buried_treasure);
+	manager_add_opcode(TOYS, 'Y', slingshot);
+	manager_add_opcode(TOYS, 'Z', barn_door);
 	return true;
 }

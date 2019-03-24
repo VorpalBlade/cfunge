@@ -134,7 +134,7 @@ void manager_list(void);
 /// For use in fingerprint loading routines ONLY.
 /// Example code:
 /// @code
-/// manager_add_opcode(CPLI, 'V', abs)
+/// manager_add_opcode(CPLI, 'V', abs);
 /// @endcode
 /// This will "bind" the function named finger_CPLI_abs to the instruction V.
 /// @param fprint Fingerprint name

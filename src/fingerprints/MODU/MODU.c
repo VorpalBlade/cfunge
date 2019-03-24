@@ -80,8 +80,8 @@ static void finger_MODU_remainder(instructionPointer * ip)
 
 bool finger_MODU_load(instructionPointer * ip)
 {
-	manager_add_opcode(MODU, 'M', signed_result)
-	manager_add_opcode(MODU, 'R', remainder)
-	manager_add_opcode(MODU, 'U', unsigned_result)
+	manager_add_opcode(MODU, 'M', signed_result);
+	manager_add_opcode(MODU, 'R', remainder);
+	manager_add_opcode(MODU, 'U', unsigned_result);
 	return true;
 }

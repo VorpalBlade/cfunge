@@ -441,22 +441,22 @@ static void finger_3DSP_scale(instructionPointer * ip)
 
 bool finger_3DSP_load(instructionPointer * ip)
 {
-	manager_add_opcode(3DSP, 'A', add)
-	manager_add_opcode(3DSP, 'B', sub)
-	manager_add_opcode(3DSP, 'C', cross)
-	manager_add_opcode(3DSP, 'D', dot)
-	manager_add_opcode(3DSP, 'L', length)
-	manager_add_opcode(3DSP, 'M', mul)
-	manager_add_opcode(3DSP, 'N', normalise)
-	manager_add_opcode(3DSP, 'P', matrix_copy)
-	manager_add_opcode(3DSP, 'R', matrix_rotate)
-	manager_add_opcode(3DSP, 'S', matrix_scale)
-	manager_add_opcode(3DSP, 'T', matrix_translate)
-	manager_add_opcode(3DSP, 'U', duplicate)
-	manager_add_opcode(3DSP, 'V', map)
-	manager_add_opcode(3DSP, 'X', transform)
-	manager_add_opcode(3DSP, 'Y', matrix_mul)
-	manager_add_opcode(3DSP, 'Z', scale)
+	manager_add_opcode(3DSP, 'A', add);
+	manager_add_opcode(3DSP, 'B', sub);
+	manager_add_opcode(3DSP, 'C', cross);
+	manager_add_opcode(3DSP, 'D', dot);
+	manager_add_opcode(3DSP, 'L', length);
+	manager_add_opcode(3DSP, 'M', mul);
+	manager_add_opcode(3DSP, 'N', normalise);
+	manager_add_opcode(3DSP, 'P', matrix_copy);
+	manager_add_opcode(3DSP, 'R', matrix_rotate);
+	manager_add_opcode(3DSP, 'S', matrix_scale);
+	manager_add_opcode(3DSP, 'T', matrix_translate);
+	manager_add_opcode(3DSP, 'U', duplicate);
+	manager_add_opcode(3DSP, 'V', map);
+	manager_add_opcode(3DSP, 'X', transform);
+	manager_add_opcode(3DSP, 'Y', matrix_mul);
+	manager_add_opcode(3DSP, 'Z', scale);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

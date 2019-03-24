@@ -32,7 +32,7 @@ FUNGE_ATTR_FAST static void binary(funge_cell number)
 {
 	if (number > 0) {
 		binary(number >> 1);
-		cf_putchar_unlocked(number & 1 ? '1' : '0');
+		cf_putchar_unlocked((number & 1) ? '1' : '0');
 	}
 }
 
@@ -119,11 +119,11 @@ static void finger_BASE_input_base(instructionPointer * ip)
 
 bool finger_BASE_load(instructionPointer * ip)
 {
-	manager_add_opcode(BASE, 'B', output_binary)
-	manager_add_opcode(BASE, 'H', output_hex)
-	manager_add_opcode(BASE, 'I', input_base)
-	manager_add_opcode(BASE, 'N', output_base)
-	manager_add_opcode(BASE, 'O', output_octal)
+	manager_add_opcode(BASE, 'B', output_binary);
+	manager_add_opcode(BASE, 'H', output_hex);
+	manager_add_opcode(BASE, 'I', input_base);
+	manager_add_opcode(BASE, 'N', output_base);
+	manager_add_opcode(BASE, 'O', output_octal);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

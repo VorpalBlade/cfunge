@@ -439,14 +439,14 @@ bool finger_FILE_load(instructionPointer * ip)
 		if (!init_handle_list())
 			return false;
 
-	manager_add_opcode(FILE, 'C', fclose)
-	manager_add_opcode(FILE, 'D', delete)
-	manager_add_opcode(FILE, 'G', fgets)
-	manager_add_opcode(FILE, 'L', ftell)
-	manager_add_opcode(FILE, 'O', fopen)
-	manager_add_opcode(FILE, 'P', fputs)
-	manager_add_opcode(FILE, 'R', fread)
-	manager_add_opcode(FILE, 'S', fseek)
-	manager_add_opcode(FILE, 'W', fwrite)
+	manager_add_opcode(FILE, 'C', fclose);
+	manager_add_opcode(FILE, 'D', delete);
+	manager_add_opcode(FILE, 'G', fgets);
+	manager_add_opcode(FILE, 'L', ftell);
+	manager_add_opcode(FILE, 'O', fopen);
+	manager_add_opcode(FILE, 'P', fputs);
+	manager_add_opcode(FILE, 'R', fread);
+	manager_add_opcode(FILE, 'S', fseek);
+	manager_add_opcode(FILE, 'W', fwrite);
 	return true;
 }

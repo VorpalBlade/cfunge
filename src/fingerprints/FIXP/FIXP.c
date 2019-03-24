@@ -197,22 +197,22 @@ static void finger_FIXP_xor(instructionPointer * ip)
 
 bool finger_FIXP_load(instructionPointer * ip)
 {
-	manager_add_opcode(FIXP, 'A', and)
-	manager_add_opcode(FIXP, 'B', acos)
-	manager_add_opcode(FIXP, 'C', cos)
-	manager_add_opcode(FIXP, 'D', rand)
-	manager_add_opcode(FIXP, 'I', sin)
-	manager_add_opcode(FIXP, 'J', asin)
-	manager_add_opcode(FIXP, 'N', neg)
-	manager_add_opcode(FIXP, 'O', or)
-	manager_add_opcode(FIXP, 'P', mulpi)
-	manager_add_opcode(FIXP, 'Q', sqrt)
-	manager_add_opcode(FIXP, 'R', pow)
-	manager_add_opcode(FIXP, 'S', signbit)
-	manager_add_opcode(FIXP, 'T', tan)
-	manager_add_opcode(FIXP, 'U', atan)
-	manager_add_opcode(FIXP, 'V', abs)
-	manager_add_opcode(FIXP, 'X', xor)
+	manager_add_opcode(FIXP, 'A', and);
+	manager_add_opcode(FIXP, 'B', acos);
+	manager_add_opcode(FIXP, 'C', cos);
+	manager_add_opcode(FIXP, 'D', rand);
+	manager_add_opcode(FIXP, 'I', sin);
+	manager_add_opcode(FIXP, 'J', asin);
+	manager_add_opcode(FIXP, 'N', neg);
+	manager_add_opcode(FIXP, 'O', or);
+	manager_add_opcode(FIXP, 'P', mulpi);
+	manager_add_opcode(FIXP, 'Q', sqrt);
+	manager_add_opcode(FIXP, 'R', pow);
+	manager_add_opcode(FIXP, 'S', signbit);
+	manager_add_opcode(FIXP, 'T', tan);
+	manager_add_opcode(FIXP, 'U', atan);
+	manager_add_opcode(FIXP, 'V', abs);
+	manager_add_opcode(FIXP, 'X', xor);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

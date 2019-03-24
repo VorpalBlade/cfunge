@@ -126,11 +126,11 @@ static void finger_SUBR_return(instructionPointer * ip)
 
 bool finger_SUBR_load(instructionPointer * ip)
 {
-	manager_add_opcode(SUBR, 'A', absolute)
-	manager_add_opcode(SUBR, 'C', call)
-	manager_add_opcode(SUBR, 'J', jump)
-	manager_add_opcode(SUBR, 'O', relative)
+	manager_add_opcode(SUBR, 'A', absolute);
+	manager_add_opcode(SUBR, 'C', call);
+	manager_add_opcode(SUBR, 'J', jump);
+	manager_add_opcode(SUBR, 'O', relative);
 	// No not a keyword in this case
-	manager_add_opcode(SUBR, 'R', return)
+	manager_add_opcode(SUBR, 'R', return);
 	return true;
 }

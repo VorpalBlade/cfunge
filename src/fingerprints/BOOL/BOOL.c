@@ -55,9 +55,9 @@ static void finger_BOOL_xor(instructionPointer * ip)
 
 bool finger_BOOL_load(instructionPointer * ip)
 {
-	manager_add_opcode(BOOL, 'A', and)
-	manager_add_opcode(BOOL, 'N', not)
-	manager_add_opcode(BOOL, 'O', or)
-	manager_add_opcode(BOOL, 'X', xor)
+	manager_add_opcode(BOOL, 'A', and);
+	manager_add_opcode(BOOL, 'N', not);
+	manager_add_opcode(BOOL, 'O', or);
+	manager_add_opcode(BOOL, 'X', xor);
 	return true;
 }

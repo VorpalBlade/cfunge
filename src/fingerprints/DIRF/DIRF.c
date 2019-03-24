@@ -65,8 +65,8 @@ static void finger_DIRF_rmdir(instructionPointer * ip)
 
 bool finger_DIRF_load(instructionPointer * ip)
 {
-	manager_add_opcode(DIRF, 'C', chdir)
-	manager_add_opcode(DIRF, 'M', mkdir)
-	manager_add_opcode(DIRF, 'R', rmdir)
+	manager_add_opcode(DIRF, 'C', chdir);
+	manager_add_opcode(DIRF, 'M', mkdir);
+	manager_add_opcode(DIRF, 'R', rmdir);
 	return true;
 }

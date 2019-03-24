@@ -641,21 +641,21 @@ bool finger_TURT_load(instructionPointer * ip)
 #ifndef NDEBUG
 	atexit(&freeResources);
 #endif
-	manager_add_opcode(TURT, 'A', query_heading)
-	manager_add_opcode(TURT, 'B', back)
-	manager_add_opcode(TURT, 'C', pen_colour)
-	manager_add_opcode(TURT, 'D', show_display)
-	manager_add_opcode(TURT, 'E', query_pen)
-	manager_add_opcode(TURT, 'F', forward)
-	manager_add_opcode(TURT, 'H', set_heading)
-	manager_add_opcode(TURT, 'I', print_drawing)
-	manager_add_opcode(TURT, 'L', turn_left)
-	manager_add_opcode(TURT, 'N', clear_paper)
-	manager_add_opcode(TURT, 'P', pen_position)
-	manager_add_opcode(TURT, 'Q', query_position)
-	manager_add_opcode(TURT, 'R', turn_right)
-	manager_add_opcode(TURT, 'T', teleport)
-	manager_add_opcode(TURT, 'U', query_bounds)
+	manager_add_opcode(TURT, 'A', query_heading);
+	manager_add_opcode(TURT, 'B', back);
+	manager_add_opcode(TURT, 'C', pen_colour);
+	manager_add_opcode(TURT, 'D', show_display);
+	manager_add_opcode(TURT, 'E', query_pen);
+	manager_add_opcode(TURT, 'F', forward);
+	manager_add_opcode(TURT, 'H', set_heading);
+	manager_add_opcode(TURT, 'I', print_drawing);
+	manager_add_opcode(TURT, 'L', turn_left);
+	manager_add_opcode(TURT, 'N', clear_paper);
+	manager_add_opcode(TURT, 'P', pen_position);
+	manager_add_opcode(TURT, 'Q', query_position);
+	manager_add_opcode(TURT, 'R', turn_right);
+	manager_add_opcode(TURT, 'T', teleport);
+	manager_add_opcode(TURT, 'U', query_bounds);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) && !defined(CFUN_NO_TURT) */

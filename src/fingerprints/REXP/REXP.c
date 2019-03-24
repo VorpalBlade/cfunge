@@ -198,8 +198,8 @@ static void finger_REXP_free(FUNGE_ATTR_UNUSED instructionPointer * ip)
 
 bool finger_REXP_load(instructionPointer * ip)
 {
-	manager_add_opcode(REXP, 'C', compile)
-	manager_add_opcode(REXP, 'E', execute)
-	manager_add_opcode(REXP, 'F', free)
+	manager_add_opcode(REXP, 'C', compile);
+	manager_add_opcode(REXP, 'E', execute);
+	manager_add_opcode(REXP, 'F', free);
 	return true;
 }

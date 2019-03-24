@@ -97,14 +97,14 @@ FUNGE_ATTR_FAST inline void if_north_south(instructionPointer * restrict ip)
 }
 
 #ifdef CONCURRENT_FUNGE
-#  define ReturnFromexecute_instruction(x) return (x)
+#  define return_from_execute_instruction(x) return (x)
    /// Return with value if we are concurrent
-#  define ReturnIfCon(x) return (x)
+#  define return_if_con(x) return (x)
 #  define CON_RETTYPE bool
 #else
-#  define ReturnFromexecute_instruction(x) return
+#  define return_from_execute_instruction(x) return
 #  define CON_RETTYPE void
-#  define ReturnIfCon(x) (x); return
+#  define return_if_con(x) (x); return
 #endif
 
 /// Generate a case for use in execute_instruction() that pushes a number on
@@ -123,16 +123,17 @@ static inline CON_RETTYPE handle_string_mode(funge_cell opcode, instructionPoint
 	} else if (opcode != ' ') {
 		ip->stringLastWasSpace = false;
 		stack_push(ip->stack, opcode);
-	} else if (opcode == ' ') {
+	} else {
+		// This is a space
 		if ((!ip->stringLastWasSpace) || (setting_current_standard == stdver93)) {
 			ip->stringLastWasSpace = true;
 			stack_push(ip->stack, opcode);
 		// More than one space in string mode take no tick in concurrent Funge.
 		} else {
-			ReturnFromexecute_instruction(true);
+			return_from_execute_instruction(true);
 		}
 	}
-	ReturnFromexecute_instruction(false);
+	return_from_execute_instruction(false);
 }
 
 /// This function handles fingerprint instructions.
@@ -163,7 +164,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 {
 	// First check if we are in string mode, and do special stuff then.
 	if (ip->mode == ipmSTRING) {
-		ReturnIfCon(handle_string_mode(opcode, ip));
+		return_if_con(handle_string_mode(opcode, ip));
 	// Next: Is this a fingerprint opcode?
 	} else if ((opcode >= 'A') && (opcode <= 'Z')) {
 		handle_fprint(opcode, ip);
@@ -183,7 +184,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 #endif
 				} while (fungespace_get(&ip->position) == ' ');
 				ip->needMove = false;
-				ReturnFromexecute_instruction(true);
+				return_from_execute_instruction(true);
 			}
 			case 'z':
 				break;
@@ -198,7 +199,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 						exit(123);
 #endif
 				} while (fungespace_get(&ip->position) != ';');
-				ReturnFromexecute_instruction(true);
+				return_from_execute_instruction(true);
 			}
 			case '^':
 				ip_go_north(ip);
@@ -566,7 +567,7 @@ FUNGE_ATTR_FAST CON_RETTYPE execute_instruction(funge_cell opcode, instructionPo
 				ip_reverse(ip);
 		}
 	}
-	ReturnFromexecute_instruction(false);
+	return_from_execute_instruction(false);
 }
 
 

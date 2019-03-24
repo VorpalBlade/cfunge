@@ -114,10 +114,10 @@ static void finger_FRTH_forth_rot(instructionPointer * ip)
 
 bool finger_FRTH_load(instructionPointer * ip)
 {
-	manager_add_opcode(FRTH, 'D', stack_size)
-	manager_add_opcode(FRTH, 'L', forth_roll)
-	manager_add_opcode(FRTH, 'O', forth_over)
-	manager_add_opcode(FRTH, 'P', forth_pick)
-	manager_add_opcode(FRTH, 'R', forth_rot)
+	manager_add_opcode(FRTH, 'D', stack_size);
+	manager_add_opcode(FRTH, 'L', forth_roll);
+	manager_add_opcode(FRTH, 'O', forth_over);
+	manager_add_opcode(FRTH, 'P', forth_pick);
+	manager_add_opcode(FRTH, 'R', forth_rot);
 	return true;
 }

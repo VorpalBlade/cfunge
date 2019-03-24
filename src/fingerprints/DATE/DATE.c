@@ -255,13 +255,13 @@ static void finger_DATE_year_day(instructionPointer * ip)
 
 bool finger_DATE_load(instructionPointer * ip)
 {
-	manager_add_opcode(DATE, 'A', add_days)
-	manager_add_opcode(DATE, 'C', jdn_to_ymd)
-	manager_add_opcode(DATE, 'D', day_diff)
-	manager_add_opcode(DATE, 'J', ymd_to_jdn)
-	manager_add_opcode(DATE, 'T', year_day_to_full)
-	manager_add_opcode(DATE, 'W', week_day)
-	manager_add_opcode(DATE, 'Y', year_day)
+	manager_add_opcode(DATE, 'A', add_days);
+	manager_add_opcode(DATE, 'C', jdn_to_ymd);
+	manager_add_opcode(DATE, 'D', day_diff);
+	manager_add_opcode(DATE, 'J', ymd_to_jdn);
+	manager_add_opcode(DATE, 'T', year_day_to_full);
+	manager_add_opcode(DATE, 'W', week_day);
+	manager_add_opcode(DATE, 'Y', year_day);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

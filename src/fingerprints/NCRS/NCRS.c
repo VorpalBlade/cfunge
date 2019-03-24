@@ -252,18 +252,18 @@ static void finger_NCRS_unget(instructionPointer * ip)
 
 bool finger_NCRS_load(instructionPointer * ip)
 {
-	manager_add_opcode(NCRS, 'B', beep)
-	manager_add_opcode(NCRS, 'C', clear)
-	manager_add_opcode(NCRS, 'E', toggle_echo)
-	manager_add_opcode(NCRS, 'G', get)
-	manager_add_opcode(NCRS, 'I', init)
-	manager_add_opcode(NCRS, 'K', toggle_keypad)
-	manager_add_opcode(NCRS, 'M', goto_xy)
-	manager_add_opcode(NCRS, 'N', toggle_input)
-	manager_add_opcode(NCRS, 'P', put)
-	manager_add_opcode(NCRS, 'R', refresh)
-	manager_add_opcode(NCRS, 'S', write)
-	manager_add_opcode(NCRS, 'U', unget)
+	manager_add_opcode(NCRS, 'B', beep);
+	manager_add_opcode(NCRS, 'C', clear);
+	manager_add_opcode(NCRS, 'E', toggle_echo);
+	manager_add_opcode(NCRS, 'G', get);
+	manager_add_opcode(NCRS, 'I', init);
+	manager_add_opcode(NCRS, 'K', toggle_keypad);
+	manager_add_opcode(NCRS, 'M', goto_xy);
+	manager_add_opcode(NCRS, 'N', toggle_input);
+	manager_add_opcode(NCRS, 'P', put);
+	manager_add_opcode(NCRS, 'R', refresh);
+	manager_add_opcode(NCRS, 'S', write);
+	manager_add_opcode(NCRS, 'U', unget);
 	return true;
 }
 #endif /* defined(HAVE_NCURSES) */

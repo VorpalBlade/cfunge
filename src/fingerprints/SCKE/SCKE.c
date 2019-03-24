@@ -110,7 +110,7 @@ error:
 
 bool finger_SCKE_load(instructionPointer * ip)
 {
-	manager_add_opcode(SCKE, 'H', gethostbyname)
-	manager_add_opcode(SCKE, 'P', peek)
+	manager_add_opcode(SCKE, 'H', gethostbyname);
+	manager_add_opcode(SCKE, 'P', peek);
 	return true;
 }

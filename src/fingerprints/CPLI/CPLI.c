@@ -105,12 +105,12 @@ static void finger_CPLI_abs(instructionPointer * ip)
 
 bool finger_CPLI_load(instructionPointer * ip)
 {
-	manager_add_opcode(CPLI, 'A', add)
-	manager_add_opcode(CPLI, 'D', div)
-	manager_add_opcode(CPLI, 'M', mul)
-	manager_add_opcode(CPLI, 'O', out)
-	manager_add_opcode(CPLI, 'S', sub)
-	manager_add_opcode(CPLI, 'V', abs)
+	manager_add_opcode(CPLI, 'A', add);
+	manager_add_opcode(CPLI, 'D', div);
+	manager_add_opcode(CPLI, 'M', mul);
+	manager_add_opcode(CPLI, 'O', out);
+	manager_add_opcode(CPLI, 'S', sub);
+	manager_add_opcode(CPLI, 'V', abs);
 	return true;
 }
 #endif /* !defined(CFUN_NO_FLOATS) */

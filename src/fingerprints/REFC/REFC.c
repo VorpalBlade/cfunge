@@ -83,7 +83,7 @@ bool finger_REFC_load(instructionPointer * ip)
 	if (!references)
 		if (!init_references())
 			return false;
-	manager_add_opcode(REFC, 'D', dereference)
-	manager_add_opcode(REFC, 'R', reference)
+	manager_add_opcode(REFC, 'D', dereference);
+	manager_add_opcode(REFC, 'R', reference);
 	return true;
 }
