@@ -186,9 +186,12 @@ FUNGE_ATTR_FAST bool manager_load(instructionPointer * restrict ip, funge_cell f
 FUNGE_ATTR_FAST bool manager_unload(instructionPointer * restrict ip, funge_cell fingerprint)
 {
 	ssize_t index = find_fingerprint(fingerprint);
+	size_t max_len;
+
 	if (index == FPRINT_NOTFOUND)
 		return false;
-	for (size_t i = 0; i < strlen(ImplementedFingerprints[index].opcodes); i++)
+	max_len = strlen(ImplementedFingerprints[index].opcodes);
+	for (size_t i = 0; i < max_len; i++)
 		opcode_stack_drop(&ip->fingerOpcodes[ImplementedFingerprints[index].opcodes[i] - 'A']);
 	return true;
 }

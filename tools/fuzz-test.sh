@@ -184,7 +184,7 @@ while true; do
 	fi
 	echo " * Generating random program"
 	# We skip ? because that make things harder to debug, we also skip i, o and = for security reasons.
-	cat /dev/urandom | tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|:%$#!'\'"${FPRINTINSTRS}" | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
+	tr -Cd -- '-[:lower:][:digit:]\n\\/ ;",.+*[]{}^<>@`_|:%$#!'\'"${FPRINTINSTRS}" < /dev/urandom | tr -d 'mhlior' | head -n 100 >> fuzz.tmp
 
 	echo " * Running free standing"
 	(./cfunge -S fuzz.tmp > cfunge.output); checkerror "$?"
