@@ -17,11 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 function(cfunge_test test_name)
-	file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name})
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name}_dir)
 	add_test(
 		NAME ${test_name}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name})
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name}_dir
+		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name}_dir)
 endfunction()
 
 cfunge_test(bool-test.b98)
