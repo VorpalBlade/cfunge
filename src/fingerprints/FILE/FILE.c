@@ -169,7 +169,7 @@ static void finger_FILE_fgets(instructionPointer * ip)
 						ungetc(ch, fp);
 						goto endofloop;
 					}
-				// Fallthrough intentional.
+				// Intentional fallthrough.
 				case '\n':
 					stringbuffer_append_char(sb, (char)ch);
 					goto endofloop;
