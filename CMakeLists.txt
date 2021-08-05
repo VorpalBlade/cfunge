@@ -348,22 +348,47 @@ if (USE_NCURSES)
 	find_package(Curses)
 	CHECK_INCLUDE_FILE(term.h HAVE_TERM_H)
 	CHECK_INCLUDE_FILE(ncurses/term.h HAVE_NCURSES_TERM_H)
-	if (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND (CURSES_HAVE_CURSES_H OR CURSES_HAVE_NCURSES_CURSES_H))
-		# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
-		# builds as it contains the full path to ncurses.so
-		target_link_libraries(cfunge ncurses)
-		add_definitions(-DHAVE_NCURSES)
-		if (HAVE_NCURSES_TERM_H)
-			add_definitions(-DTERM_H_IN_NCURSES)
-		endif ()
-		if (CURSES_HAVE_NCURSES_CURSES_H)
-			add_definitions(-DCURSES_H_IN_NCURSES)
-		endif ()
-		if (CURSES_HAVE_NCURSES_NCURSES_H)
-			add_definitions(-DNCURSES_H_IN_NCURSES)
-		endif ()
-	else ()
-		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingrprint.")
+
+    if (CURSES_FOUND AND (HAVE_TERM_H OR HAVE_NCURSES_TERM_H) AND (CURSES_HAVE_CURSES_H OR CURSES_HAVE_NCURSES_CURSES_H))
+        # Check that we're not using reentrant ncurses
+        set(ncurses_not_reentrant_check
+            "int main() {
+                #if NCURSES_REENTRANT
+                #error
+                #endif
+                curscr = NULL;
+                return 0;
+            }")
+        if (CURSES_HAVE_CURSES_H)
+            set(ncurses_not_reentrant_check "#include <curses.h>
+            ${ncurses_not_reentrant_check}")
+        elseif (CURSES_HAVE_NCURSES_CURSES_H)
+            set(ncurses_not_reentrant_check "#include <ncurses/curses.h>
+            ${ncurses_not_reentrant_check}")
+        endif ()
+
+        set(CMAKE_REQUIRED_LIBRARIES ncurses)
+        CHECK_C_SOURCE_COMPILES("${ncurses_not_reentrant_check}" NCURSES_NOT_REENTRANT)
+
+        if (NCURSES_NOT_REENTRANT)
+            # HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
+            # builds as it contains the full path to ncurses.so
+            target_link_libraries(cfunge ncurses)
+            add_definitions(-DHAVE_NCURSES)
+            if (HAVE_NCURSES_TERM_H)
+                add_definitions(-DTERM_H_IN_NCURSES)
+            endif ()
+            if (CURSES_HAVE_NCURSES_CURSES_H)
+                add_definitions(-DCURSES_H_IN_NCURSES)
+            endif ()
+            if (CURSES_HAVE_NCURSES_NCURSES_H)
+                add_definitions(-DNCURSES_H_IN_NCURSES)
+            endif ()
+        else ()
+            message(STATUS "ncurses has NCURSES_REENTRANT, which is not supported: disabling the TERM fingerprint")
+        endif ()
+    else()
+		message(STATUS "ncurses and/or term.h not found: disabling the TERM fingerprint.")
 	endif ()
 endif ()
 
