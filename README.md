@@ -27,13 +27,10 @@ don't. For example:
    version 2.8 is required.
 
  * A C99 compiler, or one that supports a large subset of C99, such as GCC.
-   + GCC 3.4.6, 4.1.2, 4.2.1, 4.3.2, 4.3.3, 4.7.2 and 4.8.0 are known to work,
-     other versions may or may not work.
-   ! Warning: GCC 4.5 and 4.6 breaks with -O3 currently.
-     (Later versions appear to work.)
+   + GCC 5.0 or newer.
    + ICC 10.1, 11.1 and 14.0.1 are known to work too.
    + Open64 4.1 should work, but isn't recommended.
-   + clang 1.0 (LLVM 2.6), 2.9 and 3.3 are known to work.
+   + clang 1.0 or newer.
    + PathScale EKOPath 4.0.10 is known to work.
    - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
 
