@@ -1,6 +1,6 @@
 # cfunge
 
-[![Build Status](https://travis-ci.org/VorpalBlade/cfunge.svg?branch=master)](https://travis-ci.org/VorpalBlade/cfunge)
+[![Build Status](https://app.travis-ci.com/VorpalBlade/cfunge.svg?branch=master)](https://app.travis-ci.com/VorpalBlade/cfunge)
 [![codecov](https://codecov.io/gh/VorpalBlade/cfunge/branch/master/graph/badge.svg)](https://codecov.io/gh/VorpalBlade/cfunge)
 
 This is cfunge - a fast Befunge93/98/109 interpreter in C.
