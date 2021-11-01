@@ -20,6 +20,10 @@ project(CFUNGE C)
 
 cmake_minimum_required(VERSION 3.0)
 
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+	message(FATAL_ERROR "Only out of tree builds are supported. Please execute something like: cd .. && mkdir cfunge-build && cd cfunge-build && cmake ${CMAKE_SOURCE_DIR}")
+endif ()
+
 enable_testing()
 
 mark_as_advanced(
