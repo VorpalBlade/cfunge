@@ -24,17 +24,11 @@ don't. For example:
 ### Required
 
  * cmake (http://www.cmake.org/) to generate a Makefile for cfunge. At least
-   version 2.8 is required.
+   version 3.12 is required.
 
- * A C99 compiler, or one that supports a large subset of C99, such as GCC.
-   + GCC 5.0 or newer.
-   + ICC 10.1, 11.1 and 14.0.1 are known to work too.
-   + Open64 4.1 should work, but isn't recommended.
-   + clang 1.0 or newer.
-   + PathScale EKOPath 4.0.10 is known to work.
-   - TCC 0.9.24 is known to fail at certain C99 constructs used in cfunge.
-
-   Other compilers may or may not work.
+ * A C99 compiler, or one that supports a large subset of C99, such as GCC or
+   clang. Any relatively modern versions should work. Other compilers may or
+   may not work.
 
  * A POSIX.1-2001 system with the memory mapped file option. It also needs the
    function strdup() which is part of the XSI extension. (For POSIX.1-2008 both
@@ -56,8 +50,10 @@ don't. For example:
 ### Highly recommended
 
  * Ncurses (http://www.gnu.org/software/ncurses/), needed for the TERM
-   fingerprint. This is most likely already installed. Ncurses will be
-   automatically used if found.
+   fingerprint. This is most likely already installed, though headers may need
+   to be installed separately via some form of -dev package. Ncurses will be
+   automatically used if found. Reentrant ncurses is not supported and support
+   will be skipped if detected.
  * IEC 60559 floating-point arithmetic. Please see Annex F in ISO/IEC 9899 for
    more details.
  * LibBSD (or have a BSD libc). This allows using arc4random which provides
@@ -67,49 +63,62 @@ don't. For example:
 ## Configuring
 
 **Warning**: Out of tree builds are highly recommended. Building in the source
-tree may work but is _completely_ untested.
+tree will not work. Building in a sub-directory of the source tree may work
+but is _completely_ untested.
 
 **Warning**: Only the make and ninja backends for cmake have been tested. Other
 backends may work, but are untested.
 
 To build using cmake, you can run these commands in the top source directory:
 
-    mkdir build && cd build
-    cmake ..
+```console
+$ mkdir ../build && cd ../build
+$ cmake ../cfunge  # Adjust path as needed.
+```
 
 If you are on a 32-bit system you may want to use 32-bit integers (instead of
 64-bit integers) for speed. It is also slightly faster on some 64-bit systems
 to use 32-bit integers. This may vary between architectures. To use 32-bit
 integers you could use these commands instead of the above ones:
 
-    mkdir build && cd build
-    cmake -DUSE_64BIT=OFF ..
+```console
+$ mkdir ../build && cd ../build
+$ cmake -DUSE_64BIT=OFF ../cfunge  # Adjust path as needed.
+```
 
 If you want to see a list of available options use ccmake. It will allow you to
 select options in a ncurses based user interface. Help is always shown at the
 bottom of the screen.
 
-    mkdir build && cd build
-    ccmake ..
-      (press c)
-      (change options - use t to show advanced options)
-      (press c again)
-      (press g to generate make file)
+```console
+$ mkdir ../build && cd ../build
+$ ccmake ../cfunge  # Adjust path as needed.
+  (press c)
+  (change options - use t to show advanced options)
+  (press c again)
+  (press g to generate make file)
+```
 
 For more information see:
 
-    cmake --help
+```console
+$ cmake --help
+```
 
 and/or
 
-    ccmake --help
+```console
+$ ccmake --help
+```
 
 
 ## Compiling
 
 After having run cmake as described in the above section, just run:
 
-    make
+```console
+$ make
+```
 
 
 Installing
@@ -117,7 +126,9 @@ Installing
 Not needed, cfunge can be run from build directory, but if you want to (after
 having compiled cfunge):
 
-    make install
+```console
+$ make install
+```
 
 
 Fingerprints
@@ -135,37 +146,37 @@ Short descriptions of implemented fingerprints:
 
 Finger print | Description
 ------------ | -----------
-3DSP | 3D space manipulation extension
-BASE | I/O for numbers in other bases
-BOOL | Logic Functions
-CPLI | Complex Integer extension
-DATE | Date Functions
-DIRF | Directory functions extension
-FILE | File I/O functions
-FING | Operate on single fingerprint semantics
-FIXP | Some useful math functions
-FPDP | Double precision floating point
-FPSP | Single precision floating point
-FRTH | Some common forth commands
-HRTI | High-Resolution Timer Interface
-INDV | Pointer functions
-JSTR | Read and write strings in Funge-Space
-MODU | Modulo Arithmetic Extension
-NCRS | Ncurses Extension
-NULL | Funge-98 Null Fingerprint
-ORTH | Orthogonal Easement Library
-PERL | Generic Interface to the Perl Language
-REFC | Referenced Cells Extension
-REXP | Regular Expression Matching
-ROMA | Funge-98 Roman Numerals
-SCKE | TCP/IP async socket and dns resolving extension
-SOCK | TCP/IP socket extension
-STRN | String functions
-SUBR | Subroutine extension
-TERM | Terminal control functions
-TIME | Time and Date functions
-TOYS | Funge-98 Standard Toys
-TURT | Simple Turtle Graphics Library
+3DSP         | 3D space manipulation extension
+BASE         | I/O for numbers in other bases
+BOOL         | Logic Functions
+CPLI         | Complex Integer extension
+DATE         | Date Functions
+DIRF         | Directory functions extension
+FILE         | File I/O functions
+FING         | Operate on single fingerprint semantics
+FIXP         | Some useful math functions
+FPDP         | Double precision floating point
+FPSP         | Single precision floating point
+FRTH         | Some common forth commands
+HRTI         | High-Resolution Timer Interface
+INDV         | Pointer functions
+JSTR         | Read and write strings in Funge-Space
+MODU         | Modulo Arithmetic Extension
+NCRS         | Ncurses Extension
+NULL         | Funge-98 Null Fingerprint
+ORTH         | Orthogonal Easement Library
+PERL         | Generic Interface to the Perl Language
+REFC         | Referenced Cells Extension
+REXP         | Regular Expression Matching
+ROMA         | Funge-98 Roman Numerals
+SCKE         | TCP/IP async socket and dns resolving extension
+SOCK         | TCP/IP socket extension
+STRN         | String functions
+SUBR         | Subroutine extension
+TERM         | Terminal control functions
+TIME         | Time and Date functions
+TOYS         | Funge-98 Standard Toys
+TURT         | Simple Turtle Graphics Library
 
 For more details please see the specs for each fingerprint.
 In cases of undefined behaviour in fingerprints, cfunge mostly tries to do the
