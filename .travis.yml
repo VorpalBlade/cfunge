@@ -1,12 +1,10 @@
+dist: focal
 language: c
 
 # Configure environment
 sudo: false
 addons:
   apt:
-    sources:
-      # Needed for newer CMake
-      - george-edison55-precise-backports
     packages:
       - cmake
       - cmake-data
