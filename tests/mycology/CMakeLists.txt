@@ -17,14 +17,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # If the mycology sub module is checked out, run it.
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mycology.b98")
-	add_test(
-		NAME mycology
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/mycology_runner.sh
-		        ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py
-		        $<TARGET_FILE:cfunge>
-		        ${CMAKE_CURRENT_SOURCE_DIR})
-else()
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mycology.b98")
 	message(WARNING "Mycology sub module missing, can not run mycology test.")
+	return()
 endif()
+
+find_program(BASH_PATH bash)
+mark_as_advanced(BASH_PATH)
+if (${BASH_PATH} STREQUAL "BASH_PATH-NOTFOUND")
+	message(WARNING "Needs bash to run wrapper script for mycology.")
+	return()
+endif()
+
+add_test(
+	NAME mycology
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${BASH_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/mycology_runner.sh
+			${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py
+			$<TARGET_FILE:cfunge>
+			${CMAKE_CURRENT_SOURCE_DIR})

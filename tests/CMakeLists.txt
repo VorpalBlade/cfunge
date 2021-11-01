@@ -16,5 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+find_package(Python3 COMPONENTS Interpreter)
+
+if (NOT ${Python3_Interpreter_FOUND})
+    message(WARNING "Tests disabled as Python 3 was not found")
+    return()
+endif ()
+
 add_subdirectory(automated)
 add_subdirectory(mycology)

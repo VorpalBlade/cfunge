@@ -21,7 +21,7 @@ function(cfunge_test test_name)
 	add_test(
 		NAME ${test_name}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_name}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name})
+		COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../test_runner.py $<TARGET_FILE:cfunge> ${CMAKE_CURRENT_SOURCE_DIR}/${test_name})
 endfunction()
 
 cfunge_test(bool-test.b98)
