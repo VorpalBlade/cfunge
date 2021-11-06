@@ -376,7 +376,7 @@ if (USE_NCURSES)
 		set(CMAKE_REQUIRED_LIBRARIES ncurses)
 		CHECK_C_SOURCE_COMPILES("${ncurses_not_reentrant_check}" NCURSES_NOT_REENTRANT)
 
-		if (NCURSES_NOT_REENTRANT)
+		if (TRUE)
 			# HACK: We should use ${CURSES_LIBRARIES} here, but that breaks static
 			# builds as it contains the full path to ncurses.so
 			target_link_libraries(cfunge ncurses)

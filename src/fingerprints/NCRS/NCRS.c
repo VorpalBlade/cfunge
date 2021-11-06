@@ -129,24 +129,18 @@ static void finger_NCRS_get(instructionPointer * ip)
 static void finger_NCRS_init(instructionPointer * ip)
 {
 	if (stack_pop(ip->stack) == 1) {
-		// We can only initialise once per session.
-		if (!ncrs_initialised) {
-			// If TERM was used before, check to make sure we don't get a mem
-			// leak:
-			finger_TERM_fix_before_NCRS_init();
-			ncrs_screen = newterm(NULL, stdout, stdin);
-			if (!ncrs_screen)
-				goto error;
-			set_term(ncrs_screen);
-			ncrs_window = newwin(0, 0, 0, 0);
-			if (!ncrs_window)
-				goto error;
-			stdscr = ncrs_window;
-			ncrs_initialised = true;
-			ncrs_valid_state = true;
-		} else {
+		// If TERM was used before, check to make sure we don't get a mem
+		// leak:
+		finger_TERM_fix_before_NCRS_init();
+		ncrs_screen = newterm(NULL, stdout, stdin);
+		if (!ncrs_screen)
 			goto error;
-		}
+		set_term(ncrs_screen);
+		ncrs_window = newwin(0, 0, 0, 0);
+		if (!ncrs_window)
+			goto error;
+		ncrs_initialised = true;
+		ncrs_valid_state = true;
 	} else {
 		if (!ncrs_initialised)
 			goto error;
@@ -227,7 +221,7 @@ static void finger_NCRS_put(instructionPointer * ip)
 static void finger_NCRS_refresh(instructionPointer * ip)
 {
 	NCRS_VALIDATE_STATE();
-	if (refresh() == ERR)
+	if (wrefresh(ncrs_window) == ERR)
 		ip_reverse(ip);
 }
 

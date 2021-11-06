@@ -173,9 +173,7 @@ void finger_TERM_fix_before_NCRS_init(void)
 {
 	if (!term_initialised)
 		return;
-	assert(cur_term != NULL);
 	del_curterm(cur_term);
-	cur_term = NULL;
 }
 
 FUNGE_ATTR_FAST
@@ -184,8 +182,7 @@ void finger_TERM_fix_after_NCRS_teardown(void)
 	int errret;
 	if (!term_initialised)
 		return;
-	assert(cur_term == NULL);
-	// Now terminal is invalid, redo setupterm()
+	// Now terminal is potentially invalid, redo setupterm()
 	if (setupterm(NULL, STDOUT_FILENO, &errret) != OK && errret <= 0)
 		return;
 }
