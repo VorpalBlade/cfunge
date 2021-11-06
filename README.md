@@ -52,8 +52,7 @@ don't. For example:
  * Ncurses (http://www.gnu.org/software/ncurses/), needed for the TERM
    fingerprint. This is most likely already installed, though headers may need
    to be installed separately via some form of -dev package. Ncurses will be
-   automatically used if found. Reentrant ncurses is not supported and support
-   will be skipped if detected.
+   automatically used if found.
  * IEC 60559 floating-point arithmetic. Please see Annex F in ISO/IEC 9899 for
    more details.
  * LibBSD (or have a BSD libc). This allows using arc4random which provides
