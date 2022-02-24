@@ -1,5 +1,7 @@
 This directory contains some useful files for when working with cfunge:
 
+ * _cfunge
+   Argument completion definition for the zsh shell.
  * example.gdbinit
    Copy this to the top source directory and call it just .gdbinit, then it
    will add some new commands to allow breaking at specific position in
