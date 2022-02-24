@@ -73,11 +73,12 @@ endif ()
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 # Common cmake modules
-include(FindPkgConfig)
 include(CheckCCompilerFlag)
 include(CheckFunctionExists)
-include(CheckLibraryExists)
 include(CheckIncludeFile)
+include(CheckLibraryExists)
+include(FindPkgConfig)
+include(GNUInstallDirs)
 
 # Cfunge specific modules.
 include(CfungeCheckCflag)
@@ -90,12 +91,6 @@ include(CfungeRequireInclude)
 include(CfungeRequireMultipleIncludes)
 include(CfungeSetBuildInfoFlags)
 include(MacroAddLinkFlags)
-
-set(MAN_INSTALL_PREFIX
-	"${CMAKE_INSTALL_PREFIX}/share/man"
-	CACHE PATH "Where to install man page."
-)
-
 
 
 ################################################################################
@@ -118,7 +113,6 @@ option(ENABLE_TURT "Enable TURT. (Recommended.)" ON)
 if (NOT ENABLE_TURT)
 	add_definitions(-DCFUN_NO_TURT)
 endif ()
-
 
 
 ################################################################################
@@ -159,7 +153,6 @@ if (HARDENED)
 endif ()
 
 
-
 ################################################################################
 # Options for cfunge developers debugging cfunge.
 
@@ -183,7 +176,6 @@ if (USE_WERROR)
 endif ()
 
 
-
 ################################################################################
 # Compiler defines. Cygwin has broken headers that hide some function prototypes
 # based on STRICT_ANSI instead of checking for the relevant _POSIX_C_SOURCE,
@@ -197,7 +189,6 @@ endif ()
 
 # Feature test macros for exposing relevant definitions in headers.
 add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
-
 
 
 ################################################################################
@@ -224,7 +215,6 @@ CFUNGE_REQUIRE_INCLUDE(regex.h)
 
 # Optional in POSIX, we need it
 CFUNGE_REQUIRE_INCLUDE(sys/mman.h)
-
 
 
 ################################################################################
@@ -280,11 +270,9 @@ if (ENABLE_FLOATS)
 endif ()
 
 
-
 ################################################################################
 # Warnings
 CFUNGE_CHECK_WARNING_FLAGS()
-
 
 
 ################################################################################
@@ -315,7 +303,6 @@ endif ()
 include_directories(${CFUNGE_SOURCE_DIR}/src/)
 
 
-
 ################################################################################
 # Targets
 FILE(GLOB CFUNGE_SOURCES RELATIVE ${CFUNGE_SOURCE_DIR}
@@ -341,7 +328,6 @@ if (HARDENED)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_relro -Wl,-z,relro)
 	CFUNGE_CHECK_LINKER_FLAG(cfunge Wl_z_now   -Wl,-z,now)
 endif ()
-
 
 
 ################################################################################
@@ -373,7 +359,6 @@ if (USE_NCURSES)
 endif ()
 
 
-
 ################################################################################
 # Check for clock_gettime() - needs to be done late due to possible libraries.
 #
@@ -390,7 +375,6 @@ if (USE_CLOCK_GETTIME)
 		endif ()
 	endif ()
 endif ()
-
 
 
 ################################################################################
@@ -428,7 +412,6 @@ if (NOT CFUNGE_HAVE_strlcpy
 endif ()
 
 
-
 ################################################################################
 # Linking libraries
 
@@ -443,11 +426,9 @@ if (USE_MUDFLAP)
 endif ()
 
 
-
 ################################################################################
 # Build info
 CFUNGE_SET_BUILD_INFO_FLAGS()
-
 
 
 ################################################################################
@@ -485,7 +466,10 @@ install(TARGETS cfunge
 	RUNTIME DESTINATION bin
 )
 install(FILES doc/cfunge.1
-	DESTINATION ${MAN_INSTALL_PREFIX}/man1
+	DESTINATION ${CMAKE_INSTALL_FULL_MANDIR}/man1
+)
+install(FILES etc/_cfunge
+	DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/zsh/site-functions
 )
 
 

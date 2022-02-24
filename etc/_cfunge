@@ -1,0 +1,20 @@
+#compdef cfunge
+
+# ZSH argument completion
+
+declare -a args
+args=(
+    '-b[Use fully buffered output (default is system default for stdout).]'
+    '-E[Show non-fatal error messages, fatal ones are always shown.]'
+    '-F[Disable all fingerprints.]'
+    '-f[Show list of features and fingerprints supported in this binary.]'
+    '(-)-h[Show this help and exit.]'
+    '-S[Enable sandbox mode (see README for details).]'
+    '-V[Show version and copyright info and exit.]'
+    '(-)-v[Show version and build info and exit.]'
+    '-W[Show warnings.]'
+    '-s+[Use the given standard.]:standard:(93 98 109)'
+    '-t+[Use given trace level. Default 0.]:level:(0 1 2 3 4 5 6 7 8 9)'
+    '*:files:_files'
+)
+_arguments $args
