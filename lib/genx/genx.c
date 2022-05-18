@@ -223,7 +223,14 @@ static genxStatus collectString(genxWriter w, collector * restrict c, constUtf8 
 	return GENX_SUCCESS;
 }
 
-#define collectPiece(w,c,d,size) {if (((c)->used+(size))>=(c)->space){if (((w)->status=growCollector(c,(c)->used+(size)))!=GENX_SUCCESS) return (w)->status;}strncpy((char *)(c)->buf+(c)->used,d,size);(c)->used+=size;}
+#define collectPiece(w,c,d,size) { \
+	if (((c)->used+(size)) >= (c)->space){ \
+		if (((w)->status = growCollector(c,(c)->used+(size))) != GENX_SUCCESS) \
+			return (w)->status; \
+		} \
+		memcpy((char *)(c)->buf+(c)->used, d, size); \
+		(c)->used+=size; \
+	}
 
 /*******************************
  * private list utilities
