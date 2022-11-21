@@ -209,7 +209,7 @@ CFUNGE_REQUIRE_INCLUDE(sys/types.h)
 CFUNGE_REQUIRE_INCLUDE(sys/socket.h)
 CFUNGE_REQUIRE_INCLUDE(netinet/in.h)
 # Some includes must be checked together.
-CFUNGE_REQUIRE_MULTIPLE_INCLUDES("sys/types.h;netinet/tcp.h" "netinet/tcp.h")
+CFUNGE_REQUIRE_MULTIPLE_INCLUDES("sys/types.h;netinet/tcp.h" NETINET_TCP_H)
 CFUNGE_REQUIRE_INCLUDE(netdb.h)
 CFUNGE_REQUIRE_INCLUDE(regex.h)
 
