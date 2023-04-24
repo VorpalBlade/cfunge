@@ -295,9 +295,9 @@ typedef uint32_t funge_unsigned_cell;
 #  error "Please rename FUNGEHANDPRINT to FUNGE_OLD_HANDPRINT and add FUNGE_NEW_HANDPRINT!"
 #endif
 /// Version, for -V.
-#define CFUNGE_APPVERSION  "1,0"
+#define CFUNGE_APPVERSION  "1,001"
 /// For y instruction.
-#define CFUNGE_VERSION_Y 10000
+#define CFUNGE_VERSION_Y 10010
 
 /**
  * For third party code.
