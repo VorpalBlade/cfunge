@@ -6,6 +6,7 @@ exec \
 	sed '/That the month is/s/[0-9][0-9]*/#/' | \
 	sed '/That the year is/s/[0-9][0-9]*/#/' | \
 	sed '/That the time is/s/[0-9][0-9]*/#/g' | \
+	sed "/That the interpreter's version is /s/[0-9][0-9]*/#/g" | \
 	sed '/The directions were generated in the order/s/[<v>^]/#/g' | \
 	sed '/? was met/s/[0-9][0-9]*/#/' | \
 	sed '/UNDEF: S pushed [0-9]/s/[0-9][0-9]*/#/' | \

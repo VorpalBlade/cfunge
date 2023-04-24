@@ -70,7 +70,7 @@ y claims all of the following:
 	That buffered I/O is being used
 	That the number of bytes per cell is 8 
 	That the interpreter's handprint is 1128682830 
-	That the interpreter's version is 10000 
+	That the interpreter's version is # 
 	That the behaviour of = is equivalent to C system()
 	That the system's path separator is /
 	That this Funge has 2 dimensions
