@@ -177,6 +177,7 @@ GOOD: T reflected when called before M
 UNDEF: S pushed # 
 UNDEF: T after M pushed # and a second T, after # ys, pushed # 
 GOOD: ET reflected
+UNDEF: E without M did not reflect
 
 Testing fingerprint MODE... not loaded.
 Testing fingerprint MODU... loaded.
