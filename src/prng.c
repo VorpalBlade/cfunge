@@ -27,9 +27,10 @@
 
 #if defined(CFUN_KLEE_TEST) || defined(AFL_FUZZ_TESTING)
 #  undef HAVE_arc4random_buf
+#  undef HAVE_arc4random_stir
 #endif
 
-#ifdef HAVE_arc4random_buf
+#if defined(HAVE_arc4random_buf) && defined(HAVE_arc4random_stir)
 #  define HAVE_ARC4RANDOM
 #  ifndef ARC4RANDOM_IN_BSD
 #    include <stdlib.h>

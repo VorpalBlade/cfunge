@@ -384,10 +384,12 @@ endif ()
 # or not be found at all.
 CFUNGE_CHECK_FUNCTION(strlcpy)
 CFUNGE_CHECK_FUNCTION(arc4random_buf)
+CFUNGE_CHECK_FUNCTION(arc4random_stir)
 
 # Try again in libbsd if that exists.
 if (NOT CFUNGE_HAVE_strlcpy
-    OR NOT CFUNGE_HAVE_arc4random_buf)
+    OR NOT CFUNGE_HAVE_arc4random_buf
+    OR NOT CFUNGE_HAVE_arc4random_stir)
 
 	find_library(LIBBSD_LOCATION
 	             NAMES bsd)
@@ -402,7 +404,8 @@ if (NOT CFUNGE_HAVE_strlcpy
 		endif ()
 
 		CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge bsd arc4random_buf ${LIBBSD_PATH})
-		if (CFUNGE_HAVE_bsd_arc4random_buf)
+		CFUNGE_CHECK_LIBRARY_FUNCTION(cfunge bsd arc4random_stir ${LIBBSD_PATH})
+		if (CFUNGE_HAVE_bsd_arc4random_buf AND CFUNGE_HAVE_bsd_arc4random_stir)
 			# In this case we need <bsd/stdlib.h>
 			# FIXME: Should fail gracefully if missing.
 			CFUNGE_REQUIRE_INCLUDE(bsd/stdlib.h)
