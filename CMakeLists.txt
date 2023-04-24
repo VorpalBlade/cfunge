@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-project(CFUNGE C)
-
 cmake_minimum_required(VERSION 3.12)
+
+project(CFUNGE C)
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 	message(FATAL_ERROR "Only out of tree builds are supported. Please execute something like: cd .. && mkdir cfunge-build && cd cfunge-build && cmake ${CMAKE_SOURCE_DIR}")
