@@ -4,10 +4,13 @@ displayed using git (does not work in tarballs, you need a development checkout
 for this).
 
 
-## Development version (up to move to github)
+## 1,0
 
 During the development of this release the project was migrated from bzr on
 launchpad to git on GitHub.
+
+Also as of 1,0 a new versioning scheme is used, see
+[the README](README.md#version-number-scheme).
 
 New features and improvements:
 
@@ -19,6 +22,8 @@ New features and improvements:
  * Changed stack stack code to not realloc once for each call of { and }.
  * Improved speed for non-cardinal warp.
  * Made cfunge work with the PathScale EKOPath compiler.
+ * Add Zsh argument completion.
+ * Automated running of tests with ctest, including mycology.
 
 Changed features:
 
@@ -46,6 +51,7 @@ Major bug fixes:
    end of the stack.
  * Fix error handling of t (split).
  * Fix s wrapping and add test for it.
+ * Fix (NCRS) for reentrant ncurses (thanks to Thomas Jollans @tjol)
 
 Minor bug fixes:
 
