@@ -227,3 +227,14 @@ but is not limited to:
  * The list of environment variables the program can see in y are restricted.
  * Non-safe fingerprints can not be loaded (this includes network and file
    system access as well as other things).
+
+
+## Version number scheme
+
+cfunge uses decimal versions as of 1,0. That is, 1,15 is between 1,1 and 1,2,
+treating the number as a proper decimal number. In addition, the widely used
+(outside English that is) convention of comma (,) as the decimal separator is
+used instead of a period.
+
+For the `y` instruction, the version number multiplied by 10000 is used. Should
+more than 4 decimals ever be used, the versioning scheme will change.
