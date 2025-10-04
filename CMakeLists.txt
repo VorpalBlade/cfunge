@@ -187,6 +187,11 @@ else (CMAKE_COMPILER_IS_CYGWIN)
 	CFUNGE_CHECK_CFLAG(std_c99 -std=c99)
 endif ()
 
+# macOS has a similar issue that this fixes; without it strlcpy is inaccessible.
+if (APPLE)
+	add_definitions(-D_DARWIN_C_SOURCE)
+endif ()
+
 # Feature test macros for exposing relevant definitions in headers.
 add_definitions(-D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=600)
 
